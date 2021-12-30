@@ -1,0 +1,289 @@
+body {
+  font-family: "Avenir", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #eaebf3;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.5em;
+}
+
+h1 {
+  color: #111;
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  line-height: 1.5em;
+}
+
+p {
+  margin: 0 0 10x 0;
+}
+
+a {
+  color: #888;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+}
+
+a:hover {
+  border-bottom-color: #888;
+}
+
+body,
+.overlay {
+  -webkit-perspective-origin-y: 25%;
+}
+
+.body--ready {
+  background: linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+}
+
+.body--ready .overlay {
+  transition: transform 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1),
+    opacity 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1);
+}
+
+
+.ui {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: 300px;
+  margin-left: -150px;
+  text-align: center;
+}
+
+button,
+input,
+.commands-item {
+  border: 0;
+  outline: 0;
+  font-size: 16px;
+  border-radius: 320px;
+  padding: 0 16px;
+  background-color: #EBECF0;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+.ui-input {
+  width: 100%;
+  height: 50px;
+  background: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #61677c;
+  border-radius: 32px;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid white;
+  box-shadow: inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.ui-input:focus {
+  outline: none;
+  border: none;
+  box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #fff;
+  border-bottom: 2px solid white;
+}
+
+.ui-return {
+  display: none;
+  position: absolute;
+  top: -0;
+  right: -64px;
+}
+
+.go-home {
+  padding: 5px 15px;
+  margin-bottom: 20px;
+}
+
+button {
+  color: #61677C;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px #FFF, 5px 5px 20px #BABECC;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.commands-item:hover,
+button:focus {
+  box-shadow: -2px -2px 5px #FFF, 2px 2px 5px #BABECC;
+}
+
+.commands-item:hover,
+button:hover {
+  box-shadow: -2px -2px 5px #fff, 2px 2px 5px #BABECC;
+}
+
+.commands-item:hover,
+button:active {
+  box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #fff;
+}
+
+.ui--enter button {
+  display: block;
+}
+
+.ui--wide {
+  width: 76%;
+  margin-left: 12%;
+  left: 0;
+}
+
+.ui--wide button {
+  right: -20px;
+}
+
+.help {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  height: 25px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.help:hover {
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 550px;
+  height: 490px;
+  margin: -260px 0 0 -275px;
+  opacity: 0;
+  transform: rotateY(90deg);
+}
+
+.overlay--visible {
+  opacity: 1;
+  transform: rotateY(0);
+}
+
+.ui-share,
+.ui-details {
+  opacity: .9;
+  background: #000;
+  z-index: 2;
+}
+
+.ui-details-content,
+.ui-share-content {
+  padding: 100px 50px;
+}
+
+.commands {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+}
+
+.commands-item {
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 20px;
+  margin-top: 10px;
+  transition: transform 0.1s cubic-bezier(0.694, 0.0482, 0.335, 1),
+    opacity 0.1s cubic-bezier(0.694, 0.0482, 0.335, 1);
+  color: #61677C;
+  box-shadow: -5px -5px 20px #fff, 5px 5px 20px #BABECC;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+
+
+.commands-item--gap {
+  margin-top: 9px;
+}
+
+.commands-item:hover {
+  opacity: 1;
+}
+
+.commands-item:hover .commands-item-action {
+  background: #333;
+}
+
+.commands-item a {
+  display: inline-block;
+}
+
+.commands-item-mode {
+  display: inline-block;
+  margin-left: 3px;
+  font-style: italic;
+  color: #ccc;
+}
+
+.commands-item-title {
+  display: inline-block;
+  width: 150px;
+}
+
+.commands-item-info {
+  display: inline-block;
+  width: 300px;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: normal;
+  color: #aaa;
+}
+
+.commands-item-action {
+  display: inline-block;
+  float: right;
+  margin-top: 3px;
+  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 10px;
+  color: #000;
+  background: #90c9d1;
+  padding: 5px 10px 4px 10px;
+  border-radius: 3px;
+}
+
+.commands-item:first-child {
+  margin-top: 0;
+}
+
+.twitter-share {
+  position: absolute;
+  top: 4px;
+  right: 20px;
+}
+
+
+.tabs-panel {
+  display: none;
+}
+
+.tabs-panel--active {
+  display: block;
+}
+
+.tab-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.touch .ui-input {
+  display: none;
+}
