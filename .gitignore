@@ -4,6 +4,13 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
+=======
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
 
 # Runtime data
 pids
@@ -16,6 +23,10 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+<<<<<<< HEAD
+=======
+*.lcov
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
 
 # nyc test coverage
 .nyc_output
@@ -35,10 +46,19 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+<<<<<<< HEAD
 dist/
 
 # TypeScript v1 declaration files
 typings/
+=======
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
 
 # Optional npm cache directory
 .npm
@@ -46,6 +66,15 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+<<<<<<< HEAD
+=======
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
 # Optional REPL history
 .node_repl_history
 
@@ -61,12 +90,30 @@ typings/
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
+<<<<<<< HEAD
 
 # next.js build output
 .next
 
 # nuxt.js build output
 .nuxt
+=======
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
 
 # vuepress build output
 .vuepress/dist
@@ -79,3 +126,19 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+<<<<<<< HEAD
+=======
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+>>>>>>> 6ac500c354f71841a206a46e30271a2b07eadd19
