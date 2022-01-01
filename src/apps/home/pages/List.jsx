@@ -1,28 +1,22 @@
 import { useEffect } from 'react';
-import { useObserver, useLocalObservable } from 'mobx-react';
-import store from '../model/store';
-import {
-  HomeOutlined
-} from '@ant-design/icons';
+import { useObserver } from 'mobx-react';
+import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
 import { load } from './home'
 
 export default function List() {
-  const localStore = useLocalObservable(() => store);
 
   useEffect(() => {
     load()
-    localStore.getArticleList();
   }, []);
 
-  console.log({ localStore });
   return useObserver(() => <>
     <canvas className="canvas"></canvas>
 
     <button className="help">?</button>
+    <button className='go-home'><HomeOutlined /></button>
 
     <div className="ui">
-      <button className='go-home'><HomeOutlined /></button>
       <input id='input' className="ui-input" type="text" />
       <button className="ui-return">↵</button>
     </div>

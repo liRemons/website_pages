@@ -1,9 +1,9 @@
 import { service } from "@axios";
 
-export const queryArticleList = () => {
+export const queryTechClassList = () => {
   return service({
-    method: "get",
-    url: "/content/queryArticleList",
+    method: 'get',
+    url: '/content/queryTechClassList',
     data: {},
   });
 };
@@ -11,7 +11,7 @@ export const queryArticleList = () => {
 
 export const getMD = (url) => {
   return service({
-    method: "get",
+    method: 'get',
     url,
     data: {},
   });

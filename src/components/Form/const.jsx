@@ -12,9 +12,11 @@ import {
   TreeSelect,
   Cascader
 } from 'antd';
+const { TextArea } = Input;
 
 export const Com = {
   input: Input,
+  textarea: TextArea,
   inputNumber: InputNumber,
   datePicker: DatePicker,
   select: Select,

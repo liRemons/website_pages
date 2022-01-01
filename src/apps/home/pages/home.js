@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const load = () => {
   let timer = null;
 

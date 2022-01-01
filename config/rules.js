@@ -36,11 +36,22 @@ const rules = [
       },
       // less
       {
-        test: /\.less$/,
+        test: new RegExp(`^(?!.*\\.global).*\\.less`),
+        exclude: /node_modules/,
         include: path.resolve(__dirname, "../src"),
         use: [
           MiniCssExtractPlugin.loader,
           cssMoudleLoader,
+          postcssLoader,
+          "less-loader",
+        ],
+      },
+      {
+        test: new RegExp(`^(.*\\.global).*\\.less`),
+        include: path.resolve(__dirname, "../src"),
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
           postcssLoader,
           "less-loader",
         ],

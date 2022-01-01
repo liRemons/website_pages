@@ -1,0 +1,158 @@
+@ruler: 16px;
+@color-red: #ae1100;
+@color-bg: #ebecf0;
+@color-shadow: #babecc;
+@color-white: #fff;
+
+body,
+html {
+  background-color: @color-bg;
+}
+
+body,
+p,
+input,
+select,
+textarea,
+button {
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -0.2px;
+  font-size: @ruler;
+}
+
+button,
+input,
+textarea,
+.ant-input {
+  border: 0 !important;
+  outline: 0;
+  font-size: @ruler !important;
+  padding: 5px 10px;
+  // text-shadow: 1px 1px 0 @color-white !important;
+}
+
+label {
+  display: block;
+  margin-bottom: @ruler*1.5;
+  width: 100%;
+}
+
+input,
+textarea,
+.ant-input {
+  background-color: @color-bg !important;
+  margin-right: @ruler / 2;
+  box-shadow: inset 2px 2px 5px @color-shadow, inset -5px -5px 10px @color-white !important;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out !important;
+  appearance: none;
+  color: #61677c !important;
+  &:hover {
+    border: none;
+  }
+
+  &:focus {
+    border: none !important;
+    box-shadow: inset 1px 1px 2px @color-shadow,
+      inset -1px -1px 2px @color-white !important;
+  }
+}
+
+button,
+.shadow {
+  color: #61677c;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow !important;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 3px !important;
+
+  &:hover {
+    box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow !important;
+  }
+
+  &:active {
+    box-shadow: inset 1px 1px 2px @color-shadow,
+      inset -1px -1px 2px @color-white !important;
+  }
+
+  .icon {
+    margin-right: @ruler / 2;
+  }
+
+  &.unit {
+    border-radius: @ruler / 2;
+    line-height: 0;
+    width: @ruler*3;
+    height: @ruler*3;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 @ruler / 2;
+    font-size: @ruler*1.2;
+
+    .icon {
+      margin-right: 0;
+    }
+  }
+
+  &.red {
+    display: block;
+    width: 100%;
+    color: @color-red;
+  }
+}
+
+.ant-card {
+  background-color: @color-bg;
+  margin: 3px;
+
+  .ant-card-head {
+    border: none !important;
+  }
+
+  .ant-card-body {
+    padding: 24px 10px;
+  }
+}
+
+.ant-card-bordered {
+  border: none !important;
+}
+
+.p-20 {
+  padding: 20px;
+}
+
+.m-r-20{
+  margin-right: 20px;
+}
+
+.tc{
+  text-align: center;
+}
+
+
+
+::-webkit-scrollbar {
+  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  /*滚动条里面小方块*/
+
+  background: rgba(126, 126, 126, 0.322);
+  transition: all 0.5s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #757575c2;
+}
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+}
