@@ -72,7 +72,8 @@ module.exports = (env, args) => {
         '@': path.resolve(__dirname, 'src'),
         '@components': path.resolve(__dirname, 'src/components'),
         '@axios': path.resolve(__dirname, 'src/axios'),
-        '@assets': path.resolve(__dirname, 'src/assets')
+        '@assets': path.resolve(__dirname, 'src/assets'),
+        '@utils': path.resolve(__dirname, 'src/utils')
       },
     },
     externals: {

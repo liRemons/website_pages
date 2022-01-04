@@ -1,0 +1,69 @@
+@import '../../../assets/css/index.global.less';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+
+
+  .header {
+    width: 100%;
+    line-height: 50px;
+    text-align: center;
+    box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow  !important;
+    position: relative;
+  }
+
+  .main {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 15px 15px 15px;
+
+    .page_list,
+    .page_main,
+    .page_nav {
+      height: 100%;
+      padding: 10px 0;
+    }
+
+    .page_list {
+      width: 20%;
+
+      .page_list_title {
+        line-height: 30px;
+        padding: 0 5px;
+        margin: 10px;
+        color: #61677c;
+        font-weight: bold;
+        box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow  !important;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 3px !important;
+
+        &:hover {
+          color: @active-color;
+
+        }
+
+        &:active {
+          box-shadow: inset 1px 1px 2px @color-shadow,
+            inset -1px -1px 2px @color-white  !important;
+        }
+      }
+    }
+
+    .page_main {
+      width: 56%;
+    }
+
+    .page_nav {
+      width: 20%;
+    }
+  }
+}

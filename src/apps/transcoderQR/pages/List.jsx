@@ -12,7 +12,8 @@ export default function List() {
   ];
 
   const onReset = () => {
-    form.resetFields()
+    form.resetFields();
+    setArr([]);
   }
 
   const onSubmit = () => {

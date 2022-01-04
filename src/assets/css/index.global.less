@@ -3,6 +3,7 @@
 @color-bg: #ebecf0;
 @color-shadow: #babecc;
 @color-white: #fff;
+@active-color: #75bcff;
 
 body,
 html {
@@ -57,6 +58,16 @@ textarea,
     box-shadow: inset 1px 1px 2px @color-shadow,
       inset -1px -1px 2px @color-white !important;
   }
+}
+
+.shadow_not_active {
+  color: #61677c;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow  !important;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 3px !important;
 }
 
 button,
