@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useObserver } from 'mobx-react';
 import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
+import { openApp } from 'methods-r';
 import { load } from './home'
 
 export default function List() {
@@ -14,7 +15,7 @@ export default function List() {
     <canvas className="canvas"></canvas>
 
     <button className="help">?</button>
-    <button className='go-home'><HomeOutlined /></button>
+    <button className='go-home' onClick={() => openApp({ url: '/homeList' })}><HomeOutlined /></button>
 
     <div className="ui">
       <input id='input' className="ui-input" type="text" />

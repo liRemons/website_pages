@@ -1,0 +1,41 @@
+@import '../../../../assets/css/index.global.less';
+
+.ant-anchor-link-active {
+
+  box-shadow: inset 1px 1px 2px @color-shadow,
+    inset -1px -1px 2px @color-white  !important;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: @active-color;
+  }
+}
+
+.ant-anchor-link {
+  border-radius: 4px;
+  padding: 0;
+  line-height: 26px;
+  margin: 3px 0 3px 5px;
+  padding-left: 5px;
+
+
+
+  &:hover {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: @active-color;
+    }
+
+    box-shadow: inset 0px 0px 2px @color-shadow,
+    inset 0px 0px 2px @color-white  !important;
+  }
+}

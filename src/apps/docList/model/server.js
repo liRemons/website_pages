@@ -8,4 +8,11 @@ export const queryArticleList = (params) => {
   });
 };
 
+export const getMarkdown = (url) => {
+  return service({
+    method: 'get',
+    url
+  });
+}
+
 

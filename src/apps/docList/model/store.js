@@ -1,8 +1,12 @@
 import { makeAutoObservable } from 'mobx';
-import { queryArticleList } from './server';
+import { queryArticleList, getMarkdown } from './server';
 
 class Store {
   articleList = [];
+
+  markdownInfo = '';
+
+  markdownUrl = '';
 
   constructor() {
     makeAutoObservable(this);
@@ -11,6 +15,13 @@ class Store {
   async queryArticleList(payload) {
     const { data: articleList } = await queryArticleList(payload);
     this.articleList = articleList;
+  }
+
+  async getMarkdown(payload) {
+    this.markdownInfo = '';
+    this.markdownUrl = payload;
+    const data = await getMarkdown(payload);
+    this.markdownInfo = data;
   }
 }
 

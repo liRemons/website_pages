@@ -27,7 +27,7 @@ textarea,
 .ant-input {
   border: 0 !important;
   outline: 0;
-  font-size: @ruler !important;
+  font-size: @ruler  !important;
   padding: 5px 10px;
   // text-shadow: 1px 1px 0 @color-white !important;
 }
@@ -41,14 +41,15 @@ label {
 input,
 textarea,
 .ant-input {
-  background-color: @color-bg !important;
+  background-color: @color-bg  !important;
   margin-right: @ruler / 2;
-  box-shadow: inset 2px 2px 5px @color-shadow, inset -5px -5px 10px @color-white !important;
+  box-shadow: inset 2px 2px 5px @color-shadow, inset -5px -5px 10px @color-white  !important;
   width: 100%;
   box-sizing: border-box;
   transition: all 0.2s ease-in-out !important;
   appearance: none;
   color: #61677c !important;
+
   &:hover {
     border: none;
   }
@@ -56,8 +57,17 @@ textarea,
   &:focus {
     border: none !important;
     box-shadow: inset 1px 1px 2px @color-shadow,
-      inset -1px -1px 2px @color-white !important;
+      inset -1px -1px 2px @color-white  !important;
   }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 !important;
 }
 
 .shadow_not_active {
@@ -71,22 +81,23 @@ textarea,
 }
 
 button,
-.shadow {
+.shadow,
+.circle {
   color: #61677c;
   font-weight: bold;
-  box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow !important;
+  box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow  !important;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   font-weight: 600;
   border-radius: 3px !important;
 
   &:hover {
-    box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow !important;
+    box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow  !important;
   }
 
   &:active {
     box-shadow: inset 1px 1px 2px @color-shadow,
-      inset -1px -1px 2px @color-white !important;
+      inset -1px -1px 2px @color-white  !important;
   }
 
   .icon {
@@ -137,20 +148,22 @@ button,
   padding: 20px;
 }
 
-.m-r-20{
+.m-r-20 {
   margin-right: 20px;
 }
 
-.tc{
+.tc {
   text-align: center;
 }
 
 
 
 ::-webkit-scrollbar {
-  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+  width: 8px;
+  /*高宽分别对应横竖滚动条的尺寸*/
   height: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
   /*滚动条里面小方块*/
@@ -158,12 +171,42 @@ button,
   background: rgba(126, 126, 126, 0.322);
   transition: all 0.5s;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #757575c2;
 }
+
 ::-webkit-scrollbar-track {
   /*滚动条里面轨道*/
   border-radius: 5px;
   border: none;
   background: transparent;
+}
+
+#loading {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.loadingVerlay {
+  background-color: rgba(22, 22, 22, 0.425);
+  z-index: 10000;
+}
+
+.circle {
+  margin: 0;
+  top: 40px;
+  left: 40px;
+  width: 40px;
+  line-height: 40px;
+  height: 40px;
+  border-radius: 100% !important;
+  padding: 0;
+  margin-right: 5px;
 }
