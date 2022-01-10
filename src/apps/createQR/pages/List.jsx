@@ -1,6 +1,7 @@
 import { Form, Button, Spin, message } from 'antd';
 import { useState } from 'react';
 import FormItem from '@components/Form';
+import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
@@ -84,5 +85,6 @@ export default function List() {
       </div>
       <div id="QR"></div>
     </div>
+    <Fixed />
   </Spin>;
 }
