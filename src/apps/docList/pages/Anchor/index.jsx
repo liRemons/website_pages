@@ -9,7 +9,7 @@ export default function MyAnchor(props) {
   const [currentAnchor, setCurrentAnchor] = useState('');
 
   const changeAnchor = (anchor) => {
-    setCurrentAnchor(anchor)
+    setCurrentAnchor(anchor);
   };
 
   const Node = (__html) => <div dangerouslySetInnerHTML={{ __html }}></div>;
@@ -21,5 +21,5 @@ export default function MyAnchor(props) {
           anchor.map(item => <Link href={'#' + item.text} key={item.text} title={Node(item.title)}></Link>)
         }
       </Anchor> : <Empty />
-    }</>
+    }</>;
 }

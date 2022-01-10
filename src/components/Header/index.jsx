@@ -1,8 +1,8 @@
 import style from './index.less';
 import { openApp } from 'methods-r';
-import { HomeOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 export default function Header(props) {
-  const Home = <div className='circle' onClick={() => openApp({ url: '/homeList' })}><HomeOutlined /></div>
+  const Home = <div className='circle' onClick={() => openApp({ url: '/homeList' })}><LeftOutlined /></div>;
   const { name, rightComponent, leftComponent } = props;
   return <>
     <div className={style.header}>
@@ -15,5 +15,5 @@ export default function Header(props) {
         {rightComponent}
       </div>
     </div>
-  </>
+  </>;
 }

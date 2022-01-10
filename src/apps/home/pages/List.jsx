@@ -3,12 +3,11 @@ import { useObserver } from 'mobx-react';
 import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
 import { openApp } from 'methods-r';
-import { load } from './home'
+import { load } from './home';
 
 export default function List() {
-
   useEffect(() => {
-    load()
+    load();
   }, []);
 
   return useObserver(() => <>

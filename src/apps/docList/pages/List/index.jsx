@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
+import Fixed from '@components/Fixed';
 import store from '../../model/store';
 import classnames from 'classnames';
-import '@assets/css/index.global.less'
+import '@assets/css/index.global.less';
 import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { download, getSearchParams } from 'methods-r'
+import { download, getSearchParams } from 'methods-r';
 import { HOST } from '@utils';
 
 export default function List() {
@@ -20,7 +21,7 @@ export default function List() {
   const [anchor, setAnchor] = useState([]);
   useEffect(() => {
     getList();
-  }, [])
+  }, []);
 
 
   const getList = async () => {
@@ -28,34 +29,34 @@ export default function List() {
     setParams(params);
     const { id: techClassId } = params;
     await localStore.queryArticleList({ techClassId });
-  }
+  };
 
   const handleClickPage = (data) => {
     const { id } = data;
     setActiveId(id);
     setDetail(data);
-  }
+  };
 
   const getAuchor = (arr) => {
-    const anchorArr = []
+    const anchorArr = [];
     document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach((item, index) => {
-      const text = item.innerText.replace(/\s+/g, '') + '-No-' + index
+      const text = item.innerText.replace(/\s+/g, '') + '-No-' + index;
       item.className = 'anchor_markdown';
-      item.id = text
+      item.id = text;
       anchorArr.push({
         title: item.outerHTML,
         text
-      })
-    })
-    setAnchor(arr || anchorArr)
-  }
+      });
+    });
+    setAnchor(arr || anchorArr);
+  };
 
   const rightComponent = () => {
     const { markdownUrl: url } = localStore;
     return <>
       {url && <div className='circle' onClick={() => download(`${HOST}${url}`)}><ArrowDownOutlined /></div>}
-    </>
-  }
+    </>;
+  };
 
 
   const { id, name } = params;
@@ -76,5 +77,6 @@ export default function List() {
         <Anchor anchor={anchor} />
       </div>
     </div>
-  </div >)
+    <Fixed />
+  </div >);
 }

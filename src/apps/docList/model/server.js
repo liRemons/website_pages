@@ -13,6 +13,6 @@ export const getMarkdown = (url) => {
     method: 'get',
     url
   });
-}
+};
 
 

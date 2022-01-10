@@ -7,6 +7,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
 const path = require('path')
 const rules = require('./config/rules')
+const pagesJSON = require('./scripts/pages.json')
 /**
  * @type {Configuration}
  */
@@ -73,7 +74,7 @@ module.exports = (env, args) => {
         '@components': path.resolve(__dirname, 'src/components'),
         '@axios': path.resolve(__dirname, 'src/axios'),
         '@assets': path.resolve(__dirname, 'src/assets'),
-        '@utils': path.resolve(__dirname, 'src/utils')
+        '@utils': path.resolve(__dirname, 'src/utils'),
       },
     },
     externals: {
@@ -87,10 +88,15 @@ module.exports = (env, args) => {
     },
     plugins: [
       ...pages.map((pageName) => {
+        const pageInfo =
+          pagesJSON.find((item) => item.pageName === pageName) || {}
         return new HtmlWebpackPlugin({
           filename: `${pageName}/index.html`,
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.html'),
+          templateParameters: {
+            title: `remons.cn - ${pageInfo.title}`,
+          },
         })
       }),
       // 提取单独的CSS
@@ -103,10 +109,14 @@ module.exports = (env, args) => {
       // new BundleAnalyzerPlugin({
       //   analyzerMode: mode === 'production' ? 'server' : 'disabled'
       // })
-      mode === 'development' ?  new ESLintPlugin({
-        extensions: ['js', 'json', 'jsx']
-      }):'',
-    ].filter( _ => !!_ ),
+      mode === 'development'
+        ? new ESLintPlugin({
+            extensions: ['js', 'json', 'jsx'],
+            fix: true,
+            failOnError: false,
+          })
+        : '',
+    ].filter((_) => !!_),
     devServer: {
       contentBase: path.join(__dirname, 'dist'),
       compress: true,
@@ -114,7 +124,7 @@ module.exports = (env, args) => {
       host: '127.0.0.1',
       open: true,
       openPage: env.pages.split(',')[0],
-      hot: true
+      hot: true,
     },
     devtool: mode === 'development' ? 'eval-source-map' : 'source-map',
   }

@@ -1,0 +1,30 @@
+[
+  {
+    "pageName": "createQR",
+    "title": "生成二维码"
+  },
+  {
+    "pageName": "docList",
+    "title": "文章列表"
+  },
+  {
+    "pageName": "home",
+    "title": "首页"
+  },
+  {
+    "pageName": "homeList",
+    "title": "首页技术分类"
+  },
+  {
+    "pageName": "transcoderQR",
+    "title": "解析二维码"
+  },
+  {
+    "pageName": "my",
+    "title": "我"
+  },
+  {
+    "pageName": "tool",
+    "title": "实用工具"
+  }
+]

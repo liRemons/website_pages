@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Form, Button } from 'antd';
 import FormItem from '@components/Form';
-import '@assets/css/index.global.less'
+import Fixed from '@components/Fixed';
+import '@assets/css/index.global.less';
 
 export default function List() {
   const [arr, setArr] = useState([]);
@@ -14,7 +15,7 @@ export default function List() {
   const onReset = () => {
     form.resetFields();
     setArr([]);
-  }
+  };
 
   const onSubmit = () => {
     const value = form.getFieldValue('encode');
@@ -22,9 +23,9 @@ export default function List() {
     const formatValue = unescape(arr.join(''));
     form.setFieldsValue({
       decode: formatValue
-    })
+    });
     setArr(arr);
-  }
+  };
 
   return <div className='p-20'>
     <Form form={form}>
@@ -40,5 +41,6 @@ export default function List() {
         重置
       </Button>
     </div>
+    <Fixed />
   </div>;
 }
