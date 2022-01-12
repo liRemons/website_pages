@@ -1,9 +1,9 @@
 import { service } from '@axios';
 
-export const queryMyInfo = (params) => {
+export const queryDocList = (params) => {
   return service({
     method: 'get',
-    url: '/info/queryMyInfo',
+    url: '/doc/queryDocList',
     params,
   });
 };
