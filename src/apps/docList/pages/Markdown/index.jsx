@@ -37,7 +37,7 @@ export default function Markdown(props) {
         timer = setTimeout(() => {
           props.getAuchor();
           initCodeClassName();
-        }, 500);
+        }, 200);
       } catch (error) {
         props.getAuchor([]);
         setHtml('');
