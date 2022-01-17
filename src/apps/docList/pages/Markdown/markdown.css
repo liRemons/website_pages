@@ -20,6 +20,13 @@ pre {
   cursor: auto;
 }
 
+li>code{
+  background: #f9f2f4;
+  color: #c7254df1;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
 pre:hover .copy {
   display: inline-block;
 }
