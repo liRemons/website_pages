@@ -39,7 +39,7 @@
         margin: 10px;
         color: #61677c;
         font-weight: bold;
-        box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow  !important;
+        box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow !important;
         transition: all 0.3s ease-in-out;
         cursor: pointer;
         font-weight: 600;
@@ -48,26 +48,42 @@
         &:hover {
           color: @active-color;
           box-shadow: inset 0px 0px 2px @color-shadow,
-            inset 0px 0px 2px @color-white  !important;
+            inset 0px 0px 2px @color-white !important;
         }
 
         &:active {
           box-shadow: inset 1px 1px 2px @color-shadow,
-            inset -1px -1px 2px @color-white  !important;
+            inset -1px -1px 2px @color-white !important;
         }
       }
 
       .active {
         color: @active-color;
         box-shadow: inset 1px 1px 2px @color-shadow,
-          inset -1px -1px 2px @color-white  !important;
+          inset -1px -1px 2px @color-white !important;
       }
     }
 
-
-
     .page_main {
       width: 56%;
+      background-color: #ebecf0;
+      .markdown_main {
+        position: relative;
+        height: 100%;
+      }
+
+      &:hover .fullscreen {
+        display: block;
+      }
+
+      .fullscreen {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        top: 0;
+        left: inherit;
+        right: 0 !important;
+      }
     }
 
     .page_nav {

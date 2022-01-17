@@ -9,7 +9,7 @@ import '@assets/css/index.global.less';
 import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
-import { ArrowDownOutlined } from '@ant-design/icons';
+import { ArrowDownOutlined, ExpandOutlined, CompressOutlined } from '@ant-design/icons';
 import { download, getSearchParams } from 'methods-r';
 import { HOST } from '@utils';
 
@@ -19,6 +19,7 @@ export default function List() {
   const [activeId, setActiveId] = useState('');
   const [detail, setDetail] = useState({});
   const [anchor, setAnchor] = useState([]);
+  const [fullscreen, setFullscreen] = useState(false);
   useEffect(() => {
     getList();
   }, []);
@@ -27,15 +28,28 @@ export default function List() {
   const getList = async () => {
     const params = getSearchParams();
     setParams(params);
-    const { id: techClassId } = params;
+    const { id: techClassId, pageId, pageUrl } = params;
     await localStore.queryArticleList({ techClassId });
+    if (pageId, pageUrl) {
+      setDetail({ url: pageUrl });
+      setActiveId(pageId);
+    }
   };
 
   const handleClickPage = (data) => {
-    const { id } = data;
+    const { id, url } = data;
+    const params = {
+      ...getSearchParams(),
+      pageId: id,
+      pageUrl: url
+    };
+    const newParams = new URLSearchParams(params);
+    const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : '/docList';
+    history.pushState('', '', pageURL);
     setActiveId(id);
     setDetail(data);
   };
+
 
   const getAuchor = (arr) => {
     const anchorArr = [];
@@ -58,6 +72,17 @@ export default function List() {
     </>;
   };
 
+  const changeFullscreen = () => {
+    const ele = document.querySelector('.markdown_screen');
+    if (!fullscreen) {
+      ele.requestFullscreen();
+      setFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setFullscreen(false);
+    }
+  };
+
 
   const { id, name } = params;
   return useObserver(() => <div className={style.container}>
@@ -70,8 +95,14 @@ export default function List() {
           }
         </div>
       </div>
-      <div className={classnames(style.page_main, 'shadow_not_active')}>
-        <Markdown getAuchor={getAuchor} id={activeId} detail={detail} />
+      <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
+        <div className={style.markdown_main}>
+          <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
+            {!fullscreen ? <ExpandOutlined /> : <CompressOutlined />}
+          </span>
+          <Markdown getAuchor={getAuchor} id={activeId} detail={detail} />
+
+        </div>
       </div>
       <div className={classnames(style.page_nav, 'shadow_not_active')}>
         <Anchor anchor={anchor} />
