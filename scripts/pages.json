@@ -26,5 +26,9 @@
   {
     "pageName": "tool",
     "title": "实用工具"
+  },
+  {
+    "pageName": "imgWatermark", 
+    "title": "图片水印"
   }
 ]

@@ -4,7 +4,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const ESLintPlugin = require('eslint-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
@@ -17,6 +18,10 @@ module.exports = (env, args) => {
   const pages = env.pages.split(',')
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
+  const otherParams = {}
+  ;(env.otherParams || '').split(',').forEach((item) => {
+    otherParams[item.split('=')[0]] = item.split('=')[1]
+  })
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
     entry,
@@ -68,7 +73,7 @@ module.exports = (env, args) => {
       rules,
     },
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.tsx', '.ts'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
         '@components': path.resolve(__dirname, 'src/components'),
@@ -85,6 +90,8 @@ module.exports = (env, args) => {
       'mobx-react': 'mobxReact',
       classnames: 'classNames',
       axios: 'axios',
+      'highlight.js': 'hljs',
+      qs: 'Qs',
     },
     plugins: [
       ...pages.map((pageName) => {
@@ -106,23 +113,21 @@ module.exports = (env, args) => {
       // 压缩css
       new CssMinimizerPlugin(),
       new CleanWebpackPlugin(),
-      // new BundleAnalyzerPlugin({
-      //   analyzerMode: mode === 'production' ? 'server' : 'disabled'
-      // })
-      mode === 'development'
-        ? new ESLintPlugin({
-            extensions: ['js', 'json', 'jsx'],
-            fix: true,
-            failOnError: false,
+      otherParams.analyse === 'true'
+        ? new BundleAnalyzerPlugin({
+            analyzerMode: mode === 'production' ? 'server' : 'disabled',
           })
-        : '',
+        : null,
+      mode === 'production' && otherParams.gzip === 'true'
+        ? new CompressionPlugin()
+        : null,
     ].filter((_) => !!_),
     devServer: {
       contentBase: path.join(__dirname, 'dist'),
       compress: true,
       port: 3033,
       host: '127.0.0.1',
-      open: true,
+      open: otherParams.open === 'true',
       openPage: env.pages.split(',')[0],
       hot: true,
     },

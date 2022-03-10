@@ -27,7 +27,7 @@ textarea,
 .ant-input {
   border: 0 !important;
   outline: 0;
-  font-size: @ruler !important;
+  font-size: @ruler;
   padding: 5px 10px;
   // text-shadow: 1px 1px 0 @color-white !important;
 }
@@ -46,7 +46,7 @@ textarea,
   box-shadow: inset 2px 2px 5px @color-shadow, inset -5px -5px 10px @color-white !important;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.2s ease-in-out !important;
+  transition: shadow 0.2s ease-in-out !important;
   appearance: none;
   color: #61677c !important;
 
@@ -86,7 +86,7 @@ button,
   color: #61677c;
   font-weight: bold;
   box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow !important;
-  transition: all 0.2s ease-in-out;
+  transition: shadow 0.2s ease-in-out;
   cursor: pointer;
   font-weight: 600;
   border-radius: 3px !important;
@@ -219,4 +219,8 @@ button,
   text-align: center;
   margin-right: 5px;
   display: inline-block;
+}
+
+canvas {
+  max-width: 100%;
 }
