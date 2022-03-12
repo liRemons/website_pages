@@ -1,58 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-    <link rel="icon" href="http://remons.cn:3009/upload/info/favicon.ico" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/antd@4.18.9/dist/antd.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="//unpkg.com/@highlightjs/cdn-assets@11.4.0/styles/default.min.css"
-    />
-  </head>
 
-  <body>
-    <div id="container"></div>
-    <div id="loading"></div>
-    <script
-      crossorigin
-      src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"
-    ></script>
-    <script crossorigin src="https://unpkg.com/qs@6.10.3/dist/qs.js"></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/axios/dist/axios.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/classnames@2.3.1/index.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/mobx@6.3.2/dist/mobx.umd.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/mobx-react-lite@3.1.6/dist/mobxreactlite.umd.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/mobx-react@7.3.0/dist/mobxreact.umd.production.min.js"
-    ></script>
-    <script src="https://unpkg.com/moment@2.29.1/min/moment.min.js"></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/antd@4.18.9/dist/antd.min.js"
-    ></script>
-    <script src="//unpkg.com/@highlightjs/cdn-assets@11.4.0/highlight.min.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="icon" href="http://remons.cn:3009/upload/info/favicon.ico" />
+  <% for (const i in externals_css) {%>
+    <link rel="stylesheet" href="<%= externals_css[i] %>" />
+    <%} %>
+</head>
+
+<body>
+  <div id="container"></div>
+  <div id="loading"></div>
+  <% for (const i in externals_js) {%>
+    <script crossorigin src="<%= externals_js[i] %>"></script>
+    <%} %>
+</body>
+
 </html>

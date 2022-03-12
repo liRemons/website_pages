@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@components/Header';
 import { Input, Slider } from 'antd';
 import Fixed from '@components/Fixed';
-import { SketchPicker } from 'react-color'
+import { RgbaColorPicker } from "react-colorful";
 import style from './index.less'
 import classNames from 'classnames';
 import { DragOutlined, ArrowDownOutlined } from '@ant-design/icons'
@@ -12,7 +12,6 @@ function List () {
   const [fileName, setFileName] = useState('');
   const [text, setText] = useState('');
   const [color, setColor] = useState('rgba(255, 255, 255, 0.3)');
-  const [selectColor, setSelectColor] = useState('rgba(255, 255, 255, 0.3)');
   const [rotate, setRotate] = useState(45);
   const [fontSize, setFontSize] = useState(12);
 
@@ -138,11 +137,7 @@ function List () {
           水印文字： <Input onChange={changeInput} />
           水印角度： <Slider value={rotate} min={0} max={360} onChange={(val) => setRotate(val)} />
           字体大小： <Slider value={fontSize} min={12} max={50} onChange={(val) => setFontSize(val)} />
-          水印颜色：<SketchPicker color={selectColor} onChangeComplete={(color) => {
-            const { r, g, b, a } = color.rgb;
-            setColor(`rgb(${r}, ${g}, ${b},${a})`)
-            setSelectColor(color.rgb)
-          }} />
+          水印颜色：<RgbaColorPicker onChange={({ r, g, b, a }) => setColor(`rgba(${r},${g},${b},${a})`)} />
           下载处理文件：<span className='circle' onClick={save}><ArrowDownOutlined /></span>
         </div>
       </div>
