@@ -2,7 +2,7 @@ import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import style from '../index.less';
-import { List, Card } from 'antd';
+import { List, Card, message } from 'antd';
 import { HOST } from '@utils';
 import { openApp } from 'methods-r';
 import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined } from '@ant-design/icons';
@@ -20,6 +20,10 @@ export default function ListPage() {
   ];
 
   const openPage = ({ url, params }) => {
+    if(!url) {
+      message.warning('开发中');
+      return;
+    }
     openApp({ url: `/${APP_NAME}${url}`, params });
   };
   return <>

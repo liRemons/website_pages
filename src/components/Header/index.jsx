@@ -3,7 +3,7 @@ import { openApp } from 'methods-r';
 import { LeftOutlined } from '@ant-design/icons';
 export default function Header(props) {
   const { name, rightComponent, leftComponent, leftPath } = props;
-  const Home = <div className='circle' onClick={() => openApp({ url: `${APP_NAME}${leftPath || '/homeList'}` })}><LeftOutlined /></div>;
+  const Home = <div className='circle' onClick={() => openApp({ url: `/${APP_NAME}${leftPath || '/homeList'}` })}><LeftOutlined /></div>;
   return <>
     <div className={style.header}>
       <div className={style.left}>

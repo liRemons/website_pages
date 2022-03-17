@@ -169,7 +169,7 @@ module.exports = (env, args) => {
       compress: true,
       port: 3033,
       host: '127.0.0.1',
-      openPage: `@${packageJSON}/${env.pages.split(',')[0]}`,
+      openPage: `@${packageJSON.name}/${env.pages.split(',')[0]}`,
       hot: true,
     },
     stats: 'errors-only',

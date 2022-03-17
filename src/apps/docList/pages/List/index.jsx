@@ -44,7 +44,7 @@ export default function List() {
       pageUrl: url
     };
     const newParams = new URLSearchParams(params);
-    const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : '/docList';
+    const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
     history.pushState('', '', pageURL);
     setActiveId(id);
     setDetail(data);
