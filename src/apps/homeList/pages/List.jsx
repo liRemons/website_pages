@@ -19,7 +19,7 @@ export default function HomeList() {
   const openPage = (data) => {
     const { name, id } = data;
     openApp({
-      url: '/docList',
+      url:`/${APP_NAME}/docList`,
       params: {
         name, id
       }

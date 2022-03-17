@@ -20,7 +20,7 @@ export default function ListPage() {
   ];
 
   const openPage = ({ url, params }) => {
-    openApp({ url, params });
+    openApp({ url: `/${APP_NAME}${url}`, params });
   };
   return <>
     <div className={style.container}>

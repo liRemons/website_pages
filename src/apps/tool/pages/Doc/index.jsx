@@ -16,7 +16,7 @@ export default function Doc() {
     window.open(HOST + url);
   };
   return useObserver(() => <div className={style.container}>
-    <Header name='文档' leftPath='/tool' />
+    <Header name='文档' leftPath={`/${APP_NAME}/tool`} />
     <div className={style.main}>
       <div className={style.page_main}>
         <div className={style.page_list}>

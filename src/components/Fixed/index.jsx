@@ -12,7 +12,7 @@ export default function Fixed() {
   };
 
   const go = (url) => {
-    openApp({ url });
+    openApp({ url: `/${APP_NAME}${url}` });
   };
 
   const btns = [

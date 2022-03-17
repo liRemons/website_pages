@@ -1,4 +1,4 @@
-const { Configuration } = require('webpack')
+const { Configuration, DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -7,8 +7,9 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
-const pagesJSON = require('./scripts/pages.json');
+const pagesJSON = require('./scripts/pages.json')
 const { js, css } = require('./config/cdn')
+const packageJSON = require('./package.json')
 /**
  * @type {Configuration}
  */
@@ -18,11 +19,11 @@ module.exports = (env, args) => {
   const pages = env.pages.split(',')
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
-  const otherParams = {};
-  (env.otherParams || '').split(',').forEach((item) => {
+  const otherParams = {}
+  ;(env.otherParams || '').split(',').forEach((item) => {
     otherParams[item.split('=')[0]] = item.split('=')[1]
   })
-  console.log('正在编译以下应用--------', pages)
+  console.log('正在编译以下应用', pages)
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
     entry,
@@ -33,8 +34,8 @@ module.exports = (env, args) => {
           ? '[name]/js/[contenthash:10].js'
           : '[name].js'
       },
-      path: path.resolve(__dirname, 'dist/'),
-      publicPath: '/',
+      path: path.resolve(__dirname, `dist/@${packageJSON.name}`),
+      publicPath: `/@${packageJSON.name}`,
     },
     optimization: {
       minimizer: [
@@ -92,7 +93,7 @@ module.exports = (env, args) => {
       axios: 'axios',
       'highlight.js': 'hljs',
       qs: 'Qs',
-      marked: 'marked'
+      marked: 'marked',
     },
     plugins: [
       ...pages.map((pageName) => {
@@ -103,40 +104,42 @@ module.exports = (env, args) => {
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.html'),
           templateParameters: (compilation, assets, assetTags, options) => {
-            const externals_js = [];
-            const externals_css = [];
-            const externalsValues = [];
+            const externals_js = []
+            const externals_css = []
+            const externalsValues = []
             for (let [key, value] of compilation._modules.entries()) {
               if (key.includes('external')) {
                 externalsValues.push(value.userRequest)
               }
             }
 
-            js.forEach(item => {
-              externalsValues.forEach(val => {
+            js.forEach((item) => {
+              externalsValues.forEach((val) => {
                 if (item.externalsName === val) {
-                  externals_js.push(item.url);
+                  externals_js.push(item.url)
                 }
               })
             })
-            css.forEach(item => {
-              externalsValues.forEach(val => {
+            css.forEach((item) => {
+              externalsValues.forEach((val) => {
                 if (item.externalsName === val) {
-                  externals_css.push(item.url);
+                  externals_css.push(item.url)
                 }
               })
             })
             if (mode === 'production') {
-              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/js--------`);
-              console.log(externals_js);
-              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/css--------`);
-              console.log(externals_css);
+              console.log('---------------------------------')
+              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/js`)
+              console.log(externals_js)
+              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/css`)
+              console.log(externals_css)
+              console.log('---------------------------------')
             }
 
             return {
               title: `remons.cn - ${pageInfo.title}`,
-              externals_js: [... new Set(externals_js)],
-              externals_css: [... new Set(externals_css)]
+              externals_js: [...new Set(externals_js)],
+              externals_css: [...new Set(externals_css)],
             }
           },
         })
@@ -145,11 +148,17 @@ module.exports = (env, args) => {
       new MiniCssExtractPlugin({
         filename: '[name]/main.[contenthash:10].css',
       }),
+      new DefinePlugin({
+        APP_NAME: JSON.stringify(`@${packageJSON.name}`),
+      }),
       // 压缩css
       new CssMinimizerPlugin(),
       new BundleAnalyzerPlugin({
         defaultSizes: 'stat',
-        analyzerMode: (mode === 'production' && otherParams.report === 'true') ? 'server' : 'disabled',
+        analyzerMode:
+          mode === 'production' && otherParams.report === 'true'
+            ? 'server'
+            : 'disabled',
       }),
       mode === 'production' && otherParams.gzip === 'true'
         ? new CompressionPlugin()
@@ -160,7 +169,7 @@ module.exports = (env, args) => {
       compress: true,
       port: 3033,
       host: '127.0.0.1',
-      openPage: env.pages.split(',')[0],
+      openPage: `@${packageJSON}/${env.pages.split(',')[0]}`,
       hot: true,
     },
     stats: 'errors-only',
