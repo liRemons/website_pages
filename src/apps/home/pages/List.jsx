@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useObserver } from 'mobx-react';
 import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
 import { openApp } from 'methods-r';
@@ -10,7 +9,7 @@ export default function List() {
     load();
   }, []);
 
-  return useObserver(() => <>
+  return  <>
     <canvas className="canvas"></canvas>
 
     <button className="help">?</button>
@@ -47,8 +46,6 @@ export default function List() {
           </ul>
         </div>
       </div>
-
     </div>
-
-  </>);
+  </>;
 }
