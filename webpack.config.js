@@ -35,7 +35,7 @@ module.exports = (env, args) => {
           : '[name].js'
       },
       path: path.resolve(__dirname, `dist/@${packageJSON.name}`),
-      publicPath: `/@${packageJSON.name}`,
+      publicPath: `/@${packageJSON.name}/`,
     },
     optimization: {
       minimizer: [
