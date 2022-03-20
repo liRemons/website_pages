@@ -59,7 +59,8 @@ export default function List() {
       item.id = text;
       anchorArr.push({
         title: item.outerHTML,
-        text
+        text,
+        nodeName: item.nodeName
       });
     });
     setAnchor(arr || anchorArr);

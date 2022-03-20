@@ -12,13 +12,14 @@ export default function MyAnchor(props) {
     setCurrentAnchor(anchor);
   };
 
-  const Node = (__html) => <div dangerouslySetInnerHTML={{ __html }}></div>;
+  const Node = (__html, nodeName) => <div><span className='link_nodename'>{nodeName}</span><div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html }} /></div>
 
   return <>
     {
       anchor.length ? <Anchor getCurrentAnchor={currentAnchor} getContainer={() => document.querySelector('.markdown')} onChange={changeAnchor}>
         {
-          anchor.map(item => <Link href={'#' + item.text} key={item.text} title={Node(item.title)}></Link>)
+          anchor.map(item => <Link href={'#' + item.text} key={item.text} title={Node(item.title, item.nodeName)}>
+          </Link>)
         }
       </Anchor> : <Empty />
     }</>;

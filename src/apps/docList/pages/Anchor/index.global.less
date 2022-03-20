@@ -1,9 +1,7 @@
 @import '../../../../assets/css/index.global.less';
 
 .ant-anchor-link-active {
-
-  box-shadow: inset 1px 1px 2px @color-shadow,
-    inset -1px -1px 2px @color-white  !important;
+  box-shadow: inset 1px 1px 2px @color-shadow, inset -1px -1px 2px @color-white !important;
 
   h1,
   h2,
@@ -21,11 +19,37 @@
   line-height: 26px;
   margin: 3px 0 3px 5px;
   padding-left: 5px;
-
-
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 900;
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  h5 {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  h6 {
+    font-size: 13px;
+    font-weight: normal;
+  }
+  .link_nodename {
+    position: absolute;
+    right: 2px;
+    font-size: 12px;
+    color: #ccc;
+    font-weight: normal;
+  }
 
   &:hover {
-
     h1,
     h2,
     h3,
@@ -34,8 +58,10 @@
     h6 {
       color: @active-color;
     }
+    .link_nodename {
+      display: inline-block;
+    }
 
-    box-shadow: inset 0px 0px 2px @color-shadow,
-    inset 0px 0px 2px @color-white  !important;
+    box-shadow: inset 0px 0px 2px @color-shadow, inset 0px 0px 2px @color-white !important;
   }
 }
