@@ -22,7 +22,7 @@ export default function List() {
       message.warning('内容不能为空');
       return;
     }
-    const val = escape(value);
+    const val = window.btoa(unescape(encodeURIComponent(value)));
     setLoading(true);
     const body = document.querySelector('body');
     body.style.overflow = 'hidden';

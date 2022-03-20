@@ -4,10 +4,16 @@ const fs = require('fs')
 const log4js = require('log4js')
 const chalk = require('chalk')
 const { logCongfig } = require('./log')
+const pakeageJSON = require('../package.json')
 log4js.configure(logCongfig)
-const getPages = () =>
-  new Promise((resolve, reject) => {
-    fsExtra.emptydirSync('dist')
+
+const deletePath = (pages) =>
+  Promise.all(
+    pages.map((item) => fsExtra.remove(`dist/@${pakeageJSON.name}/${item}`))
+  )
+
+const getPages = () => {
+  return new Promise(async (resolve, reject) => {
     const pages =
       ((process.argv[2] || '').includes('=') ? '' : process.argv[2]) ||
       readdirSync('src/apps').join(',')
@@ -33,8 +39,10 @@ const getPages = () =>
           )
         : []
     pages.split(',').forEach((el, index) => console.log(`${index + 1}:`, el))
+    await deletePath(pages.split(','))
     resolve({ pages, otherParams })
   })
+}
 
 const getDist = (pages) => {
   let filesDir = []

@@ -20,7 +20,7 @@ export default function List() {
   const onSubmit = () => {
     const value = form.getFieldValue('encode');
     !arr.includes(value.trim()) && arr.push(value.trim());
-    const formatValue = unescape(arr.join(''));
+    const formatValue = decodeURIComponent(escape(window.atob(unescape(arr.join('')))));
     form.setFieldsValue({
       decode: formatValue
     });
