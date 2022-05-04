@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import store from '../../model/store';
 import { useLocalObservable, useObserver } from 'mobx-react';
-import { marked } from 'marked';
 import { message } from 'antd';
-import hljs from 'highlight.js';
 import Empty from '@components/Empty';
 import { copy } from 'methods-r';
-import './markdown.css';
+import './markdown.global.less';
 
 let timer = null;
 
@@ -15,33 +13,14 @@ export default function Markdown(props) {
   const [html, setHtml] = useState('');
 
   const getMarkdown = async () => {
-    const { url } = props.detail || {};
-    if (url) {
-      try {
-        await localStore.getMarkdown(url);
-        marked.setOptions({
-          renderer: new marked.Renderer(),
-          gfm: true,
-          tables: true,
-          breaks: false,
-          pedantic: false,
-          sanitize: false,
-          smartLists: true,
-          smartypants: false,
-          highlight: (code) => {
-            return hljs.highlightAuto(code).value;
-          }
-        });
-        setHtml(marked(localStore.markdownInfo));
-        props.getAuchor([]);
-        timer = setTimeout(() => {
-          props.getAuchor();
-          initCodeClassName();
-        }, 200);
-      } catch (error) {
-        props.getAuchor([]);
-        setHtml('');
-      }
+    try {
+      await localStore.markdownToHTML(localStore.markdownInfo)
+      setHtml(localStore.htmlInfo);
+      timer = setTimeout(() => {
+        initCodeClassName();
+      }, 200);
+    } catch (error) {
+      setHtml('');
     }
   };
 
@@ -79,7 +58,7 @@ export default function Markdown(props) {
     };
   }, []);
 
-  return useObserver(() => <> <div className="markdown">
+  return useObserver(() => <> <div className='markdown'>
     {html ? <div className='markdown-html'><div dangerouslySetInnerHTML={{ __html: html }} onClick={handleClick}></div></div> : <Empty />}
   </div>
   </>);

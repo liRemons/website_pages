@@ -15,4 +15,14 @@ export const getMarkdown = (url) => {
   });
 };
 
+export const markdownToHTML = (content) => {
+  return service({
+    method: 'post',
+    url: '/content/markdownToHTML',
+    data: {
+      content,
+    },
+  });
+};
+
 

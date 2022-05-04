@@ -9,7 +9,8 @@ import '@assets/css/index.global.less';
 import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
-import { ArrowDownOutlined, ExpandOutlined, CompressOutlined } from '@ant-design/icons';
+import MarkMap from '../MarkMap';
+import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined } from '@ant-design/icons';
 import { download, getSearchParams } from 'methods-r';
 import { HOST } from '@utils';
 
@@ -19,6 +20,7 @@ export default function List() {
   const [activeId, setActiveId] = useState('');
   const [detail, setDetail] = useState({});
   const [anchor, setAnchor] = useState([]);
+  const [viewType, setViewType] = useState('');
   const [fullscreen, setFullscreen] = useState(false);
   useEffect(() => {
     getList();
@@ -32,7 +34,9 @@ export default function List() {
     await localStore.queryArticleList({ techClassId });
     if (pageId, pageUrl) {
       setDetail({ url: pageUrl });
+      localStore.getMarkdown(pageUrl);
       setActiveId(pageId);
+      setViewType('html')
     }
   };
 
@@ -48,23 +52,10 @@ export default function List() {
     history.pushState('', '', pageURL);
     setActiveId(id);
     setDetail(data);
+    setViewType('html')
+    localStore.getMarkdown(data.url);
   };
 
-
-  const getAuchor = (arr) => {
-    const anchorArr = [];
-    document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach((item, index) => {
-      const text = item.innerText.replace(/\s+/g, '') + '-No-' + index;
-      item.className = 'anchor_markdown';
-      item.id = text;
-      anchorArr.push({
-        title: item.outerHTML,
-        text,
-        nodeName: item.nodeName
-      });
-    });
-    setAnchor(arr || anchorArr);
-  };
 
   const rightComponent = () => {
     const { markdownUrl: url } = localStore;
@@ -84,8 +75,17 @@ export default function List() {
     }
   };
 
+  const changeViewType = () => {
+    viewType === 'html' ? setViewType('markMap') : setViewType('html')
+  }
+
 
   const { id, name } = params;
+
+  const VIEW_DETAIL = {
+    html: <Markdown id={activeId} />,
+    markMap: <MarkMap markdownInfo={localStore.markdownInfo} />
+  }
   return useObserver(() => <div className={style.container}>
     <Header name={name} rightComponent={rightComponent()} />
     <div className={style.main}>
@@ -96,18 +96,22 @@ export default function List() {
           }
         </div>
       </div>
-      <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
+      <div className={classnames(viewType === 'html' ? style.page_main : style.page_max_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
           <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
             {!fullscreen ? <ExpandOutlined /> : <CompressOutlined />}
           </span>
-          <Markdown getAuchor={getAuchor} id={activeId} detail={detail} />
-
+          <span className={classnames(style.viewType, 'circle')} onClick={changeViewType} >
+            {viewType === 'html' ? <ApartmentOutlined /> : <FontSizeOutlined />}
+          </span>
+          {
+            localStore.markdownInfo ? VIEW_DETAIL[viewType] : <Empty />
+          }
         </div>
       </div>
-      <div className={classnames(style.page_nav, 'shadow_not_active')}>
-        <Anchor anchor={anchor} />
-      </div>
+      {viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
+        <Anchor anchor={localStore.anchor} />
+      </div>}
     </div>
     <Fixed />
   </div >);

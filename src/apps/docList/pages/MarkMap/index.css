@@ -1,0 +1,10 @@
+code[class*="language-"], pre[class*="language-"] {
+  line-height: 1 !important;
+  color: inherit !important;
+  text-shadow: none !important
+}
+
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string, code  {
+  background: transparent !important;
+
+}
