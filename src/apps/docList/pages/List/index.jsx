@@ -10,21 +10,40 @@ import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
-import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
+import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
 import { download, getSearchParams } from 'methods-r';
 import { HOST } from '@utils';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
   const [params, setParams] = useState({});
+  const [searchTitle, setSearchTitle] = useState('')
   const [activeId, setActiveId] = useState('');
-  const [detail, setDetail] = useState({});
+  const [detail,] = useState({});
   const [anchor, setAnchor] = useState([]);
   const [viewType, setViewType] = useState('');
   const [fullscreen, setFullscreen] = useState(false);
   useEffect(() => {
     getList();
   }, []);
+
+  const onSearch = () => {
+    if (!searchTitle) {
+      setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
+    } else {
+      const deepAnchor = (data) => {
+        return data.filter(item => {
+          if (item.title.toLocaleLowerCase().includes(searchTitle.toLocaleLowerCase())) {
+            return true
+          }
+          item.children = deepAnchor(item.children)
+          return item.children.length
+        })
+      }
+      setAnchor(deepAnchor(anchor))
+    }
+  }
 
 
   const getList = async () => {
@@ -33,7 +52,6 @@ export default function List() {
     const { id: techClassId, pageId, pageUrl } = params;
     await localStore.queryArticleList({ techClassId });
     if (pageId, pageUrl) {
-      setDetail({ url: pageUrl });
       localStore.getMarkdown(pageUrl);
       setActiveId(pageId);
       setViewType('html')
@@ -83,7 +101,7 @@ export default function List() {
   const { id, name } = params;
 
   const VIEW_DETAIL = {
-    html: <Markdown id={activeId} />,
+    html: <Markdown id={activeId} setAnchor={setAnchor} />,
     markMap: <MarkMap markdownInfo={localStore.markdownInfo} />
   }
   return useObserver(() => <div className={style.container}>
@@ -110,7 +128,13 @@ export default function List() {
         </div>
       </div>
       {viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
-        <Anchor anchor={localStore.anchor} />
+        <div className={style.search}>
+          <Input placeholder="请输入以搜索" onChange={(e) => setSearchTitle(e.target.value)} />
+          <span className='circle' onClick={onSearch} >
+            <SearchOutlined />
+          </span>
+        </div>
+        <Anchor anchor={anchor} />
       </div>}
     </div>
     <Fixed />
