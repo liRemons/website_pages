@@ -59,7 +59,7 @@ arr.forEach((item) => {
       }
       const res = response.data;
       // 返回请求值
-      return res;
+      return res
     },
     (error) => {
       // 如果接口出错，当然，也可以根据错误的状态码进行错误信息配置，

@@ -53,8 +53,6 @@
     "antd": "^4.16.8",
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
-    "highlight.js": "^11.3.1",
-    "marked": "^4.0.8",
     "markmap-lib": "^0.13.2",
     "markmap-view": "^0.13.2",
     "methods-r": "^1.2.11",

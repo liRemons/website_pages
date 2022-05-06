@@ -1,6 +1,6 @@
 import Empty from '@components/Empty';
 import { Anchor } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.global.less';
 
 const { Link } = Anchor;
@@ -8,9 +8,16 @@ export default function MyAnchor(props) {
   const { anchor } = props;
   const [currentAnchor, setCurrentAnchor] = useState('');
 
-  const changeAnchor = (anchor) => {
-    setCurrentAnchor(anchor);
-  };
+  useEffect(() => {
+    if (anchor.length && window.location.hash) {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.setAttribute('href', window.location.hash)
+        a.click();
+      }, 500);
+    }
+
+  }, [anchor]);
 
   const Node = (__html, nodeName) => <div><span className='link_nodename'>{nodeName}</span><div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html }} /></div>
 
@@ -19,7 +26,7 @@ export default function MyAnchor(props) {
       {
         arr.map(item => item.children.length ?
           <Link href={'#' + item.href} key={item.href} title={Node(item.title, item.nodeName)}>
-           { renderAnchor(item.children)}
+            {renderAnchor(item.children)}
           </Link> :
           <Link href={'#' + item.href} key={item.href} title={Node(item.title, item.nodeName)} />
         )
@@ -29,7 +36,7 @@ export default function MyAnchor(props) {
 
   return <>
     {
-      anchor.length ? <Anchor getCurrentAnchor={currentAnchor} getContainer={() => document.querySelector('.markdown')} onChange={changeAnchor}>
+      anchor.length ? <Anchor getContainer={() => document.querySelector('.markdown')}>
         {
           renderAnchor(anchor)
         }
