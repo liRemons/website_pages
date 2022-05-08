@@ -30,5 +30,9 @@
   {
     "pageName": "imgWatermark", 
     "title": "图片水印"
+  },
+  {
+    "pageName": "login",
+    "title": "登录"
   }
 ]

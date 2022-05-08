@@ -20,7 +20,6 @@ export default function List() {
   const [params, setParams] = useState({});
   const [searchTitle, setSearchTitle] = useState('')
   const [activeId, setActiveId] = useState('');
-  const [detail,] = useState({});
   const [anchor, setAnchor] = useState([]);
   const [viewType, setViewType] = useState('');
   const [fullscreen, setFullscreen] = useState(false);

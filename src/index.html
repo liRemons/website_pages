@@ -1,25 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>
-    <%= title %>
-  </title>
-  <link rel="icon" href="http://remons.cn:3009/upload/info/favicon.ico" />
-  <% for (const i in externals_css) {%>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="http://remons.cn:3009/upload/info/favicon.ico" />
+    <% for (const i in externals_css) {%>
     <link rel="stylesheet" href="<%= externals_css[i] %>" />
     <%} %>
-</head>
+    <style>
+      #container {
+        height: 100%;
+        width: 100%;
+      }
 
-<body>
-  <div id="container"></div>
-  <div id="loading"></div>
-  <% for (const i in externals_js) {%>
+      #loading {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: none;
+      }
+
+      .loadingVerlay {
+        background-color: rgba(22, 22, 22, 0.225);
+        z-index: 10000;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <div id="loading"></div>
+    <% for (const i in externals_js) {%>
     <script crossorigin src="<%= externals_js[i] %>"></script>
     <%} %>
-</body>
-
+  </body>
 </html>

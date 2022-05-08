@@ -3,10 +3,10 @@ import { Form } from 'antd';
 import { Com } from './const';
 export default class FormItem extends React.Component {
   render() {
-    const { label, name, component, componentProps } = this.props;
+    const { component, componentProps, ...others } = this.props;
     const ReCompont = Com[component];
     return (
-      <Form.Item {...this.props}>
+      <Form.Item {...others}>
         <ReCompont {...componentProps}></ReCompont>
       </Form.Item>
     );

@@ -16,6 +16,7 @@ const { TextArea } = Input;
 
 export const Com = {
   input: Input,
+  inputPassword: Input.Password,
   textarea: TextArea,
   inputNumber: InputNumber,
   datePicker: DatePicker,
