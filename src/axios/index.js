@@ -28,8 +28,8 @@ arr.forEach((item) => {
   loadingCount = 0
   item.interceptors.request.use(
     (config) => {
-      const REMONS_TOKEN = localStorage.getItem('REMONS_TOKEN');
-      REMONS_TOKEN && (config.headers['REMONS_TOKEN'] = REMONS_TOKEN);
+      const REMONS_TOKEN = localStorage.getItem('REMONS_TOKEN')
+      REMONS_TOKEN && (config.headers['REMONS_TOKEN'] = REMONS_TOKEN)
       // 如果需要序列化
       if (
         config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
@@ -60,7 +60,7 @@ arr.forEach((item) => {
         // 如果接口请求累加值小于0 那么关闭loading
       }
       const res = response.data
-      if (!res.success) {
+      if (!res.success && !response.config.url.includes('upload')) {
         message.error(res.msg)
       }
       // 返回请求值
