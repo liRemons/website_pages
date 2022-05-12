@@ -6,18 +6,6 @@ import './index.global.less';
 const { Link } = Anchor;
 export default function MyAnchor(props) {
   const { anchor } = props;
-  const [currentAnchor, setCurrentAnchor] = useState('');
-
-  useEffect(() => {
-    if (anchor.length && window.location.hash) {
-      setTimeout(() => {
-        const a = document.createElement('a');
-        a.setAttribute('href', window.location.hash)
-        a.click();
-      }, 500);
-    }
-
-  }, [anchor]);
 
   const Node = (__html, nodeName) => <div><span className='link_nodename'>{nodeName}</span><div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html }} /></div>
 
