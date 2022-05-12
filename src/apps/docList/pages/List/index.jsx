@@ -10,7 +10,7 @@ import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
-import { Input } from 'antd';
+import { Input, BackTop } from 'antd';
 import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
 import { download, getSearchParams, debounce } from 'methods-r';
 import { HOST } from '@utils';
@@ -131,6 +131,7 @@ export default function List() {
         <Anchor anchor={anchor} />
       </div>}
     </div>
+    {localStore.markdownInfo && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
     <Fixed />
   </div >);
 }
