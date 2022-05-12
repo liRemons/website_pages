@@ -12,13 +12,12 @@ import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
 import { Input } from 'antd';
 import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
-import { download, getSearchParams } from 'methods-r';
+import { download, getSearchParams, debounce } from 'methods-r';
 import { HOST } from '@utils';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
   const [params, setParams] = useState({});
-  const [searchTitle, setSearchTitle] = useState('')
   const [activeId, setActiveId] = useState('');
   const [anchor, setAnchor] = useState([]);
   const [viewType, setViewType] = useState('');
@@ -27,7 +26,7 @@ export default function List() {
     getList();
   }, []);
 
-  const onSearch = () => {
+  const onSearch = (searchTitle) => {
     if (!searchTitle) {
       setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
     } else {
@@ -40,7 +39,7 @@ export default function List() {
           return item.children.length
         })
       }
-      setAnchor(deepAnchor(anchor))
+      setAnchor(deepAnchor(JSON.parse(JSON.stringify(localStore.anchor))))
     }
   }
 
@@ -127,10 +126,7 @@ export default function List() {
       </div>
       {viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
         <div className={style.search}>
-          <Input placeholder="请输入以搜索" onChange={(e) => setSearchTitle(e.target.value)} />
-          <span className='circle' onClick={onSearch} >
-            <SearchOutlined />
-          </span>
+          <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
         </div>
         <Anchor anchor={anchor} />
       </div>}

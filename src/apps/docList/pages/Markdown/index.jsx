@@ -5,6 +5,7 @@ import { message } from 'antd';
 import Empty from '@components/Empty';
 import { copy } from 'methods-r';
 import './markdown.global.less';
+import './index.global.less';
 
 let timer = null;
 
@@ -17,6 +18,13 @@ export default function Markdown(props) {
       await localStore.markdownToHTML(localStore.markdownInfo)
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       setHtml(localStore.htmlInfo);
+      if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.setAttribute('href', window.location.hash)
+          a.click();
+        }, 500);
+      }
       timer = setTimeout(() => {
         initCodeClassName();
       }, 200);

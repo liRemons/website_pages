@@ -1,0 +1,73 @@
+.markdown {
+  height: 100%;
+  overflow: auto;
+
+  code {
+    background: #f9f2f4;
+    color: #c7254df1;
+    border-radius: 4px;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+
+  pre {
+    overflow: hidden;
+    background-color: #263238;
+    position: relative;
+    color: #fff;
+    box-shadow: inset 5px 5px 10px #0f1416, inset -5px -5px 10px #3d505a;
+    cursor: auto;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 25px 10px 5px;
+    border-radius: 7px;
+    position: relative;
+
+    code {
+      overflow: auto;
+      background-color: transparent;
+      line-height: 20px;
+      width: 100%;
+      display: inline-block;
+      color: #fff;
+
+      .hljs-comment {
+        font-style: italic;
+      }
+    }
+
+    &::before {
+      position: absolute;
+      width: 50px;
+      top: 8px;
+      z-index: 11;
+      height: 16px;
+      content: "";
+      background: url(https://remons.gitee.io/feq/summarize/website/assets/img/code_icon.png) no-repeat;
+      background-size: contain;
+    }
+  }
+
+  pre:hover .copy {
+    display: inline-block;
+  }
+
+  .copy {
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    font-size: 12px;
+    color: #75715e;
+  }
+
+
+  img {
+    max-width: 100%;
+  }
+}
+
+.markdown-html {
+  overflow: auto;
+}
