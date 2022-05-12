@@ -4,6 +4,7 @@ import { useObserver, useLocalObservable } from 'mobx-react';
 import { List, Card } from 'antd';
 import { HOST } from '@utils';
 import { openApp } from 'methods-r';
+import { FileTextTwoTone } from '@ant-design/icons'
 import store from '../model/store';
 import Empty from '@components/Empty';
 import Fixed from '@components/Fixed';
@@ -33,7 +34,7 @@ export default function HomeList() {
       renderItem={item => (
         <List.Item onClick={() => openPage(item)} className={classNames('shadow', style.cardItem)}>
           <Card title={item.name}>
-            <img src={`${HOST}${item.icon}`} alt="" />
+         { item.icon ? <img src={`${HOST}${item.icon}`} alt="" /> : <div className={style.icon}><FileTextTwoTone /></div>}
           </Card>
         </List.Item>
       )}
