@@ -3,6 +3,8 @@ import { Anchor } from 'antd';
 import { useState, useEffect } from 'react';
 import './index.global.less';
 
+let timer = null;
+
 const { Link } = Anchor;
 export default function MyAnchor(props) {
   const { anchor } = props;
