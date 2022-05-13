@@ -131,7 +131,7 @@ export default function List() {
         {viewType === 'html' && <Anchor anchor={anchor} />}
       </div>}
     </div>
-    {localStore.markdownInfo && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
+    {localStore.markdownInfo && viewType === 'html' && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
     <Fixed />
   </div >);
 }
