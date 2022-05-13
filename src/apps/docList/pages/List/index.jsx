@@ -128,7 +128,7 @@ export default function List() {
         <div className={style.search}>
           <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
         </div>
-        <Anchor anchor={anchor} />
+        {viewType === 'html' && <Anchor anchor={anchor} />}
       </div>}
     </div>
     {localStore.markdownInfo && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
