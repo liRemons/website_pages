@@ -1,6 +1,44 @@
 .markdown {
   height: 100%;
   overflow: auto;
+  font-weight: normal;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    position: relative;
+    font-weight: bold;
+    line-height: 1.6em;
+  }
+  h1 {
+    font-size: 2em;
+    line-height: 1.2em;
+  }
+  h2 {
+    font-size: 1.5em;
+    line-height: 1.225em;
+  }
+  h3 {
+    font-size: 1.3em;
+    line-height: 1.43em;
+  }
+  h4 {
+    font-size: 1.2em;
+  }
+  h5 {
+    font-size: 1em;
+  }
+  h6 {
+    font-size: 1em;
+    color: #999;
+  }
+
+  ul,
+  ol {
+    padding-left: 2em;
+  }
 
   code {
     background: #f9f2f4;
@@ -42,8 +80,9 @@
       top: 8px;
       z-index: 11;
       height: 16px;
-      content: "";
-      background: url(http://remons.cn:3009/upload/content/icon/code_icon.png) no-repeat;
+      content: '';
+      background: url(http://remons.cn:3009/upload/content/icon/code_icon.png)
+        no-repeat;
       background-size: contain;
     }
   }
@@ -61,7 +100,6 @@
     font-size: 12px;
     color: #75715e;
   }
-
 
   img {
     max-width: 100%;
