@@ -1,9 +1,9 @@
-const { Configuration, DefinePlugin } = require('webpack')
+const { Configuration, DefinePlugin, ProgressPlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
@@ -38,13 +38,14 @@ module.exports = (env, args) => {
       publicPath: `/@${packageJSON.name}/`,
     },
     optimization: {
+      minimize: true,
       minimizer: [
-        new UglifyJsPlugin({
-          exclude: /node_modules/,
-          uglifyOptions: {
-            output: {
-              comments: false,
-            },
+        new TerserPlugin({
+          minify: (file, sourceMap) => {
+            const uglifyJsOptions = {
+              sourceMap: false,
+            }
+            return require('uglify-js').minify(file, uglifyJsOptions)
           },
         }),
       ],
@@ -91,9 +92,9 @@ module.exports = (env, args) => {
       'mobx-react': 'mobxReact',
       classnames: 'classNames',
       axios: 'axios',
-      'highlight.js': 'hljs',
       qs: 'Qs',
-      marked: 'marked',
+      'markmap-view': 'markmap',
+      'markmap-lib': 'markmap',
     },
     plugins: [
       ...pages.map((pageName) => {
@@ -144,6 +145,10 @@ module.exports = (env, args) => {
           },
         })
       }),
+      new ProgressPlugin({
+        activeModules: true,
+        modules: true,
+      }),
       // 提取单独的CSS
       new MiniCssExtractPlugin({
         filename: '[name]/main.[contenthash:10].css',
@@ -165,16 +170,20 @@ module.exports = (env, args) => {
         : null,
     ].filter((_) => !!_),
     devServer: {
-      contentBase: path.join(__dirname, 'dist'),
+      static: {
+        directory: path.resolve(__dirname, 'dist'),
+      },
       compress: true,
       port: 3033,
-      host: '127.0.0.1',
-      openPage: `@${packageJSON.name}/${env.pages.split(',')[0]}`,
+      host: 'local-ip',
+      open: [`/@${packageJSON.name}/${env.pages.split(',')[0]}`],
       hot: true,
+      client: {
+        progress: true,
+      },
     },
     stats: 'errors-only',
-    devtool: mode === 'development' ? 'eval-source-map' : 'source-map',
+    devtool: mode === 'development' ? 'eval-source-map' : false,
   }
-
   return config
 }

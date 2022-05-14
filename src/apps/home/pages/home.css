@@ -32,10 +32,6 @@ body,
   -webkit-perspective-origin-y: 25%;
 }
 
-.body--ready {
-  background: linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
-}
-
 .body--ready .overlay {
   transition: transform 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1),
     opacity 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1);

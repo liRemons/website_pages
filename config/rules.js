@@ -17,6 +17,7 @@ const postcssLoader = {
 const cssMoudleLoader = {
   loader: 'css-loader',
   options: {
+    sourceMap: false,
     modules: {
       localIdentName: '[path][name]-[local]-[hash:base64:10]',
     },
