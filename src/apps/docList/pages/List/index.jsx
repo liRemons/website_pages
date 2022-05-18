@@ -102,7 +102,7 @@ export default function List() {
     markMap: <MarkMap markdownInfo={localStore.markdownInfo} />
   }
   return useObserver(() => <div className={style.container}>
-    <Header name={name} rightComponent={rightComponent()} />
+    <Header leftPath={`/${APP_NAME}/note`} name={name} rightComponent={rightComponent()} />
     <div className={style.main}>
       <div className={classnames(style.page_list, 'shadow_not_active')}>
         <div className={style.page_list_main}>
