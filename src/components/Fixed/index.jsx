@@ -16,7 +16,7 @@ export default function Fixed() {
   };
 
   const btns = [
-    { icon: <HomeOutlined />, path: '/home', title: '首页' },
+    { icon: <HomeOutlined />, path: '/homeList', title: '首页' },
     { icon: <ShareAltOutlined />, path: '', title: '分享', handle: share },
     { icon: <UserOutlined />, path: '/my', title: '关于我' },
     { icon: <ToolOutlined />, path: '/tool', title: '工具' }
