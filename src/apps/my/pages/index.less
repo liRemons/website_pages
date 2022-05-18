@@ -1,75 +1,52 @@
-.container {
+.center {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  position: absolute;
-  height: 100%;
+  justify-content: space-around;
+  .card {
+    padding: 10px;
+    margin-top: 30px;
 
-  .main {
-    width: 100%;
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    justify-content: space-between;
-    padding: 30px 15px 15px 15px;
-    overflow: hidden;
-
-    .page_main {
-      height: 100%;
-      width: 100%;
-      overflow: auto;
+    .card_body {
+      padding: 0 30px;
       display: flex;
-      justify-content: space-around;
+      align-items: center;
+      justify-content: space-between;
 
-      // align-items: center;
-      .card {
-        padding: 10px;
-        margin-top: 30px;
+      .name {
+        color: #000;
+        margin-bottom: 5px;
+        font-size: 18px;
+        font-weight: bold;
+      }
 
-        .card_body {
-          padding: 0 30px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+      .introduce {
+        color: #ccc;
+        font-size: 14px;
+      }
+    }
 
-          .name {
-            color: #000;
-            margin-bottom: 5px;
-            font-size: 18px;
-            font-weight: bold;
-          }
+    .list {
+      padding: 10px 30px;
 
-          .introduce {
-            color: #ccc;
-            font-size: 14px;
-          }
+      .list_val {
+        display: flex;
+        justify-content: space-between;
+        text-align: left !important;
+        line-height: 30px;
+
+        .icon,
+        .val {
+          display: inline-block;
         }
 
-        .list {
-          padding: 10px 30px;
-
-          .list_val {
-            display: flex;
-            justify-content: space-between;
-            text-align: left !important;
-            line-height: 30px;
-
-            .icon,
-            .val {
-              display: inline-block;
-            }
-
-            .val {
-              padding-left: 5px;
-              width: 100%;
-            }
-          }
+        .val {
+          padding-left: 5px;
+          width: 100%;
         }
       }
     }
   }
-}
 
-.qr {
-  width: 200px;
+  .qr {
+    width: 200px;
+  }
 }

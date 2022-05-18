@@ -1,9 +1,9 @@
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
+import CardList from '@components/CardList';
+import Container from '@components/Container';
 import '@assets/css/index.global.less';
-import style from '../index.less';
-import { List, Card, message } from 'antd';
-import { HOST } from '@utils';
+import { message } from 'antd';
 import { openApp } from 'methods-r';
 import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined } from '@ant-design/icons';
 import npmSVG from './assets/svg/npm.svg';
@@ -20,31 +20,17 @@ export default function ListPage() {
   ];
 
   const openPage = ({ url, params }) => {
-    if(!url) {
+    if (!url) {
       message.warning('开发中');
       return;
     }
     openApp({ url: `/${APP_NAME}${url}`, params });
   };
   return <>
-    <div className={style.container}>
-      <Header name='实用工具' />
-      <div className={style.main}>
-        <List
-          grid={{ gutter: 24, column: 4 }}
-          dataSource={list}
-          renderItem={item => (
-            <List.Item onClick={() => openPage(item)} className={classNames('shadow', style.cardItem)}>
-              <Card title={item.title}>
-                {
-                  item.icon ? <span className={style.icon} > {item.icon}</span> : <img src={`${HOST}${item.url}`} alt="" />
-                }
-              </Card>
-            </List.Item>
-          )}
-        />
-      </div>
-    </div>
+    <Container
+      header={<Header name='实用工具' />}
+      main={<CardList list={list} itemClick={openPage} />}
+    />
     <Fixed />
   </>;
 }

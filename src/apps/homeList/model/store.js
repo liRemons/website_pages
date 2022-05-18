@@ -10,6 +10,11 @@ class Store {
 
   async queryTechClassList() {
     const { data: techClassList } = await queryTechClassList();
+    techClassList.forEach(item => {
+      item.url = item.icon;
+      item.title = item.name;
+      delete item.icon;
+    })
     this.techClassList = techClassList;
   }
 }

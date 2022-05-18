@@ -13,7 +13,7 @@ export default function List() {
     <canvas className="canvas"></canvas>
 
     <button className="help">?</button>
-    <button className='go-home' onClick={() => openApp({ url: `/${APP_NAME}/homeList` })}><HomeOutlined /></button>
+    <button className='go-home' onClick={() => openApp({ url: `/${APP_NAME}/tool` })}><HomeOutlined /></button>
 
     <div className="ui">
       <input id='input' className="ui-input" type="text" />

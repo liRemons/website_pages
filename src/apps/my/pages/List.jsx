@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
+import Container from '@components/Container';
 import Header from '@components/Header';
 import style from './index.less';
 import classnames from 'classnames';
@@ -58,28 +59,26 @@ export default function List() {
       { icon: <WechatOutlined />, name: 'weChat' }
     ];
     return <>
-      <div className={style.container}>
-        <Header name='关于我' />
-        <div className={style.main}>
-          <div className={style.page_main}>
-            <div>
-              <Card
-                className={classnames('shadow_not_active', style.card)}
-                style={{
-                  width: 300
-                }}
-                cover={renderMyInfo()}
-                actions={
-                  list.map(item => <Popover trigger="click" content={() => content(item.name)}>
-                    <div className="circle">{item.icon}</div>
-                  </Popover>)
-                }
-              >
-              </Card>
-            </div>
+      <Container
+        header={<Header name='关于我' />}
+        main={
+          <div className={style.center}>
+            <Card
+              className={classnames('shadow_not_active', style.card)}
+              style={{
+                width: 300
+              }}
+              cover={renderMyInfo()}
+              actions={
+                list.map(item => <Popover trigger="click" content={() => content(item.name)}>
+                  <div className="circle">{item.icon}</div>
+                </Popover>)
+              }
+            >
+            </Card>
           </div>
-        </div>
-      </div>
+        }
+      />
       <Fixed />
     </>;
   });
