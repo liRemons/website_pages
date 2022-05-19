@@ -5,6 +5,11 @@ import { HOST } from '@utils';
 import style from './index.less';
 
 function CardList({ list, itemClick }) {
+  
+  const renderImg = (url) => {
+    return url ? <img src={`${HOST}${url}`} alt="" /> :  <span className={style.icon}><FileTextTwoTone /></span>
+  }
+  
   return <List
     grid={{ gutter: 24, column: 4 }}
     dataSource={list}
@@ -12,7 +17,7 @@ function CardList({ list, itemClick }) {
       <List.Item onClick={() => itemClick(item)} className={classNames('shadow', style.cardItem)}>
         <Card title={item.title}>
           {
-            item.icon ? <span className={style.icon} > {item.icon || <FileTextTwoTone />}</span> : <img src={`${HOST}${item.url}`} alt="" />
+            item.icon ? <span className={style.icon}> {item.icon} </span> : <img src={`${HOST}${item.url}`} alt="" />
           }
         </Card>
       </List.Item>
