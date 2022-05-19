@@ -16,7 +16,7 @@ function CardList({ list, itemClick }) {
     renderItem={item => (
       <List.Item onClick={() => itemClick(item)} className={classNames('shadow', style.cardItem)}>
         <Card title={item.title}>
-          <span className={style.icon}> {item.icon || renderImg(item.url)} </span>
+          <div className={style.icon}> {item.icon || renderImg(item.url)} </div>
         </Card>
       </List.Item>
     )}
