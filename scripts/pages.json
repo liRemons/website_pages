@@ -13,7 +13,7 @@
   },
   {
     "pageName": "homeList",
-    "title": "学习笔记"
+    "title": "主页"
   },
   {
     "pageName": "transcoderQR",
@@ -34,5 +34,9 @@
   {
     "pageName": "login",
     "title": "登录"
+  },
+  {
+    "pageName": "note",
+    "title": "学习笔记"
   }
 ]
