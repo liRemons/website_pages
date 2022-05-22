@@ -5,15 +5,15 @@ import Container from '@components/Container';
 import '@assets/css/index.global.less';
 import { message } from 'antd';
 import { openApp } from 'methods-r';
-import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined, ToolOutlined } from '@ant-design/icons';
+import { FilePdfOutlined, ToolOutlined } from '@ant-design/icons';
 import npmSVG from './assets/svg/npm.svg';
 import githubSVG from './assets/svg/github.svg'
 
 export default function ListPage() {
   const list = [
     { title: '笔记', icon: <FilePdfOutlined />, url: '/note' },
-    { title: 'GitHub', icon: <img style={{ height: '120px' }} src={githubSVG} alt="" />, url: 'https://gitee.com/Remons' },
-    { title: 'npm', icon: <img style={{ height: '120px' }} src={npmSVG} alt="" />, url: 'https://www.npmjs.com/settings/remons/packages' },
+    { title: 'GitHub', icon: <img style={{ height: '120px' }} src={githubSVG} alt="" />, url: 'https://github.com/liRemons' },
+    { title: 'npm', icon: <img style={{ height: '120px' }} src={npmSVG} alt="" />, url: 'https://www.npmjs.com/~remons' },
     { title: '工具', icon: <ToolOutlined /> , url: '/tool' },
   ];
 
