@@ -6,6 +6,7 @@ import Empty from '@components/Empty';
 import Container from '@components/Container';
 import CardList from '@components/CardList';
 import Fixed from '@components/Fixed';
+import Header from '@components/Header';
 export default function HomeList() {
   const localStore = useLocalObservable(() => store);
 
@@ -24,6 +25,7 @@ export default function HomeList() {
   };
 
   return useObserver(() => <> <Container
+    header={<Header name='学习笔记' />}
     main={
       localStore.techClassList?.length === 0
         ? <Empty />
