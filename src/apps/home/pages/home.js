@@ -57,6 +57,7 @@ export const load = () => {
       adjustCanvas: function () {
         canvas.width = window.innerWidth
         canvas.height = window.innerHeight
+        console.log(canvas.height);
       },
 
       clearFrame: function () {

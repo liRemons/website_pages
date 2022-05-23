@@ -1,9 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
 body {
   font-family: "Avenir", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #eaebf3;
   color: #666;
   font-size: 16px;
   line-height: 1.5em;
+  height: 100%;
+  margin: 0;
 }
 
 h1 {
@@ -14,7 +25,7 @@ h1 {
 }
 
 p {
-  margin: 0 0 10x 0;
+  margin: 0 0 10px 0;
 }
 
 a {
@@ -29,7 +40,7 @@ a:hover {
 
 body,
 .overlay {
-  -webkit-perspective-origin-y: 25%;
+  /* -webkit-perspective-origin-y: 25%; */
 }
 
 .body--ready .overlay {
