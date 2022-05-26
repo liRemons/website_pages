@@ -193,7 +193,7 @@ export default function List() {
     <Drawer
       contentWrapperStyle={{ padding: 0 }}
       width='80%'
-      closable
+      closable={false}
       title={drawerConentTitle()}
       placement='left'
       onClose={() => setDrawerVisible(false)}
