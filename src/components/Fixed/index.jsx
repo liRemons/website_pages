@@ -1,11 +1,13 @@
 import style from './index.less';
 import '@assets/css/index.global.less';
 import classnames from 'classnames';
-import { HomeOutlined, UserOutlined, ShareAltOutlined, ToolOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { HomeOutlined, UserOutlined, ShareAltOutlined, ToolOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import { copy, openApp } from 'methods-r';
 
 export default function Fixed() {
+  const [visible, setVisible] = useState(false);
   const share = () => {
     copy(location.href);
     message.success('复制当前页面链接成功');
@@ -24,9 +26,17 @@ export default function Fixed() {
 
   return <>
     <div className={style.container}>
-      {btns.map(item => <div onClick={item.handle || (() => go(item.path))} className={classnames('circle', style.circle)}>
+
+      {visible && btns.map(item => <div onClick={item.handle || (() => go(item.path))} className={classnames('circle', style.circle)}>
         {item.icon}
       </div>)}
+      <div onClick={() => setVisible(!visible)} className={classnames('circle', style.circle)}>
+        {
+          visible ? <DownOutlined /> : <UpOutlined />
+        }
+      </div>
+
     </div>
+
   </>;
 }

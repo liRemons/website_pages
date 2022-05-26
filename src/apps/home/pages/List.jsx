@@ -49,3 +49,34 @@ export default function List() {
     </div>
   </>;
 }
+console.log(1);
+setTimeout(function () { console.log(2); }, 0);
+new Promise(resolve => {
+    console.log(3);
+    resolve();
+    console.log(4);
+}).then(() => {
+    console.log(5);
+})
+console.log(6);
+1  2 3 4 5 2
+
+[1, 2, 3, [4, 5, [6]]] => [1, 2, 3, 4, 5, 6] 
+const fun=(arr)=>{
+  const arr1=arr.map(item)=>{
+    if(Array.isArray(item)=>{
+      return arr.flat
+    })
+    
+
+  }
+
+}
+
+const fun = (arr) => {
+ const newArr = arr.map(item => {
+  if(item instanceof Array) {
+    return item
+  }
+  })
+}
