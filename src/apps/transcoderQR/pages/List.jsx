@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Form, Button } from 'antd';
 import FormItem from '@components/Form';
 import Fixed from '@components/Fixed';
+import Header from '@components/Header';
+import Container from '@components/Container';
 import '@assets/css/index.global.less';
 
 export default function List() {
@@ -27,20 +29,25 @@ export default function List() {
     setArr(arr);
   };
 
-  return <div className='p-20'>
-    <Form form={form}>
-      {
-        items.map(item => <FormItem {...item} />)
-      }
-    </Form>
-    <div className='tc'>
-      <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
-        PUSH
-      </Button>
-      <Button htmlType="button" onClick={onReset}>
-        重置
-      </Button>
-    </div>
-    <Fixed />
-  </div>;
+  return <Container
+    header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} />}
+    main={
+      <div className='p-20'>
+        <Form form={form}>
+          {
+            items.map(item => <FormItem {...item} />)
+          }
+        </Form>
+        <div className='tc'>
+          <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
+            PUSH
+          </Button>
+          <Button htmlType="button" onClick={onReset}>
+            重置
+          </Button>
+        </div>
+        <Fixed />
+      </div>
+    } />
+    ;
 }

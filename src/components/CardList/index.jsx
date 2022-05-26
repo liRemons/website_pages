@@ -3,6 +3,7 @@ import { List, Card } from 'antd';
 import { FileTextTwoTone } from '@ant-design/icons'
 import { HOST } from '@utils';
 import style from './index.less';
+import { IsPC } from 'methods-r';
 
 function CardList({ list, itemClick }) {
 
@@ -11,7 +12,7 @@ function CardList({ list, itemClick }) {
   }
 
   return <List
-    grid={{ gutter: 24, column: 4 }}
+    grid={{ gutter: 24, column: IsPC() ? 4 : 2 }}
     dataSource={list}
     renderItem={item => (
       <List.Item onClick={() => itemClick(item)} className={classNames('shadow', style.cardItem)}>

@@ -15,6 +15,7 @@ export default function Markdown(props) {
 
   const getMarkdown = async () => {
     try {
+      props.setAnchor([]);
       await localStore.markdownToHTML(localStore.markdownInfo)
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       setHtml(localStore.htmlInfo);

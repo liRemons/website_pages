@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { IsPC } from 'methods-r';
 export const load = () => {
   let timer = null
 
@@ -500,7 +501,7 @@ export const load = () => {
   }
 
   S.ShapeBuilder = (function () {
-    var gap = 12,
+    var gap = IsPC() ? 12: 7,
       shapeCanvas = document.createElement('canvas'),
       shapeContext = shapeCanvas.getContext('2d'),
       fontSize = 500,

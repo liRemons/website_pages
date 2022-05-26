@@ -127,7 +127,7 @@ function List () {
 
   return <>
     <div className={style.container}>
-      <Header name='图片文字水印' />
+      <Header name='图片文字水印' leftPath={`/${APP_NAME}/tool`} />
       
       <Fixed />
       <div id="warp">

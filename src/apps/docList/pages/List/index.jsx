@@ -10,9 +10,9 @@ import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
-import { Input, BackTop } from 'antd';
-import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
-import { download, getSearchParams, debounce } from 'methods-r';
+import { Input, BackTop, Drawer } from 'antd';
+import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
+import { download, getSearchParams, debounce, IsPC } from 'methods-r';
 import { HOST } from '@utils';
 
 export default function List() {
@@ -22,6 +22,8 @@ export default function List() {
   const [anchor, setAnchor] = useState([]);
   const [viewType, setViewType] = useState('');
   const [fullscreen, setFullscreen] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerType, setDrawerType] = useState('');
   useEffect(() => {
     getList();
   }, []);
@@ -53,6 +55,13 @@ export default function List() {
       localStore.getMarkdown(pageUrl);
       setActiveId(pageId);
       setViewType('html')
+    } else {
+      if (localStore.articleList?.length) {
+        const info = localStore.articleList[0]
+        localStore.getMarkdown(info.url);
+        setActiveId(info.id);
+        setViewType('html')
+      }
     }
   };
 
@@ -101,16 +110,68 @@ export default function List() {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
     markMap: <MarkMap markdownInfo={localStore.markdownInfo} />
   }
+
+  const renderList = () => {
+    return <div className={classnames(style.page_list, 'shadow_not_active')}>
+      <div className={style.page_list_main}>
+        {
+          localStore.articleList?.length ? localStore.articleList.map(item => <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}> {item.title}</div>) : <Empty />
+        }
+      </div>
+    </div>
+  }
+
+  const renderNav = () => {
+    return <>{viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
+      <div className={style.search}>
+        <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
+      </div>
+      {viewType === 'html' && <Anchor anchor={anchor} />}
+    </div>
+    }
+    </>
+  }
+
+  const openListMenu = () => {
+    setDrawerVisible(true)
+    setDrawerType('list')
+  }
+
+  const openListNav = () => {
+    setDrawerVisible(true)
+    setDrawerType('nav')
+  }
+
+  const drawerConent = () => {
+    const obj = {
+      list: renderList,
+      nav: renderNav
+    }
+    if (!IsPC()) {
+      return obj[drawerType] && obj[drawerType]()
+    }
+    return null
+  }
+
+  const drawerConentTitle = () => {
+    const obj = {
+      list: '文章列表',
+      nav: '导航'
+    }
+    if (!IsPC()) {
+      return obj[drawerType]
+    }
+    return null
+  }
+
   return useObserver(() => <div className={style.container}>
     <Header leftPath={`/${APP_NAME}/note`} name={name} rightComponent={rightComponent()} />
     <div className={style.main}>
-      <div className={classnames(style.page_list, 'shadow_not_active')}>
-        <div className={style.page_list_main}>
-          {
-            localStore.articleList?.length ? localStore.articleList.map(item => <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}> {item.title}</div>) : <Empty />
-          }
-        </div>
-      </div>
+      {!IsPC() && <div className={style.h5_menu}>
+        {localStore.articleList?.length && <span className='circle' onClick={openListMenu}><ProfileOutlined /></span>}
+        {(viewType === 'html' && localStore.markdownInfo) && <span className='circle' onClick={openListNav}><OrderedListOutlined /></span>}
+      </div>}
+      {IsPC() && renderList()}
       <div className={classnames(viewType === 'html' ? style.page_main : style.page_max_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
           <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
@@ -124,14 +185,25 @@ export default function List() {
           }
         </div>
       </div>
-      {viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
-        <div className={style.search}>
-          <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
-        </div>
-        {viewType === 'html' && <Anchor anchor={anchor} />}
-      </div>}
+      {IsPC() && renderNav()}
     </div>
     {localStore.markdownInfo && viewType === 'html' && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
     <Fixed />
+
+    <Drawer
+      contentWrapperStyle={{ padding: 0 }}
+      width='80%'
+      closable
+      title={drawerConentTitle()}
+      placement='left'
+      onClose={() => setDrawerVisible(false)}
+      visible={drawerVisible}
+    >
+      <div className={style.main}>
+        {
+          drawerConent()
+        }
+      </div>
+    </Drawer>
   </div >);
 }

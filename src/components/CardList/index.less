@@ -6,8 +6,9 @@
   overflow: hidden;
   text-align: center;
 
-  img {
-    height: 180px;
+  img, svg {
+    max-width: 160px;
+    max-height: 160px;
   }
 
   .icon {
@@ -19,4 +20,23 @@
     color: #61677c !important;
     font-size: 140px;
   }
+}
+
+@media screen and (max-width: 500px) {
+  .cardItem {
+    margin: 10px 0 !important;
+
+    .icon {
+      height: 100px;
+      svg {
+        max-height: 100px;
+      }
+    }
+
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
+  }
+
 }

@@ -2,6 +2,8 @@ import { Form, Button, Spin, message } from 'antd';
 import { useState } from 'react';
 import FormItem from '@components/Form';
 import Fixed from '@components/Fixed';
+import Container from '@components/Container';
+import Header from '@components/Header';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
@@ -71,7 +73,9 @@ export default function List() {
     makeCode(form.getFieldValue('value'));
   };
 
-  return <Spin tip={loadingText} spinning={loading} >
+  return <Container
+  header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
+  main={<Spin tip={loadingText} spinning={loading} >
     <div className='p-20'>
       <Form form={form}>
         {
@@ -86,5 +90,5 @@ export default function List() {
       <div id="QR"></div>
     </div>
     <Fixed />
-  </Spin>;
+  </Spin>} />
 }
