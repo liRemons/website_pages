@@ -38,10 +38,6 @@ a:hover {
   border-bottom-color: #888;
 }
 
-body,
-.overlay {
-  /* -webkit-perspective-origin-y: 25%; */
-}
 
 .body--ready .overlay {
   transition: transform 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1),
@@ -295,4 +291,21 @@ button:active {
 
 .touch .ui-input {
   display: none;
+}
+
+
+@media screen and (max-width: 500px) {
+  .overlay {
+    width: 300px;
+    margin: -200px 0 0 -145px;
+  }
+  .commands-item {
+    padding: 10px;
+  }
+  .commands-item-title {
+    width: 100px;
+  }
+  .commands-item-info {
+    width: 150px;
+  }
 }
