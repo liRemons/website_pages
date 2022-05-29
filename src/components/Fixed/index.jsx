@@ -2,7 +2,7 @@ import style from './index.less';
 import '@assets/css/index.global.less';
 import classnames from 'classnames';
 import React, { useState } from 'react';
-import { HomeOutlined, UserOutlined, ShareAltOutlined, ToolOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { HomeOutlined, UserOutlined, ShareAltOutlined, LeftOutlined, RightOutlined, ToolOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import { copy, openApp } from 'methods-r';
 
@@ -25,14 +25,13 @@ export default function Fixed() {
   ];
 
   return <>
-    <div className={style.container}>
-
-      {visible && btns.map(item => <div onClick={item.handle || (() => go(item.path))} className={classnames('circle', style.circle)}>
+    <div className={classnames(style.container, visible ? style.containerToRight : '')}>
+      {btns.map(item => <div onClick={item.handle || (() => go(item.path))} className={classnames('circle', style.circle)}>
         {item.icon}
       </div>)}
-      <div onClick={() => setVisible(!visible)} className={classnames('circle', style.circle)}>
+      <div onClick={() => setVisible(!visible)} className={classnames('circle', style.circle, visible ? style.toRightIcon : '')}>
         {
-          visible ? <DownOutlined /> : <UpOutlined />
+          visible ? <LeftOutlined /> : <RightOutlined />
         }
       </div>
 
