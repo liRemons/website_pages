@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Form, Button } from 'antd';
+import { Form, Button, message } from 'antd';
 import FormItem from '@components/Form';
 import Fixed from '@components/Fixed';
 import Header from '@components/Header';
 import Container from '@components/Container';
 import '@assets/css/index.global.less';
+import { copy } from 'methods-r';
 
 export default function List() {
   const [arr, setArr] = useState([]);
@@ -29,6 +30,11 @@ export default function List() {
     setArr(arr);
   };
 
+  const onCopy = () => {
+    copy(document.getElementById('decode').value)
+    message.success('复制成功');
+  }
+
   return <Container
     header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} />}
     main={
@@ -45,6 +51,9 @@ export default function List() {
           <Button htmlType="button" onClick={onReset}>
             重置
           </Button>
+          { <Button type="primary" htmlType="button" className='m-l-20' onClick={onCopy}>
+            copy
+          </Button>}
         </div>
         <Fixed />
       </div>

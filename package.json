@@ -56,7 +56,7 @@
     "crypto-js": "^4.1.1",
     "markmap-lib": "^0.13.2",
     "markmap-view": "^0.13.2",
-    "methods-r": "^1.2.12",
+    "methods-r": "^1.2.14",
     "mobx": "^6.3.5",
     "mobx-react": "^7.2.0",
     "react": "^17.0.2",
