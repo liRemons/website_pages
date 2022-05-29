@@ -11,7 +11,7 @@ import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
 import { Input, BackTop, Drawer } from 'antd';
-import { ArrowDownOutlined, ExpandOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
+import { ArrowDownOutlined, ExpandOutlined, LeftOutlined, RightOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
 import { download, getSearchParams, debounce, IsPC } from 'methods-r';
 import { HOST } from '@utils';
 
@@ -24,6 +24,7 @@ export default function List() {
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
+  const [menuVisible, setMenuVisible] = useState(false);
   useEffect(() => {
     getList();
   }, []);
@@ -164,12 +165,24 @@ export default function List() {
     return null
   }
 
+  const menuToLeft = () => {
+    setMenuVisible(() => !menuVisible)
+  }
+
+  const renderMenuList = () => {
+    const arr = [
+      { onClick: openListMenu, icon: <ProfileOutlined />, isShow: localStore.articleList?.length !== 0 },
+      { onClick: openListNav, icon: <OrderedListOutlined />, isShow: viewType === 'html' && localStore.markdownInfo },
+      { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
+    ];
+    return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
+  }
+
   return useObserver(() => <div className={style.container}>
     <Header leftPath={`/${APP_NAME}/note`} name={name} rightComponent={rightComponent()} />
     <div className={style.main}>
-      {!IsPC() && <div className={style.h5_menu}>
-        {localStore.articleList?.length && <span className='circle' onClick={openListMenu}><ProfileOutlined /></span>}
-        {(viewType === 'html' && localStore.markdownInfo) && <span className='circle' onClick={openListNav}><OrderedListOutlined /></span>}
+      {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
+        {renderMenuList()}
       </div>}
       {IsPC() && renderList()}
       <div className={classnames(viewType === 'html' ? style.page_main : style.page_max_main, 'shadow_not_active', 'markdown_screen')}>
