@@ -13,13 +13,35 @@
   }
 }
 
+.ant-anchor-link-title {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    transition: all 0.3s;
+  }
+}
+
+.ant-anchor-link-title:hover {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: @active-color;
+  }
+}
+
 .ant-anchor-link {
   border-radius: 4px;
   padding: 0;
   line-height: 26px;
   margin: 3px 0 3px 5px;
   padding-left: 5px;
-  border: 1px transparent solid;
+
   h1 {
     font-size: 24px;
   }
@@ -54,8 +76,6 @@
     .link_nodename {
       display: inline-block;
     }
-    border: 1px #188fff1c dashed;
-    box-sizing: content-box;
     box-shadow: inset 0px 0px 2px @color-shadow, inset 0px 0px 2px @color-white !important;
   }
 }
