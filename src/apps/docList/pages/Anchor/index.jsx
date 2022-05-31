@@ -34,10 +34,10 @@ export default function MyAnchor(props) {
     return <>
       {
         arr.map(item => item.children.length ?
-          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.title, item.nodeName)}>
+          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.nodeTitle, item.nodeName)}>
             {renderAnchor(item.children)}
           </Link> :
-          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.title, item.nodeName)} />
+          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.nodeTitle, item.nodeName)} />
         )
       }
     </>
