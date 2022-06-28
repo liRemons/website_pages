@@ -10,12 +10,64 @@ import store from '../model/store';
 import { HOST } from '@utils';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import { GithubOutlined, WechatOutlined, DingdingOutlined, MailOutlined, MobileOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { formatter } from '../model/const'
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
 
+  const test = () => {
+    const data = {
+      record: {
+        data: [
+          { name: 'remons', value: 0 },
+          { name: 'remons1', value: 1 },
+          { name: 'remons2', value: 2 },
+          { name: 'remons3', value: 3 },
+          {
+            name: 'remons4',
+            value: 4,
+            children: [
+              { name: 'remons3111', value: 3111 },
+              { name: 'remons3112', value: 3112 },
+              { name: 'remons3113', value: 3113, children: [{ name: 'dddd', value: '0000' }] },
+            ]
+          },
+        ],
+      },
+      message: 'remons',
+      errorCode: 404,
+      pageInfo: {
+        pageNum: 10,
+        pageIndex: 1,
+        total: 100
+      }
+    };
+    formatter('object',
+      {
+        data: 'record.data',
+        message: 'message',
+        code: 'errorCode',
+        pageNum: 'pageInfo.pageNum',
+        'pagination.pageInfos.current': 'pageInfo.pageIndex',
+        'pagination.pageInfos.pageSize': 'pageInfo.pageNum',
+        'pagination.pageInfos.total': 'pageInfo.total',
+      })(data);
+    formatter('treeList', [
+      { data: 'record.data' },
+      { labels: 'name', values: 'value', children: 'children' }
+    ])(data);
+    formatter('list', [
+      {
+        data: 'record.data',
+        'code.errorCode': 'errorCode'
+      },
+      { label: 'name', a: 'value' }
+    ])(data)
+  }
+
   useEffect(() => {
     localStore.queryMyInfo();
+    test()
   }, []);
 
 
