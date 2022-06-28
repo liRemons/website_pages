@@ -77,7 +77,8 @@ export default function List() {
     const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
     history.pushState('', '', pageURL);
     setActiveId(id);
-    setViewType('html')
+    setViewType('html');
+    setDrawerVisible(false);
     localStore.getMarkdown(data.url);
   };
 
