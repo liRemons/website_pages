@@ -59,7 +59,7 @@ export default function List() {
     } else {
       if (localStore.articleList?.length) {
         const info = localStore.articleList[0]
-        localStore.getMarkdown(info.url);
+        localStore.getMarkdown(info.id);
         setActiveId(info.id);
         setViewType('html')
       }
