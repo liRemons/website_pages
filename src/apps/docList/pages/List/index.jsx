@@ -123,13 +123,13 @@ export default function List() {
   }
 
   const renderNav = () => {
-    return <>{(viewType === 'html' && localStore.markdownInfo) ? <div className={classnames(style.page_nav, 'shadow_not_active')}>
-      <div className={style.search}>
-        <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
+    return <>
+      <div className={classnames(style.page_nav, 'shadow_not_active')}>
+        <div className={style.search}>
+          <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
+        </div>
+        {viewType === 'html' && localStore.htmlInfo && <Anchor anchor={anchor} />}
       </div>
-      {viewType === 'html' && localStore.htmlInfo && <Anchor anchor={anchor} />}
-    </div> : <Empty />
-    }
     </>
   }
 
