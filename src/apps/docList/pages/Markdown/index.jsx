@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import store from '../../model/store';
 import { useLocalObservable, useObserver } from 'mobx-react';
-import { message } from 'antd';
+import { message, BackTop } from 'antd';
 import Empty from '@components/Empty';
 import { copy } from 'methods-r';
 import './markdown.global.less';
@@ -15,8 +15,6 @@ export default function Markdown(props) {
 
   const getMarkdown = async () => {
     try {
-      props.setAnchor([]);
-      await localStore.markdownToHTML(localStore.markdownInfo)
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       setHtml(localStore.htmlInfo);
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
@@ -60,7 +58,7 @@ export default function Markdown(props) {
 
   useEffect(() => {
     getMarkdown();
-  }, [props.id]);
+  }, [localStore.htmlInfo, props.id]);
 
   useEffect(() => {
     return () => {
@@ -68,8 +66,10 @@ export default function Markdown(props) {
     };
   }, []);
 
+
   return useObserver(() => <> <div className='markdown'>
     {html ? <div className='markdown-html'><div dangerouslySetInnerHTML={{ __html: html }} onClick={handleClick}></div></div> : <Empty />}
+    <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />
   </div>
   </>);
 }

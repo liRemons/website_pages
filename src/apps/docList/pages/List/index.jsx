@@ -10,7 +10,7 @@ import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '../MarkMap';
-import { Input, BackTop, Drawer } from 'antd';
+import { Input, Drawer } from 'antd';
 import { ArrowDownOutlined, ExpandOutlined, LeftOutlined, RightOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
 import { download, getSearchParams, debounce, IsPC } from 'methods-r';
 import { HOST } from '@utils';
@@ -50,10 +50,10 @@ export default function List() {
   const getList = async () => {
     const params = getSearchParams();
     setParams(params);
-    const { id: techClassId, pageId, pageUrl } = params;
+    const { id: techClassId, pageId } = params;
     await localStore.queryArticleList({ techClassId });
-    if (pageId, pageUrl) {
-      localStore.getMarkdown(pageUrl);
+    if (pageId) {
+      localStore.getMarkdown(pageId);
       setActiveId(pageId);
       setViewType('html')
     } else {
@@ -67,11 +67,10 @@ export default function List() {
   };
 
   const handleClickPage = (data) => {
-    const { id, url } = data;
+    const { id } = data;
     const params = {
       ...getSearchParams(),
       pageId: id,
-      pageUrl: url
     };
     const newParams = new URLSearchParams(params);
     const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
@@ -79,7 +78,7 @@ export default function List() {
     setActiveId(id);
     setViewType('html');
     setDrawerVisible(false);
-    localStore.getMarkdown(data.url);
+    localStore.getMarkdown(id);
   };
 
 
@@ -106,7 +105,7 @@ export default function List() {
   }
 
 
-  const { id, name } = params;
+  const { name } = params;
 
   const VIEW_DETAIL = {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
@@ -124,12 +123,12 @@ export default function List() {
   }
 
   const renderNav = () => {
-    return <>{viewType === 'html' && localStore.markdownInfo && <div className={classnames(style.page_nav, 'shadow_not_active')}>
+    return <>{(viewType === 'html' && localStore.markdownInfo) ? <div className={classnames(style.page_nav, 'shadow_not_active')}>
       <div className={style.search}>
         <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
       </div>
-      {viewType === 'html' && <Anchor anchor={anchor} />}
-    </div>
+      {viewType === 'html' && localStore.htmlInfo && <Anchor anchor={anchor} />}
+    </div> : <Empty />
     }
     </>
   }
@@ -195,13 +194,12 @@ export default function List() {
             {viewType === 'html' ? <ApartmentOutlined /> : <FontSizeOutlined />}
           </span>
           {
-            localStore.markdownInfo ? VIEW_DETAIL[viewType] : <Empty />
+            (localStore.markdownInfo && localStore.htmlInfo) ? VIEW_DETAIL[viewType] : <Empty />
           }
         </div>
       </div>
       {IsPC() && renderNav()}
     </div>
-    {localStore.markdownInfo && viewType === 'html' && <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />}
     <Fixed />
 
     <Drawer

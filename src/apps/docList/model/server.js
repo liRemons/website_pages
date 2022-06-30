@@ -8,19 +8,22 @@ export const queryArticleList = (params) => {
   });
 };
 
-export const getMarkdown = (url) => {
+export const getMarkdown = (id) => {
   return service({
     method: 'get',
-    url
+    url: '/content/getArticleDetail',
+    params: {
+      id
+    }
   });
 };
 
-export const markdownToHTML = (content) => {
+export const markdownToHTML = (id) => {
   return service({
-    method: 'post',
+    method: 'get',
     url: '/content/markdownToHTML',
-    data: {
-      content,
+    params: {
+      id,
     },
   });
 };

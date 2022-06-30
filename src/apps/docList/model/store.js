@@ -21,18 +21,21 @@ class Store {
     this.articleList = articleList
   }
 
-  async getMarkdown(payload) {
-    this.markdownInfo = ''
-    this.markdownUrl = payload
-    const data = await getMarkdown(payload)
-    this.markdownInfo = data
-  }
+  // async getMarkdown(payload) {
+  //   this.markdownInfo = ''
+  //   // this.markdownUrl = payload
+  //   const res = await getMarkdown(payload)
+  //   this.markdownInfo = res.data;
+  // }
 
-  async markdownToHTML(payload) {
+  async getMarkdown(payload) {
+    this.markdownInfo = '';
+    this.htmlInfo = '';
     const { data } = await markdownToHTML(payload)
-    const { anchor, info } = data || {}
-    this.anchor = anchor
-    this.htmlInfo = info
+    const { anchor, info, content } = data || {}
+    this.anchor = anchor;
+    this.markdownInfo = content;
+    this.htmlInfo = info;
   }
 }
 

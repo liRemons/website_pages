@@ -2,7 +2,7 @@ import axios from 'axios'
 import ReactDOM from 'react-dom'
 import qs from 'qs'
 import { message, Spin } from 'antd'
-// import {  } from "@config";
+import { HOST } from "@utils";
 const noLoadingURL = []
 const controlLoading = ({ isOpen }) => {
   const loadingDOM = document.getElementById('loading')
@@ -17,8 +17,7 @@ const controlLoading = ({ isOpen }) => {
   }
 }
 const service = axios.create({
-  baseURL: 'http://remons.cn:3009',
-  // HOST_URL,
+  baseURL: HOST,
   timeout: 20000,
 })
 const arr = [service]
