@@ -38,5 +38,9 @@
   {
     "pageName": "note",
     "title": "学习笔记"
+  },
+  {
+    "pageName": "reMark",
+    "title": "所见即所得 markdown 编辑查看器"
   }
 ]

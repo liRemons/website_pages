@@ -95,6 +95,7 @@ module.exports = (env, args) => {
       qs: 'Qs',
       'markmap-view': 'markmap',
       'markmap-lib': 'markmap',
+      'vditor': 'Vditor'
     },
     plugins: [
       ...pages.map((pageName) => {

@@ -13,10 +13,12 @@ const js = [
   { externalsName: 'markmap-lib', url: "https://unpkg.com/d3@7.4.4/dist/d3.min.js" },
   { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-view@0.13.2/dist/index.min.js" },
   { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-lib@0.13.2/dist/browser/index.js" },
+  { externalsName: 'vditor', url: 'https://unpkg.com/vditor@3.8.15/dist/index.min.js' }
 ];
 
 const css = [
   { externalsName: 'antd', url: "https://unpkg.com/antd@4.18.9/dist/antd.min.css", },
+  { externalsName: 'vditor', url: "https://unpkg.com/vditor@3.8.15/dist/index.css", },
 ]
 
 module.exports = {

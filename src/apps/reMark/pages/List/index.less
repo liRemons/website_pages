@@ -1,0 +1,46 @@
+.main {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  
+  justify-content: space-between;
+
+  .menu {
+    flex-shrink: 0;
+    width: 300px;
+    height: 100%;
+    margin-right: 5px;
+    overflow-y: auto;
+  }
+
+  .content {
+    height: 100%;
+    overflow: hidden;
+    .btn {
+      margin-bottom: 10px;
+      button {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+:global {
+  .vditor-toolbar {
+    .vditor-toolbar__item {
+      margin: 5px;
+      button {
+        width: auto;
+        padding: 10px;
+      }
+      .vditor-emojis{
+        button {
+          padding: 10px;
+          margin: 5px;
+          line-height: inherit;
+        }
+      }
+    }
+  }
+  
+}
