@@ -27,9 +27,9 @@ function List() {
       counter: {
         enable: true
       },
-      cache: {
-        enable: false,
-      },
+      // cache: {
+      //   enable: false,
+      // },
       preview: {
         mode: 'both'
       },
@@ -118,7 +118,7 @@ function List() {
   }
 
   return <> <Fixed /><Container
-    header={<Header name='markdown' leftPath={`/${APP_NAME}/tool`} />}
+    header={<Header name='所见即所得 markdown 编辑查看器' leftPath={`/${APP_NAME}/tool`} />}
     main={<>
       <div className={style.main}>
         {files.length !== 0 && type === 'importFolder' && <div className={style.menu}>

@@ -7,15 +7,16 @@ import { message } from 'antd';
 import { openApp } from 'methods-r';
 import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined } from '@ant-design/icons';
 import watermark from './assets/svg/watermark.svg';
+import markdown from './assets/svg/markdown.svg';
 
 export default function ListPage() {
   const list = [
     { title: '解码', icon: <ScanOutlined />, url: '/transcoderQR' },
     { title: '生成二维码', icon: <QrcodeOutlined />, url: '/createQR' },
     { title: '文档', icon: <FilePdfOutlined />, url: '/tool', params: { page: 'doc' } },
-    { title: '其他', icon: <EllipsisOutlined /> },
-    
     { title: '图片水印', icon: <img style={{ height: '120px' }} src={watermark} alt="" />, url: '/imgWatermark' },
+    { title: 'markdown 编辑查看器', icon: <img style={{ height: '130px' }}  src={markdown} />, url: '/reMark' },
+    { title: '其他', icon: <EllipsisOutlined /> },
   ];
 
   const openPage = ({ url, params }) => {
