@@ -15,7 +15,7 @@ function List() {
 
   useEffect(() => {
     const vditor = new Vditor('markdown', {
-      height: '100%',
+      height: 'calc(100% - 40px)',
       width: '100%',
       resize: {
         enable: true
@@ -114,7 +114,9 @@ function List() {
   }
 
   const menuClick = ({ item }) => {
-    readFile(item.props.file)
+    setTimeout(() => {
+      readFile(item.props.file)
+    }, 500);
   }
 
   return <> <Fixed /><Container
