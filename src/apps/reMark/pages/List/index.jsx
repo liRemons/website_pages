@@ -4,7 +4,6 @@ import { FolderOpenOutlined, FileMarkdownOutlined } from '@ant-design/icons';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
 import Header from '@components/Header';
-import 'vditor/dist/index.css';
 import style from './index.less';
 import Vditor from 'vditor'
 
