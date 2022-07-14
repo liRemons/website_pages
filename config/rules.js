@@ -30,6 +30,7 @@ const rules = [
       // css
       {
         test: /\.css$/,
+        include: path.resolve(__dirname, '../src'),
         // MiniCssExtractPlugin.loader plug-in extracts css as a separate file.
         // Unlike style-loader, style-loader inserts css into the style tag.
         use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader],
@@ -37,7 +38,6 @@ const rules = [
       // less
       {
         test: new RegExp(`^(?!.*\\.global).*\\.less`),
-        include: path.resolve(__dirname, '../src'),
         include: path.resolve(__dirname, '../src'),
         use: [
           MiniCssExtractPlugin.loader,
