@@ -82,13 +82,6 @@ export default function List() {
   };
 
 
-  const rightComponent = () => {
-    const { markdownUrl: url } = localStore;
-    return <>
-      {url && <div className='circle' onClick={() => download(`${HOST}${url}`)}><ArrowDownOutlined /></div>}
-    </>;
-  };
-
   const changeFullscreen = () => {
     const ele = document.querySelector('.markdown_screen');
     if (!fullscreen) {
@@ -179,7 +172,7 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header leftPath={`/${APP_NAME}/note`} name={name} rightComponent={rightComponent()} />
+    <Header leftPath={`/${APP_NAME}/note`} name={name} />
     <div className={style.main}>
       {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
