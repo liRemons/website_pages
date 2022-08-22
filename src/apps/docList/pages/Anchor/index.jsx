@@ -9,7 +9,15 @@ const { Link } = Anchor;
 export default function MyAnchor(props) {
   const { anchor } = props;
 
-  const Node = (__html, nodeName) => <div><span className='link_nodename'>{nodeName}</span><div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html }} /></div>
+  const Node = (item) => {
+    const { nodeName, title } = item;
+    return <div>
+       <span className='link_nodename'>{nodeName}</span>
+       <span>{title}</span>
+    </div>
+
+  }
+
 
   const enCode = (value) => {
     let str = 'a' + value.split('').map(item => item.charCodeAt(0).toString(16)).join('');
@@ -34,10 +42,10 @@ export default function MyAnchor(props) {
     return <>
       {
         arr.map(item => item.children.length ?
-          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.nodeTitle, item.nodeName)}>
+          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item)}>
             {renderAnchor(item.children)}
           </Link> :
-          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item.nodeTitle, item.nodeName)} />
+          <Link className={enCode(item.href)} href={'#' + item.href} key={item.href} title={Node(item)} />
         )
       }
     </>
