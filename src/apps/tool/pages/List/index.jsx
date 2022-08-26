@@ -5,7 +5,7 @@ import Container from '@components/Container';
 import '@assets/css/index.global.less';
 import { message } from 'antd';
 import { openApp } from 'methods-r';
-import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined, LinkOutlined } from '@ant-design/icons';
 import watermark from './assets/svg/watermark.svg';
 import markdown from './assets/svg/markdown.svg';
 
@@ -16,6 +16,7 @@ export default function ListPage() {
     { title: '文档', icon: <FilePdfOutlined />, url: '/tool', params: { page: 'doc' } },
     { title: '图片水印', icon: <img style={{ height: '120px' }} src={watermark} alt="" />, url: '/imgWatermark' },
     { title: 'markdown 编辑查看器', icon: <img style={{ height: '130px' }}  src={markdown} />, url: '/reMark' },
+    { title: 'URL 编解码', icon: <LinkOutlined />, url: '/urlCoder' },
     { title: '其他', icon: <EllipsisOutlined /> },
   ];
 
