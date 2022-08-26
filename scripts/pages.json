@@ -42,5 +42,9 @@
   {
     "pageName": "reMark",
     "title": "所见即所得 markdown 编辑查看器"
+  },
+  {
+    "pageName": "urlCoder",
+    "title": "URL转编码"
   }
 ]
