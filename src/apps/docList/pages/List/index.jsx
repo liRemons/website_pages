@@ -9,7 +9,7 @@ import '@assets/css/index.global.less';
 import style from './index.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
-import MarkMap from '../MarkMap';
+import MarkMap from '@components/MarkMap';
 import { Input, Drawer } from 'antd';
 import { ArrowDownOutlined, ExpandOutlined, LeftOutlined, RightOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
 import { download, getSearchParams, debounce, IsPC } from 'methods-r';
