@@ -124,7 +124,7 @@ function List() {
 
   return <>
     <Fixed />
-    <Modal title='思维导图' width='80%' visible={visible} onCancel={() => setVisible(false)} footer={null}>
+    <Modal destroyOnClose title='思维导图' width='80%' visible={visible} onCancel={() => setVisible(false)} footer={null}>
       <div style={{ height: '500px' }}>
         {visible && <MarkMap markdownInfo={vditor.getValue()} />}
       </div>
