@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Header from '@components/Header';
 import Container from '@components/Container';
 import { useLocalObservable, useObserver } from 'mobx-react';

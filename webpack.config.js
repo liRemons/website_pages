@@ -5,8 +5,9 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const path = require('path')
-const rules = require('./config/rules')
+const { setRules } = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
 const { js, css } = require('./config/cdn')
 const packageJSON = require('./package.json')
@@ -14,8 +15,30 @@ const packageJSON = require('./package.json')
  * @type {Configuration}
  */
 
+const setExternals = (isProduction) => {
+  return isProduction
+    ? {
+        react: 'React',
+        'react-dom': 'ReactDOM',
+        antd: 'antd',
+        'antd/dist/antd.css': 'antd',
+        mobx: 'mobx',
+        'mobx-react': 'mobxReact',
+        classnames: 'classNames',
+        axios: 'axios',
+        qs: 'Qs',
+        'markmap-view': 'markmap',
+        'markmap-lib': 'markmap',
+        vditor: 'Vditor',
+        'vditor/dist/index.css': 'Vditor',
+      }
+    : {}
+}
+
 module.exports = (env, args) => {
   const mode = args.mode
+  const isProduction = mode === 'production'
+  const isDevelopment = mode === 'development'
   const pages = env.pages.split(',')
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
@@ -72,7 +95,7 @@ module.exports = (env, args) => {
       },
     },
     module: {
-      rules,
+      rules: setRules({ isDevelopment, isProduction }),
     },
     resolve: {
       extensions: ['.js', '.jsx', '.tsx', '.ts'],
@@ -84,19 +107,10 @@ module.exports = (env, args) => {
         '@utils': path.resolve(__dirname, 'src/utils'),
       },
     },
-    externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      antd: 'antd',
-      mobx: 'mobx',
-      'mobx-react': 'mobxReact',
-      classnames: 'classNames',
-      axios: 'axios',
-      qs: 'Qs',
-      'markmap-view': 'markmap',
-      'markmap-lib': 'markmap',
-      'vditor': 'Vditor'
+    cache: {
+      type: 'filesystem',
     },
+    externals: setExternals(isProduction),
     plugins: [
       ...pages.map((pageName) => {
         const pageInfo =
@@ -129,7 +143,7 @@ module.exports = (env, args) => {
                 }
               })
             })
-            if (mode === 'production') {
+            if (isProduction) {
               console.log('---------------------------------')
               console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/js`)
               console.log(externals_js)
@@ -146,6 +160,7 @@ module.exports = (env, args) => {
           },
         })
       }),
+      new ReactRefreshPlugin(),
       new ProgressPlugin({
         activeModules: true,
         modules: true,
@@ -162,21 +177,16 @@ module.exports = (env, args) => {
       new BundleAnalyzerPlugin({
         defaultSizes: 'stat',
         analyzerMode:
-          mode === 'production' && otherParams.report === 'true'
-            ? 'server'
-            : 'disabled',
+          isProduction && otherParams.report === 'true' ? 'server' : 'disabled',
       }),
-      mode === 'production' && otherParams.gzip === 'true'
+      isProduction && otherParams.gzip === 'true'
         ? new CompressionPlugin()
         : null,
-    ].filter((_) => !!_),
+    ].filter(Boolean),
     devServer: {
       static: {
         directory: path.resolve(__dirname, 'dist'),
       },
-      compress: true,
-      port: 3033,
-      host: 'local-ip',
       open: [`/@${packageJSON.name}/${env.pages.split(',')[0]}`],
       hot: true,
       client: {
@@ -184,7 +194,7 @@ module.exports = (env, args) => {
       },
     },
     stats: 'errors-only',
-    devtool: mode === 'development' ? 'eval-source-map' : false,
+    devtool: isDevelopment ? 'eval-source-map' : false,
   }
   return config
 }

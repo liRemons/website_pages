@@ -1,3 +1,4 @@
+import React from 'react';
 import style from './index.less';
 import { openApp } from 'methods-r';
 import { LeftOutlined, UserOutlined } from '@ant-design/icons';

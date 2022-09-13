@@ -1,3 +1,4 @@
+import React from 'react';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import CardList from '@components/CardList';

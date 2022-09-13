@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import Container from '@components/Container';

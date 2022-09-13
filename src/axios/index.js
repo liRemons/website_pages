@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios from 'axios';
+import React from 'react';
 import ReactDOM from 'react-dom'
 import qs from 'qs'
 import { message, Spin } from 'antd'

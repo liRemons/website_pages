@@ -1,3 +1,4 @@
+import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { encrypt, DES_KEY, DES_IV } from './model/const';
@@ -5,6 +6,7 @@ import { useObserver, useLocalObservable } from 'mobx-react';
 import store from './model/store';
 import styled from './index.less'
 import FormItem from '../../components/Form';
+import 'antd/dist/antd.css';
 
 const NormalLoginForm = () => {
   const localStore = useLocalObservable(() => store);

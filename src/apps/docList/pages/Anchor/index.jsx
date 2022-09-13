@@ -1,6 +1,6 @@
+import React from 'react';
 import Empty from '@components/Empty';
 import { Anchor } from 'antd';
-import { useState, useEffect } from 'react';
 import './index.global.less';
 
 let timer = null;

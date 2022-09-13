@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import { openApp } from 'methods-r';
 import store from '../model/store';

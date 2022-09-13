@@ -5,6 +5,7 @@ import Header from '@components/Header';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ToolBar, ActionList } from 'remons-components';
 import { Table, Input } from 'antd';
+import 'antd/dist/antd.css';
 
 export default function App() {
   const [list, setList] = useState([]);
