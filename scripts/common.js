@@ -177,7 +177,7 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
   }
 
   return {
-    title: `remons.cn - ${pageInfo.title}`,
+    title: `${pakeageJSON.title} - ${pageInfo.title}`,
     externals_js: [...new Set(externals_js)],
     externals_css: [...new Set(externals_css)],
   }

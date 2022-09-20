@@ -1,6 +1,7 @@
 {
   "name": "website_pages",
   "version": "1.0.0",
+  "title": "remons.cn",
   "description": "",
   "main": "index.js",
   "scripts": {
