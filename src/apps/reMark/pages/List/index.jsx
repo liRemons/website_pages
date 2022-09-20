@@ -5,7 +5,7 @@ import Fixed from '@components/Fixed';
 import Container from '@components/Container';
 import MarkMap from '@components/MarkMap';
 import Header from '@components/Header';
-import style from './index.less';
+import style from './index.module.less';
 import Vditor from 'vditor';
 
 function List() {

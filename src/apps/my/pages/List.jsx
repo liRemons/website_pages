@@ -3,7 +3,7 @@ import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import Container from '@components/Container';
 import Header from '@components/Header';
-import style from './index.less';
+import style from './index.module.less';
 import classnames from 'classnames';
 import { Card, Avatar, Popover } from 'antd';
 import store from '../model/store';

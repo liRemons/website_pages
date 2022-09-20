@@ -2,50 +2,31 @@ const { Configuration, DefinePlugin, ProgressPlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const path = require('path')
-const { setRules } = require('./config/rules')
+const rules = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
-const { js, css } = require('./config/cdn')
-const packageJSON = require('./package.json')
+const packageJSON = require('./package.json');
+const { setExternals, templateParameters } = require('./scripts/common');
+
 /**
  * @type {Configuration}
  */
 
-const setExternals = (isProduction) => {
-  return isProduction
-    ? {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-        antd: 'antd',
-        'antd/dist/antd.css': 'antd',
-        mobx: 'mobx',
-        'mobx-react': 'mobxReact',
-        classnames: 'classNames',
-        axios: 'axios',
-        qs: 'Qs',
-        'markmap-view': 'markmap',
-        'markmap-lib': 'markmap',
-        vditor: 'Vditor',
-        'vditor/dist/index.css': 'Vditor',
-      }
-    : {}
-}
-
 module.exports = (env, args) => {
   const mode = args.mode
-  const isProduction = mode === 'production'
-  const isDevelopment = mode === 'development'
+  const isEnvDevelopment = mode === "development";
+  const isEnvProduction = mode === "production";
   const pages = env.pages.split(',')
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
   const otherParams = {}
-  ;(env.otherParams || '').split(',').forEach((item) => {
-    otherParams[item.split('=')[0]] = item.split('=')[1]
-  })
+    ; (env.otherParams || '').split(',').forEach((item) => {
+      otherParams[item.split('=')[0]] = item.split('=')[1]
+    })
   console.log('正在编译以下应用', pages)
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
@@ -95,7 +76,7 @@ module.exports = (env, args) => {
       },
     },
     module: {
-      rules: setRules({ isDevelopment, isProduction }),
+      rules,
     },
     resolve: {
       extensions: ['.js', '.jsx', '.tsx', '.ts'],
@@ -107,10 +88,7 @@ module.exports = (env, args) => {
         '@utils': path.resolve(__dirname, 'src/utils'),
       },
     },
-    cache: {
-      type: 'filesystem',
-    },
-    externals: setExternals(isProduction),
+    externals: setExternals(isEnvProduction),
     plugins: [
       ...pages.map((pageName) => {
         const pageInfo =
@@ -119,48 +97,11 @@ module.exports = (env, args) => {
           filename: `${pageName}/index.html`,
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.html'),
-          templateParameters: (compilation, assets, assetTags, options) => {
-            const externals_js = []
-            const externals_css = []
-            const externalsValues = []
-            for (let [key, value] of compilation._modules.entries()) {
-              if (key.includes('external')) {
-                externalsValues.push(value.userRequest)
-              }
-            }
-
-            js.forEach((item) => {
-              externalsValues.forEach((val) => {
-                if (item.externalsName === val) {
-                  externals_js.push(item.url)
-                }
-              })
-            })
-            css.forEach((item) => {
-              externalsValues.forEach((val) => {
-                if (item.externalsName === val) {
-                  externals_css.push(item.url)
-                }
-              })
-            })
-            if (isProduction) {
-              console.log('---------------------------------')
-              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/js`)
-              console.log(externals_js)
-              console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/css`)
-              console.log(externals_css)
-              console.log('---------------------------------')
-            }
-
-            return {
-              title: `remons.cn - ${pageInfo.title}`,
-              externals_js: [...new Set(externals_js)],
-              externals_css: [...new Set(externals_css)],
-            }
-          },
+          templateParameters: (compilation, assets, assetTags, options) =>
+            templateParameters({ compilation, assets, assetTags, options, isEnvProduction, pageInfo })
         })
       }),
-      new ReactRefreshPlugin(),
+
       new ProgressPlugin({
         activeModules: true,
         modules: true,
@@ -177,16 +118,23 @@ module.exports = (env, args) => {
       new BundleAnalyzerPlugin({
         defaultSizes: 'stat',
         analyzerMode:
-          isProduction && otherParams.report === 'true' ? 'server' : 'disabled',
+          isEnvProduction && otherParams.report === 'true'
+            ? 'server'
+            : 'disabled',
       }),
-      isProduction && otherParams.gzip === 'true'
+      isEnvProduction && otherParams.gzip === 'true'
         ? new CompressionPlugin()
         : null,
+      new ReactRefreshPlugin()
+
     ].filter(Boolean),
     devServer: {
       static: {
         directory: path.resolve(__dirname, 'dist'),
       },
+      compress: true,
+      host: 'local-ip',
+      allowedHosts: 'auto',
       open: [`/@${packageJSON.name}/${env.pages.split(',')[0]}`],
       hot: true,
       client: {
@@ -194,7 +142,7 @@ module.exports = (env, args) => {
       },
     },
     stats: 'errors-only',
-    devtool: isDevelopment ? 'eval-source-map' : false,
+    devtool: isEnvDevelopment ? 'eval-source-map' : false,
   }
   return config
 }

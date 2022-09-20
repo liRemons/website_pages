@@ -4,7 +4,8 @@ const fs = require('fs')
 const log4js = require('log4js')
 const chalk = require('chalk')
 const { logCongfig } = require('./log')
-const pakeageJSON = require('../package.json')
+const pakeageJSON = require('../package.json');
+const { js, css } = require('../config/cdn')
 log4js.configure(logCongfig)
 
 const deletePath = (pages) =>
@@ -124,7 +125,67 @@ const getDist = (pages) => {
   }, 100)
 }
 
+const setExternals = (isEnvProduction) => {
+  return isEnvProduction ? {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    antd: 'antd',
+    'antd/dist/antd.css': 'antd',
+    mobx: 'mobx',
+    'mobx-react': 'mobxReact',
+    classnames: 'classNames',
+    axios: 'axios',
+    qs: 'Qs',
+    'markmap-view': 'markmap',
+    'markmap-lib': 'markmap',
+    vditor: 'Vditor',
+    'vditor/dist/index.css': 'Vditor',
+  } : {};
+}
+
+const templateParameters = ({ compilation, assets, assetTags, options, pageInfo, isEnvProduction }) => {
+  const externals_js = []
+  const externals_css = []
+  const externalsValues = []
+  for (let [key, value] of compilation._modules.entries()) {
+    if (key.includes('external')) {
+      externalsValues.push(value.userRequest)
+    }
+  }
+
+  js.forEach((item) => {
+    externalsValues.forEach((val) => {
+      if (item.externalsName === val) {
+        externals_js.push(item.url)
+      }
+    })
+  })
+  css.forEach((item) => {
+    externalsValues.forEach((val) => {
+      if (item.externalsName === val) {
+        externals_css.push(item.url)
+      }
+    })
+  })
+  if (isEnvProduction) {
+    console.log('---------------------------------')
+    console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/js`)
+    console.log(externals_js)
+    console.log(`正在写入模板 页面：${pageName}/index.html:  cdn/css`)
+    console.log(externals_css)
+    console.log('---------------------------------')
+  }
+
+  return {
+    title: `remons.cn - ${pageInfo.title}`,
+    externals_js: [...new Set(externals_js)],
+    externals_css: [...new Set(externals_css)],
+  }
+}
+
 module.exports = {
   getPages,
   getDist,
+  setExternals,
+  templateParameters
 }

@@ -3,7 +3,7 @@ import Header from '@components/Header';
 import { Input, Slider } from 'antd';
 import Fixed from '@components/Fixed';
 import { RgbaColorPicker } from "react-colorful";
-import style from './index.less'
+import style from './index.module.less'
 import classNames from 'classnames';
 import { DragOutlined, ArrowDownOutlined } from '@ant-design/icons'
 

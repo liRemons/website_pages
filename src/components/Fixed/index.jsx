@@ -1,4 +1,4 @@
-import style from './index.less';
+import style from './index.module.less';
 import '@assets/css/index.global.less';
 import classnames from 'classnames';
 import React, { useState } from 'react';

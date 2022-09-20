@@ -1,5 +1,5 @@
 import React from 'react';
-import style from './index.less';
+import style from './index.module.less';
 import { openApp } from 'methods-r';
 import { LeftOutlined, UserOutlined } from '@ant-design/icons';
 export default function Header(props) {

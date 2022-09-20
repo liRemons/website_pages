@@ -1,5 +1,5 @@
 import React from "react";
-import style from './index.less';
+import style from './index.module.less';
 
 function Container({ header, main }) {
   return <>

@@ -3,7 +3,7 @@ import { List, Card } from 'antd';
 import { FileTextTwoTone } from '@ant-design/icons'
 import { HOST } from '@utils';
 import classnames from 'classnames';
-import style from './index.less';
+import style from './index.module.less';
 import { IsPC } from 'methods-r';
 
 function CardList({ list, itemClick }) {
