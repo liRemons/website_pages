@@ -150,8 +150,8 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
 
 module.exports = (env, args) => {
   const mode = args.mode
-  const isEnvDevelopment = mode === 'development'
-  const isEnvProduction = mode === 'production'
+  const isEnvDevelopment = mode === 'development';
+  const isEnvProduction = mode === 'production';
   const pages = env.pages.split(',')
   const otherParams = {}
   ;(env.otherParams || '').split(',').forEach((item) => {

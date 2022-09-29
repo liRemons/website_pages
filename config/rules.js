@@ -93,14 +93,16 @@ const rules = ({ isEnvDevelopment }) => [
           {
             loader: 'thread-loader',
             options: {
-              worker: 3
-            }
+              worker: 3,
+            },
           },
           {
             loader: 'babel-loader',
             options: {
               presets: ['@babel/preset-env'],
-              plugins: ['react-refresh/babel'],
+              plugins: [isEnvDevelopment ? 'react-refresh/babel' : ''].filter(
+                Boolean
+              ),
             },
           },
         ],

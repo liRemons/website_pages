@@ -149,6 +149,9 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
   const externalsValues = []
   for (let [key, value] of compilation._modules.entries()) {
     if (key.includes('external')) {
+      console.log('====================================');
+      console.log(key);
+      console.log('====================================');
       externalsValues.push(value.userRequest)
     }
   }

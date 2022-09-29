@@ -7,6 +7,7 @@ import MarkMap from '@components/MarkMap';
 import Header from '@components/Header';
 import style from './index.module.less';
 import Vditor from 'vditor';
+import 'vditor/dist/index.css';
 
 function List() {
   const [files, setFiles] = useState([]);

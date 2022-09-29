@@ -7,7 +7,6 @@ import { load } from './home';
 
 export default function List() {
   useEffect(() => {
-    console.log(0)
     load();
   }, []);
 
