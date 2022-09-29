@@ -127,7 +127,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       isEnvProduction && otherParams.gzip === 'true'
         ? new CompressionPlugin()
         : null,
-      new ReactRefreshPlugin(),
+        isEnvDevelopment && new ReactRefreshPlugin(),
     ].filter(Boolean),
     devServer: {
       static: {
@@ -163,7 +163,7 @@ module.exports = (env, args) => {
     isEnvProduction,
     pages,
     otherParams
-  })
+  });
   const config = otherParams.speed === 'true' ? smp.wrap(webpackConfig) : webpackConfig;
   config.plugins.push(
     // 提取单独的CSS
