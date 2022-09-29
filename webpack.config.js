@@ -18,7 +18,7 @@ const smp = new SpeedMeasurewebpackplugin()
  * @type {Configuration}
  */
 
-const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages }) => {
+const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams }) => {
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
 
@@ -162,6 +162,7 @@ module.exports = (env, args) => {
     mode,
     isEnvProduction,
     pages,
+    otherParams
   })
   const config = otherParams.speed === 'true' ? smp.wrap(webpackConfig) : webpackConfig;
   config.plugins.push(
