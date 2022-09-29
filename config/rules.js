@@ -1,11 +1,11 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const path = require('path');
-const cssRegex = /\.css$/;
-const cssModuleRegex = /\.module\.css$/;
-const lessRegex = /\.less$/;
-const lessModuleRegex = /\.module\.less$/;
+const path = require('path')
+const cssRegex = /\.css$/
+const cssModuleRegex = /\.module\.css$/
+const lessRegex = /\.less$/
+const lessModuleRegex = /\.module\.less$/
 const postcssLoader = {
-  loader: 'postcss-loader'
+  loader: 'postcss-loader',
 }
 
 const cssMoudleLoader = {
@@ -18,38 +18,48 @@ const cssMoudleLoader = {
   },
 }
 
-const rules = [
+const rules = ({ isEnvDevelopment }) => [
   {
     oneOf: [
       // css
       {
         test: cssRegex,
         exclude: cssModuleRegex,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader],
+        use: isEnvDevelopment
+          ? ['style-loader', 'css-loader', postcssLoader]
+          : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader],
       },
       {
         test: cssModuleRegex,
-        use: [MiniCssExtractPlugin.loader, cssMoudleLoader, 'css-loader', postcssLoader],
+        exclude: /node_modules/,
+        use: isEnvDevelopment
+          ? ['style-loader', cssMoudleLoader, postcssLoader]
+          : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader],
       },
       // less
       {
         test: lessModuleRegex,
-        use: [
-          MiniCssExtractPlugin.loader,
-          cssMoudleLoader,
-          postcssLoader,
-          'less-loader',
-        ],
+        exclude: /node_modules/,
+        use: isEnvDevelopment
+          ? ['style-loader', cssMoudleLoader, postcssLoader, 'less-loader']
+          : [
+              MiniCssExtractPlugin.loader,
+              cssMoudleLoader,
+              postcssLoader,
+              'less-loader',
+            ],
       },
       {
         test: lessRegex,
         exclude: lessModuleRegex,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          postcssLoader,
-          'less-loader',
-        ],
+        use: isEnvDevelopment
+          ? ['style-loader', 'css-loader', postcssLoader, 'less-loader']
+          : [
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+              postcssLoader,
+              'less-loader',
+            ],
       },
       // Process images.
       {
@@ -79,13 +89,21 @@ const rules = [
       {
         test: /\.js|jsx$/,
         include: path.resolve(__dirname, '../src'),
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-            plugins: ['react-refresh/babel']
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              worker: 3
+            }
           },
-        },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['react-refresh/babel'],
+            },
+          },
+        ],
       },
       {
         test: /\.ts|tsx$/,
@@ -102,14 +120,15 @@ const rules = [
             loader: 'file-loader',
             options: {
               outputPath: (url, resourcePath) => {
-                console.log(resourcePath);
-                return `${(resourcePath || '')
-                  .replace(/\//g, '_')
-                  .replace(/\\/g, '_')
-                  .split('apps')[1]
-                  .split('_')
-                  .filter((_) => !!_)[0]
-                  }/assets/file/${url}`
+                console.log(resourcePath)
+                return `${
+                  (resourcePath || '')
+                    .replace(/\//g, '_')
+                    .replace(/\\/g, '_')
+                    .split('apps')[1]
+                    .split('_')
+                    .filter((_) => !!_)[0]
+                }/assets/file/${url}`
               },
             },
           },

@@ -2,31 +2,26 @@ const { Configuration, DefinePlugin, ProgressPlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
-const packageJSON = require('./package.json');
-const { setExternals, templateParameters } = require('./scripts/common');
+const packageJSON = require('./package.json')
+const { setExternals, templateParameters } = require('./scripts/common')
+const SpeedMeasurewebpackplugin = require('speed-measure-webpack-plugin')
+const smp = new SpeedMeasurewebpackplugin()
 
 /**
  * @type {Configuration}
  */
 
-module.exports = (env, args) => {
-  const mode = args.mode
-  const isEnvDevelopment = mode === "development";
-  const isEnvProduction = mode === "production";
-  const pages = env.pages.split(',')
+const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages }) => {
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
-  const otherParams = {}
-    ; (env.otherParams || '').split(',').forEach((item) => {
-      otherParams[item.split('=')[0]] = item.split('=')[1]
-    })
+
   console.log('正在编译以下应用', pages)
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
@@ -44,15 +39,16 @@ module.exports = (env, args) => {
     optimization: {
       minimize: true,
       minimizer: [
-        new TerserPlugin({
-          minify: (file, sourceMap) => {
-            const uglifyJsOptions = {
-              sourceMap: false,
-            }
-            return require('uglify-js').minify(file, uglifyJsOptions)
-          },
-        }),
-      ],
+        isEnvProduction &&
+          new TerserPlugin({
+            minify: (file, sourceMap) => {
+              const uglifyJsOptions = {
+                sourceMap: false,
+              }
+              return require('uglify-js').minify(file, uglifyJsOptions)
+            },
+          }),
+      ].filter(Boolean),
       splitChunks: {
         chunks: 'async',
         minSize: 20000,
@@ -75,8 +71,11 @@ module.exports = (env, args) => {
         },
       },
     },
+    cache: {
+      type: 'filesystem',
+    },
     module: {
-      rules,
+      rules: rules({ isEnvDevelopment }),
     },
     resolve: {
       extensions: ['.js', '.jsx', '.tsx', '.ts'],
@@ -98,7 +97,14 @@ module.exports = (env, args) => {
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.html'),
           templateParameters: (compilation, assets, assetTags, options) =>
-            templateParameters({ compilation, assets, assetTags, options, isEnvProduction, pageInfo })
+            templateParameters({
+              compilation,
+              assets,
+              assetTags,
+              options,
+              isEnvProduction,
+              pageInfo,
+            }),
         })
       }),
 
@@ -106,15 +112,11 @@ module.exports = (env, args) => {
         activeModules: true,
         modules: true,
       }),
-      // 提取单独的CSS
-      new MiniCssExtractPlugin({
-        filename: '[name]/main.[contenthash:10].css',
-      }),
       new DefinePlugin({
         APP_NAME: JSON.stringify(`@${packageJSON.name}`),
       }),
       // 压缩css
-      new CssMinimizerPlugin(),
+      isEnvProduction ? new CssMinimizerPlugin() : null,
       new BundleAnalyzerPlugin({
         defaultSizes: 'stat',
         analyzerMode:
@@ -125,8 +127,7 @@ module.exports = (env, args) => {
       isEnvProduction && otherParams.gzip === 'true'
         ? new CompressionPlugin()
         : null,
-      new ReactRefreshPlugin()
-
+      new ReactRefreshPlugin(),
     ].filter(Boolean),
     devServer: {
       static: {
@@ -135,14 +136,41 @@ module.exports = (env, args) => {
       compress: true,
       host: 'local-ip',
       allowedHosts: 'auto',
-      open: [`/@${packageJSON.name}/${env.pages.split(',')[0]}`],
+      open: [`/@${packageJSON.name}/${pages[0]}`],
       hot: true,
       client: {
         progress: true,
       },
     },
-    stats: 'errors-only',
+    stats: 'normal',
     devtool: isEnvDevelopment ? 'eval-source-map' : false,
   }
+  return config
+}
+
+module.exports = (env, args) => {
+  const mode = args.mode
+  const isEnvDevelopment = mode === 'development'
+  const isEnvProduction = mode === 'production'
+  const pages = env.pages.split(',')
+  const otherParams = {}
+  ;(env.otherParams || '').split(',').forEach((item) => {
+    otherParams[item.split('=')[0]] = item.split('=')[1]
+  })
+  const webpackConfig = getConfig({
+    isEnvDevelopment,
+    mode,
+    isEnvProduction,
+    pages,
+  })
+  const config = otherParams.speed === 'true' ? smp.wrap(webpackConfig) : webpackConfig;
+  config.plugins.push(
+    // 提取单独的CSS
+    new MiniCssExtractPlugin({
+      filename: isEnvDevelopment
+        ? '[name]/main.css'
+        : '[name]/main.[contenthash:10].css',
+    })
+  )
   return config
 }

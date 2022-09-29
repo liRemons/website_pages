@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
+import '@assets/css/index.global.less'
 import { openApp } from 'methods-r';
 import { load } from './home';
 
 export default function List() {
   useEffect(() => {
+    console.log(0)
     load();
   }, []);
 
