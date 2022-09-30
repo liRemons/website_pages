@@ -155,14 +155,14 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
 
   js.forEach((item) => {
     externalsValues.forEach((val) => {
-      if (item.externalsName === val) {
+      if (item.externalsName === val || item.externalsName.includes(val)) {
         externals_js.push(item.url)
       }
     })
   })
   css.forEach((item) => {
     externalsValues.forEach((val) => {
-      if (item.externalsName === val) {
+      if (item.externalsName === val || item.externalsName.includes(val)) {
         externals_css.push(item.url)
       }
     })
