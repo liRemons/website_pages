@@ -8,19 +8,17 @@ const js = [
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react-lite@3.1.6/dist/mobxreactlite.umd.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react@7.3.0/dist/mobxreact.umd.production.min.js" },
   { externalsName: 'moment', url: "https://unpkg.com/moment@2.29.1/min/moment.min.js" },
-  { externalsName: 'antd', url: "https://unpkg.com/moment@2.29.1/min/moment.min.js" },
-  { externalsName: 'antd/dist/antd.css', url: "https://unpkg.com/moment@2.29.1/min/moment.min.js" },
-  { externalsName: 'antd', url: "https://unpkg.com/antd@4.21.6/dist/antd.min.js" },
-  { externalsName: 'antd/dist/antd.css', url: "https://unpkg.com/antd@4.21.6/dist/antd.min.js" },
-  { externalsName: 'markmap-view', url: "https://unpkg.com/d3@7.4.4/dist/d3.min.js" },
-  { externalsName: 'markmap-view', url: "https://unpkg.com/markmap-view@0.13.2/dist/index.min.js" },
+  { externalsName: ['antd', 'antd/dist/antd.css'], url: "https://unpkg.com/moment@2.29.1/min/moment.min.js" },
+  { externalsName: ['antd', 'antd/dist/antd.css'], url: "https://unpkg.com/antd@4.21.6/dist/antd.min.js" },
+  { externalsName: 'markmap-lib', url: "https://unpkg.com/d3@7.4.4/dist/d3.min.js" },
+  { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-view@0.13.2/dist/index.min.js" },
   { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-lib@0.13.2/dist/browser/index.js" },
-  { externalsName: 'vditor', url: 'https://unpkg.com/vditor@3.8.15/dist/index.min.js' }
+  { externalsName: ['vditor', 'vditor/dist/index.css'], url: 'https://unpkg.com/vditor@3.8.15/dist/index.min.js' }
 ];
 
 const css = [
-  { externalsName: 'antd/dist/antd.css', url: "https://unpkg.com/antd@4.21.6/dist/antd.min.css", },
-  { externalsName: 'vditor', url: "https://unpkg.com/vditor@3.8.15/dist/index.css", },
+  { externalsName: ['antd', 'antd/dist/antd.css'], url: "https://unpkg.com/antd@4.21.6/dist/antd.min.css", },
+  { externalsName: ['vditor', 'vditor/dist/index.css'], url: "https://unpkg.com/vditor@3.8.15/dist/index.css", },
 ]
 
 module.exports = {
