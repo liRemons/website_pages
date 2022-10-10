@@ -170,9 +170,9 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
   if (isEnvProduction) {
     console.log('---------------------------------')
     console.log(`正在写入模板 页面：${pageInfo.pageName}/index.html:  cdn/js`)
-    console.log(externals_js)
+    console.log([...new Set(externals_js)])
     console.log(`正在写入模板 页面：${pageInfo.pageName}/index.html:  cdn/css`)
-    console.log(externals_css)
+    console.log([...new Set(externals_css)])
     console.log('---------------------------------')
   }
 
