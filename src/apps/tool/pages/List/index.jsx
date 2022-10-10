@@ -17,8 +17,7 @@ export default function ListPage() {
     { title: '文档', icon: <FilePdfOutlined />, url: '/tool', params: { page: 'doc' } },
     { title: '图片水印', icon: <img style={{ height: '120px' }} src={watermark} alt="" />, url: '/imgWatermark' },
     { title: 'markdown 编辑查看器', icon: <img style={{ height: '130px' }}  src={markdown} />, url: '/reMark' },
-    { title: 'URL 编解码', icon: <LinkOutlined />, url: '/urlCoder' },
-    { title: '其他', icon: <EllipsisOutlined /> },
+    { title: 'URL 编解码', icon: <LinkOutlined />, url: '/urlCoder' }
   ];
 
   const openPage = ({ url, params }) => {
