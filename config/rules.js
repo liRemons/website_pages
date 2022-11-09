@@ -122,15 +122,17 @@ const rules = ({ isEnvDevelopment }) => [
             loader: 'file-loader',
             options: {
               outputPath: (url, resourcePath) => {
-                console.log(resourcePath)
-                return `${
-                  (resourcePath || '')
-                    .replace(/\//g, '_')
-                    .replace(/\\/g, '_')
-                    .split('apps')[1]
-                    .split('_')
-                    .filter((_) => !!_)[0]
-                }/assets/file/${url}`
+                if(resourcePath.includes('app')) {
+                  return `${
+                    (resourcePath || '')
+                      .replace(/\//g, '_')
+                      .replace(/\\/g, '_')
+                      .split('apps')[1]
+                      .split('_')
+                      .filter((_) => !!_)[0]
+                  }/assets/file/${url}`;
+                };
+                return resourcePath
               },
             },
           },

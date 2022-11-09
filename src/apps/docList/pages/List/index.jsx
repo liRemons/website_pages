@@ -11,7 +11,14 @@ import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '@components/MarkMap';
 import { Input, Drawer } from 'antd';
-import { ExpandOutlined, LeftOutlined, RightOutlined, CompressOutlined, ProfileOutlined, OrderedListOutlined, ApartmentOutlined, FontSizeOutlined, SearchOutlined } from '@ant-design/icons';
+import { img } from '@utils';
+import mindSvg from './assets/svg/mind.svg';
+import fullscreenSvg from './assets/svg/fullscreen.svg';
+import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
+import txtSvg from './assets/svg/txt.svg';
+import docListSvg from './assets/svg/docList.svg';
+import anchorListSvg from './assets/svg/anchorList.svg';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
@@ -163,8 +170,8 @@ export default function List() {
 
   const renderMenuList = () => {
     const arr = [
-      { onClick: openListMenu, icon: <ProfileOutlined />, isShow: localStore.articleList?.length !== 0 },
-      { onClick: openListNav, icon: <OrderedListOutlined />, isShow: viewType === 'html' && localStore.markdownInfo },
+      { onClick: openListMenu, icon: img(docListSvg, 20), isShow: localStore.articleList?.length !== 0 },
+      { onClick: openListNav, icon: img(anchorListSvg, 20), isShow: viewType === 'html' && localStore.markdownInfo },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
@@ -180,10 +187,10 @@ export default function List() {
       <div className={classnames(viewType === 'html' ? style.page_main : style.page_max_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
           <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
-            {!fullscreen ? <ExpandOutlined /> : <CompressOutlined />}
+            {!fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20)}
           </span>
           <span className={classnames(style.viewType, 'circle')} onClick={changeViewType} >
-            {viewType === 'html' ? <ApartmentOutlined /> : <FontSizeOutlined />}
+            {viewType === 'html' ? img(mindSvg, 20) : img(txtSvg, 20)}
           </span>
           {
             (localStore.markdownInfo && localStore.htmlInfo) ? VIEW_DETAIL[viewType] : <Empty />

@@ -6,18 +6,22 @@ import Container from '@components/Container';
 import '@assets/css/index.global.less';
 import { message } from 'antd';
 import { openApp } from 'methods-r';
-import { ScanOutlined, QrcodeOutlined, FilePdfOutlined, EllipsisOutlined, LinkOutlined } from '@ant-design/icons';
-import watermark from './assets/svg/watermark.svg';
-import markdown from './assets/svg/markdown.svg';
+import watermarkSvg from './assets/svg/watermark.svg';
+import qrcodeSvg from './assets/svg/qrcode.svg';
+import markdownSvg from './assets/svg/markdown.svg';
+import decodelinkSvg from './assets/svg/decodelink.svg';
+import docSvg from './assets/svg/doc.svg';
+import scanSvg from './assets/svg/scan.svg';
+import { img } from '@utils'
 
 export default function ListPage() {
   const list = [
-    { title: '解码', icon: <ScanOutlined />, url: '/transcoderQR' },
-    { title: '生成二维码', icon: <QrcodeOutlined />, url: '/createQR' },
-    { title: '文档', icon: <FilePdfOutlined />, url: '/tool', params: { page: 'doc' } },
-    { title: '图片水印', icon: <img style={{ height: '120px' }} src={watermark} alt="" />, url: '/imgWatermark' },
-    { title: 'markdown 编辑查看器', icon: <img style={{ height: '130px' }}  src={markdown} />, url: '/reMark' },
-    { title: 'URL 编解码', icon: <LinkOutlined />, url: '/urlCoder' }
+    { title: '解码', icon: img(scanSvg), url: '/transcoderQR' },
+    { title: '生成二维码', icon: img(qrcodeSvg), url: '/createQR' },
+    { title: '文档', icon: img(docSvg), url: '/tool', params: { page: 'doc' } },
+    { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark' },
+    { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
+    { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' }
   ];
 
   const openPage = ({ url, params }) => {

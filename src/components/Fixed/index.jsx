@@ -2,9 +2,12 @@ import style from './index.module.less';
 import '@assets/css/index.global.less';
 import classnames from 'classnames';
 import React, { useState } from 'react';
-import { HomeOutlined, UserOutlined, ShareAltOutlined, LeftOutlined, RightOutlined, ToolOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import { copy, openApp } from 'methods-r';
+import { img } from '@utils';
+import homeSvg from './assets/svg/home.svg';
+import shareSvg from './assets/svg/share.svg';
 
 export default function Fixed() {
   const [visible, setVisible] = useState(false);
@@ -18,10 +21,8 @@ export default function Fixed() {
   };
 
   const btns = [
-    { icon: <HomeOutlined />, path: '/homeList', title: '首页' },
-    { icon: <ShareAltOutlined />, path: '', title: '分享', handle: share },
-    { icon: <UserOutlined />, path: '/my', title: '关于我' },
-    { icon: <ToolOutlined />, path: '/tool', title: '工具' }
+    { icon: img(homeSvg, 20), path: '/homeList', title: '首页' },
+    { icon: img(shareSvg, 20), path: '', title: '分享', handle: share },
   ];
 
   return <>

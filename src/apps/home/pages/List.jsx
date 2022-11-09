@@ -4,6 +4,9 @@ import './home.css';
 import '@assets/css/index.global.less'
 import { openApp } from 'methods-r';
 import { load } from './home';
+import { img } from '@utils';
+import homeSvg from './assets/svg/home.svg';
+import qsSvg from './assets/svg/qs.svg';
 
 export default function List() {
   useEffect(() => {
@@ -12,9 +15,8 @@ export default function List() {
 
   return  <>
     <canvas className="canvas"></canvas>
-
-    <button className="help">?</button>
-    <button className='go-home' onClick={() => openApp({ url: `/${APP_NAME}/homeList` })}><HomeOutlined /></button>
+    <div className='help'>{img(qsSvg, 20)}</div>
+    <button className='go-home' onClick={() => openApp({ url: `/${APP_NAME}/homeList` })}>{img(homeSvg, 20)}</button>
 
     <div className="ui">
       <input id='input' className="ui-input" type="text" />
