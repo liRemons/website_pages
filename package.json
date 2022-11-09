@@ -55,7 +55,7 @@
     "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
-    "antd": "^4.21.6",
+    "antd": "^4.24.1",
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
     "crypto-js": "^4.1.1",
@@ -67,7 +67,7 @@
     "react": "^17.0.2",
     "react-colorful": "^5.5.1",
     "react-dom": "^17.0.2",
-    "vditor": "^3.8.15",
-    "remons-components": "^0.1.0-rc.4"
+    "remons-components": "^0.1.0-rc.4",
+    "vditor": "^3.8.15"
   }
 }
