@@ -20,6 +20,12 @@
     "title": "解析二维码"
   },
   {
+
+    "pageName": "scanqr",
+
+    "title": "扫描二维码"
+
+  },
     "pageName": "my",
     "title": "我"
   },
