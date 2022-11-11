@@ -138,6 +138,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       allowedHosts: 'auto',
       open: [`/@${packageJSON.name}/${pages[0]}`],
       hot: true,
+      https: true,
       client: {
         progress: true,
       },
