@@ -12,12 +12,14 @@ import markdownSvg from './assets/svg/markdown.svg';
 import decodelinkSvg from './assets/svg/decodelink.svg';
 import docSvg from './assets/svg/doc.svg';
 import scanSvg from './assets/svg/scan.svg';
+import transcoderSvg from './assets/svg/transcoder.svg';
 import { img } from '@utils'
 
 export default function ListPage() {
   const list = [
-    { title: '解码', icon: img(scanSvg), url: '/transcoderQR' },
+    { title: '扫描二维码', icon: img(scanSvg), url: '/scanqr' },
     { title: '生成二维码', icon: img(qrcodeSvg), url: '/createQR' },
+    { title: '解码', icon: img(transcoderSvg), url: '/transcoderQR' },
     { title: '文档', icon: img(docSvg), url: '/tool', params: { page: 'doc' } },
     { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark' },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
