@@ -7,6 +7,7 @@ import Container from '@components/Container';
 import ScanQr from '@components/ScanQr';
 import '@assets/css/index.global.less';
 import { copy } from 'methods-r';
+import { unGzip } from '@utils';
 
 let obj = {};
 export default function List() {
@@ -51,7 +52,7 @@ export default function List() {
   const onSubmit = () => {
     const value = form.getFieldValue('encode');
     !arr.includes(value.trim()) && arr.push(value.trim());
-    const formatValue = decodeURIComponent(escape(window.atob(unescape(arr.join('')))));
+    const formatValue = unGzip(arr.join(''))
     form.setFieldsValue({
       decode: formatValue
     });

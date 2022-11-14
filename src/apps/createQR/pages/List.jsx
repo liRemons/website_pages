@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Spin, message } from 'antd';
+import pako from 'pako';
 import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
@@ -7,6 +8,7 @@ import Header from '@components/Header';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
+import { gzip } from '@utils';
 
 let intTimer;
 
@@ -46,7 +48,8 @@ export default function List() {
       message.warning('内容不能为空');
       return;
     }
-    const val = window.btoa(unescape(encodeURIComponent(value)));
+
+    var val = gzip(value);
     !replace && setLoading(true);
     const length = count || 1900;
     const ceil = Math.ceil(val.length / length);
