@@ -14,17 +14,28 @@ export default function List() {
   const [loadingText, setLoadingText] = useState('');
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const changeReplace = (val) => {
+    if (val) {
+      form.setFieldsValue({ count: 600, wait: 200 })
+    } else {
+      form.setFieldsValue({ count: 1900, wait: 100 })
+    }
+  }
   const items = [
-    { label: '文本', name: 'value', component: 'textarea', componentProps: { rows: 4 } },
-    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺' } },
+    { label: '文本', name: 'value', component: 'textarea', componentProps: { rows: 4, allowClear: true } },
+    { label: '单个二维码字数限制', name: 'count', component: 'inputNumber', componentProps: { min: 500, max: 1900, defaultValue: 1900, precision: 0, step: 100 } },
+    { label: '生成频率(ms)', name: 'wait', component: 'inputNumber', componentProps: { min: 100, max: 2000, defaultValue: 200, precision: 0, step: 100 } },
+    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', onChange: changeReplace } },
   ];
 
   const resetTimer = () => {
-    // clearInterval(intTimer);
-    intTimer.cancel()
+    clearTimeout(intTimer);
+    intTimer = null;
   }
 
   const makeCode = (value) => {
+    const wait = form.getFieldValue('wait') || 200;
+    const count = form.getFieldValue('count');
     const replace = form.getFieldValue('replace');
     const QRDiv = document.getElementById('QR');
     const replaceQR = document.getElementById('replaceQR')
@@ -37,9 +48,7 @@ export default function List() {
     }
     const val = window.btoa(unescape(encodeURIComponent(value)));
     !replace && setLoading(true);
-    const body = document.querySelector('body');
-    body.style.overflow = 'hidden';
-    const length = 1900;
+    const length = count || 1900;
     const ceil = Math.ceil(val.length / length);
     const arr = [...new Array(ceil).keys()].map(l => l * length);
     const textArr = arr.map((item, index) => {
@@ -74,20 +83,16 @@ export default function List() {
           if (index === text.length - 1) {
             setLoadingText('');
             setLoading(false);
-            body.style.overflow = 'auto';
           }
-        }, 100);
+        }, wait);
       });
     } else {
       let i = 0;
-      body.style.overflow = 'auto';
       const createQr = (index) => {
-        console.log(index);
         const item = text[index]
         replaceQR.innerHTML = ''
         const div = document.createElement('div');
         const icon = document.createElement('span');
-        // icon.className = 'qrcodeIcon';
         icon.innerHTML = `(共 ${text.length} 个, 当前 第 ${index + 1} 个)`;
         replaceQR.appendChild(icon);
         div.id = 'qrcode_replace';
@@ -98,30 +103,23 @@ export default function List() {
           height: 330,
           correctLevel: QRCode.CorrectLevel.M
         });
-        qrcode.makeCode(item);
+        qrcode.makeCode(`__${index}_${text.length}__${item}`);
       }
-      function mySetInterval(fun, delay) {
-        let timer = null
-        function interval() {
-          //fun中的同步代码执行完之后，再开始定时
-          fun()
-          setTimeout(interval, delay);
+      function myInterval(func, wait) {
+        let interv = function () {
+          func.call(null)
+          intTimer = setTimeout(interv, wait)
         }
-        interval()
-        return {
-          cancel: () => {
-            clearTimeout(timer)
-          }
-        }
+        intTimer = setTimeout(interv, wait)
       }
 
-      intTimer = mySetInterval(() => {
+      myInterval(() => {
         createQr(i);
         i++;
         if (i >= text.length) {
           i = 0
         }
-      }, 1000);
+      }, wait);
     }
 
   };
@@ -134,7 +132,7 @@ export default function List() {
     header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
     main={<Spin tip={loadingText} spinning={loading} >
       <div className='p-20'>
-        <Form form={form}>
+        <Form labelAlign='left' layout='vertical' form={form}>
           {
             items.map(item => <FormItem {...item} />)
           }
