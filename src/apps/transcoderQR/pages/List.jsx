@@ -57,7 +57,7 @@ export default function List() {
   };
 
   const scanQr = () => {
-    obj = null;
+    obj = {};
     setQrVisible(true)
   }
 
