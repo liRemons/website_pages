@@ -16,7 +16,7 @@ export default function List() {
   const [form] = Form.useForm();
   const changeReplace = (val) => {
     if (val) {
-      form.setFieldsValue({ count: 600, wait: 200 })
+      form.setFieldsValue({ count: 500, wait: 200 })
     } else {
       form.setFieldsValue({ count: 1900, wait: 100 })
     }
