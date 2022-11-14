@@ -22,6 +22,9 @@ export default function List() {
     const [_, itemInfo, text] = val.split('__');
     if (itemInfo) {
       const [key, length] = itemInfo.split('_');
+      if (obj.hasOwnProperty(key)) {
+        return;
+      }
       obj[key] = text;
       if (Object.keys(obj).length === +length) {
         let text = '';
