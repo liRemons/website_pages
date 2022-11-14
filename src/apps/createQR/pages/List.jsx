@@ -112,6 +112,10 @@ export default function List() {
         }
         intTimer = setTimeout(interv, wait)
       }
+      if (text.length === 1) {
+        createQr(0);
+        return;
+      }
 
       myInterval(() => {
         createQr(i);
