@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Spin, message } from 'antd';
-import pako from 'pako';
 import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
