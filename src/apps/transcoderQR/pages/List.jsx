@@ -79,7 +79,7 @@ export default function List() {
         </Form>
         <div className='tc'>
           <Button type="primary" htmlType="submit" className='m-r-20' onClick={scanQr}>
-            扫描二维码
+            扫描
           </Button>
           <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
             PUSH
