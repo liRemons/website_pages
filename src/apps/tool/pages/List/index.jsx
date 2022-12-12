@@ -12,6 +12,7 @@ import markdownSvg from './assets/svg/markdown.svg';
 import decodelinkSvg from './assets/svg/decodelink.svg';
 import docSvg from './assets/svg/doc.svg';
 import scanSvg from './assets/svg/scan.svg';
+import timeSvg from './assets/svg/time.svg';
 import transcoderSvg from './assets/svg/transcoder.svg';
 import { img } from '@utils'
 
@@ -23,7 +24,8 @@ export default function ListPage() {
     { title: '文档', icon: img(docSvg), url: '/tool', params: { page: 'doc' } },
     { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark' },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
-    { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' }
+    { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
+      { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' }
   ];
 
   const openPage = ({ url, params }) => {
