@@ -1,11 +1,11 @@
 import React from "react";
-import style from './index.module.less';
+import styles from './index.module.less';
 
-function Container({ header, main }) {
+function Container({ header, main, style }) {
   return <>
-   <div className={style.container}>
+   <div className={styles.container}>
       {header}
-      <div className={style.main}>
+      <div style={style} className={styles.main}>
         {main}
       </div>
     </div>
