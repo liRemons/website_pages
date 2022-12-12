@@ -5,6 +5,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
@@ -107,7 +108,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
             }),
         })
       }),
-
+      new AntdDayjsWebpackPlugin(),
       new ProgressPlugin({
         activeModules: true,
         modules: true,
