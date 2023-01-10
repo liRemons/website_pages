@@ -104,7 +104,7 @@ export default function List() {
   }
 
 
-  const { name } = params;
+  const { name, handleType } = params;
 
   const VIEW_DETAIL = {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
@@ -178,13 +178,13 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header leftPath={`/${APP_NAME}/note`} name={name} />
+    <Header showRight={handleType !== 'share'} showLefr={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={name} />
     <div className={style.main}>
-      {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
+      {!IsPC() && handleType !== 'share' && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
       </div>}
-      {IsPC() && renderList()}
-      <div className={classnames(viewType === 'html' ? style.page_main : style.page_max_main, 'shadow_not_active', 'markdown_screen')}>
+      {IsPC() && handleType !== 'share' && renderList()}
+      <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
           <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
             {!fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20)}
