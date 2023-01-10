@@ -178,7 +178,7 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header showRight={handleType !== 'share'} showLefr={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={name} />
+    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.title || name} />
     <div className={style.main}>
       {!IsPC() && handleType !== 'share' && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
