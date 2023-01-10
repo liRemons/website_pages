@@ -12,7 +12,12 @@ import shareSvg from './assets/svg/share.svg';
 export default function Fixed() {
   const [visible, setVisible] = useState(false);
   const share = () => {
-    copy(location.search.includes('?') ? `${location.href}&handleType=share` : `${location.href}?handleType=share`);
+    const params = {
+      ...getSearchParams(),
+      handleType: 'share'
+    };
+    const newParams = new URLSearchParams(params)
+    copy(`${location.origin}${location.pathname}?${newParams.toString()}`);
     message.success('复制当前页面链接成功');
   };
 
