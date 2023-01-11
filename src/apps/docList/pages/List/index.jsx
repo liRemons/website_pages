@@ -170,7 +170,7 @@ export default function List() {
 
   const renderMenuList = () => {
     const arr = [
-      { onClick: openListMenu, icon: img(docListSvg, 20), isShow: localStore.articleList?.length !== 0 },
+      { onClick: openListMenu, icon: img(docListSvg, 20), isShow: localStore.articleList?.length !== 0 && handleType !== 'share' },
       { onClick: openListNav, icon: img(anchorListSvg, 20), isShow: viewType === 'html' && localStore.markdownInfo },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
@@ -180,7 +180,7 @@ export default function List() {
   return useObserver(() => <div className={style.container}>
     <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.title || name} />
     <div className={style.main}>
-      {!IsPC() && handleType !== 'share' && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
+      {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
       </div>}
       {IsPC() && handleType !== 'share' && renderList()}
