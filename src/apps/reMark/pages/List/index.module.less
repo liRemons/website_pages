@@ -3,8 +3,10 @@
   width: 100%;
   height: 100%;
   justify-content: space-between;
+  font-size: 12px;
 
   .menu {
+    
     flex-shrink: 0;
     width: 300px;
     height: 100%;
@@ -14,10 +16,14 @@
 
   .content {
     height: 100%;
+    width: 100%;
     overflow: hidden;
+
     .btn {
       margin-bottom: 10px;
+
       button {
+        margin-bottom: 10px;
         margin-right: 10px;
       }
     }
@@ -28,18 +34,22 @@
   .vditor-toolbar {
     .vditor-toolbar__item {
       margin: 5px;
+
       button {
         width: auto;
-        padding: 10px;
+        padding: inherit;
+        box-shadow: none !important;
       }
-      .vditor-emojis{
+
+      .vditor-emojis {
         button {
           padding: 10px;
           margin: 5px;
           line-height: inherit;
         }
       }
-.vditor-panel--arrow {
+
+      .vditor-panel--arrow {
         button {
           width: 100%;
           box-shadow: none !important;
@@ -47,5 +57,34 @@
       }
     }
   }
+}
+
+@media screen and (max-width: 520px) {
+  :global {
+    .vditor-toolbar {
+      .vditor-toolbar__item {
+        padding: 0;
+        margin: 0 5px;
+      }
+    }
+  }
   
+
+  .main {
+    .content {
+      .btn {
+        margin-bottom: 5px;
+
+        button {
+          height: 24px;
+          padding: 0 6px;
+          font-size: 12px;
+          line-height: 24px;
+          margin-bottom: 5px;
+          margin-right: 5px;
+        }
+      }
+    }
+
+  }
 }
