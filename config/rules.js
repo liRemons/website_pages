@@ -132,7 +132,7 @@ const rules = ({ isEnvDevelopment }) => [
                       .filter((_) => !!_)[0]
                   }/assets/file/${url}`;
                 };
-                return `/assets/file/${url}`
+                return `assets/file/${url}`
               },
             },
           },
