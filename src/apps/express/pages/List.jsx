@@ -43,7 +43,9 @@ export default () => {
   }, [yesList])
 
   useEffect(() => {
-    form.resetFields()
+    if (!visible) {
+       form.resetFields()
+    }
   }, [visible]);
 
   const openModal = () => {
