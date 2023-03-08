@@ -56,5 +56,9 @@
   {
     "pageName": "urlCoder",
     "title": "URL转编码"
+  },
+  {
+    "pageName": "express",
+    "title": "快递查询"
   }
 ]
