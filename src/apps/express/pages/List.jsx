@@ -300,4 +300,65 @@ export default () => {
 
                 <div className={classnames('circle')} onClick={() => edit(item)}><EditOutlined /></div>
 
-                <div className={classnames('ci
+                <div className={classnames('circle')} onClick={() => del(item)}><DeleteOutlined /></div>
+              </div>
+            </div>
+          }) : <Empty />
+        }
+      </CheckboxGroup>
+    </div>
+  }
+
+  const renderYesList = () => {
+    return <div>
+      {
+       yesList.length ? yesList.map(item => {
+          return <div className={style.card}>
+            <div>
+              <div className={style.code}>{item.code}</div>
+              <div className={style.add}>{item.add}</div>
+              <div className={style.desc}>{item.desc}</div>
+            </div>
+            <div className={style.handle}>
+              <div className={classnames('circle')} onClick={() => restore(item)}><RedoOutlined /></div>
+            </div>
+          </div>
+        }) : <Empty />
+      }
+    </div>
+  }
+
+  const tabsItems = [
+    { label: '未领取', key: 'no', children: renderNoList() },
+    { label: '已领取', key: 'yes', children: renderYesList() },
+  ]
+  return <>
+    <ConfigProvider locale={zhCN}>
+      <Container
+        header={<Header name='快递' />}
+        main={
+          <div>
+            <button className="circle" onClick={openModal}>+</button>
+            <Tabs items={tabsItems} />
+          </div>
+        }
+      />
+      <Modal open={visible} footer={false} onCancel={() => setVisible(false)}>
+        <Form form={form}>
+          {
+            formItems.map(item => <FormItem rules={[{ required: true }]} {...item} />)
+          }
+          <ButtonBar>
+            <Button type="primary" onClick={onParse}>
+              解析
+            </Button>
+            <Button type="primary" onClick={onSubmit}>
+              确定
+            </Button>
+          </ButtonBar>
+        </Form>
+      </Modal>
+      <Fixed />
+    </ConfigProvider>
+  </>
+}
