@@ -208,7 +208,7 @@ export default () => {
               <span className={style.check}>
                 <Checkbox value={item.code} onChange={(e) => changeChecked(item, e)} />
               </span>
-              <div>
+              <div className={style.card_main}>
                 <div className={style.code}>{item.code}</div>
                 <div className={style.add}>{item.add}</div>
                 <div className={style.desc}>{item.desc}</div>
