@@ -62,8 +62,8 @@ export default () => {
         noList.splice(findIndex, 1, { ...values, time: +new Date() });
         list = [...noList]
       } else {
-        if (noList.find(item => item.code === values.code)) {
-          message.warning('取件码相同')
+        if (noList.find(item => item.code === values.code && item.add === values.add)) {
+          message.warning('取件码和地址相同')
           return
         }
         list = [...noList, { ...values, time: +new Date() }];
@@ -199,8 +199,8 @@ export default () => {
   }
 
   const tabsItems = [
-    { label: '未领取', key: 'no', children: renderNoList() },
-    { label: '已领取', key: 'yes', children: renderYesList() },
+    { label: '未签收', key: 'no', children: renderNoList() },
+    { label: '已签收', key: 'yes', children: renderYesList() },
   ]
   return <>
     <ConfigProvider locale={zhCN}>
