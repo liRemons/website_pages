@@ -5,29 +5,57 @@ import Header from '@components/Header';
 import classnames from 'classnames';
 import Fixed from '@components/Fixed';
 import style from './index.module.less';
-import { Tabs, Form, Modal, ConfigProvider, Button, message, Checkbox, Empty } from 'antd';
-import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { Tabs, Modal, ConfigProvider, Button, message, Checkbox, Empty } from 'antd';
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined, RedoOutlined, FunctionOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import zhCN from 'antd/lib/locale/zh_CN';
-import { FormItem, ButtonBar } from 'remons-components';
+import { FormItem, ButtonBar, Form } from 'remons-components';
 
 const { Group: CheckboxGroup } = Checkbox;
 const { confirm } = Modal;
 
+const mockRuleCodes = [
+  ['请凭', '来取'],
+  ['栋', '联系电话'],
+  ['取件码', '前来领取'],
+  ['请凭', '到'],
+];
+
+const mockRuleAdds = [
+  ['到达', '快递'],
+  ['已到', '栋'],
+  ['已到', '中邮驿站'],
+  ['到', '领取'],
+]
+
 export default () => {
   const [visible, setVisible] = useState(false);
+  const [ruleVisible, setRuleVisible] = useState(false);
   const [handleType, setHandleType] = useState('')
   const [noList, setNoList] = useState([]);
   const [yesList, setYesList] = useState([]);
-  const [form] = Form.useForm()
+  const [ruleCodes, setRuleCodes] = useState([]);
+  const [ruleAdds, setRuleAdds] = useState([]);
+  const [ruleTabKey, setRuleTabKey] = useState('ruleCodes')
+  const [codeMatchs, setCodeMatchs] = useState([]);
+  const [addMatchs, setAddMatchs] = useState([]);
+  const [form] = Form.useForm();
+  const [ruleForm] = Form.useForm();
   const isMount = useRef(true)
-
 
   useEffect(() => {
     const noList = localStorage.express_no_list ? JSON.parse(localStorage.express_no_list) : []
     const yesList = localStorage.express_yes_list ? JSON.parse(localStorage.express_yes_list) : []
     setNoList(noList.filter(item => (+new Date() - item.time) <= 48 * 60 * 60 * 1000))
     setYesList(yesList.filter(item => (+new Date() - item.time) <= 48 * 60 * 60 * 1000))
-    isMount.current = false
+    const ruleCodes = localStorage.rule_codes ? JSON.parse(localStorage.rule_codes) : []
+    const ruleAdds = localStorage.rule_adds ? JSON.parse(localStorage.rule_adds) : []
+    isMount.current = false;
+    ruleForm.setFieldsValue({
+      ruleCodes: ruleCodes.length ? ruleCodes : mockRuleCodes,
+      ruleAdds: ruleAdds.length ? ruleAdds : mockRuleAdds
+    })
+    setRuleCodes(ruleCodes.length ? ruleCodes : mockRuleCodes);
+    setRuleAdds(ruleAdds.length ? ruleAdds : mockRuleAdds)
   }, []);
 
   useEffect(() => {
@@ -37,6 +65,21 @@ export default () => {
   }, [noList])
 
   useEffect(() => {
+    const String2Regex = str => {
+      // Main regex
+      const main = str.match(/\/(.+)\/.*/)[1]
+      // Regex options
+      const options = str.match(/\/.+\/(.*)/)[1]
+      // Return compiled regex
+      return new RegExp(main, options)
+    }
+    localStorage.setItem('rule_codes', JSON.stringify(ruleCodes || []))
+    localStorage.setItem('rule_adds', JSON.stringify(ruleAdds || []))
+    setCodeMatchs(ruleCodes?.map(([start, end]) => String2Regex(`/${start}(\\S*)${end}/`)));
+    setAddMatchs(ruleAdds?.map(([start, end]) => String2Regex(`/${start}(\\S*)${end}/`)));
+  }, [ruleCodes, ruleAdds])
+
+  useEffect(() => {
     if (!isMount.current) {
       localStorage.setItem('express_yes_list', JSON.stringify(yesList))
     }
@@ -44,13 +87,27 @@ export default () => {
 
   useEffect(() => {
     if (!visible) {
-       form.resetFields()
+      form.resetFields()
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (!ruleVisible) {
+      ruleForm.resetFields()
+    }
+  }, [ruleVisible]);
 
   const openModal = () => {
     setHandleType('create')
     setVisible(true)
+  }
+
+  const changeRule = () => {
+    setRuleVisible(true);
+    ruleForm.setFieldsValue({
+      ruleCodes,
+      ruleAdds
+    })
   }
 
   const onSubmit = async () => {
@@ -62,8 +119,8 @@ export default () => {
         noList.splice(findIndex, 1, { ...values, time: +new Date() });
         list = [...noList]
       } else {
-        if (noList.find(item => item.code === values.code && item.add === values.add)) {
-          message.warning('取件码和地址相同')
+        if (noList.find(item => item.code === values.code)) {
+          message.warning('取件码相同')
           return
         }
         list = [...noList, { ...values, time: +new Date() }];
@@ -91,19 +148,7 @@ export default () => {
     })
     return text;
   }
-  const addMatchs = [
-    /到达(\S*)快递/,
-    /已到(\S*)栋/,
-    /已到(\S*)中邮驿站/,
-    /到(\S*)领取/
-  ];
 
-  const codeMatchs = [
-    /请凭(\S*)来取/,
-    /栋(\S*)联系电话/,
-    /取件码(\S*)前来领取/,
-    /请凭(\S*)到/,
-  ];
 
   const onParse = () => {
     const { desc } = form.getFieldsValue()
@@ -198,10 +243,24 @@ export default () => {
     </div>
   }
 
+  const onSubmitRule = () => {
+    ruleForm.validateFields().then(() => {
+      setRuleCodes(ruleForm.getFieldValue('ruleCodes'))
+      setRuleAdds(ruleForm.getFieldValue('ruleAdds'));
+      setRuleVisible(false)
+    }).catch(() => { })
+  }
+
   const tabsItems = [
     { label: '未签收', key: 'no', children: renderNoList() },
     { label: '已签收', key: 'yes', children: renderYesList() },
+  ];
+
+  const tabsRuleItems = [
+    { label: '取件码', key: 'ruleCodes' },
+    { label: '地址', key: 'ruleAdds' },
   ]
+
   return <>
     <ConfigProvider locale={zhCN}>
       <Container
@@ -209,6 +268,7 @@ export default () => {
         main={
           <div>
             <button className="circle" onClick={openModal}>+</button>
+            <div className="circle" onClick={changeRule}><FunctionOutlined /></div>
             <Tabs items={tabsItems} />
           </div>
         }
@@ -225,6 +285,45 @@ export default () => {
             <Button type="primary" onClick={onSubmit}>
               确定
             </Button>
+          </ButtonBar>
+        </Form>
+      </Modal>
+      <Modal onCancel={() => setRuleVisible(false)} footer={false} open={ruleVisible}>
+        <Tabs activeKey={ruleTabKey} items={tabsRuleItems} onChange={(key) => {
+          setRuleTabKey(key)
+        }} />
+        <Form form={ruleForm}>
+          <Form.List name={ruleTabKey}>
+            {
+              (fields, { add, remove }) => {
+                return <>
+                  {fields.map(({ key, name }) => <FormItem
+                    label={`规则${name + 1}`}
+                    required
+                    key={key}
+                  >
+                    <div style={{ display: 'flex' }}>
+                      <FormItem rules={[{ required: true }]} name={name} component='rangeInput' />
+                      <Button type="dashed" onClick={() => remove(name)}><MinusCircleOutlined /></Button>
+                    </div>
+                  </FormItem>
+                  )}
+                  <FormItem>
+                    <Button type="dashed" onClick={() => {
+                      if (fields?.length > (10 - 1)) {
+                        message.warning('最多可配置 10 条规则，请删除后重试')
+                      } else {
+                        add()
+                      }
+                    }}>新增</Button>
+                  </FormItem>
+                </>
+              }
+            }
+          </Form.List>
+          <ButtonBar>
+            <Button onClick={() => setRuleVisible(false)}>取消</Button>
+            <Button type="primary" onClick={onSubmitRule}>确定</Button>
           </ButtonBar>
         </Form>
       </Modal>
