@@ -45,7 +45,7 @@ export default () => {
   useEffect(() => {
     const noList = localStorage.express_no_list ? JSON.parse(localStorage.express_no_list) : []
     const yesList = localStorage.express_yes_list ? JSON.parse(localStorage.express_yes_list) : []
-    setNoList(noList.filter(item => (+new Date() - item.time) <= 48 * 60 * 60 * 1000))
+    setNoList(noList)
     setYesList(yesList.filter(item => (+new Date() - item.time) <= 48 * 60 * 60 * 1000))
     const ruleCodes = localStorage.rule_codes ? JSON.parse(localStorage.rule_codes) : []
     const ruleAdds = localStorage.rule_adds ? JSON.parse(localStorage.rule_adds) : []
@@ -116,14 +116,14 @@ export default () => {
       let list = []
       if (handleType === 'edit') {
         const findIndex = noList.findIndex(item => item.code === values.code);
-        noList.splice(findIndex, 1, { ...values, time: +new Date() });
+        noList.splice(findIndex, 1, values);
         list = [...noList]
       } else {
         if (noList.find(item => item.code === values.code)) {
           message.warning('取件码相同')
           return
         }
-        list = [...noList, { ...values, time: +new Date() }];
+        list = [...noList, values];
       }
       setNoList(list);
       setVisible(false);
@@ -188,7 +188,7 @@ export default () => {
       const findIndex = noList.findIndex(item => item.code === data.code);
       noList.splice(findIndex, 1);
       setNoList([...noList]);
-      setYesList([...yesList, data])
+      setYesList([...yesList, {...data, time: +new Date()}])
     }
   }
 
@@ -208,7 +208,7 @@ export default () => {
               <span className={style.check}>
                 <Checkbox value={item.code} onChange={(e) => changeChecked(item, e)} />
               </span>
-              <div className={style.card_main}>
+              <div>
                 <div className={style.code}>{item.code}</div>
                 <div className={style.add}>{item.add}</div>
                 <div className={style.desc}>{item.desc}</div>
