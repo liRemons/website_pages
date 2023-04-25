@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, message, Modal } from 'antd';
+import { Form, Button, message, Modal, Input } from 'antd';
 import FormItem from '@components/Form';
 import Fixed from '@components/Fixed';
 import Header from '@components/Header';
@@ -15,6 +15,8 @@ export default function List() {
   const [visibleText, setVisibleText] = useState('扫描二维码');
   const [qrVisible, setQrVisible] = useState(false);
   const [form] = Form.useForm();
+  const [exportVisible, setExportVisible] = useState(false);
+  const [fileName, setFileName] = useState('');
   const items = [
     { label: '转码前', name: 'encode', component: 'textarea', componentProps: { rows: 4 } },
     { label: '转码后', name: 'decode', component: 'textarea', componentProps: { rows: 4 } }
@@ -69,6 +71,20 @@ export default function List() {
     message.success('复制成功');
   }
 
+  const onDownload = () => {
+    const a = document.createElement('a');
+    const file = new File([form.getFieldValue('decode')],  `${fileName}.txt`, { type: 'text/plain' });
+    a.href = URL.createObjectURL(file);
+    a.download = `${fileName}.txt`
+    a.click();
+    setExportVisible(false);
+    setFileName('')
+  }
+
+  const handleInputFileNmae = (e) => {
+    setFileName(e.target.value);
+  }
+
   return <Container
     header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} />}
     main={
@@ -88,13 +104,24 @@ export default function List() {
           <Button htmlType="button" onClick={onReset}>
             重置
           </Button>
-          {<Button type="primary" htmlType="button" className='m-l-20' onClick={onCopy}>
+          <Button type="primary" htmlType="button" className='m-l-20' onClick={onCopy}>
             copy
-          </Button>}
+          </Button>
+          <Button type="primary" htmlType="button" className='m-l-20' onClick={() => setExportVisible(true)}>
+            下载
+          </Button>
         </div>
         <Fixed />
         <Modal title={visibleText} bodyStyle={{ paddingTop: '64px' }} onOk={() => setQrVisible(false)} onCancel={() => setQrVisible(false)} open={qrVisible} destroyOnClose>
           {qrVisible && <ScanQr getQrValCallback={getQrValCallback} />}
+        </Modal>
+        <Modal title='文件名设置' open={exportVisible}
+          onOk={onDownload}
+          onCancel={() => {
+            setExportVisible(false);
+            setFileName('')
+          }}>
+          <Input placeholder='请输入文件名' onChange={handleInputFileNmae} />
         </Modal>
       </div>
     } />
