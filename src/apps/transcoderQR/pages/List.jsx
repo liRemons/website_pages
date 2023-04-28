@@ -5,6 +5,7 @@ import Fixed from '@components/Fixed';
 import Header from '@components/Header';
 import Container from '@components/Container';
 import ScanQr from '@components/ScanQr';
+import { ScanOutlined, UploadOutlined, RedoOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 import '@assets/css/index.global.less';
 import { copy } from 'methods-r';
 import { unGzip } from '@utils';
@@ -73,7 +74,7 @@ export default function List() {
 
   const onDownload = () => {
     const a = document.createElement('a');
-    const file = new File([form.getFieldValue('decode')],  `${fileName}.txt`, { type: 'text/plain' });
+    const file = new File([form.getFieldValue('decode')], `${fileName}.txt`, { type: 'text/plain' });
     a.href = URL.createObjectURL(file);
     a.download = `${fileName}.txt`
     a.click();
@@ -95,20 +96,20 @@ export default function List() {
           }
         </Form>
         <div className='tc'>
-          <Button type="primary" htmlType="submit" className='m-r-20' onClick={scanQr}>
-            扫描
+          <Button type="primary" htmlType="submit" shape="circle" className='m-r-20' onClick={scanQr}>
+            <ScanOutlined />
           </Button>
-          <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
-            PUSH
+          <Button type="primary" htmlType="submit" shape="circle" className='m-r-20' onClick={onSubmit}>
+            <UploadOutlined />
           </Button>
-          <Button htmlType="button" onClick={onReset}>
-            重置
+          <Button htmlType="button" shape="circle" onClick={onReset}>
+            <RedoOutlined />
           </Button>
-          <Button type="primary" htmlType="button" className='m-l-20' onClick={onCopy}>
-            copy
+          <Button type="primary" htmlType="button" shape="circle" className='m-l-20' onClick={onCopy}>
+            <CopyOutlined />
           </Button>
-          <Button type="primary" htmlType="button" className='m-l-20' onClick={() => setExportVisible(true)}>
-            下载
+          <Button type="primary" htmlType="button" shape="circle" className='m-l-20' onClick={() => setExportVisible(true)}>
+            <DownloadOutlined />
           </Button>
         </div>
         <Fixed />
