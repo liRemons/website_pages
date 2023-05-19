@@ -9,7 +9,7 @@ import { ScanOutlined, UploadOutlined, RedoOutlined, CopyOutlined, DownloadOutli
 import '@assets/css/index.global.less';
 import { copy } from 'methods-r';
 import { unGzip } from '@utils';
-
+import Pako from 'pako'
 let obj = {};
 export default function List() {
   const [arr, setArr] = useState([]);
@@ -54,8 +54,9 @@ export default function List() {
 
   const onSubmit = () => {
     const value = form.getFieldValue('encode');
+    const str = value.match(/===(\S*)===/)?.[1];
     !arr.includes(value.trim()) && arr.push(value.trim());
-    const formatValue = unGzip(arr.join(''))
+    const formatValue = str ? arr.join('') : unGzip(arr.join(''));
     form.setFieldsValue({
       decode: formatValue
     });
@@ -74,9 +75,22 @@ export default function List() {
 
   const onDownload = () => {
     const a = document.createElement('a');
-    const file = new File([form.getFieldValue('decode')], `${fileName}.txt`, { type: 'text/plain' });
+    const code = form.getFieldValue('decode');
+    let file = null;
+    const str = code.match(/===(\S*)===/)?.[1];
+    let filename = null;
+    if (str) {
+      const search = new URLSearchParams(str);
+      filename = search.get('filename');
+      const type = search.get('type');
+      const newCode = code.replace(/===(\S*)===/, '');
+      const buffer = Pako.ungzip(atob(newCode));
+      file = new File([buffer], filename, { type });
+    } else {
+      file = new File([form.getFieldValue('decode')], `${fileName}.txt`, { type: 'text/plain' });
+    }
     a.href = URL.createObjectURL(file);
-    a.download = `${fileName}.txt`
+    a.download = str ? filename : `${fileName}.txt`
     a.click();
     setExportVisible(false);
     setFileName('')
