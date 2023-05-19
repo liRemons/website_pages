@@ -7,6 +7,7 @@ import Header from '@components/Header';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
+import Pako from 'pako';
 import { gzip } from '@utils';
 
 let intTimer;
@@ -34,7 +35,7 @@ export default function List() {
     intTimer = null;
   }
 
-  const makeCode = (value) => {
+  const makeCode = (value, type) => {
     const wait = form.getFieldValue('wait') || 200;
     const count = form.getFieldValue('count');
     const replace = form.getFieldValue('replace');
@@ -48,7 +49,7 @@ export default function List() {
       return;
     }
 
-    var val = gzip(value);
+    const val = type === 'noZip' ? value : gzip(value);
     !replace && setLoading(true);
     const length = count || 1900;
     const ceil = Math.ceil(val.length / length);
@@ -134,6 +135,23 @@ export default function List() {
     makeCode(form.getFieldValue('value'));
   };
 
+  const upload = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('style', 'none');
+    input.click();
+    document.body.appendChild(input)
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      const { name, type } = file;
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onloadend = (el) => {
+        makeCode(`===?filename=${name}&type=${type}===${btoa(Pako.gzip(el.target.result, { to: 'string' }))}`, 'noZip')
+      }
+    }
+  }
+
   return <Container
     header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
     main={<Spin tip={loadingText} spinning={loading} >
@@ -144,8 +162,9 @@ export default function List() {
           }
         </Form>
         <div className='tc'>
+          <Button onClick={upload} className='m-r-20'>upload</Button>
           <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
-            PUSH
+            push
           </Button>
           <Button onClick={resetTimer}>STOP</Button>
         </div>
@@ -155,3 +174,4 @@ export default function List() {
       <Fixed />
     </Spin>} />
 }
+
