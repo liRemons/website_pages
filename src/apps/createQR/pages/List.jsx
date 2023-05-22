@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Button, Spin, message } from 'antd';
+import { Button, Spin, message, Modal, Input } from 'antd';
 import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
@@ -15,7 +16,10 @@ let intTimer;
 export default function List() {
   const [loadingText, setLoadingText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [visible, setVisble] = useState(false);
   const [form] = Form.useForm();
+  const [textArr, setTextArr] = useState([]);
+  const [errorStr, setErrorStr] = useState('')
   const changeReplace = (val) => {
     if (val) {
       form.setFieldsValue({ count: 500, wait: 200 })
@@ -65,6 +69,7 @@ export default function List() {
     });
 
     const text = textArr.map(item => val.slice(item[0], item[1]));
+    setTextArr(text);
     if (!replace) {
       text.forEach((item, index) => {
         setTimeout(() => {
@@ -136,9 +141,13 @@ export default function List() {
   };
 
   const upload = () => {
+    if (document.querySelector('.input_file_test')) {
+      document.body.removeChild(document.querySelector('.input_file_test'));
+    }
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
-    input.setAttribute('style', 'none');
+    input.setAttribute('style', 'display: none');
+    input.setAttribute('class', 'input_file_test');
     input.click();
     document.body.appendChild(input)
     input.onchange = (e) => {
@@ -150,6 +159,41 @@ export default function List() {
         makeCode(`===?filename=${name}&type=${type}===${btoa(Pako.gzip(el.target.result, { to: 'string' }))}`, 'noZip')
       }
     }
+  }
+
+  const onError = () => {
+    setVisble(true);
+    setErrorStr('')
+  }
+
+  const changeInput = (e) => {
+    setErrorStr(e.target.value);
+  }
+
+  const onOk = () => {
+    const errorQR = document.getElementById('errorQR');
+    errorQR.innerHTML = ''
+    errorStr.split(',').forEach((el) => {
+      setTimeout(() => {
+        const index = +el
+        const item = textArr[index - 1]
+        const div = document.createElement('div');
+        const icon = document.createElement('span');
+        icon.innerHTML = `(共 ${textArr.length} 个, 当前 第 ${index} 个)`;
+        errorQR.appendChild(icon);
+        div.id = 'qrcode_error' + (index);
+        div.className = 'qrcode';
+        errorQR.appendChild(div);
+        var qrcode = new QRCode(document.getElementById('qrcode_error' + (index)), {
+          width: 330,
+          height: 330,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        qrcode.makeCode(`__${index - 1}_${textArr.length}__${item}`);
+      }, 100)
+    })
+
+
   }
 
   return <Container
@@ -166,12 +210,19 @@ export default function List() {
           <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
             push
           </Button>
-          <Button onClick={resetTimer}>STOP</Button>
+          <Button onClick={resetTimer} className='m-r-20'>STOP</Button>
+          <Button onClick={onError}>补缺</Button>
         </div>
         <div id="QR"></div>
         <div id="replaceQR"></div>
       </div>
       <Fixed />
+      <Modal destroyOnClose title='二维码补缺' open={visible} onCancel={() => setVisble(false)} onOk={onOk}>
+        <div>
+          <Input onChange={changeInput} placeholder='输入缺少的二维码 index，英文逗号隔开' />
+          <div id="errorQR"></div>
+        </div>
+      </Modal>
     </Spin>} />
 }
 
