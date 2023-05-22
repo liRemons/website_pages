@@ -22,6 +22,7 @@
   flex-shrink: 0;
   display: flex;
   position: relative;
+  flex-wrap: wrap
 }
 
 .qrcodeIcon {
