@@ -22,7 +22,7 @@ export default function List() {
   const [errorStr, setErrorStr] = useState('')
   const changeReplace = (val) => {
     if (val) {
-      form.setFieldsValue({ count: 500, wait: 200 })
+      form.setFieldsValue({ count: 400, wait: 200 })
     } else {
       form.setFieldsValue({ count: 1900, wait: 100 })
     }
