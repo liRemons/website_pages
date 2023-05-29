@@ -60,5 +60,9 @@
   {
     "pageName": "express",
     "title": "快递查询"
+  },
+  {
+    "pageName": "wangEditor",
+    "title": "富文本编辑器"
   }
 ]
