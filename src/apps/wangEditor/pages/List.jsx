@@ -74,7 +74,7 @@ export default function List() {
 
   return <>
     <Container
-      header={<Header name='关于我' />}
+      header={<Header name='富文本编辑器' />}
       main={
         <div style={{  zIndex: 100 }}>
           <Button type='primary' onClick={download}>下载</Button>
