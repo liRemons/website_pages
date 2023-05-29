@@ -6,7 +6,7 @@ import { Button, Input, message, Modal } from 'antd';
 import { Editor, Toolbar } from '@wangeditor/editor-for-react';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import '@wangeditor/editor/dist/css/style.css';
-
+import style from './index.module.less'
 const { confirm } = Modal;
 
 export default function List() {
