@@ -55,8 +55,9 @@ export default function App() {
     if (!url) {
       return
     }
-    setLocation(url.split('?')[0])
-    const params = new URLSearchParams(decodeURI(url.split('?')[1]));
+    setLocation(url.split('?')[0]);
+    const searchURL = url.split('?')[1] || url.split('?')[0]
+    const params = new URLSearchParams(decodeURIComponent(searchURL));
     const obj = {};
     const keys = [...params.keys()];
     keys.forEach((key) => {
