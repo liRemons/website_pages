@@ -55,7 +55,10 @@ export default function App() {
     if (!url) {
       return
     }
-    setLocation(url.split('?')[0]);
+    if (url.split('?').length > 1){
+       setLocation(url.split('?')[0]);
+    }
+    
     const searchURL = url.split('?')[1] || url.split('?')[0]
     const params = new URLSearchParams(decodeURIComponent(searchURL));
     const obj = {};
@@ -84,7 +87,11 @@ export default function App() {
       })
       const { origin, pathname } = window.location
       const newParams = new URLSearchParams(obj);
-      setUrl(`${location || (origin + pathname)}?${newParams.toString()}`)
+      if (location) {
+        setUrl(`${location}?${newParams.toString()}`)
+      } else {
+        setUrl(`${newParams.toString()}`)
+      }
     }
 
     if (key === 'toTable') {
