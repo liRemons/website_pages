@@ -15,7 +15,6 @@ const js = [
 ];
 
 const css = [
-  { externalsName: ['antd', 'antd/dist/antd.css'], url: "https://unpkg.com/antd@4.24.1/dist/antd.min.css", },
   { externalsName: ['vditor', 'vditor/dist/index.css'], url: "https://unpkg.com/vditor@3.8.15/dist/index.css", },
 ]
 
