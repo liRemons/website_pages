@@ -6,7 +6,6 @@ import { useObserver, useLocalObservable } from 'mobx-react';
 import store from './model/store';
 import styled from './index.module.less'
 import FormItem from '../../components/Form';
-import 'antd/dist/antd.css';
 
 const NormalLoginForm = () => {
   const localStore = useLocalObservable(() => store);
