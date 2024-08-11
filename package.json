@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "antd-dayjs-webpack-plugin": "^1.0.6",
     "@babel/core": "^7.14.6",
     "@babel/plugin-proposal-decorators": "^7.14.5",
     "@babel/plugin-transform-runtime": "^7.14.5",
@@ -22,6 +21,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.12",
+    "antd-dayjs-webpack-plugin": "^1.0.6",
     "babel-loader": "^8.2.2",
     "chalk": "^4.1.2",
     "compression-webpack-plugin": "^8.0.1",
@@ -56,9 +56,9 @@
     "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
-    "@wangeditor/editor-for-react": "^1.0.6",
     "@wangeditor/editor": "^5.1.23",
-    "antd": "^4.24.1",
+    "@wangeditor/editor-for-react": "^1.0.6",
+    "antd": "^5.20.0",
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
     "crypto-js": "^4.1.1",
@@ -72,7 +72,7 @@
     "react": "^17.0.2",
     "react-colorful": "^5.5.1",
     "react-dom": "^17.0.2",
-    "remons-components": "^1.0.1",
+    "remons-components": "^2.0.7",
     "vditor": "^3.8.15"
   }
 }
