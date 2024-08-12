@@ -4,6 +4,7 @@ import copy from 'copy-to-clipboard';
 import AddForm from './addForm';
 import AddPlatForm from './addPlatForm';
 import AddStatus from './addStatus';
+import orderby from 'lodash.orderby'
 import { ToolBar, ActionList, Descriptions, Layout, SearchForm, FormItem } from 'remons-components';
 import dayjs from 'dayjs';
 import { IsPC } from 'methods-r';
@@ -12,7 +13,7 @@ import { ConfigProvider } from 'antd';
 import Container from '@components/Container';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
-import { CopyOutlined, SettingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { CopyOutlined, SettingOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { listKey, plantFormKey, statusKey } from '../model/const';
 import './index.less';
 import style from './index.module.less';
@@ -190,13 +191,10 @@ export default class ProductManage extends React.Component {
     const { visible, platformVisible, statusVisible, list, isFold, ...others } = this.state;
     const leftActionList = [
       {
-        label: <SettingOutlined />,
+        label: <PlusOutlined />,
+        key: 'addForm',
+        icon: <SettingOutlined />,
         children: [
-          {
-            label: '新增单据',
-            type: 'primary',
-            key: 'addForm'
-          },
           {
             label: '设置平台/店铺',
             type: 'primary',
@@ -294,11 +292,11 @@ export default class ProductManage extends React.Component {
               leftActionList={leftActionList}
             />
             {
-              list.map(item => {
+              orderby(list, 'shopNo', 'desc').map(item => {
                 return <Section className={style.list} title={<div className={style.platformRender}>
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
-                    {`店铺单: ${item.shopNo}`}
+                    {`店铺单号: ${item.shopNo}`}
                   </span>
                   <span>
                     {
