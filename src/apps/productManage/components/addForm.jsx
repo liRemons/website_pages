@@ -12,10 +12,16 @@ export default class AddForm extends React.Component {
   }
 
   componentDidMount() {
-    const { handleType, listItem } = this.props;
+    const { handleType, listItem, plantFormOptions = [], statusOptions = [] } = this.props;
     if (handleType === 'edit') {
       const { createTime, ...others } = listItem
       this.field.setFieldsValue({ ...others, createTime: dayjs(createTime) })
+    }
+
+    if (handleType === 'add') {
+      const firstPlatform = plantFormOptions[0]?.value;
+      const firstStatus = statusOptions[0]?.value;
+      this.field.setFieldsValue({ platform: firstPlatform, status: firstStatus })
     }
   }
 
@@ -59,10 +65,12 @@ export default class AddForm extends React.Component {
         }
       },
       { name: 'shopNo', label: '店铺单号', component: 'input' },
-      { name: 'purchaseNo', label: '采购单号', component: 'textarea', placeholder: '多个以英文逗号分割' },
-      { name: 'expressNo', label: '快递单号', component: 'textarea', placeholder: '多个以英文逗号分割' },
+      { name: 'purchaseNo', label: '采购单号', component: 'textarea', placeholder: '多个以逗号分割' },
+      { name: 'expressNo', label: '快递单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'status', label: '状态', component: 'select', componentProps: { options: statusOptions } },
+      { name: 'count', label: '订单数量', component: 'inputNumber', componentProps: { defaultValue: 1 } },
       { name: 'createTime', label: '时间', component: 'datePicker', componentProps: { showTime: true } },
+      { name: 'remark', label: '备注', component: 'textarea' },
     ];
 
     const formLayout = {

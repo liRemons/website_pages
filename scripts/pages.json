@@ -64,5 +64,9 @@
   {
     "pageName": "wangEditor",
     "title": "富文本编辑器"
+  },
+  {
+    "pageName": "productManage",
+    "title": "订单管理"
   }
 ]

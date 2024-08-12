@@ -43,7 +43,8 @@ export default class ProductManage extends React.Component {
     statusOptions: [],
     statusObj: {},
     list: [],
-    listItem: {}
+    listItem: {},
+    isFold: false
   }
 
   get list() {
@@ -62,8 +63,16 @@ export default class ProductManage extends React.Component {
       addForm: this.addForm,
       addPlatform: this.addPlatform,
       addStatus: this.addStatus,
+      fold: this.handleFold
     }
     handleMap[key]?.();
+  }
+
+  handleFold = () => {
+    const { isFold } = this.state;
+    this.setState({
+      isFold: !isFold
+    })
   }
 
   onHandleActionClick = (key, data, val) => {
@@ -178,7 +187,7 @@ export default class ProductManage extends React.Component {
   }
 
   render() {
-    const { visible, platformVisible, statusVisible, list, ...others } = this.state;
+    const { visible, platformVisible, statusVisible, list, isFold, ...others } = this.state;
     const leftActionList = [
       {
         label: <SettingOutlined />,
@@ -197,6 +206,11 @@ export default class ProductManage extends React.Component {
             label: '设置状态',
             type: 'primary',
             key: 'addStatus'
+          },
+          {
+            label: !isFold ? '详细模式' : '简洁模式',
+            type: 'primary',
+            key: 'fold'
           }
         ]
       }
@@ -217,10 +231,13 @@ export default class ProductManage extends React.Component {
     ];
 
 
-    const renderCopy = (name, val) => {
+    const renderCopy = (name, val = '') => {
+      if (!val) {
+        return
+      }
       return <>
         {
-          ((val || '').split(',').map(item => <div>
+          (val.split(val.includes(',') ? ',' : '，').map(item => <div>
             {item} &nbsp;<CopyOutlined onClick={() => this.onCopy(item)} />
           </div>))
         }
@@ -233,13 +250,15 @@ export default class ProductManage extends React.Component {
     }
 
     const columns = [
-      { name: 'platform', label: '平台/店铺' },
+      { name: 'platform', label: '平台/店铺', visible: isFold },
       { name: 'shopNo', label: '店铺单号', render: renderCopy },
       { name: 'purchaseNo', label: '采购单号', render: renderCopy },
       { name: 'expressNo', label: '快递单号', render: renderCopy },
       { name: 'status', label: '状态', render: renderStatus },
-      { name: 'createTime', label: '时间', render: (name, val) => dayjs(val).format('YYYY-MM-DD HH:mm:ss') },
-    ];
+      { name: 'count', label: '订单数量' },
+      { name: 'createTime', label: '时间', render: (name, val) => dayjs(val).format('YYYY-MM-DD HH:mm:ss'), visible: isFold },
+      { name: 'remark', label: '备注', visible: isFold },
+    ].filter(item => item.visible !== false);
 
     const items = [
       { name: 'shopNo', label: '店铺单号', component: 'input' },
@@ -263,7 +282,7 @@ export default class ProductManage extends React.Component {
         header={<Header name='订单关联' leftPath={`/${APP_NAME}/tool`} />}
         main={
           <>
-            <SearchForm cols={2} {...formLayout} rows={IsPC() ? 3 : 1} onSearch={this.onSearch} onReset={this.onReset}>
+            <SearchForm cols={2} {...formLayout} rows={IsPC() ? 2 : 1} onSearch={this.onSearch} onReset={this.onReset}>
               {items.map((item) => (
                 <FormItem {...item} key={item.name} />
               ))}
@@ -279,7 +298,7 @@ export default class ProductManage extends React.Component {
                 return <Section className={style.list} title={<div className={style.platformRender}>
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
-                    {`店铺单号: ${item.shopNo}`}
+                    {`店铺单: ${item.shopNo}`}
                   </span>
                   <span>
                     {
