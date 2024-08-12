@@ -254,6 +254,7 @@ export default class ProductManage extends React.Component {
       { name: 'expressNo', label: '快递单号', render: renderCopy },
       { name: 'status', label: '状态', render: renderStatus },
       { name: 'count', label: '订单数量' },
+      { name: 'totalPrice', label: '总价', visible: isFold },
       { name: 'createTime', label: '时间', render: (name, val) => dayjs(val).format('YYYY-MM-DD HH:mm:ss'), visible: isFold },
       { name: 'remark', label: '备注', visible: isFold },
     ].filter(item => item.visible !== false);
