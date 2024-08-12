@@ -259,7 +259,7 @@ export default class ProductManage extends React.Component {
     ].filter(item => item.visible !== false);
 
     const items = [
-      { name: 'shopNo', label: '店铺单号', component: 'input' },
+      { name: 'shopNo', label: '订单号', component: 'input' },
       { name: 'purchaseNo', label: '采购单号', component: 'input' },
       { name: 'expressNo', label: '快递单号', component: 'input' },
       { name: 'status', label: '状态', component: 'select', componentProps: { options: others.statusOptions } },
@@ -296,8 +296,8 @@ export default class ProductManage extends React.Component {
                 return <Section className={style.list} title={<div className={style.platformRender}>
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
-                    {`店铺单号: ${item.shopNo}`}
-                     &nbsp;<CopyOutlined onClick={() => this.onCopy(item.shopNo)} />
+                    {`订单号: ${item.shopNo}`}
+                    <CopyOutlined onClick={() => this.onCopy(item.shopNo)} />
                   </span>
                   <span>
                     {
