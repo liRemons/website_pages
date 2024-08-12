@@ -249,7 +249,6 @@ export default class ProductManage extends React.Component {
 
     const columns = [
       { name: 'platform', label: '平台/店铺', visible: isFold },
-      { name: 'shopNo', label: '店铺单号', render: renderCopy },
       { name: 'purchaseNo', label: '采购单号', render: renderCopy },
       { name: 'expressNo', label: '快递单号', render: renderCopy },
       { name: 'status', label: '状态', render: renderStatus },
@@ -298,6 +297,7 @@ export default class ProductManage extends React.Component {
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
                     {`店铺单号: ${item.shopNo}`}
+                     &nbsp;<CopyOutlined onClick={() => this.onCopy(item.shopNo)} />
                   </span>
                   <span>
                     {
