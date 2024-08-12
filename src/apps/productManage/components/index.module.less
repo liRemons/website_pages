@@ -1,0 +1,44 @@
+.list {
+    margin: 8px 0;
+}
+
+.platformRender {
+    display: flex;
+    align-items: center;
+    img {
+        width: 20px;
+        height: 20px;
+        margin-right: 6px;
+    }
+}
+
+.setting {
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    z-index: 10;
+}
+
+.colorTag {
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+:global {
+
+    .ant-form-item {
+        margin-bottom: 6px;
+
+        .ant-form-item-label {
+            padding: 0 0 4px;
+        }
+        .ant-form-item-label >label {
+            height: 22px;
+        }
+    }
+
+    .ant-descriptions-item-label,
+    .ant-descriptions-item-content {
+        padding: 10px 10px !important;
+    }
+}
