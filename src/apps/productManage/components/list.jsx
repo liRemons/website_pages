@@ -277,20 +277,21 @@ export default class ProductManage extends React.Component {
             {
               list.map(item => {
                 return <Section className={style.list} title={<div className={style.platformRender}>
-                  {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
-                  {`店铺单号: ${item.shopNo}`}
+                  <span>
+                    {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
+                    {`店铺单号: ${item.shopNo}`}
+                  </span>
+                  <span>
+                    {
+                      handleActionList.map(el => <span className={style.handle} onClick={() => this.onHandleActionClick(el.key, el, item)}>{el.label}</span>)
+                    }
+                  </span>
                 </div>}>
                   <Descriptions
                     className="productManage-list"
                     bordered
                     dataSource={item}
                     columns={columns}
-                    extra={
-                      <ActionList
-                        actions={handleActionList}
-                        onActionClick={(key, data) => this.onHandleActionClick(key, data, item)}
-                      />
-                    }
                   />
                 </Section>
               })

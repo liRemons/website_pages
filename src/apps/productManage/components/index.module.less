@@ -5,10 +5,21 @@
 .platformRender {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     img {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         margin-right: 6px;
+    }
+
+    span {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .handle {
+        cursor: pointer;
+        padding-left: 10px;
     }
 }
 
@@ -39,6 +50,6 @@
 
     .ant-descriptions-item-label,
     .ant-descriptions-item-content {
-        padding: 10px 10px !important;
+        padding: 8px !important;
     }
 }
