@@ -21,7 +21,7 @@ export default class AddForm extends React.Component {
     if (handleType === 'add') {
       const firstPlatform = plantFormOptions[0]?.value;
       const firstStatus = statusOptions[0]?.value;
-      this.field.setFieldsValue({ platform: firstPlatform, status: firstStatus })
+      this.field.setFieldsValue({ platform: firstPlatform, status: firstStatus, count: 0 })
     }
   }
 
@@ -68,9 +68,9 @@ export default class AddForm extends React.Component {
       { name: 'purchaseNo', label: '采购单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'expressNo', label: '快递单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'status', label: '状态', component: 'select', componentProps: { options: statusOptions } },
-      { name: 'count', label: '订单数量', component: 'inputNumber', componentProps: { defaultValue: 1 } },
+      { name: 'count', label: '订单数量', component: 'inputNumber'},
       { name: 'totalPrice', label: '总价', component: 'inputNumber', componentProps: { min: 0,  prefix: '￥', precision: 2 } },
-      { name: 'createTime', label: '时间', component: 'datePicker', componentProps: { showTime: true } },
+      { name: 'createTime', label: '时间', component: 'datePicker', componentProps: { showTime: true, placement: 'topLeft' } },
       { name: 'remark', label: '备注', component: 'textarea' },
     ];
 
