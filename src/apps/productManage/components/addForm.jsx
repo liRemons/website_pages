@@ -21,7 +21,7 @@ export default class AddForm extends React.Component {
     if (handleType === 'add') {
       const firstPlatform = plantFormOptions[0]?.value;
       const firstStatus = statusOptions[0]?.value;
-      this.field.setFieldsValue({ platform: firstPlatform, status: firstStatus, count: 0 })
+      this.field.setFieldsValue({ platform: firstPlatform, status: firstStatus, count: 1 })
     }
   }
 
