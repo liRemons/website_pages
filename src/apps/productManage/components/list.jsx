@@ -296,8 +296,8 @@ export default class ProductManage extends React.Component {
                 return <Section className={style.list} title={<div className={style.platformRender}>
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
-                    {`订单号: ${item.shopNo}`}
-                    <CopyOutlined onClick={() => this.onCopy(item.shopNo)} />
+                    {`订单号: `}
+                    {renderCopy('', item.shopNo)}
                   </span>
                   <span>
                     {
