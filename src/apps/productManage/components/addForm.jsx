@@ -33,15 +33,15 @@ export default class AddForm extends React.Component {
       list.splice(findIndex, 1, values)
       localStorage.setItem(listKey, JSON.stringify(list));
     } else {
-      if (list.map(item => item.shopNo).includes(values.shopNo)) {
+      if (values.shopNo && list.map(item => item.shopNo).includes(values.shopNo)) {
         message.error('订单号不能相同');
         return;
       }
-      if (list.map(item => item.purchaseNo).includes(values.purchaseNo)) {
+      if (values.purchaseNo && list.map(item => item.purchaseNo).includes(values.purchaseNo)) {
         message.error('采购单号不能相同');
         return;
       }
-      if (list.map(item => item.expressNo).includes(values.expressNo)) {
+      if (values.expressNo && list.map(item => item.expressNo).includes(values.expressNo)) {
         message.error('快递单号不能相同');
         return;
       }
@@ -64,7 +64,7 @@ export default class AddForm extends React.Component {
           options: plantFormOptions
         }
       },
-      { name: 'shopNo', label: '订单号', component: 'input' },
+      { name: 'shopNo', label: '订单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'purchaseNo', label: '采购单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'expressNo', label: '快递单号', component: 'textarea', placeholder: '多个以逗号分割' },
       { name: 'status', label: '状态', component: 'select', componentProps: { options: statusOptions } },
