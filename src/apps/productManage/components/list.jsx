@@ -297,7 +297,7 @@ export default class ProductManage extends React.Component {
                   <span>
                     {shopMapIcon[item.platform] && <img src={shopMapIcon[item.platform]} alt="" />}
                     {`订单号: `}
-                    {renderCopy('', item.shopNo)}
+                    <div className={style.shopNo}>{renderCopy('', item.shopNo)}</div>
                   </span>
                   <span>
                     {
