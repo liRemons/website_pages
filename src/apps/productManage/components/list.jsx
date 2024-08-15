@@ -316,7 +316,7 @@ export default class ProductManage extends React.Component {
             }</>}
       ></Container>
       <Fixed />
-      <Modal destroyOnClose footer={false} open={visible} title={others.handleType === 'edit' ? <span className={style.addFormTitle}>订单-采购单:<div>{renderCopy('', others.listItem.shopNo, false)}</div></span> : '新增订单'} onCancel={this.onClose}>
+      <Modal destroyOnClose footer={false} open={visible} title={others.handleType === 'edit' ? <span className={style.addFormTitle}>订单: <div>{renderCopy('', others.listItem.shopNo, false)}</div></span> : '新增订单'} onCancel={this.onClose}>
         <AddForm {...others} onClose={this.onClose} updateState={this.updateState} />
       </Modal>
       <Modal destroyOnClose footer={false} open={platformVisible} title="管理平台/店铺" onCancel={this.onClose}>
