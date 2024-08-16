@@ -4,7 +4,7 @@ const js = [
   { externalsName: 'qs', url: "https://unpkg.com/qs@6.10.3/dist/qs.js" },
   { externalsName: 'axios', url: "https://unpkg.com/axios/dist/axios.min.js" },
   { externalsName: 'classnames', url: "https://unpkg.com/classnames@2.3.1/index.js" },
-  { externalsName: 'mobx', url: "https://unpkg.com/mobx@6.3.2/dist/mobx.umd.production.min.js" },
+  { externalsName: 'mobx-react', url: "https://unpkg.com/mobx@6.3.2/dist/mobx.umd.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react-lite@3.1.6/dist/mobxreactlite.umd.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react@7.3.0/dist/mobxreact.umd.production.min.js" },
   { externalsName: 'antd', url: "https://unpkg.com/dayjs@1.11.12/dayjs.min.js" },
