@@ -127,18 +127,18 @@ const getDist = (pages) => {
 
 const setExternals = (isEnvProduction) => {
   return isEnvProduction ? {
-    // react: 'React',
-    // 'react-dom': 'ReactDOM',
-    // antd: 'antd',
-    // mobx: 'mobx',
-    // 'mobx-react': 'mobxReact',
-    // classnames: 'classNames',
-    // axios: 'axios',
-    // qs: 'Qs',
-    // 'markmap-view': 'markmap',
-    // 'markmap-lib': 'markmap',
-    // vditor: 'Vditor',
-    // 'vditor/dist/index.css': 'Vditor',
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    antd: 'antd',
+    mobx: 'mobx',
+    'mobx-react': 'mobxReact',
+    classnames: 'classNames',
+    axios: 'axios',
+    qs: 'Qs',
+    'markmap-view': 'markmap',
+    'markmap-lib': 'markmap',
+    vditor: 'Vditor',
+    'vditor/dist/index.css': 'Vditor',
   } : {};
 }
 
