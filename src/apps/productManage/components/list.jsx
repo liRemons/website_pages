@@ -165,7 +165,7 @@ export default class ProductManage extends React.Component {
       let flag = true;
       for (const key in val) {
         if (val[key]) {
-          if (!(item[key] === val[key] || item[key].includes(val[key]))) {
+          if (!(item[key] === val[key] || (item[key] || '').includes(val[key]))) {
             flag = false
           }
         }
