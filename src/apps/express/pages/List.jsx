@@ -273,7 +273,7 @@ export default () => {
           </div>
         }
       />
-      <Modal open={visible} footer={false} onCancel={() => setVisible(false)}>
+      <Modal title="快递信息" open={visible} footer={false} onCancel={() => setVisible(false)}>
         <Form form={form}>
           {
             formItems.map(item => <FormItem rules={[{ required: true }]} {...item} />)
@@ -288,7 +288,7 @@ export default () => {
           </ButtonBar>
         </Form>
       </Modal>
-      <Modal onCancel={() => setRuleVisible(false)} footer={false} open={ruleVisible}>
+      <Modal title="解析规则设置" onCancel={() => setRuleVisible(false)} footer={false} open={ruleVisible}>
         <Tabs activeKey={ruleTabKey} items={tabsRuleItems} onChange={(key) => {
           setRuleTabKey(key)
         }} />
