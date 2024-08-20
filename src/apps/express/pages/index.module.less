@@ -1,16 +1,13 @@
 .card {
 
   box-shadow: -2px -2px 10px #fff, 2px 2px 10px #babecc;
-
   padding: 10px;
-
   margin-bottom: 20px;
-
   border-radius: 4px;
   display: flex;
   align-items: center;
-
   position: relative;
+  width: 100%;
   .card_main {
      width: calc(100% - 30px)
    }
@@ -32,45 +29,32 @@
   }
 
   .code {
-
     font-size: 20px;
-
     font-weight: bold;
-
     color: #222;
-
     margin-bottom: 6px;
-
   }
 
   .add {
-
     font-size: 14px;
-
     font-weight: bold;
-
     color: #333;
-
     margin-bottom: 10px;
-
   }
 
   .desc {
-
     font-size: 12px;
-
     color: #999;
-
   }
-
 }
 
 :global {
 
   .ant-checkbox-inner, .ant-checkbox-checked::after {
-
     border-radius: 50% !important;
-
+  }
+  .ant-checkbox-group {
+    width: 100%;
   }
 
 }
