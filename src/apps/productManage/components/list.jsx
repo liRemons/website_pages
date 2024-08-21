@@ -1,11 +1,12 @@
 import React from 'react';
-import { message, Modal } from 'antd';
+import { message, Modal, Alert } from 'antd';
+import Marquee from 'react-fast-marquee';
 import copy from 'copy-to-clipboard';
 import AddForm from './addForm';
 import AddPlatForm from './addPlatForm';
 import AddStatus from './addStatus';
 import orderby from 'lodash.orderby'
-import { ToolBar, ActionList, Descriptions, Layout, SearchForm, FormItem } from 'remons-components';
+import { ToolBar, Descriptions, Layout, SearchForm, FormItem } from 'remons-components';
 import dayjs from 'dayjs';
 import { IsPC } from 'methods-r';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -14,10 +15,9 @@ import Container from '@components/Container';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import { CopyOutlined, SettingOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { listKey, plantFormKey, statusKey } from '../model/const';
+import { listKey, plantFormKey, statusKey, bannerVisibleKey } from '../model/const';
 import './index.less';
 import style from './index.module.less';
-
 import doudian from '../assets/doudian.svg';
 import pinduoduo from '../assets/pinduoduo.svg';
 import douyin from '../assets/douyin.svg';
@@ -45,7 +45,8 @@ export default class ProductManage extends React.Component {
     statusObj: {},
     list: [],
     listItem: {},
-    isFold: false
+    isFold: false,
+    bannerVisible: false,
   }
 
   get list() {
@@ -119,9 +120,33 @@ export default class ProductManage extends React.Component {
     this.setState({ statusVisible: false, platformVisible: false, visible: false })
   }
 
+  bannerAfterClose = () => {
+    this.setState({
+      bannerVisible: false,
+    })
+    localStorage[bannerVisibleKey] = +new Date();
+    message.success('7 天内不再提醒')
+  }
+
   updateState = () => {
     const localPlantForm = JSON.parse(localStorage.getItem(plantFormKey) || '[]');
     const localStatus = JSON.parse(localStorage.getItem(statusKey) || '[]');
+    const bannerVisibleTime = localStorage[bannerVisibleKey];
+    let bannerVisible = false;
+
+    if (bannerVisibleTime) {
+      if (dayjs(+bannerVisibleTime).isBefore(dayjs().subtract(7, 'day'))) {
+        bannerVisible = true
+      } else {
+        bannerVisible = false
+      }
+    } else {
+      bannerVisible = true;
+    }
+
+    this.setState({
+      bannerVisible,
+    })
 
     if (!localPlantForm.length || !localStatus.length) {
       const arr = [];
@@ -148,7 +173,6 @@ export default class ProductManage extends React.Component {
         value: item.name,
         color: item.color,
       })),
-
       statusObj: localStatus?.reduce((prev, item) => {
         return {
           ...prev,
@@ -188,7 +212,7 @@ export default class ProductManage extends React.Component {
   }
 
   render() {
-    const { visible, platformVisible, statusVisible, list, isFold, ...others } = this.state;
+    const { visible, platformVisible, statusVisible, list, isFold, bannerVisible, ...others } = this.state;
     const leftActionList = [
       {
         label: <PlusOutlined />,
@@ -276,6 +300,18 @@ export default class ProductManage extends React.Component {
     };
 
     return <ConfigProvider locale={zhCN}>
+      {
+        bannerVisible && <Alert
+          closable
+          banner
+          onClose={this.bannerAfterClose}
+          message={
+            <Marquee pauseOnHover gradient={false}>
+              温馨提示：1. 为了保证您能正常的使用该功能，请新增订单前先设置平台和状态。2. 订单仅保存在本地不会上传服务器，请勿清理浏览器缓存以防数据丢失。3. 为节约空间，默认清理30天前的订单列表。
+            </Marquee>
+          }
+        />
+      }
       <Container
         header={<Header name='订单关联' leftPath={`/${APP_NAME}/tool`} />}
         main={
