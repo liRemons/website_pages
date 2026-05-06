@@ -1,0 +1,92 @@
+/**
+ * 可配置化页面系统样式
+ */
+
+.table-config-app {
+  min-height: 100vh;
+
+  .config-builder {
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .ant-tabs-content {
+      margin-top: 16px;
+    }
+  }
+
+  .search-form {
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+
+    .ant-form-item-label {
+      font-weight: 500;
+    }
+  }
+
+  .data-table {
+    .ant-table {
+      background: #fff;
+    }
+
+    .ant-table-thead > tr > th {
+      background: #fafafa;
+      font-weight: 500;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: #e6f7ff;
+    }
+  }
+
+  .page-renderer {
+    .ant-card {
+      margin-bottom: 16px;
+    }
+
+    .ant-card-head {
+      font-weight: 500;
+    }
+  }
+
+  // 代码编辑器样式
+  code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  // 配置列表样式
+  .config-list {
+    .ant-table-row {
+      cursor: pointer;
+
+      &:hover {
+        background: #e6f7ff;
+      }
+    }
+  }
+
+  // 编辑面板样式
+  .edit-panel {
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .table-config-app {
+    .ant-layout-content {
+      padding: 12px;
+    }
+
+    .config-builder {
+      .ant-tabs-nav {
+        flex-wrap: wrap;
+      }
+    }
+  }
+}
