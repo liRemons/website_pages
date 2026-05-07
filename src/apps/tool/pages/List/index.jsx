@@ -15,6 +15,8 @@ import scanSvg from './assets/svg/scan.svg';
 import timeSvg from './assets/svg/time.svg';
 import expressSvg from './assets/svg/express.svg';
 import transcoderSvg from './assets/svg/transcoder.svg';
+import travelbadgeSvg from './assets/svg/travelbadge.svg';
+import tableconfigSvg from './assets/svg/tableconfig.svg';
 import { img } from '@utils'
 
 export default function ListPage() {
@@ -27,7 +29,9 @@ export default function ListPage() {
     { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark' },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
     { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
-    { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' }
+    { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' },
+    { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge' }
+    { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig' }
   ];
 
   const openPage = ({ url, params }) => {
