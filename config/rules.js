@@ -8,17 +8,19 @@ const postcssLoader = {
   loader: 'postcss-loader',
 }
 
+
+const rules = ({ isEnvDevelopment }) => {
+  
 const cssMoudleLoader = {
   loader: 'css-loader',
   options: {
     sourceMap: false,
     modules: {
-      localIdentName: '[path][name]-[local]-[hash:base64:10]',
+      localIdentName: isEnvDevelopment ? '[path][name]-[local]-[hash:base64:10]' : [hash:base64:10],
     },
   },
 }
-
-const rules = ({ isEnvDevelopment }) => [
+  return  [
   {
     oneOf: [
       // css
@@ -141,5 +143,6 @@ const rules = ({ isEnvDevelopment }) => [
     ],
   },
 ]
+}
 
 module.exports = rules
