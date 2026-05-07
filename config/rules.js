@@ -16,7 +16,7 @@ const cssMoudleLoader = {
   options: {
     sourceMap: false,
     modules: {
-      localIdentName: isEnvDevelopment ? '[path][name]-[local]-[hash:base64:10]' : [hash:base64:10],
+      localIdentName: isEnvDevelopment ? '[path][name]-[local]-[hash:base64:10]' : '[hash:base64:10]',
     },
   },
 }
