@@ -66,7 +66,7 @@ export default class TableConfig extends React.Component {
     return (
       <Layout className="table-config-app">
         <Header style={{ background: '#fff', borderBottom: '1px solid #f0f0f0' }}>
-          <h2 style={{ margin: 0, lineHeight: '64px' }}>可配置化页面系统</h2>
+          <h2 style={{ margin: 0, lineHeight: '64px' }}>表单配置引擎</h2>
         </Header>
         <Content style={{ padding: 24, background: '#f0f2f5', minHeight: 'calc(100vh - 64px)' }}>
           <Tabs
