@@ -1,0 +1,76 @@
+// ─── Tab 导航栏（新拟物风：激活态凹陷，非激活态凸起）────────────────────────
+
+.panel-tabs {
+  display: flex;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px 12px 8px;
+  gap: 6px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__btn {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 14px;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+  }
+
+  &__btn-icon {
+    font-size: 15px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  &__btn-label {
+    line-height: 1;
+  }
+
+  &__btn--mobile {
+    padding: 9px 6px;
+    font-size: 10px;
+  }
+
+  &__btn--desktop {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  // 激活态：凹陷感（内嵌阴影）
+  &__btn--active {
+    font-weight: 700;
+    box-shadow: var(--nm-concave-sm);
+  }
+
+  // 非激活态：轻微凸起
+  &__btn--inactive {
+    font-weight: 400;
+    opacity: 0.6;
+    box-shadow: var(--nm-convex-sm);
+
+    &:hover {
+      opacity: 0.85;
+      box-shadow: var(--nm-convex);
+    }
+
+    &:active {
+      box-shadow: var(--nm-concave-sm);
+      opacity: 1;
+    }
+  }
+}

@@ -1,0 +1,237 @@
+// ─── 新拟物风（Neumorphism）全局样式 ────────────────────────────────────────
+// 亮色：底色 #dde1e7，双侧阴影（暗 #b8bec7 / 亮 #ffffff）
+// 暗色：底色 #1a1d2e，双侧阴影（暗 #12141f / 亮 #28304a）
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── 应用根容器 ──────────────────────────────────────────────────────────────
+
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+// app-topbar 样式已移至 components/AppHeader.less
+
+// ─── 主内容区（顶部栏下方）────────────────────────────────────────────────────
+
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+
+  &--mobile {
+    flex-direction: column;
+  }
+
+  &--desktop {
+    flex-direction: row;
+  }
+}
+
+// slide-toggle 样式已移至 components/AppHeader.less
+
+// ─── 新拟物风混入（亮色 / 暗色通过 CSS 变量切换）────────────────────────────
+
+// 新拟物风 CSS 变量：--nm-shadow-dark / --nm-shadow-light 由 JS 内联 style 注入
+// 这里只定义依赖这两个变量的复合阴影变量，不写死颜色值
+.app-root--desktop,
+.app-root--mobile {
+  --nm-convex:     5px 5px 10px var(--nm-shadow-dark), -5px -5px 10px var(--nm-shadow-light);
+  --nm-convex-sm:  3px 3px 6px var(--nm-shadow-dark), -3px -3px 6px var(--nm-shadow-light);
+  --nm-concave:    inset 4px 4px 8px var(--nm-shadow-dark), inset -4px -4px 8px var(--nm-shadow-light);
+  --nm-concave-sm: inset 2px 2px 5px var(--nm-shadow-dark), inset -2px -2px 5px var(--nm-shadow-light);
+}
+
+// mobile-header、slide-toggle、setting-toggle-btn 样式已移至 components/AppHeader.less
+
+// ─── PC 端右侧面板 ────────────────────────────────────────────────────────────
+
+.side-panel {
+  width: 300px;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  // 背景由 JS 注入，左侧用内嵌阴影模拟分隔
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.08);
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.2);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(128, 128, 128, 0.4);
+    }
+  }
+
+  // 常驻属性区：固定在面板底部，有选中元素时展示
+  &__props {
+    flex-shrink: 0;
+    max-height: 55%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.2);
+      border-radius: 4px;
+    }
+  }
+}
+
+// ─── 移动端底部抽屉 ───────────────────────────────────────────────────────────
+
+.mobile-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  box-shadow: -4px -4px 16px var(--nm-shadow-dark), 4px -4px 16px var(--nm-shadow-light);
+  transition: none;
+
+  &__handle-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    cursor: row-resize;
+    touch-action: none;
+  }
+
+  &__handle-pill {
+    width: 36px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(128, 128, 128, 0.25);
+    box-shadow: var(--nm-concave-sm);
+    transition: all 0.2s ease;
+
+    .mobile-drawer__handle-bar:hover & {
+      width: 50px;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.2);
+      border-radius: 3px;
+    }
+  }
+
+  // 常驻属性区（移动端：固定在抽屉底部）
+  &__props {
+    flex-shrink: 0;
+    max-height: 45%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.2);
+      border-radius: 3px;
+    }
+  }
+}
+
+// canvas-area、canvas-empty-state、canvas-nm-wrap 样式已移至 components/CanvasArea.less
+
+// ─── 导出按钮（新拟物凸起 + 渐变色）────────────────────────────────────────
+
+.export-btn {
+  border: none !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  letter-spacing: 0.3px !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  &--desktop {
+    padding: 8px 22px !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    box-shadow:
+      4px 4px 10px rgba(99, 102, 241, 0.4),
+      -2px -2px 6px rgba(255, 255, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+
+    &:hover {
+      transform: translateY(-2px) !important;
+      box-shadow:
+        6px 8px 16px rgba(99, 102, 241, 0.5),
+        -2px -2px 8px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    }
+
+    &:active {
+      transform: translateY(0) !important;
+      box-shadow:
+        inset 3px 3px 8px rgba(80, 60, 180, 0.4),
+        inset -2px -2px 6px rgba(180, 160, 255, 0.2) !important;
+    }
+  }
+
+  &--mobile {
+    padding: 7px 16px !important;
+    border-radius: 12px !important;
+    font-size: 13px !important;
+    box-shadow: 3px 3px 8px rgba(99, 102, 241, 0.35), -1px -1px 4px rgba(255,255,255,0.1) !important;
+  }
+
+  &--active {
+    background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%) !important;
+  }
+
+  &--loading {
+    background: rgba(128, 128, 128, 0.3) !important;
+    box-shadow: var(--nm-concave-sm) !important;
+    cursor: not-allowed !important;
+    color: rgba(255,255,255,0.5) !important;
+  }
+}
+
+// mobile-bg-picker 样式已移至 components/AppHeader.less

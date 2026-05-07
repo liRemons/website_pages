@@ -20,12 +20,11 @@
     "title": "解析二维码"
   },
   {
-
     "pageName": "scanqr",
 
     "title": "扫描二维码"
-
-  },{
+  },
+  {
     "pageName": "my",
     "title": "我"
   },
@@ -38,7 +37,7 @@
     "title": "时间计算"
   },
   {
-    "pageName": "imgWatermark", 
+    "pageName": "imgWatermark",
     "title": "图片水印"
   },
   {
@@ -68,5 +67,13 @@
   {
     "pageName": "productManage",
     "title": "订单管理"
+  },
+  {
+    "pageName": "travelBadge",
+    "title": "旅行勋章"
+  },
+  {
+    "pageName": "tableConfig",
+    "title": "配置化表单"
   }
 ]

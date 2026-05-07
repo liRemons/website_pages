@@ -1,0 +1,134 @@
+// ─── 全局顶部栏 ───────────────────────────────────────────────────────────────
+
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 44px;
+  flex-shrink: 0;
+  z-index: 100;
+  box-shadow: var(--nm-convex-sm);
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+// ─── 右侧滑出切换组件（主题/语言）────────────────────────────────────────────
+
+.slide-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--nm-convex-sm);
+  background: var(--slide-toggle-bg);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &__options {
+    display: flex;
+    align-items: center;
+    max-width: 0;
+    overflow: hidden;
+    transition: max-width 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  &:hover &__options {
+    max-width: 120px;
+    opacity: 1;
+  }
+
+  &__option-btn,
+  &__current-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__current-btn {
+    cursor: default;
+  }
+}
+
+// ─── 移动端顶部标题栏 ─────────────────────────────────────────────────────────
+
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  flex-shrink: 0;
+
+  &__title {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &__bg-btn {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    border: none !important;
+    box-shadow: var(--nm-convex-sm) !important;
+    transition: all 0.2s !important;
+
+    &:active {
+      box-shadow: var(--nm-concave-sm) !important;
+    }
+  }
+}
+
+// ─── 移动端背景色选择器 ───────────────────────────────────────────────────────
+
+.mobile-bg-picker {
+  width: 36px;
+  height: 36px;
+}

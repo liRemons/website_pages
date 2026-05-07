@@ -1,0 +1,377 @@
+// ─── 属性面板容器（新拟物风）────────────────────────────────────────────────
+
+.props-panel {
+  &__empty {
+    padding: 52px 20px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    &-icon {
+      font-size: 32px;
+      color: #b0b8c8;
+      margin-bottom: 8px;
+      line-height: 1;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+    }
+  }
+
+  &__empty-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #8892a4;
+  }
+
+  &__empty-sub {
+    font-size: 12px;
+    opacity: 0.5;
+  }
+}
+
+// ─── 编辑区整体容器 ───────────────────────────────────────────────────────────
+
+.text-props-editor {
+  padding: 12px 12px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ─── 属性分组卡片（新拟物凹陷容器）──────────────────────────────────────────
+
+.prop-group {
+  border-radius: 14px;
+  border: none;
+  overflow: hidden;
+  box-shadow: var(--nm-convex-sm);
+
+  &__title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 12px 5px;
+    opacity: 0.4;
+  }
+
+  &__body {
+    padding: 2px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__field {
+    // 单个全宽控件
+  }
+
+  &__sublabel {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    opacity: 0.55;
+  }
+
+  &__two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+// ─── 单行属性行 ───────────────────────────────────────────────────────────────
+
+.prop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+
+  &__label {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__value {
+    font-size: 11px;
+    opacity: 0.4;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ─── Slider 行 ────────────────────────────────────────────────────────────────
+
+.prop-slider-row {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  &__value {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.45;
+    font-variant-numeric: tabular-nums;
+    min-width: 30px;
+    text-align: right;
+  }
+}
+
+// Slider 新拟物风（Ant Design v5 兼容）
+.prop-slider {
+  margin: 0 !important;
+
+  // 轨道：凹陷感
+  .ant-slider-rail {
+    height: 4px !important;
+    border-radius: 4px !important;
+    box-shadow: inset 1px 1px 3px var(--nm-shadow-dark), inset -1px -1px 2px var(--nm-shadow-light) !important;
+    background: transparent !important;
+  }
+
+  .ant-slider-track,
+  .ant-slider-tracks > * {
+    height: 4px !important;
+    border-radius: 4px !important;
+    background: #007AFF !important;
+    box-shadow: 1px 1px 3px rgba(0,122,255,0.4) !important;
+  }
+
+  // 滑块：新拟物小凸起圆点
+  .ant-slider-handle {
+    width: 16px !important;
+    height: 16px !important;
+    inset-block-start: 50% !important;
+    transform: translateY(-50%) !important;
+
+    &::after {
+      width: 14px !important;
+      height: 14px !important;
+      inset-block-start: 1px !important;
+      inset-inline-start: 1px !important;
+      border-radius: 50% !important;
+      background: linear-gradient(145deg, #f0f4ff, #d8dde8) !important;
+      box-shadow:
+        3px 3px 6px var(--nm-shadow-dark),
+        -2px -2px 5px var(--nm-shadow-light),
+        0 0 0 2px #007AFF !important;
+
+      .app-root--dark & {
+        background: linear-gradient(145deg, #2e3350, #1e2235) !important;
+      }
+    }
+
+    &:hover::after,
+    &:focus::after {
+      box-shadow:
+        3px 3px 8px var(--nm-shadow-dark),
+        -2px -2px 6px var(--nm-shadow-light),
+        0 0 0 2px #007AFF,
+        0 0 8px rgba(0,122,255,0.4) !important;
+    }
+  }
+}
+
+// ─── 文字属性专属控件 ─────────────────────────────────────────────────────────
+
+.text-props {
+  &__textarea {
+    font-size: 13px;
+    border-radius: 10px !important;
+    border: none !important;
+    box-shadow: var(--nm-concave-sm) !important;
+    background: transparent !important;
+    resize: none !important;
+    transition: box-shadow 0.2s !important;
+
+    &:focus {
+      box-shadow: var(--nm-concave), 0 0 0 2px rgba(0, 122, 255, 0.25) !important;
+    }
+  }
+
+  &__input-number {
+    width: 100% !important;
+    border-radius: 10px !important;
+    border: none !important;
+    box-shadow: var(--nm-concave-sm) !important;
+    background: transparent !important;
+
+    .ant-input-number-input {
+      background: transparent !important;
+    }
+  }
+}
+
+// ─── 翻转按钮组（新拟物风）──────────────────────────────────────────────────
+
+.flip-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.flip-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  background: transparent;
+  box-shadow: var(--nm-convex-sm);
+  transition: box-shadow 0.18s ease, color 0.18s ease, font-weight 0.18s ease;
+
+  &--active {
+    font-weight: 700;
+    box-shadow: var(--nm-concave-sm);
+  }
+
+  @media (hover: hover) {
+    &:not(&--active):hover {
+      box-shadow: var(--nm-convex);
+    }
+  }
+
+  &:active {
+    box-shadow: var(--nm-concave-sm);
+  }
+}
+
+// ─── 图片适应（object-fit）选择器（新拟物风）────────────────────────────────
+
+.object-fit-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.object-fit-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 4px;
+  border-radius: 10px;
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.6;
+  background: transparent;
+  // 默认：凸起感（未选中）
+  box-shadow: var(--nm-convex-sm);
+  transition: box-shadow 0.18s ease, color 0.18s ease, font-weight 0.18s ease;
+
+  &--active {
+    font-weight: 700;
+    // 选中：凹陷感
+    box-shadow: var(--nm-concave-sm);
+  }
+
+  @media (hover: hover) {
+    &:not(&--active):hover {
+      box-shadow: var(--nm-convex);
+    }
+  }
+
+  &:active {
+    box-shadow: var(--nm-concave-sm);
+  }
+}
+
+
+// ─── 保存为字体模板区域 ───────────────────────────────────────────────────────
+
+.font-template-save-area {
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: var(--nm-convex-sm);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  &__title {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    box-shadow: var(--nm-convex-sm);
+    transition: all 0.18s ease;
+
+    &--active {
+      box-shadow: var(--nm-concave-sm);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
+
+    .ant-input {
+      flex: 1;
+    }
+  }
+
+  &__save-btn {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    box-shadow: var(--nm-convex-sm);
+    transition: all 0.18s ease;
+    white-space: nowrap;
+
+    &:hover {
+      box-shadow: var(--nm-convex);
+    }
+
+    &:active {
+      box-shadow: var(--nm-concave-sm);
+    }
+  }
+
+  &__count {
+    font-size: 11px;
+    margin-top: 6px;
+    opacity: 0.55;
+  }
+}

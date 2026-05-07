@@ -1,0 +1,451 @@
+// ─── 模板面板（新拟物风）────────────────────────────────────────────────────
+
+.template-panel {
+  padding: 20px 14px 28px;
+
+  // ── 分段切换器 ──────────────────────────────────────────────────────────────
+  &__segmented {
+    display: flex;
+    gap: 6px;
+    padding: 10px 0 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  &__seg-btn {
+    flex: 1;
+    padding: 6px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.2px;
+
+    &--active {
+      font-weight: 700;
+    }
+
+    @media (hover: hover) {
+      &:not(&--active):hover {
+        opacity: 0.75;
+      }
+    }
+  }
+
+  &__manager {
+    margin-bottom: 20px;
+  }
+
+  &__manager-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  // 保存当前按钮（新拟物风小凸起）
+  &__save-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    box-shadow: var(--nm-convex-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.1px;
+
+    &:hover {
+      box-shadow: var(--nm-convex);
+      transform: translateY(-1px);
+    }
+
+    &:active,
+    &--active {
+      box-shadow: var(--nm-concave-sm);
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: var(--nm-concave-sm);
+    }
+  }
+
+  &__manager-title {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.1px;
+  }
+
+  &__save-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  &__save-input {
+    flex: 1;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    outline: none;
+    border: none;
+    box-shadow: var(--nm-concave-sm);
+    background: transparent;
+    transition: box-shadow 0.2s;
+
+    &:focus {
+      box-shadow: var(--nm-concave), 0 0 0 2px rgba(0, 122, 255, 0.25);
+    }
+  }
+
+  &__hint {
+    font-size: 11px;
+    margin-top: 8px;
+    opacity: 0.4;
+    letter-spacing: 0.1px;
+  }
+
+  &__section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.35;
+    padding-left: 2px;
+  }
+
+  // 系统模板区头部（标题 + 搜索框）
+  &__system-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .template-panel__section-title {
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+  }
+
+  // 搜索框容器
+  &__search-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 10px;
+    border: 1px solid;
+    box-shadow: var(--nm-concave-sm);
+    min-width: 0;
+  }
+
+  // 搜索输入框
+  &__search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 11px;
+    min-width: 0;
+    line-height: 1.4;
+
+    &::placeholder {
+      opacity: 0.35;
+    }
+  }
+
+  // 清空按钮
+  &__search-clear {
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0.45;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  // 无结果提示（跨满两列）
+  &__search-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 24px 0;
+    font-size: 12px;
+    opacity: 0.4;
+  }
+
+  // 管理员操作栏（新增 + 重置）
+  &__admin-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__admin-add-btn {
+    flex: 1;
+  }
+
+  &__admin-reset-btn {
+    flex-shrink: 0;
+  }
+
+  // 2列网格
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+}
+
+// ─── 模板卡片（新拟物风：凸起卡片，选中凹陷）────────────────────────────────
+
+.template-card {
+  border-radius: 16px;
+  border: none;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 非激活：凸起
+  &--inactive {
+    opacity: 0.85;
+    box-shadow: var(--nm-convex-sm);
+
+    &:hover {
+      opacity: 1;
+      box-shadow: var(--nm-convex);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      box-shadow: var(--nm-concave-sm);
+      transform: translateY(0);
+    }
+  }
+
+  // 激活：凹陷 + 主色光晕
+  &--active {
+    opacity: 1;
+    box-shadow: var(--nm-concave), 0 0 0 2px #007AFF;
+
+    .app-root--dark & {
+      box-shadow: var(--nm-concave), 0 0 0 2px #4f9eff;
+    }
+  }
+
+  // 顶部预览色条
+  &__color-bar {
+    position: relative;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  // 画布缩略图模拟（新拟物小凸起）
+  &__canvas-mock {
+    width: 50px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.25), -2px -2px 5px rgba(255,255,255,0.15);
+    transition: transform 0.2s ease;
+
+    &--active {
+      transform: scale(1.06);
+    }
+  }
+
+  // 选中勾选徽章
+  &__check-badge {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #007AFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 5px rgba(0,122,255,0.5), -1px -1px 3px rgba(255,255,255,0.2);
+    animation: check-badge-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    @keyframes check-badge-pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+  }
+
+  // 自定义徽章
+  &__custom-badge {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 2px 2px 5px rgba(124,58,237,0.4);
+  }
+
+  // 底部文字区
+  &__body {
+    padding: 8px 10px 11px;
+  }
+
+  &__name {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__desc {
+    font-size: 10px;
+    margin-top: 2px;
+    opacity: 0.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+
+  &__dot-count {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #007AFF;
+    flex-shrink: 0;
+    box-shadow: 1px 1px 3px rgba(0,122,255,0.4);
+  }
+
+  &__created-at {
+    font-size: 10px;
+    opacity: 0.4;
+  }
+
+  // 操作区（hover 时出现，位于卡片底部 body 下方，不与 color-bar 重叠）
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 0 8px 8px;
+    opacity: 0;
+    transition: opacity 0.18s;
+    pointer-events: none;
+  }
+
+  &:hover &__actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &__action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    background: transparent;
+    box-shadow: var(--nm-convex-sm);
+    transition: all 0.18s;
+
+    &:hover {
+      box-shadow: var(--nm-convex);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      box-shadow: var(--nm-concave-sm);
+      transform: translateY(0);
+    }
+
+    &--danger:hover {
+      color: #ff4d4f !important;
+    }
+
+    // 🔄 用画布覆盖按钮（蓝色系）
+    &--sync:hover {
+      color: #007AFF !important;
+    }
+  }
+}
+
+// ─── 内联编辑表单 ─────────────────────────────────────────────────────────────
+
+.template-panel {
+  &__card-edit-wrap {
+    grid-column: 1 / -1;
+  }
+
+  &__inline-form {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid;
+    box-shadow: var(--nm-concave-sm);
+
+    .template-panel__save-input {
+      width: 100%;
+      display: block;
+    }
+  }
+
+  &__inline-form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  &__add-hint {
+    font-size: 10px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+    letter-spacing: 0.2px;
+  }
+}
+

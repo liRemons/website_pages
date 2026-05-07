@@ -1,0 +1,134 @@
+// ─── 可拖拽元素 ───────────────────────────────────────────────────────────────
+
+.draggable-element {
+  position: absolute;
+  cursor: move;
+  user-select: none;
+  box-sizing: border-box;
+  transition: filter 0.15s ease;
+  // outline 和 zIndex 由 JS 动态控制，不在此定义
+
+  // hover 效果仅在非触摸设备上生效，避免移动端点击后 hover 状态残留
+  @media (hover: hover) {
+    &:hover {
+      filter: brightness(1.02);
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  &__text {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    text-align: center;
+    padding: 4px;
+  }
+}
+
+// ─── 内联编辑 textarea ────────────────────────────────────────────────────────
+
+.draggable-element__editor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 2px dashed rgba(79, 158, 255, 0.8);
+  border-radius: 4px;
+  padding: 4px 8px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  cursor: text;
+  text-align: center;
+  word-break: break-word;
+  // textarea 不支持 flex，用 overflow 隐藏滚动条保持整洁
+  overflow: hidden;
+  animation: editor-appear 0.15s ease;
+
+  @keyframes editor-appear {
+    from {
+      opacity: 0;
+      border-color: transparent;
+    }
+    to {
+      opacity: 1;
+      border-color: rgba(79, 158, 255, 0.8);
+    }
+  }
+}
+
+// ─── 文字组件删除按钮（右上角）────────────────────────────────────────────────
+
+.draggable-element__delete-btn {
+  position: absolute;
+  top: -11px;
+  right: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.45);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: delete-btn-appear 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  @keyframes delete-btn-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  &:hover {
+    background: #d9363e;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ─── Resize 手柄 ──────────────────────────────────────────────────────────────
+
+.resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #4f9eff;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(79, 158, 255, 0.4);
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.3);
+  }
+}
