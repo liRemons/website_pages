@@ -30,7 +30,7 @@ export default function ListPage() {
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
     { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
     { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' },
-    { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge' }
+    { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge' },
     { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig' }
   ];
 
