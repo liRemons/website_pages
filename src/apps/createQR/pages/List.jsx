@@ -9,11 +9,12 @@ import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
 import Pako from 'pako';
-import { gzip } from '@utils';
+import { gzip, base91 } from '@utils';
 
 let intTimer;
 
 export default function List() {
+ 
   const [loadingText, setLoadingText] = useState('');
   const [loading, setLoading] = useState(false);
   const [visible, setVisble] = useState(false);
@@ -156,7 +157,15 @@ export default function List() {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
       fileReader.onloadend = (el) => {
-        makeCode(`===?filename=${name}&type=${type}===${btoa(Pako.gzip(el.target.result, { to: 'string' }))}`, 'noZip')
+        const bytes = new Uint8Array(el.target.result);
+        // 两种方案都算，选小的：
+        // gzip+base64 对可压缩文件有效；base91 对已压缩二进制（jpg/png/pdf）有效
+        const gzStr = btoa(Pako.gzip(el.target.result, { to: 'string' }));
+        const b91Str = base91.encode(bytes);
+        const useBase91 = b91Str.length <= gzStr.length;
+        const encoded = useBase91 ? b91Str : gzStr;
+        const enc = useBase91 ? 'b91' : 'gz';
+        makeCode(`===?filename=${name}&type=${type}&enc=${enc}===${encoded}`, 'noZip');
       }
     }
   }
