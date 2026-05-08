@@ -18,7 +18,7 @@ import transcoderSvg from './assets/svg/transcoder.svg';
 import travelbadgeSvg from './assets/svg/travelbadge.svg';
 import tableconfigSvg from './assets/svg/tableconfig.svg';
 import postmarkGeneratorSvg from './assets/svg/postmarkgenerator.svg';
-import simplesketchesSvg from './assets/svg/simplesketchesSvg.svg';
+import simplesketchesSvg from './assets/svg/simplesketches.svg';
 import { img } from '@utils'
 
 export default function ListPage() {
