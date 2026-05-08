@@ -1,5 +1,5 @@
 const en = {
-  'app.title': 'Image Editor',
+  'app.title': 'Travel Badge',
   'theme.dark': 'Dark Mode',
   'theme.light': 'Light Mode',
   'theme.system': 'System',

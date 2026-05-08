@@ -75,5 +75,13 @@
   {
     "pageName": "tableConfig",
     "title": "表单引擎"
+  },
+  {
+    "pageName": "simpleSketches",
+    "title": "简笔画生成器"
+  },
+  {
+    "pageName": "postmarkGenerator",
+    "title": "邮戳生成器"
   }
 ]

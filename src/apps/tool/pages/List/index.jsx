@@ -17,6 +17,8 @@ import expressSvg from './assets/svg/express.svg';
 import transcoderSvg from './assets/svg/transcoder.svg';
 import travelbadgeSvg from './assets/svg/travelbadge.svg';
 import tableconfigSvg from './assets/svg/tableconfig.svg';
+import postmarkGeneratorSvg from './assets/svg/postmarkgenerator.svg';
+import simplesketchesSvg from './assets/svg/simplesketchesSvg.svg';
 import { img } from '@utils'
 
 export default function ListPage() {
@@ -31,7 +33,9 @@ export default function ListPage() {
     { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
     { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' },
     { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge' },
-    { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig' }
+    { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig' },
+    { title: '邮戳生成器', icon: img(postmarkGeneratorSvg), url: '/postmarkGenerator' },
+    { title: '简笔画生成器', icon: img(simplesketchesSvg), url: '/simpleSketches' }
   ];
 
   const openPage = ({ url, params }) => {

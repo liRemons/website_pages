@@ -1,5 +1,5 @@
 const zhTW = {
-  'app.title': '圖片編輯器',
+  'app.title': '旅行勳章',
   'theme.dark': '暗黑模式',
   'theme.light': '淺色模式',
   'theme.system': '跟隨系統',

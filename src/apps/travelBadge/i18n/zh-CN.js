@@ -1,5 +1,5 @@
 const zhCN = {
-  'app.title': '图片编辑器',
+  'app.title': '旅行勋章',
   'theme.dark': '暗黑模式',
   'theme.light': '浅色模式',
   'theme.system': '跟随系统',
