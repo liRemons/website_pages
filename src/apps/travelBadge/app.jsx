@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './index.less';
 import { Button, ConfigProvider } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
 import zhCN from 'antd/locale/zh_CN';
 import { FRAME_TEMPLATES } from './utils/constants';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -52,7 +53,7 @@ const App = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [canvasBackground, setCanvasBackground] = useState('#ffffff');
   const [canvasRatio, setCanvasRatio] = useState(4 / 3);
-  const [drawerHeight, setDrawerHeight] = useState(280);
+  const [drawerHeight, setDrawerHeight] = useState(window.innerHeight / 2);
   const [guideLines, setGuideLines] = useState([]);
 
   const currentFrame = systemTemplates.find((f) => f.id === activeFrame);
@@ -336,6 +337,8 @@ const App = () => {
             onCanvasBackgroundChange={setCanvasBackground}
             isExporting={isExporting}
             onExport={handleExport}
+            isAdmin={isAdmin}
+            onToggleAdmin={setIsAdmin}
           />
         )}
 
@@ -422,37 +425,58 @@ const App = () => {
             >
               <div className="mobile-drawer__handle-pill" />
             </div>
-            {/* Tab 栏 */}
-            <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={true} theme={theme} />
-            {/* Tab 内容区 */}
-            <div className="mobile-drawer__content">
-              {renderPanelContent()}
-            </div>
-            {/* 常驻属性区（选中元素时展示） */}
-            {selectedElement && (
-              <div
-                className="mobile-drawer__props"
-                style={{ borderTop: `1px solid ${theme.border}` }}
-              >
-                <PropsPanel
-                  selectedElement={selectedElement}
-                  onUpdate={updateElement}
-                  onDelete={deleteElement}
-                  onZIndexChange={changeZIndex}
-                  theme={theme}
-                  fontTemplateProps={{
-                    customFontTemplates,
-                    saveFontTemplateName,
-                    setSaveFontTemplateName,
-                    showFontSaveInput,
-                    setShowFontSaveInput,
-                    saveCurrentAsFontTemplate,
-                    updateFontTemplate,
-                    editingFontTemplate,
-                    setEditingFontTemplate,
-                  }}
-                />
-              </div>
+
+            {/* 选中元素时：抽屉整体切换为属性视图 */}
+            {selectedElement ? (
+              <>
+                {/* 属性视图顶栏：返回按钮 + 标题 */}
+                <div
+                  className="mobile-drawer__props-header"
+                  style={{ borderBottom: `1px solid ${theme.border}` }}
+                >
+                  <button
+                    type="button"
+                    className="mobile-drawer__props-back-btn"
+                    style={{ color: theme.accent }}
+                    onClick={() => setSelectedId(null)}
+                  >
+                    <LeftOutlined /> 返回
+                  </button>
+                  <span className="mobile-drawer__props-title" style={{ color: theme.textPrimary }}>
+                    {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
+                  </span>
+                  <div style={{ width: 52 }} />
+                </div>
+                {/* 属性内容区（可滚动，充分利用整个抽屉高度） */}
+                <div className="mobile-drawer__content">
+                  <PropsPanel
+                    selectedElement={selectedElement}
+                    onUpdate={updateElement}
+                    onDelete={deleteElement}
+                    onZIndexChange={changeZIndex}
+                    theme={theme}
+                    fontTemplateProps={{
+                      customFontTemplates,
+                      saveFontTemplateName,
+                      setSaveFontTemplateName,
+                      showFontSaveInput,
+                      setShowFontSaveInput,
+                      saveCurrentAsFontTemplate,
+                      updateFontTemplate,
+                      editingFontTemplate,
+                      setEditingFontTemplate,
+                    }}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 未选中时：正常 Tab 视图 */}
+                <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={true} theme={theme} />
+                <div className="mobile-drawer__content">
+                  {renderPanelContent()}
+                </div>
+              </>
             )}
           </div>
         )}

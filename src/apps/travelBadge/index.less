@@ -130,7 +130,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 30px;
+    height: 24px;
     cursor: row-resize;
     touch-action: none;
   }
@@ -161,20 +161,50 @@ body {
       border-radius: 3px;
     }
   }
+}
 
-  // 常驻属性区（移动端：固定在抽屉底部）
-  &__props {
+// ─── 移动端抽屉：属性视图顶栏 ────────────────────────────────────────────────
+
+.mobile-drawer {
+  &__props-header {
     flex-shrink: 0;
-    max-height: 45%;
-    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 8px 12px;
+    min-height: 44px;
+  }
 
-    &::-webkit-scrollbar {
-      width: 3px;
+  &__props-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s;
+    letter-spacing: 0.2px;
+    min-width: 52px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
     }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(128, 128, 128, 0.2);
-      border-radius: 3px;
+
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
     }
+  }
+
+  &__props-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    flex: 1;
+    text-align: center;
   }
 }
 

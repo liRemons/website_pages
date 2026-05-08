@@ -77,13 +77,13 @@ export const LocaleToggle = ({ theme }) => {
 
 // ─── 移动端顶部标题栏 ────────────────────────────────────────────────────────
 
-export const MobileHeader = ({ theme, themeMode, onThemeModeChange, canvasBackground, onCanvasBackgroundChange, isExporting, onExport }) => {
+export const MobileHeader = ({ theme, themeMode, onThemeModeChange, canvasBackground, onCanvasBackgroundChange, isExporting, onExport, isAdmin, onToggleAdmin }) => {
   const { t } = useLocale();
 
   const settingsDropdown = (
     <div
       className="mobile-settings-panel"
-      style={{ background: theme.bgSecondary, border: `1px solid ${theme.border}`, borderRadius: 12, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12, minWidth: 160 }}
+      style={{ background: theme.bgSecondary, border: `1px solid ${theme.border}`, borderRadius: 12, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12, minWidth: 180 }}
     >
       <div className="mobile-settings-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <span style={{ fontSize: 13, color: theme.textSecondary }}>{'主题'}</span>
@@ -92,6 +92,30 @@ export const MobileHeader = ({ theme, themeMode, onThemeModeChange, canvasBackgr
       <div className="mobile-settings-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <span style={{ fontSize: 13, color: theme.textSecondary }}>{'语言'}</span>
         <LocaleToggle theme={theme} />
+      </div>
+      <div
+        className="mobile-settings-row"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingTop: 8, borderTop: `1px solid ${theme.border}` }}
+      >
+        <span style={{ fontSize: 13, color: theme.textSecondary }}>{t('admin.switchAdmin')}</span>
+        <button
+          type="button"
+          onClick={() => onToggleAdmin && onToggleAdmin(!isAdmin)}
+          style={{
+            padding: '4px 10px',
+            borderRadius: 8,
+            border: `1px solid ${isAdmin ? '#f59e0b' : theme.border}`,
+            background: isAdmin ? 'rgba(245,158,11,0.12)' : 'transparent',
+            color: isAdmin ? '#f59e0b' : theme.textMuted,
+            fontSize: 11,
+            fontWeight: 700,
+            cursor: 'pointer',
+            letterSpacing: 0.3,
+            transition: 'all 0.2s',
+          }}
+        >
+          {isAdmin ? `👑 ${t('admin.adminMode')}` : t('admin.enterAdmin')}
+        </button>
       </div>
     </div>
   );
