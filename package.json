@@ -64,6 +64,7 @@
     "classnames": "^2.3.1",
     "compression": "^1.7.4",
     "crypto-js": "^4.1.1",
+    "dayjs": "^1.11.20",
     "jsqr": "^1.4.0",
     "lodash.orderby": "^4.6.0",
     "lodash.sortby": "^4.7.0",
