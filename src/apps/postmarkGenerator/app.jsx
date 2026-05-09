@@ -6,7 +6,7 @@ import {
   Select,
   DatePicker,
   ColorPicker,
-  Segmented,
+  Switch,
   Row,
   Col,
   Card,
@@ -16,11 +16,53 @@ import {
 import {
   DownloadOutlined,
   FontSizeOutlined,
+  CheckCircleFilled,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { BUILTIN_FONTS, STAMP_STYLES } from './constants';
 import { degToRad, drawStampToCanvas } from './canvas/drawers';
+import Fixed from '@components/Fixed';
 import './app.css';
+
+/** 样式预览缩略图组件：独立渲染一个小 canvas 作为预览 */
+function StampStyleCard({ style, selected, color, location, date, subtitle, locationFont, locationFontSize, dateFontFamily, dateFontSize, onClick }) {
+  const previewCanvasRef = useRef(null);
+  const previewSize = 80;
+
+  useEffect(() => {
+    const canvas = previewCanvasRef.current;
+    if (!canvas) return;
+    drawStampToCanvas(canvas, {
+      location,
+      date,
+      subtitle,
+      color,
+      stampSize: previewSize,
+      locationFont,
+      locationFontSize: Math.max(6, Math.round(locationFontSize * 0.5)),
+      dateFontFamily,
+      dateFontSize: Math.max(5, Math.round(dateFontSize * 0.5)),
+      rotation: 0,
+      stampStyle: style.value,
+    });
+  }, [style.value, color, location, date, subtitle, locationFont, locationFontSize, dateFontFamily, dateFontSize]);
+
+  return (
+    <div
+      className={`stamp-style-card ${selected ? 'stamp-style-card--selected' : ''}`}
+      onClick={onClick}
+    >
+      <div className="stamp-style-card-preview">
+        <canvas ref={previewCanvasRef} width={previewSize} height={previewSize} />
+      </div>
+      <div className="stamp-style-card-info">
+        <span className="stamp-style-card-label">{style.label}</span>
+        <span className="stamp-style-card-desc">{style.desc}</span>
+      </div>
+      {selected && <CheckCircleFilled className="stamp-style-card-check" />}
+    </div>
+  );
+}
 
 export default function PostmarkGenerator() {
   const canvasRef = useRef(null);
@@ -28,6 +70,7 @@ export default function PostmarkGenerator() {
 
   // 邮戳内容
   const [location, setLocation] = useState('黄山');
+  const [subtitle, setSubtitle] = useState('');
   const [dateObj, setDateObj] = useState(dayjs());
   const [color, setColor] = useState('#C0392B');
 
@@ -45,6 +88,9 @@ export default function PostmarkGenerator() {
   // 旋转角度（度），-90 ~ 90
   const [rotationDeg, setRotationDeg] = useState(0);
 
+  // 做旧效果
+  const [wornEffect, setWornEffect] = useState(true);
+
   // 邮戳样式
   const [stampStyle, setStampStyle] = useState('classic');
 
@@ -56,6 +102,7 @@ export default function PostmarkGenerator() {
     if (!canvas) return;
     drawStampToCanvas(canvas, {
       location,
+      subtitle,
       date: dateStr,
       color,
       stampSize,
@@ -65,8 +112,9 @@ export default function PostmarkGenerator() {
       dateFontSize,
       rotation: degToRad(rotationDeg),
       stampStyle,
+      wornEffect,
     });
-  }, [location, dateStr, color, stampSize, locationFont, locationFontSize, dateFontFamily, dateFontSize, rotationDeg, stampStyle]);
+  }, [location, subtitle, dateStr, color, stampSize, locationFont, locationFontSize, dateFontFamily, dateFontSize, rotationDeg, stampStyle, wornEffect]);
 
   useEffect(() => {
     redrawStamp();
@@ -166,6 +214,18 @@ export default function PostmarkGenerator() {
                 </Col>
               </Row>
 
+              {stampStyle === 'postal' && (
+                <div className="field-item">
+                  <label className="field-label">单位名称 <span style={{ color: '#999', fontWeight: 400 }}>（下弧副标题，仅邮政日戳）</span></label>
+                  <Input
+                    value={subtitle}
+                    onChange={(e) => setSubtitle(e.target.value)}
+                    placeholder="输入单位名称，如：中央广播电视总台"
+                    maxLength={20}
+                  />
+                </div>
+              )}
+
               <div className="field-item">
                 <label className="field-label">邮戳颜色</label>
                 <ColorPicker
@@ -258,13 +318,24 @@ export default function PostmarkGenerator() {
             {/* ── 邮戳样式切换 ── */}
             <div className="config-section">
               <div className="config-section-title">邮戳样式</div>
-              <Segmented
-                block
-                value={stampStyle}
-                onChange={setStampStyle}
-                options={STAMP_STYLES}
-                className="style-segmented"
-              />
+              <div className="stamp-style-grid">
+                {STAMP_STYLES.map((style) => (
+                  <StampStyleCard
+                    key={style.value}
+                    style={style}
+                    selected={stampStyle === style.value}
+                    color={color}
+                    location={location}
+                    date={dateStr}
+                    subtitle={subtitle}
+                    locationFont={locationFont}
+                    locationFontSize={locationFontSize}
+                    dateFontFamily={dateFontFamily}
+                    dateFontSize={dateFontSize}
+                    onClick={() => setStampStyle(style.value)}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* ── 邮戳大小 & 角度 ── */}
@@ -303,11 +374,17 @@ export default function PostmarkGenerator() {
                   </div>
                 </Col>
               </Row>
+
+              <div className="field-item" style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+                <span className="field-label" style={{ margin: 0 }}>做旧效果</span>
+                <Switch checked={wornEffect} onChange={setWornEffect} />
+              </div>
             </div>
 
           </Card>
         </div>
       </div>
+      <Fixed homeUrl="/tool" />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import style from './index.module.less';
-import '@assets/css/index.global.less';
+// import '@assets/css/index.global.less';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import { img } from '@utils';
 import homeSvg from './assets/svg/home.svg';
 import shareSvg from './assets/svg/share.svg';
 
-export default function Fixed() {
+export default function Fixed({ homeUrl = '/homeList', }) {
   const [visible, setVisible] = useState(false);
   const share = () => {
     const params = {
@@ -26,7 +26,7 @@ export default function Fixed() {
   };
 
   const btns = [
-    { icon: img(homeSvg, 20), path: '/homeList', title: '首页', isShow: getSearchParams('handleType') !== 'share' },
+    { icon: img(homeSvg, 20), path: homeUrl, title: '首页', isShow: getSearchParams('handleType') !== 'share' },
     { icon: img(shareSvg, 20), path: '', title: '分享', handle: share },
   ].filter(item => item.isShow !== false);
 

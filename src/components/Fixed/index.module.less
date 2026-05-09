@@ -1,4 +1,6 @@
 .container {
+  @import url('@assets/css/index.global.less');
+  
   position: fixed;
   bottom: 10px;
   right: 0;
@@ -10,6 +12,7 @@
   text-align: center;
   transition: all .5s;
   z-index: 99;
+
   .circle {
     display: inline-block;
     margin-bottom: 10px;
@@ -18,11 +21,10 @@
 
 .containerToRight {
   right: -60px;
+
   .toRightIcon {
     margin-right: 50px;
     transition: all .3s;
     text-align: left;
   }
 }
-
-

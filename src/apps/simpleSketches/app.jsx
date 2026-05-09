@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Button, Slider, Upload, Space, Divider } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import Fixed from '@components/Fixed';
 import './app.css';
 
 function debounce(func, wait) {
@@ -199,6 +200,7 @@ export default function SimpleSketches() {
           </div>
         </div>
       </div>
+      <Fixed homeUrl="/tool" />
     </div>
   );
 }

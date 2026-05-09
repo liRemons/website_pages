@@ -13,7 +13,10 @@ export const BUILTIN_FONTS = [
 ];
 
 export const STAMP_STYLES = [
-  { value: 'classic', label: '经典' },
-  { value: 'arc', label: '弧形' },
-  { value: 'vintage', label: '复古' },
+  { value: 'classic', label: '经典', desc: '双圆同心，地点居上，日期居下' },
+  { value: 'arc', label: '弧形', desc: '弧形文字，上下分布，中线分隔' },
+  { value: 'vintage', label: '复古', desc: '粗外框，三星分隔，简洁有力' },
+  { value: 'approval', label: '审批章', desc: '双圆五角星，大横幅主字，弧形日期' },
+  { value: 'arcStamp', label: '弧形章', desc: '双圆五角星，月牙双弧，地点日期' },
+  { value: 'postal', label: '邮政日戳', desc: '单圆，上弧地名，中间日期，下弧单位名' },
 ];
