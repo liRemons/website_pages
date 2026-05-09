@@ -13,7 +13,8 @@ app.get('/', (req, res) => {
     res.redirect(302, 'https://remons.cn');
     res.end()
   }
-  res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
+  // res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
+  res.sendFile(path.resolve(__dirname, './dist/@website_pages/tool/index.html'))
 })
 const https_options = {
    key: fs.readFileSync(path.join(__dirname,'./a.key')),

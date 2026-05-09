@@ -15,7 +15,7 @@ export default function Header(props) {
       </div>
       {name}
       <div>
-        {showRight && rightComponent}
+        {/* {showRight && rightComponent} */}
       </div>
     </div>
   </>;

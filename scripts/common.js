@@ -15,9 +15,12 @@ const deletePath = (pages) =>
 
 const getPages = () => {
   return new Promise(async (resolve, reject) => {
-    const pages =
+    let pages =
       ((process.argv[2] || '').includes('=') ? '' : process.argv[2]) ||
       readdirSync('src/apps').join(',')
+
+    const ignorePages = ['my', 'home'];
+    pages = pages.split(',').filter(item => !ignorePages.includes(item)).join(',')
     if (!pages) {
       reject('未找到目录')
       return
