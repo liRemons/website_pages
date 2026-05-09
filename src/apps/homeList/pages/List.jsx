@@ -17,7 +17,7 @@ export default function ListPage() {
     { title: '笔记', icon: img(noteSvg), url: '/note' },
     { title: 'GitHub', icon: img(githubSVG), url: 'https://github.com/liRemons' },
     { title: 'npm', icon: img(npmSVG), url: 'https://www.npmjs.com/~remons' },
-    { title: '工具', icon: img(toolSvg), url: '/tool' },
+    { title: '工具', icon: img(toolSvg), url: '/tool', hot: true },
   ];
 
   const openPage = ({ url, params }) => {

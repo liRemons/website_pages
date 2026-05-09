@@ -1,6 +1,6 @@
 import React from "react";
-import { List, Card } from 'antd';
-import { FileTextTwoTone } from '@ant-design/icons'
+import { List, Card, Badge } from 'antd';
+import { FileTextTwoTone, FireFilled } from '@ant-design/icons'
 import { HOST } from '@utils';
 import classnames from 'classnames';
 import style from './index.module.less';
@@ -12,17 +12,33 @@ function CardList({ list, itemClick }) {
     return url ? <img src={`${HOST}${url}`} alt="" /> : <span className={style.icon}><FileTextTwoTone /></span>
   }
 
-  return <List
-    grid={{ gutter: 24, column: IsPC() ? 4 : 2 }}
-    dataSource={list}
-    renderItem={item => (
-      <List.Item onClick={() => itemClick(item)} className={classnames('shadow', style.cardItem)}>
-        <Card title={item.title}>
-          <div className={style.icon}> {item.icon || renderImg(item.url)} </div>
-        </Card>
-      </List.Item>
-    )}
-  />
+  return (
+    <List
+      grid={{ gutter: [16, 16], column: IsPC() ? 4 : 2 }}
+      dataSource={[...list].sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0))}
+      renderItem={(item) => (
+        <List.Item className={style.listItem}>
+          <Badge.Ribbon
+            text={<span className={style.hotLabel}><FireFilled /> HOT</span>}
+            color="red"
+            style={{ display: item.hot ? '' : 'none' }}
+          >
+            <div
+              onClick={() => itemClick(item)}
+              className={classnames('shadow', style.cardItem)}
+            >
+              <Card>
+                <div className={style.cardInner}>
+                  <div className={style.icon}>{item.icon || renderImg(item.url)}</div>
+                  <span className={style.cardTitle}>{item.title}</span>
+                </div>
+              </Card>
+            </div>
+          </Badge.Ribbon>
+        </List.Item>
+      )}
+    />
+  );
 }
 
 export default CardList;

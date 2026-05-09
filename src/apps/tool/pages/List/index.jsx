@@ -23,19 +23,19 @@ import { img } from '@utils'
 
 export default function ListPage() {
   const list = [
-    { title: '扫描二维码', icon: img(scanSvg), url: '/scanqr' },
-    { title: '生成二维码', icon: img(qrcodeSvg), url: '/createQR' },
-    { title: '解码', icon: img(transcoderSvg), url: '/transcoderQR' },
     { title: '取快递', icon: img(expressSvg), url: '/express' },
-    { title: '文档', icon: img(docSvg), url: '/tool', params: { page: 'doc' } },
-    { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark' },
+    // { title: '文档', icon: img(docSvg), url: '/tool', params: { page: 'doc' } },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
     { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
     { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' },
-    { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge' },
-    { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig' },
-    { title: '邮戳生成器', icon: img(postmarkGeneratorSvg), url: '/postmarkGenerator' },
-    { title: '简笔画生成器', icon: img(simplesketchesSvg), url: '/simpleSketches' }
+    { title: '扫描二维码', icon: img(scanSvg), url: '/scanqr' },
+    { title: '生成二维码', icon: img(qrcodeSvg), url: '/createQR' },
+    { title: '解码', icon: img(transcoderSvg), url: '/transcoderQR' },
+    { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge', hot: true },
+    { title: '邮戳生成器', icon: img(postmarkGeneratorSvg), url: '/postmarkGenerator', hot: true },
+    { title: '简笔画生成器', icon: img(simplesketchesSvg), url: '/simpleSketches', hot: true },
+    { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig', hot: true },
+    { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark', hot: true },
   ];
 
   const openPage = ({ url, params }) => {
