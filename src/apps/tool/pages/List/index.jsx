@@ -19,6 +19,7 @@ import travelbadgeSvg from './assets/svg/travelbadge.svg';
 import tableconfigSvg from './assets/svg/tableconfig.svg';
 import postmarkGeneratorSvg from './assets/svg/postmarkgenerator.svg';
 import simplesketchesSvg from './assets/svg/simplesketches.svg';
+import productmanagSvg from './assets/svg/productmanage.svg';
 import { img } from '@utils'
 
 export default function ListPage() {
@@ -28,14 +29,15 @@ export default function ListPage() {
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), url: '/reMark' },
     { title: 'URL 编解码', icon: img(decodelinkSvg), url: '/urlCoder' },
     { title: '时间计算器', icon: img(timeSvg), url: '/timeCalculator' },
-    { title: '扫描二维码', icon: img(scanSvg), url: '/scanqr' },
+    // { title: '扫描二维码', icon: img(scanSvg), url: '/scanqr' },
     { title: '生成二维码', icon: img(qrcodeSvg), url: '/createQR' },
-    { title: '解码', icon: img(transcoderSvg), url: '/transcoderQR' },
+    { title: '解码', icon: img(scanSvg), url: '/transcoderQR' },
     { title: '旅行勋章', icon: img(travelbadgeSvg), url: '/travelBadge', hot: true },
     { title: '邮戳生成器', icon: img(postmarkGeneratorSvg), url: '/postmarkGenerator', hot: true },
     { title: '简笔画生成器', icon: img(simplesketchesSvg), url: '/simpleSketches', hot: true },
     { title: '表单引擎', icon: img(tableconfigSvg), url: '/tableConfig', hot: true },
     { title: '图片水印', icon: img(watermarkSvg), url: '/imgWatermark', hot: true },
+    { title: '订单管理', icon: img(productmanagSvg), url: '/productManage', hot: true },
   ];
 
   const openPage = ({ url, params }) => {

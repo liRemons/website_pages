@@ -11,7 +11,7 @@ import 'vditor/dist/index.css';
 
 function List() {
   const [files, setFiles] = useState([]);
-  const [vditor, setVditor] = useState(null);
+  const [vditor, setVditor] = useState('');
   const [type, setType] = useState('edit');
   const [visible, setVisible] = useState(false);
 
@@ -43,7 +43,7 @@ function List() {
   }, [])
 
   const changeFolder = (e) => {
-    vditor.setValue(null);
+    vditor.setValue('');
     const files = [...e.target.files].filter(file => file.name.includes('md'));
     const path = files.map(file => file.webkitRelativePath.split('/'))
     const arr = path.reduce((initVal, item, index, arr) => {
@@ -93,7 +93,7 @@ function List() {
 
   const edit = () => {
     setType('edit');
-    vditor.setValue(null);
+    vditor.setValue('');
   }
 
   const importFile = () => {

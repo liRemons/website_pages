@@ -23,6 +23,8 @@ import pinduoduo from '../assets/pinduoduo.svg';
 import douyin from '../assets/douyin.svg';
 import xiaohongshu from '../assets/xiaohongshu.svg';
 import taobao from '../assets/taobao.svg';
+import '@assets/css/index.global.less';
+
 
 const { Section } = Layout;
 

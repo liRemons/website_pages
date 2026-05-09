@@ -5,6 +5,8 @@ import Header from '@components/Header';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ToolBar, ActionList } from 'remons-components';
 import { Table, Input } from 'antd';
+import '@assets/css/index.global.less';
+
 
 export default function App() {
   const [list, setList] = useState([]);

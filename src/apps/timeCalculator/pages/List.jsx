@@ -7,6 +7,8 @@ import Fixed from '@components/Fixed';
 import { Form, FormItem, Layout } from 'remons-components';
 import zhCN from 'antd/lib/locale/zh_CN';
 import './index.module.less'
+import '@assets/css/index.global.less';
+
 
 const { Section } = Layout;
 
