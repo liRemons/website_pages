@@ -177,6 +177,8 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
 
   return {
     title: `${pakeageJSON.title} - ${pageInfo.title}`,
+    description: pageInfo.seoContent || pageInfo.description || '',
+    keywords: pageInfo.keywords || pageInfo.title || '',
     externals_js: [...new Set(externals_js)],
     externals_css: [...new Set(externals_css)],
   }
