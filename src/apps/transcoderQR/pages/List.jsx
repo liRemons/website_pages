@@ -18,8 +18,6 @@ export default function List() {
   const [visibleText, setVisibleText] = useState('扫描二维码');
   const [qrVisible, setQrVisible] = useState(false);
   const [form] = Form.useForm();
-  const [exportVisible, setExportVisible] = useState(false);
-  const [fileName, setFileName] = useState('');
   const [errorText, setErrorText] = useState('')
   const items = [
     { label: '转码前', name: 'encode', component: 'textarea', componentProps: { rows: 4 } },
@@ -109,13 +107,8 @@ export default function List() {
     a.href = URL.createObjectURL(file);
     a.download = str ? filename : `${fileName}.txt`
     a.click();
-    setExportVisible(false);
-    setFileName('')
   }
 
-  const handleInputFileNmae = (e) => {
-    setFileName(e.target.value);
-  }
 
   return <Container
     header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} />}
@@ -136,7 +129,7 @@ export default function List() {
           <Button type="primary" htmlType="button" shape="circle" className='m-l-20' onClick={onCopy}>
             <CopyOutlined />
           </Button>
-          <Button type="primary" htmlType="button" shape="circle" className='m-l-20' onClick={() => setExportVisible(true)}>
+          <Button type="primary" htmlType="button" shape="circle" className='m-l-20' onClick={onDownload}>
             <DownloadOutlined />
           </Button>
         </div>
@@ -146,14 +139,6 @@ export default function List() {
             {qrVisible && <ScanQr getQrValCallback={getQrValCallback} />}
             {errorText}
           </div>
-        </Modal>
-        <Modal title='文件名设置' open={exportVisible}
-          onOk={onDownload}
-          onCancel={() => {
-            setExportVisible(false);
-            setFileNam('')
-          }}>
-          <Input placeholder='请输入文件名' onChange={handleInputFileNmae} />
         </Modal>
       </div>
     } />

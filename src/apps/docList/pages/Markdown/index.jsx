@@ -46,12 +46,33 @@ export default function Markdown(props) {
     document.querySelectorAll('.markdown-html code[class*="language-"]').forEach((item, index) => {
       const onlyId = `copy-${index}`;
       const codeType = item.className.replace('language-', '').trim();
-      const dom = document.createElement('span');
-      dom.innerText = codeType + ' 复制代码';
-      dom.fatherClass = onlyId;
-      dom.setAttribute('class', 'copy');
+      const preNode = item.parentNode;
+
+      // 复制按钮
+      const copyBtn = document.createElement('span');
+      copyBtn.innerText = codeType + ' 复制代码';
+      copyBtn.fatherClass = onlyId;
+      copyBtn.setAttribute('class', 'copy');
       item.className += ' ' + onlyId;
-      item.parentNode.appendChild(dom);
+      preNode.appendChild(copyBtn);
+
+      // 收起/展开按钮（避免重复添加）
+      if (!preNode.querySelector('.code-toggle')) {
+        const toggleBtn = document.createElement('span');
+        toggleBtn.setAttribute('class', 'code-toggle');
+        toggleBtn.innerText = '收起';
+        toggleBtn.addEventListener('click', () => {
+          const isCollapsed = preNode.classList.contains('code-collapsed');
+          if (isCollapsed) {
+            preNode.classList.remove('code-collapsed');
+            toggleBtn.innerText = '收起';
+          } else {
+            preNode.classList.add('code-collapsed');
+            toggleBtn.innerText = '展开';
+          }
+        });
+        preNode.appendChild(toggleBtn);
+      }
     });
   };
 

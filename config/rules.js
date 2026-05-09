@@ -15,7 +15,7 @@ const rules = ({ isEnvDevelopment }) => {
       sourceMap: false,
       modules: {
         localIdentName: isEnvDevelopment
-          ? '[path][name]-[local]-[hash:base64:10]'
+          ? '[path][name]-[local]'
           : '[hash:base64:10]',
       },
     },

@@ -12,7 +12,7 @@ export default function MyAnchor(props) {
   const Node = (item) => {
     const { nodeName, title } = item;
     return <div>
-       <span className='link_nodename'>{nodeName}</span>
+       {/* <span className='link_nodename'>{nodeName}</span> */}
        <span>{title}</span>
     </div>
 
