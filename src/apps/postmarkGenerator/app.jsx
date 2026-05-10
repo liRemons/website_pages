@@ -69,8 +69,8 @@ export default function PostmarkGenerator() {
   const [messageApi, contextHolder] = message.useMessage();
 
   // 邮戳内容
-  const [location, setLocation] = useState('黄山');
-  const [subtitle, setSubtitle] = useState('');
+  const [location, setLocation] = useState('杭州');
+  const [subtitle, setSubtitle] = useState('西湖风景名胜区');
   const [dateObj, setDateObj] = useState(dayjs());
   const [color, setColor] = useState('#C0392B');
 

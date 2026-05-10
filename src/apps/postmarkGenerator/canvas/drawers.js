@@ -275,7 +275,7 @@ function drawArcStamp(ctx, opts) {
 }
 
 /**
- * approval：审批章（横幅穿透双圆，双圆断开）
+ * approval：打卡认证（横幅穿透双圆，双圆断开）
  *
  * 精确结构：
  *   ① 外圆（粗）+ 内圆（细）在横幅位置断开，断开处留明显缝隙
@@ -432,14 +432,14 @@ function drawPostal(ctx, opts) {
   ctx.fillStyle = color;
 
   // ① 单圆粗边框
-  ctx.lineWidth = Math.max(3, stampSize * 0.038);
+  ctx.lineWidth = Math.max(3, stampSize * 0.02);
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.stroke();
 
   // 弧形文字弧半径：贴近圆内侧，arcRadius = radius * 0.88
   // 文字中心在此处，字体向圆心延伸，不超出圆边
-  const arcRadius = radius * 0.76;
+  const arcRadius = radius * 0.74;
 
   // 固定字间距角度：3°（紧凑但不拥挤）
   // 字号由「目标弧长 / 字数」决定：字数多则字小，字数少则字大
@@ -447,8 +447,8 @@ function drawPostal(ctx, opts) {
   // 设固定字间距 = SPACING_DEG 度，则：
   //   fontSize × n + (n-1) × SPACING_RAD × arcRadius = arcRadius × SPAN_RAD
   //   fontSize = (arcRadius × SPAN_RAD - (n-1) × SPACING_RAD × arcRadius) / n
-  const SPACING_DEG = 4;
-  const TOP_SPACING_DEG = 15; 
+  const SPACING_DEG = 2;
+  const TOP_SPACING_DEG = 18; 
   const SPACING_RAD = degToRad(SPACING_DEG);
   const SPAN_RAD = degToRad(150);
 

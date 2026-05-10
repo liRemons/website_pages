@@ -89,7 +89,8 @@ const rules = ({ isEnvDevelopment }) => {
           },
         },
         {
-          test: /\.js|jsx$/,
+          test: /\.js|jsx|json$/,
+          type: 'javascript/auto', 
           include: path.resolve(__dirname, '../src'),
           use: [
             {

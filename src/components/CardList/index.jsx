@@ -30,7 +30,10 @@ function CardList({ list, itemClick }) {
               <Card>
                 <div className={style.cardInner}>
                   <div className={style.icon}>{item.icon || renderImg(item.url)}</div>
-                  <span className={style.cardTitle}>{item.title}</span>
+                  <div className={style.rightText}>
+                    <span className={style.cardTitle}>{item.title}</span>
+                    <div className={style.subTitle}>{item.subTitle}</div>
+                  </div>
                 </div>
               </Card>
             </div>

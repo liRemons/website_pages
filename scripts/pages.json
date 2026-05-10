@@ -1,6 +1,7 @@
 [
   {
     "pageName": "createQR",
+    "subTitle": "数据化身二维码，离线传输黑科技",
     "title": "生成二维码",
     "description": "二维码生成工具",
     "keywords": "二维码生成,在线二维码,免费二维码生成器,文本转二维码,网址二维码,无线传输数据,手机扫码",
@@ -8,6 +9,7 @@
   },
   {
     "pageName": "docList",
+    "subTitle": "技术干货集结，进阶路上不迷路",
     "title": "文章列表",
     "description": "文章列表，用于展示技术文档和学习笔记，供大家参考交流",
     "keywords": "技术文章,学习笔记,前端开发,JavaScript,React,工程化,技术博客,开发者教程",
@@ -15,6 +17,7 @@
   },
   {
     "pageName": "home",
+    "subTitle": "宝藏工具集合，解决你的各种小麻烦",
     "title": "首页",
     "description": "首页",
     "keywords": "在线工具,免费工具,二维码生成,图片处理,时间计算,快递查询,Markdown编辑,实用工具",
@@ -22,6 +25,7 @@
   },
   {
     "pageName": "homeList",
+    "subTitle": "开发者百宝箱，效率翻倍的神器",
     "title": "主页",
     "description": "主页",
     "keywords": "在线工具箱,开发者工具,编码转换,图片水印,富文本编辑,表单引擎,实用工具集合",
@@ -29,6 +33,7 @@
   },
   {
     "pageName": "transcoderQR",
+    "subTitle": "扫一扫识万物，破解二维码秘密",
     "title": "解析二维码",
     "description": "二维码解析工具，用于解析生成的二维码，是二维码传递数据的解析端",
     "keywords": "二维码解析,在线解码二维码,读取二维码,二维码内容识别,无网络传输,离线数据传输",
@@ -36,6 +41,7 @@
   },
   {
     "pageName": "scanqr",
+    "subTitle": "摄像头变身扫码枪，即开即用",
     "title": "扫描二维码",
     "description": "扫描二维码",
     "keywords": "扫描二维码,摄像头扫码,在线扫码,浏览器扫二维码,手机扫码,PC扫码",
@@ -43,6 +49,7 @@
   },
   {
     "pageName": "my",
+    "subTitle": "你的专属空间，记录你的足迹",
     "title": "我",
     "description": "我",
     "keywords": "个人中心,用户信息,使用记录,个人设置",
@@ -50,6 +57,7 @@
   },
   {
     "pageName": "tool",
+    "subTitle": "工作生活帮手，让麻烦事变简单",
     "title": "实用工具",
     "description": "实用工具，提供生活工具、图片处理工具、时间计算等工具",
     "keywords": "实用工具,在线工具,图片水印,时间戳计算,URL编码,二维码,Markdown编辑,快递查询,免费工具",
@@ -57,6 +65,7 @@
   },
   {
     "pageName": "timeCalculator",
+    "subTitle": "告别掐指一算，时间管理神器",
     "title": "时间计算",
     "description": "时间计算，用于计算时间，如：时间戳、日期、时间差等",
     "keywords": "时间计算,时间戳转换,日期计算,时间差计算,工作日计算,在线时间工具,Unix时间戳",
@@ -64,6 +73,7 @@
   },
   {
     "pageName": "imgWatermark",
+    "subTitle": "一键添加水印，守护原创心血",
     "title": "图片水印",
     "description": "图片水印，用于给图片添加水印，比如保护图片不被滥用",
     "keywords": "图片水印,添加水印,文字水印,图片版权保护,防盗图,在线水印工具,摄影师工具",
@@ -71,6 +81,7 @@
   },
   {
     "pageName": "login",
+    "subTitle": "欢迎回来，解锁更多专属特权",
     "title": "登录",
     "description": "登录",
     "keywords": "用户登录,账号登录,个性化功能,工具记录",
@@ -78,6 +89,7 @@
   },
   {
     "pageName": "note",
+    "subTitle": "打造第二大脑，沉淀技术智慧",
     "title": "学习笔记",
     "description": "学习笔记",
     "keywords": "学习笔记,在线笔记,技术笔记,Markdown笔记,知识管理,开发者笔记,笔记整理",
@@ -85,13 +97,15 @@
   },
   {
     "pageName": "reMark",
+    "subTitle": "所见即所得，书写流畅新体验",
     "title": "所见即所得 Markdown 编辑查看器",
-    "description": "所见即所得 markdown 编辑查看器，用于快速查看编辑 markdown 格式的文档",
-    "keywords": "Markdown编辑器,在线Markdown,所见即所得,实时预览,Markdown预览,技术文档编辑,README编辑",
-    "seoContent": "免费在线 Markdown 编辑器，支持所见即所得实时预览，左侧编辑右侧渲染，让 Markdown 文档撰写更直观高效。支持标题、代码块、表格、图片等全部 Markdown 语法，适合写技术文档、README、博客草稿，无需安装任何软件。"
+    "description": "所见即所得 markdown 编辑查看器，用于快速查看编辑 markdown 格式的文档，支持解析文件夹",
+    "keywords": "Markdown编辑器,在线Markdown,所见即所得,实时预览,Markdown预览,技术文档编辑,README编辑,文件夹",
+    "seoContent": "免费在线 Markdown 编辑器，支持解析文件夹，支持所见即所得实时预览，左侧编辑右侧渲染，让 Markdown 文档撰写更直观高效。支持标题、代码块、表格、图片等全部 Markdown 语法，适合写技术文档、README、博客草稿，无需安装任何软件。"
   },
   {
     "pageName": "urlCoder",
+    "subTitle": "乱码参数克星，一眼看穿本质",
     "title": "URL 转编码",
     "description": "URL转编码，用于将 URL 参数转为可视化编码",
     "keywords": "URL编码,URL解码,encodeURIComponent,URL参数解析,在线编码转换,URL调试,接口调试",
@@ -99,6 +113,7 @@
   },
   {
     "pageName": "express",
+    "subTitle": "短信智能解析，取件信息直达",
     "title": "快递查询",
     "description": "快递查询，用于查询快递信息，根据用户文本输入，解析取件地址及取件码",
     "keywords": "快递查询,快递信息解析,取件码识别,取件地址,快递单号,智能解析快递,快递短信解析",
@@ -106,6 +121,7 @@
   },
   {
     "pageName": "wangEditor",
+    "subTitle": "排版随心所欲，图文混排利器",
     "title": "富文本编辑器",
     "description": "富文本编辑器，用于编辑 html 格式的文档",
     "keywords": "富文本编辑器,在线富文本,wangEditor,HTML编辑器,所见即所得编辑,内容编辑,图文混排",
@@ -113,6 +129,7 @@
   },
   {
     "pageName": "productManage",
+    "subTitle": "订单井井有条，生意打理更轻松",
     "title": "订单管理",
     "description": "订单管理，用于管理电商订单",
     "keywords": "订单管理,电商订单,订单跟踪,订单状态,电商工具,商家管理,订单列表",
@@ -120,6 +137,7 @@
   },
   {
     "pageName": "travelBadge",
+    "subTitle": "照片变身勋章，打卡旅途高光",
     "title": "旅行勋章",
     "description": "旅行勋章，用于处理旅途中拍摄的照片，用于打卡编辑分享",
     "keywords": "旅行勋章,旅行打卡,照片编辑,旅游照片,地点打卡,朋友圈分享,小红书旅行,旅行记录",
@@ -127,6 +145,7 @@
   },
   {
     "pageName": "tableConfig",
+    "subTitle": "配置生成页面，解放双手神器",
     "title": "表单引擎",
     "description": "表单引擎，用于动态生成表单",
     "keywords": "表单引擎,低代码,可视化表单,JSON配置表单,动态表单生成,React代码生成,增删改查页面,低代码开发",
@@ -134,6 +153,7 @@
   },
   {
     "pageName": "simpleSketches",
+    "subTitle": "照片秒变线稿，解锁艺术画风",
     "title": "简笔画生成器",
     "description": "简笔画生成器，用于生成简笔画",
     "keywords": "简笔画生成,照片转简笔画,在线简笔画,边缘检测,图片转线稿,AI简笔画,创意设计工具",
@@ -141,6 +161,7 @@
   },
   {
     "pageName": "postmarkGenerator",
+    "subTitle": "定制复古邮戳，盖下时光印记",
     "title": "邮戳生成器",
     "description": "邮戳生成器，用于生成邮戳，支持记录地点和日期，生成邮戳印章",
     "keywords": "邮戳生成,在线邮戳,复古邮戳,印章生成,旅行打卡邮戳,创意贺卡,邮票印章设计",
