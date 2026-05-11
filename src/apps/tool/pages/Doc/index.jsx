@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '@components/Header';
+import handleContent from '../../handle.md';
 import Container from '@components/Container';
 import { useLocalObservable, useObserver } from 'mobx-react';
 import style from '../index.module.less';
@@ -17,7 +18,7 @@ export default function Doc() {
     window.open(HOST + url);
   };
   return useObserver(() => <Container
-    header={<Header name='文档' leftPath={`/${APP_NAME}/tool`} />}
+    header={<Header name='文档' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
     main={
       <div className={style.page_list}>
         <div className={style.page_list_main}>

@@ -162,7 +162,12 @@ const rules = ({ isEnvDevelopment }) => {
             },
           ],
         },
-        // Other resources（不含 svg，已单独处理）
+        // Markdown files — import as raw string
+        {
+          test: /\.md$/,
+          use: 'raw-loader',
+        },
+        // Other resources
         {
           test: /\.(pdf|doc|node)$/,
           use: [

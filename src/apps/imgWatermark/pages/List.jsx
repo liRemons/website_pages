@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import { Input, Slider, Tooltip, ColorPicker } from 'antd';
 import Fixed from '@components/Fixed';
 import style from './index.module.less';
@@ -129,7 +130,7 @@ function List() {
 
   return (
     <div className={style.container}>
-      <Header name="图片文字水印" leftPath={`/${APP_NAME}/tool`} />
+      <Header name="图片文字水印" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />
       <Fixed />
 
       {/* img 用 display:none 隐藏，仅作 drawImage 数据源 */}

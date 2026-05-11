@@ -3,6 +3,7 @@ import { Form, Button, message, Modal, Input } from 'antd';
 import FormItem from '@components/Form';
 import Fixed from '@components/Fixed';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import Container from '@components/Container';
 import ScanQr from '@components/ScanQr';
 import { ScanOutlined, UploadOutlined, RedoOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -111,7 +112,7 @@ export default function List() {
 
 
   return <Container
-    header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} />}
+    header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
     main={
       <div className='p-20'>
         <Form form={form}>

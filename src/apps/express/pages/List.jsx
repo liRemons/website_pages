@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Container from '@components/Container';
 import '@assets/css/index.global.less';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import classnames from 'classnames';
 import Fixed from '@components/Fixed';
 import style from './index.module.less';
@@ -264,7 +265,7 @@ export default () => {
   return <>
     <ConfigProvider locale={zhCN}>
       <Container
-        header={<Header name='快递' leftPath={`/${APP_NAME}/tool`} />}
+        header={<Header name='快递' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
         main={
           <div>
             <button className="circle" onClick={openModal}>+</button>

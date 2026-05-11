@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
+import handleContent from '../../handle.md';
 import Fixed from '@components/Fixed';
 import store from '../../model/store';
 import classnames from 'classnames';
@@ -178,7 +179,7 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.title || name} />
+    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.title || name} handleContent={handleContent} />
     <div className={style.main}>
       {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}

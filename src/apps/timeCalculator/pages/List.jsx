@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { ConfigProvider } from 'antd';
 import Container from '@components/Container';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import Fixed from '@components/Fixed';
 import { Form, FormItem, Layout } from 'remons-components';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -59,7 +60,7 @@ export default () => {
   return <ConfigProvider locale={zhCN}>
      <Container
       style={{ padding: '0 0 10px 0' }}
-      header={<Header name='时间处理' leftPath={`/${APP_NAME}/tool`} />}
+      header={<Header name='时间处理' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
       main={
         <Form {...layout} form={form}>
         <Layout style={{ background: 'transparent' }}>

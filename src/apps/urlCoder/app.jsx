@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Container from '@components/Container';
 import Fixed from '@components/Fixed';
 import Header from '@components/Header';
+import handleContent from './handle.md';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ToolBar, ActionList } from 'remons-components';
 import { Table, Input } from 'antd';
@@ -118,7 +119,7 @@ export default function App() {
   }
 
   return <> <Container
-    header={<Header name='URL转编码' />}
+    header={<Header name='URL转编码' handleContent={handleContent} />}
     main={renderMain()}
   />
     <Fixed />

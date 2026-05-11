@@ -3,6 +3,7 @@ import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import Container from '@components/Container';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import style from './index.module.less';
 import classnames from 'classnames';
 import { Card, Avatar, Popover } from 'antd';
@@ -60,7 +61,7 @@ export default function List() {
     ];
     return <>
       <Container
-        header={<Header name='关于我' />}
+        header={<Header name='关于我' handleContent={handleContent} />}
         main={
           <div className={style.center}>
             <Card

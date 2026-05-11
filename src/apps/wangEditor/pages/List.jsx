@@ -4,6 +4,8 @@ import Container from '@components/Container';
 import Header from '@components/Header';
 import { Input, message, Modal } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
+import handleContent from '../handle.md';
+import { Button, Input, message, Modal } from 'antd';
 import { Editor, Toolbar } from '@wangeditor/editor-for-react';
 import '@wangeditor/editor/dist/css/style.css';
 import style from './index.module.less';
@@ -59,7 +61,7 @@ export default function List() {
 
   return <>
     <Container
-      header={<Header name='富文本编辑器' />}
+      header={<Header name='富文本编辑器' handleContent={handleContent} />}
       main={
         <div className={style.page}>
           {/* 编辑器卡片 */}

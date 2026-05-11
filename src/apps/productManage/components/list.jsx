@@ -13,6 +13,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import { ConfigProvider } from 'antd';
 import Container from '@components/Container';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import Fixed from '@components/Fixed';
 import { CopyOutlined, SettingOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { listKey, plantFormKey, statusKey, bannerVisibleKey } from '../model/const';
@@ -315,7 +316,7 @@ export default class ProductManage extends React.Component {
         />
       }
       <Container
-        header={<Header name='订单关联' leftPath={`/${APP_NAME}/tool`} />}
+        header={<Header name='订单关联' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
         main={
           <>
             <SearchForm cols={2} {...formLayout} rows={IsPC() ? 2 : 1} onSearch={this.onSearch} onReset={this.onReset}>

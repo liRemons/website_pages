@@ -5,6 +5,7 @@ import Fixed from '@components/Fixed';
 import Container from '@components/Container';
 import MarkMap from '@components/MarkMap';
 import Header from '@components/Header';
+import handleContent from '../../handle.md';
 import style from './index.module.less';
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
@@ -131,7 +132,7 @@ function List() {
       </div>
     </Modal>
     <Container
-      header={<Header name='所见即所得 markdown 编辑查看器' leftPath={`/${APP_NAME}/tool`} />}
+      header={<Header name='所见即所得 markdown 编辑查看器' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
       main={<>
         <div className={style.main}>
           {files.length !== 0 && type === 'importFolder' && <div className={style.menu}>

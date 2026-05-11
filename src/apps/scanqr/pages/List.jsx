@@ -1,12 +1,13 @@
 import React from 'react';
 import Container from '@components/Container';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import ScanQr from '@components/ScanQr';
 import '@assets/css/index.global.less';
 
 const View = () => {
   return <Container
-    header={<Header name='扫描二维码' leftPath={`/${APP_NAME}/tool`} />}
+    header={<Header name='扫描二维码' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
     main={
       <ScanQr />
     }

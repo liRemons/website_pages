@@ -4,6 +4,7 @@ import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
 import Header from '@components/Header';
+import handleContent from '../handle.md';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
@@ -210,7 +211,7 @@ export default function List() {
 
   return (
     <Container
-      header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
+      header={<Header name='创建二维码' handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
       main={
         <Spin tip={loadingText} spinning={loading}>
           <div className='qr-page'>
