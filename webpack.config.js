@@ -12,6 +12,7 @@ const pagesJSON = require('./scripts/pages.json')
 const packageJSON = require('./package.json')
 const { setExternals, templateParameters } = require('./scripts/common')
 const SpeedMeasurewebpackplugin = require('speed-measure-webpack-plugin')
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 const smp = new SpeedMeasurewebpackplugin()
 
 /**
@@ -147,6 +148,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
             }),
         })
       }),
+      new AntdDayjsWebpackPlugin(),
       new DefinePlugin({
         APP_NAME: JSON.stringify(`@${packageJSON.name}`),
       }),
