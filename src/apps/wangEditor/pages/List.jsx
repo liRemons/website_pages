@@ -5,7 +5,6 @@ import Header from '@components/Header';
 import { Input, message, Modal } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import handleContent from '../handle.md';
-import { Button, Input, message, Modal } from 'antd';
 import { Editor, Toolbar } from '@wangeditor/editor-for-react';
 import '@wangeditor/editor/dist/css/style.css';
 import style from './index.module.less';
