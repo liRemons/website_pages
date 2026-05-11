@@ -1,38 +1,114 @@
-#QR {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  margin: 0 auto;
-  justify-content: space-around;
+/* ── 页面容器 ───────────────────────────────────── */
+.qr-page {
+  padding: 12px 16px 80px;
 }
 
+/* ── 表单配置行：字数限制 / 频率 / 模式 横向排列 ─── */
+.qr-config-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
 
+.qr-config-cell {
+  flex: 1;
+  min-width: 0;
+}
 
-.box {
+/* inputNumber 宽度撑满格子 */
+.qr-config-cell .ant-input-number {
+  width: 100% !important;
+}
+
+/* ── 操作按钮区 ─────────────────────────────────── */
+/* 移动端：2×2 网格；PC 端：横排 */
+.qr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.qr-actions .ant-btn {
+  flex: 1 1 calc(50% - 5px);  /* 移动端默认两列 */
+  height: 40px;
+  font-size: 14px;
+  border-radius: 8px;
+  min-width: 80px;
+}
+
+/* PC 端（宽度足够时）：四个按钮横排一行，自动均分 */
+@media (min-width: 600px) {
+  .qr-actions .ant-btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ── 平铺模式：二维码列表 ──────────────────────── */
+.qr-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* ── 替换模式：居中单个展示 ────────────────────── */
+.qr-replace-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 16px;
 }
 
-.qrcode {
+/* ── 进度标签 ──────────────────────────────────── */
+.qr-progress-label {
   text-align: center;
-  width: 300px;
-  margin: 30px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  display: flex;
-  position: relative;
-  flex-wrap: wrap
+  font-size: 13px;
+  color: #61677c;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
 }
 
+.qr-progress-label strong {
+  color: #1677ff;
+  font-size: 15px;
+}
+
+/* ── 单个二维码卡片 ────────────────────────────── */
+.qrcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 让二维码图片在移动端不超出屏幕宽度 */
+.qrcode img,
+.qrcode canvas {
+  max-width: calc(100vw - 48px);
+  height: auto !important;
+}
+
+/* 替换模式下让二维码撑满宽度 */
+.qrcode--replace img,
+.qrcode--replace canvas {
+  width: calc(100vw - 48px) !important;
+  max-width: 400px;
+  height: auto !important;
+}
+
+/* ── 平铺模式序号角标 ─────────────────────────── */
 .qrcodeIcon {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  top: -31px;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
   background: cadetblue;
   color: #fff;
   border-radius: 50%;
-  left: 150px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
 }

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Spin, message, Modal, Input } from 'antd';
 import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
@@ -11,41 +10,52 @@ import '../model/qrcode';
 import Pako from 'pako';
 import { gzip, base91 } from '@utils';
 
-let intTimer;
-
 export default function List() {
- 
   const [loadingText, setLoadingText] = useState('');
   const [loading, setLoading] = useState(false);
   const [visible, setVisble] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
   const [form] = Form.useForm();
   const [textArr, setTextArr] = useState([]);
-  const [errorStr, setErrorStr] = useState('')
+  const [errorStr, setErrorStr] = useState('');
+
+  // 用 ref 控制递归 setTimeout 的运行状态，确保 STOP 能立即生效
+  const isRunningRef = useRef(false);
+  const timerRef = useRef(null);
+
   const changeReplace = (val) => {
     if (val) {
-      form.setFieldsValue({ count: 800, wait: 200 })
+      form.setFieldsValue({ count: 800, wait: 200 });
     } else {
-      form.setFieldsValue({ count: 1900, wait: 100 })
+      form.setFieldsValue({ count: 1900, wait: 100 });
     }
-  }
-  const items = [
-    { label: '文本', name: 'value', component: 'textarea', componentProps: { rows: 4, allowClear: true } },
-    { label: '单个二维码字数限制', name: 'count', component: 'inputNumber', componentProps: { min: 300, max: 1900, defaultValue: 1900, precision: 0, step: 100 } },
-    { label: '生成频率(ms)', name: 'wait', component: 'inputNumber', componentProps: { min: 100, max: 2000, defaultValue: 200, precision: 0, step: 100 } },
+  };
+
+  const textItem = { label: '文本', name: 'value', component: 'textarea', componentProps: { rows: 2, allowClear: true } };
+  const configItems = [
+    { label: '字数限制', name: 'count', component: 'inputNumber', componentProps: { min: 300, max: 1900, defaultValue: 1900, precision: 0, step: 100 } },
+    { label: '频率(ms)', name: 'wait', component: 'inputNumber', componentProps: { min: 100, max: 2000, defaultValue: 200, precision: 0, step: 100 } },
     { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', onChange: changeReplace } },
   ];
 
-  const resetTimer = () => {
-    clearTimeout(intTimer);
-    intTimer = null;
-  }
+  const stopTimer = () => {
+    isRunningRef.current = false;
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    setIsRunning(false);
+  };
 
   const makeCode = (value, type) => {
+    // 先停掉上一次的轮播
+    stopTimer();
+
     const wait = form.getFieldValue('wait') || 200;
     const count = form.getFieldValue('count');
     const replace = form.getFieldValue('replace');
     const QRDiv = document.getElementById('QR');
-    const replaceQR = document.getElementById('replaceQR')
+    const replaceQR = document.getElementById('replaceQR');
     QRDiv.innerHTML = '';
     replaceQR.innerHTML = '';
 
@@ -55,23 +65,18 @@ export default function List() {
     }
 
     const val = type === 'noZip' ? value : gzip(value);
-    !replace && setLoading(true);
     const length = count || 1900;
     const ceil = Math.ceil(val.length / length);
     const arr = [...new Array(ceil).keys()].map(l => l * length);
-    const textArr = arr.map((item, index) => {
-      return index !== arr.length - 1 ? [
-        item,
-        arr[index + 1]
-      ] : [
-        item,
-        val.length
-      ];
-    });
-
-    const text = textArr.map(item => val.slice(item[0], item[1]));
+    const sliceRanges = arr.map((item, index) =>
+      index !== arr.length - 1 ? [item, arr[index + 1]] : [item, val.length]
+    );
+    const text = sliceRanges.map(item => val.slice(item[0], item[1]));
     setTextArr(text);
+
     if (!replace) {
+      // 平铺模式：逐个生成，使用累积 delay
+      setLoading(true);
       text.forEach((item, index) => {
         setTimeout(() => {
           setLoadingText(`正在生成二维码 ... (共 ${text.length} 个, 当前 第 ${index + 1} 个)`);
@@ -83,58 +88,59 @@ export default function List() {
           div.id = 'qrcode' + index;
           div.className = 'qrcode';
           QRDiv.appendChild(div);
-          var qrcode = new QRCode(document.getElementById('qrcode' + index), {
-            width: 330,
-            height: 330,
-            correctLevel: QRCode.CorrectLevel.M
+          const qrcode = new QRCode(document.getElementById('qrcode' + index), {
+            width: 300,
+            height: 300,
+            correctLevel: QRCode.CorrectLevel.M,
           });
           qrcode.makeCode(item);
           if (index === text.length - 1) {
             setLoadingText('');
             setLoading(false);
           }
-        }, wait);
+        }, wait * (index + 1));
       });
     } else {
-      let i = 0;
-      const createQr = (index) => {
-        const item = text[index]
-        replaceQR.innerHTML = ''
-        const div = document.createElement('div');
-        const icon = document.createElement('span');
-        icon.innerHTML = `(共 ${text.length} 个, 当前 第 ${index + 1} 个)`;
-        replaceQR.appendChild(icon);
-        div.id = 'qrcode_replace';
-        div.className = 'qrcode';
-        replaceQR.appendChild(div);
-        var qrcode = new QRCode(document.getElementById('qrcode_replace'), {
-          width: 330,
-          height: 330,
-          correctLevel: QRCode.CorrectLevel.M
-        });
-        qrcode.makeCode(`__${index}_${text.length}__${item}`);
-      }
-      function myInterval(func, wait) {
-        let interv = function () {
-          func.call(null)
-          intTimer = setTimeout(interv, wait)
-        }
-        intTimer = setTimeout(interv, wait)
-      }
+      // 替换模式：轮播展示
       if (text.length === 1) {
-        createQr(0);
+        renderReplaceQR(replaceQR, text, 0);
         return;
       }
 
-      myInterval(() => {
-        createQr(i);
-        i++;
-        if (i >= text.length) {
-          i = 0
-        }
-      }, wait);
-    }
+      let currentIndex = 0;
+      isRunningRef.current = true;
+      setIsRunning(true);
 
+      const tick = () => {
+        // 每次执行前检查 ref，确保 STOP 后立刻退出
+        if (!isRunningRef.current) return;
+        renderReplaceQR(replaceQR, text, currentIndex);
+        currentIndex = (currentIndex + 1) % text.length;
+        timerRef.current = setTimeout(tick, wait);
+      };
+
+      timerRef.current = setTimeout(tick, wait);
+    }
+  };
+
+  const renderReplaceQR = (container, text, index) => {
+    container.innerHTML = '';
+    const progressLabel = document.createElement('div');
+    progressLabel.className = 'qr-progress-label';
+    progressLabel.innerHTML = `共 ${text.length} 个，当前第 <strong>${index + 1}</strong> 个`;
+    container.appendChild(progressLabel);
+
+    const div = document.createElement('div');
+    div.id = 'qrcode_replace';
+    div.className = 'qrcode qrcode--replace';
+    container.appendChild(div);
+
+    const qrcode = new QRCode(document.getElementById('qrcode_replace'), {
+      width: 300,
+      height: 300,
+      correctLevel: QRCode.CorrectLevel.M,
+    });
+    qrcode.makeCode(`__${index}_${text.length}__${text[index]}`);
   };
 
   const onSubmit = () => {
@@ -142,15 +148,15 @@ export default function List() {
   };
 
   const upload = () => {
-    if (document.querySelector('.input_file_test')) {
-      document.body.removeChild(document.querySelector('.input_file_test'));
-    }
+    const existingInput = document.querySelector('.input_file_test');
+    if (existingInput) document.body.removeChild(existingInput);
+
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('style', 'display: none');
     input.setAttribute('class', 'input_file_test');
     input.click();
-    document.body.appendChild(input)
+    document.body.appendChild(input);
     input.onchange = (e) => {
       const file = e.target.files[0];
       const { name, type } = file;
@@ -158,80 +164,94 @@ export default function List() {
       fileReader.readAsArrayBuffer(file);
       fileReader.onloadend = (el) => {
         const bytes = new Uint8Array(el.target.result);
-        // 两种方案都算，选小的：
-        // gzip+base64 对可压缩文件有效；base91 对已压缩二进制（jpg/png/pdf）有效
         const gzStr = btoa(Pako.gzip(el.target.result, { to: 'string' }));
         const b91Str = base91.encode(bytes);
         const useBase91 = b91Str.length <= gzStr.length;
         const encoded = useBase91 ? b91Str : gzStr;
         const enc = useBase91 ? 'b91' : 'gz';
         makeCode(`===?filename=${name}&type=${type}&enc=${enc}===${encoded}`, 'noZip');
-      }
-    }
-  }
+      };
+    };
+  };
 
   const onError = () => {
     setVisble(true);
-    setErrorStr('')
-  }
+    setErrorStr('');
+  };
 
   const changeInput = (e) => {
     setErrorStr(e.target.value);
-  }
+  };
 
   const onOk = () => {
     const errorQR = document.getElementById('errorQR');
-    errorQR.innerHTML = ''
+    errorQR.innerHTML = '';
     errorStr.split(',').forEach((el) => {
       setTimeout(() => {
-        const index = +el
-        const item = textArr[index - 1]
+        const index = +el;
+        const item = textArr[index - 1];
+        const label = document.createElement('div');
+        label.className = 'qr-progress-label';
+        label.innerHTML = `共 ${textArr.length} 个，当前第 <strong>${index}</strong> 个`;
+        errorQR.appendChild(label);
         const div = document.createElement('div');
-        const icon = document.createElement('span');
-        icon.innerHTML = `(共 ${textArr.length} 个, 当前 第 ${index} 个)`;
-        errorQR.appendChild(icon);
-        div.id = 'qrcode_error' + (index);
+        div.id = 'qrcode_error' + index;
         div.className = 'qrcode';
         errorQR.appendChild(div);
-        var qrcode = new QRCode(document.getElementById('qrcode_error' + (index)), {
-          width: 330,
-          height: 330,
-          correctLevel: QRCode.CorrectLevel.M
+        const qrcode = new QRCode(document.getElementById('qrcode_error' + index), {
+          width: 300,
+          height: 300,
+          correctLevel: QRCode.CorrectLevel.M,
         });
         qrcode.makeCode(`__${index - 1}_${textArr.length}__${item}`);
-      }, 100)
-    })
+      }, 100);
+    });
+  };
 
+  return (
+    <Container
+      header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
+      main={
+        <Spin tip={loadingText} spinning={loading}>
+          <div className='qr-page'>
+            <Form labelAlign='left' layout='vertical' form={form}>
+              {/* 文本输入：独占一行，rows 缩短 */}
+              <FormItem key={textItem.name} {...textItem} />
+              {/* 字数限制 / 频率 / 模式：横向紧凑三列 */}
+              <div className='qr-config-row'>
+                {configItems.map(item => (
+                  <div key={item.name} className='qr-config-cell'>
+                    <FormItem {...item} />
+                  </div>
+                ))}
+              </div>
+            </Form>
 
-  }
+            {/* 操作按钮区：移动端 2×2，PC 端横排 */}
+            <div className='qr-actions'>
+              <Button onClick={upload}>上传文件</Button>
+              <Button type='primary' onClick={onSubmit}>开始生成</Button>
+              <Button danger={isRunning} onClick={stopTimer}>
+                {isRunning ? '⏹ 暂停' : '暂停'}
+              </Button>
+              <Button onClick={onError}>补缺</Button>
+            </div>
 
-  return <Container
-    header={<Header name='创建二维码' leftPath={`/${APP_NAME}/tool`} />}
-    main={<Spin tip={loadingText} spinning={loading} >
-      <div className='p-20'>
-        <Form labelAlign='left' layout='vertical' form={form}>
-          {
-            items.map(item => <FormItem {...item} />)
-          }
-        </Form>
-        <div className='tc'>
-          <Button onClick={upload} className='m-r-20'>upload</Button>
-          <Button type="primary" htmlType="submit" className='m-r-20' onClick={onSubmit}>
-            push
-          </Button>
-          <Button onClick={resetTimer} className='m-r-20'>STOP</Button>
-          <Button onClick={onError}>补缺</Button>
-        </div>
-        <div id="QR"></div>
-        <div id="replaceQR"></div>
-      </div>
-      <Fixed />
-      <Modal destroyOnClose title='二维码补缺' open={visible} onCancel={() => setVisble(false)} onOk={onOk}>
-        <div>
-          <Input onChange={changeInput} placeholder='输入缺少的二维码 index，英文逗号隔开' />
-          <div id="errorQR"></div>
-        </div>
-      </Modal>
-    </Spin>} />
+            {/* 平铺模式二维码列表 */}
+            <div id='QR' className='qr-grid' />
+
+            {/* 替换模式二维码展示 */}
+            <div id='replaceQR' className='qr-replace-wrap' />
+          </div>
+
+          <Fixed />
+
+          <Modal destroyOnClose title='二维码补缺' open={visible} onCancel={() => setVisble(false)} onOk={onOk}>
+            <Input onChange={changeInput} placeholder='输入缺少的二维码 index，英文逗号隔开' />
+            <div id='errorQR' className='qr-grid' style={{ marginTop: 12 }} />
+          </Modal>
+        </Spin>
+      }
+    />
+  );
 }
-

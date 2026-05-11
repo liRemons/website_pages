@@ -292,10 +292,12 @@ const App = () => {
   };
 
   // 画布容器样式（背景色，不应用模板相框样式）
+  // 移动端：画布高度不超过空状态时的高度（即宽度 × 3/4），竖图超出时画布保持此上限，图片用 contain 显示
   const canvasWrapStyle = {
     position: 'relative',
     width: isMobile ? '100%' : 'min(600px, 100%)',
     aspectRatio: `${canvasRatio}`,
+    ...(isMobile && canvasRatio < 1 ? { maxHeight: `calc(100vw * 3 / 4)` } : {}),
     background: canvasBackground,
     overflow: 'hidden',
     boxSizing: 'border-box',

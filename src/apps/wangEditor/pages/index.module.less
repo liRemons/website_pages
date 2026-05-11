@@ -1,9 +1,91 @@
+/* ── 页面容器 ────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* ── 悬浮下载按钮 ────────────────────────────── */
+.floatDownloadBtn {
+  position: fixed;
+  left: 20px;
+  bottom: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1677ff;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(22, 119, 255, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  z-index: 200;
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(22, 119, 255, 0.55);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ── 编辑器卡片 ──────────────────────────────── */
+.editorCard {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e4e7ed;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 工具栏：去掉 wangeditor 默认的 border，用卡片统一处理 */
+.editorToolbar {
+  border-bottom: 1px solid #f0f0f0 !important;
+  background: #fafafa !important;
+}
+
+/* 编辑区：固定高度，移动端撑满屏幕剩余空间 */
+.editorBody {
+  min-height: 420px;
+  overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .editorBody {
+    min-height: calc(100vh - 250px);
+  }
+}
+
+/* ── 重置 wangeditor 内部 button 样式 ─────────── */
 :global {
-    .w-e-bar {
-        button {
-            width: auto;
-            padding: inherit;
-            box-shadow: none !important;
-        }
+  .w-e-bar {
+    button {
+      width: auto;
+      padding: inherit;
+      box-shadow: none !important;
     }
+  }
+
+  /* 工具栏背景与卡片融合 */
+  .w-e-toolbar {
+    background: #fafafa !important;
+    flex-wrap: wrap;
+  }
+
+  /* 编辑区 padding */
+  .w-e-text-container {
+    background: #fff !important;
+  }
+
+  .w-e-text-placeholder {
+    color: #bbb !important;
+  }
 }

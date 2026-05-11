@@ -194,17 +194,29 @@ const DraggableElement = ({
     const newY = newCenterY - newHeight / 2;
 
     const canvas = canvasRef.current;
+    let clampedX = newX;
+    let clampedY = newY;
+    let clampedWidth = newWidth;
+    let clampedHeight = newHeight;
     if (canvas) {
       const rect = canvas.getBoundingClientRect();
+
       const { lines } = computeSnapAndGuideLines(
         { x: newX, y: newY, width: newWidth, height: newHeight },
         otherElements || [],
         { width: rect.width, height: rect.height }
       );
       onDragGuideLines && onDragGuideLines(lines);
+
+      // 限制元素不超出画布边界：至少保留 20px 宽/高在画布内
+      const MIN_VISIBLE = 20;
+      clampedWidth = Math.max(40, Math.min(newWidth, rect.width));
+      clampedHeight = Math.max(30, Math.min(newHeight, rect.height));
+      clampedX = Math.max(-(clampedWidth - MIN_VISIBLE), Math.min(newX, rect.width - MIN_VISIBLE));
+      clampedY = Math.max(-(clampedHeight - MIN_VISIBLE), Math.min(newY, rect.height - MIN_VISIBLE));
     }
 
-    onUpdate(element.id, { width: newWidth, height: newHeight, x: newX, y: newY });
+    onUpdate(element.id, { width: clampedWidth, height: clampedHeight, x: clampedX, y: clampedY });
   }, [element, onUpdate, canvasRef, otherElements, onDragGuideLines]);
 
   const handleResizeMouseDown = useCallback((event, direction) => {

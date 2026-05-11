@@ -59,6 +59,29 @@ export const createAddImageElement = (setElements, setCanvasRatio, setSelectedId
 
       if (isFirstImage) {
         // 第一张图：画布比例跟随图片，图片铺满画布
+        // 竖图时画布高度上限 = 空状态时的高度（宽度 × 3/4），超出则用 contain 模式
+        const maxCanvasHeight = canvasDisplayWidth * (3 / 4);
+        const idealCanvasHeight = canvasDisplayWidth / ratio;
+        const isHeightOverLimit = idealCanvasHeight > maxCanvasHeight;
+
+        if (isHeightOverLimit) {
+          // 超出上限：画布保持 4/3 比例，图片用 contain 居中展示
+          // canvasRatio 保持 4/3 不变（不调用 setCanvasRatio，避免画布变成超高竖向）
+          const newEl = {
+            id: generateId(),
+            type: 'image',
+            url,
+            x: 0,
+            y: 0,
+            width: canvasDisplayWidth,
+            height: maxCanvasHeight,
+            objectFit: 'contain',
+            zIndex: 1,
+          };
+          return [newEl];
+        }
+
+        // 未超出上限：正常铺满画布，画布比例跟随图片
         setCanvasRatio(ratio);
         const newEl = {
           id: generateId(),
@@ -67,7 +90,7 @@ export const createAddImageElement = (setElements, setCanvasRatio, setSelectedId
           x: 0,
           y: 0,
           width: canvasDisplayWidth,
-          height: canvasDisplayHeight,
+          height: idealCanvasHeight,
           zIndex: 1,
         };
         return [newEl];
