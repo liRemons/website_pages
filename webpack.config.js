@@ -1,11 +1,10 @@
-const { Configuration, DefinePlugin, ProgressPlugin } = require('webpack')
+const { Configuration, DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
-const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
 const rules = require('./config/rules')
@@ -23,50 +22,90 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
   const entry = {}
 
-  console.log('正在编译以下应用', pages)
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
     entry,
     mode,
     output: {
       filename: (pathData) => {
-        return pages.includes(pathData.runtime)
-          ? '[name]/js/[contenthash:10].js'
-          : '[name].js'
+        const chunkName = pathData.chunk?.name || '';
+        // runtime chunk 输出到 chunks/ 目录
+        if (chunkName === 'runtime') return 'chunks/runtime.[contenthash:10].js';
+        // entry chunk（页面）输出到各自的 js/ 子目录
+        if (pages.includes(chunkName)) return '[name]/js/[contenthash:10].js';
+        // 兜底（理论上不会走到这里）
+        return 'chunks/[name].[contenthash:10].js';
       },
       path: path.resolve(__dirname, `dist/@${packageJSON.name}`),
       publicPath: `/@${packageJSON.name}/`,
     },
     optimization: {
+      // 稳定的 moduleId 策略：新增/删除模块不影响无关 chunk 的 hash，提升浏览器缓存命中率
+      moduleIds: 'deterministic',
+      // runtime 单独抽出，避免业务代码变动污染 vendor chunk 的 hash
+      runtimeChunk: 'single',
       minimize: true,
       minimizer: [
         isEnvProduction &&
           new TerserPlugin({
-            minify: (file, sourceMap) => {
-              const uglifyJsOptions = {
-                sourceMap: false,
-              }
-              return require('uglify-js').minify(file, uglifyJsOptions)
+            // 使用 terser 替代 uglify-js：支持 ES6+，压缩率更高
+            terserOptions: {
+              compress: {
+                drop_console: true,    // 去掉 console.log
+                drop_debugger: true,   // 去掉 debugger
+                pure_funcs: ['console.log', 'console.info'],
+              },
+              format: {
+                comments: false,       // 去掉所有注释
+              },
             },
+            extractComments: false,    // 不生成额外的 LICENSE.txt 文件
           }),
       ].filter(Boolean),
       splitChunks: {
-        chunks: 'async',
+        chunks: 'all',
         minSize: 20000,
-        minRemainingSize: 0,
-        minChunks: 1,
         maxAsyncRequests: 30,
         maxInitialRequests: 30,
-        enforceSizeThreshold: 50000,
         cacheGroups: {
-          defaultVendors: {
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
+          // antd 及其依赖单独成包，体积大且稳定，有利于长效缓存
+          antd: {
+            test: /[\\/]node_modules[\\/](antd|@ant-design|rc-[\w-]+)[\\/]/,
+            name: 'chunks/vendor-antd',
+            chunks: 'all',
+            priority: 30,
             reuseExistingChunk: true,
           },
-          default: {
+          // react 生态单独成包
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+            name: 'chunks/vendor-react',
+            chunks: 'all',
+            priority: 25,
+            reuseExistingChunk: true,
+          },
+          // mobx 状态管理单独成包
+          mobx: {
+            test: /[\\/]node_modules[\\/](mobx|mobx-react|mobx-react-lite)[\\/]/,
+            name: 'chunks/vendor-mobx',
+            chunks: 'all',
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+          // 其余 node_modules 统一归到 vendor-libs
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'chunks/vendor-libs',
+            chunks: 'all',
+            priority: 10,
+            reuseExistingChunk: true,
+          },
+          // 业务代码中被多页面复用的公共模块
+          common: {
+            name: 'chunks/common',
             minChunks: 2,
-            priority: -20,
+            chunks: 'all',
+            priority: 5,
             reuseExistingChunk: true,
           },
         },
@@ -108,25 +147,39 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
             }),
         })
       }),
-      new AntdDayjsWebpackPlugin(),
-      new ProgressPlugin({
-        activeModules: true,
-        modules: true,
-      }),
       new DefinePlugin({
         APP_NAME: JSON.stringify(`@${packageJSON.name}`),
       }),
-      // 压缩css
+      // 压缩 CSS
       isEnvProduction ? new CssMinimizerPlugin() : null,
-      new BundleAnalyzerPlugin({
-        defaultSizes: 'stat',
-        analyzerMode:
-          isEnvProduction && otherParams.report === 'true'
-            ? 'server'
-            : 'disabled',
-      }),
+      // BundleAnalyzer 仅在 report=true 时才注入，避免每次构建都有开销
+      isEnvProduction && otherParams.report === 'true'
+        ? new BundleAnalyzerPlugin({ defaultSizes: 'stat', analyzerMode: 'server' })
+        : null,
+      // gzip 压缩：通过 gzip=true 开启，兼容性最好，适合需要兼容旧浏览器的场景
+      // 用法：npm run build gzip=true
       isEnvProduction && otherParams.gzip === 'true'
-        ? new CompressionPlugin()
+        ? new CompressionPlugin({
+            algorithm: 'gzip',
+            test: /\.(js|css|html|svg)$/,
+            filename: '[path][base].gz',
+            threshold: 10240,
+            minRatio: 0.8,
+          })
+        : null,
+      // brotli 压缩：通过 br=true 开启，压缩率比 gzip 高 15%-25%，现代浏览器均支持
+      // 用法：npm run build br=true
+      isEnvProduction && otherParams.br === 'true'
+        ? new CompressionPlugin({
+            algorithm: 'brotliCompress',
+            test: /\.(js|css|html|svg)$/,
+            filename: '[path][base].br',
+            threshold: 10240,
+            minRatio: 0.8,
+            compressionOptions: {
+              level: 11, // brotli 最高压缩级别（0-11）
+            },
+          })
         : null,
         isEnvDevelopment && new ReactRefreshPlugin(),
     ].filter(Boolean),
@@ -144,7 +197,9 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         progress: true,
       },
     },
-    stats: 'normal',
+    // 并行打包模式下子进程 stdout 的任何输出都会把主进程光标推下去，导致进度条 UI 错位
+    // 设为 errors-only，只在构建出错时才输出，正常构建时 stdout 完全静默
+    stats: 'errors-only',
     devtool: isEnvDevelopment ? 'eval-source-map' : false,
   }
   return config

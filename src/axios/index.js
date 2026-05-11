@@ -1,83 +1,100 @@
-import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom'
-import qs from 'qs'
 import { message, Spin } from 'antd'
 import { HOST } from "@utils";
-const noLoadingURL = []
+
+const TIMEOUT_MS = 20000;
+const noLoadingURL = [];
+
+let loadingCount = 0;
+
 const controlLoading = ({ isOpen }) => {
-  const loadingDOM = document.getElementById('loading')
+  const loadingDOM = document.getElementById('loading');
   if (isOpen) {
-    loadingDOM.setAttribute('class', 'loadingVerlay')
-    loadingDOM.style.display = 'flex'
-    ReactDOM.render(<Spin tip="加载中..." size="large"></Spin>, loadingDOM)
+    loadingDOM.setAttribute('class', 'loadingVerlay');
+    loadingDOM.style.display = 'flex';
+    ReactDOM.render(<Spin tip="加载中..." size="large"></Spin>, loadingDOM);
   } else {
-    loadingDOM.setAttribute('class', '')
-    loadingDOM.style.display = 'none'
-    ReactDOM.render('', loadingDOM)
+    loadingDOM.setAttribute('class', '');
+    loadingDOM.style.display = 'none';
+    ReactDOM.render('', loadingDOM);
   }
-}
-const service = axios.create({
-  baseURL: HOST,
-  timeout: 20000,
-})
-const arr = [service]
-let loadingCount = 0
-arr.forEach((item) => {
-  // 接口请求累加
-  loadingCount = 0
-  item.interceptors.request.use(
-    (config) => {
-      const REMONS_TOKEN = localStorage.getItem('REMONS_TOKEN')
-      REMONS_TOKEN && (config.headers['REMONS_TOKEN'] = REMONS_TOKEN)
-      // 如果需要序列化
-      if (
-        config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
-      ) {
-        // post请求序列化
-        config.data = qs.stringify(config.data)
-      }
+};
 
-      // 全局loading
-      if (!noLoadingURL.includes(config.url)) {
-        loadingCount += 1
-        controlLoading({ isOpen: true })
-      }
-      return config
-    },
-    (error) => {
-      Promise.reject(error)
-    }
-  )
+const showLoading = () => {
+  loadingCount += 1;
+  controlLoading({ isOpen: true });
+};
 
-  // response 拦截器,数据返回后进行一些处理
-  item.interceptors.response.use(
-    (response) => {
-      loadingCount -= 1
-      // --是为了让loading消失，因为上面++，所以待成功后让其抵消为0；（下同）
-      if (loadingCount <= 0) {
-        controlLoading({ isOpen: false })
-        // 如果接口请求累加值小于0 那么关闭loading
-      }
-      const res = response.data
-      if (!res.success && !response.config.url.includes('upload')) {
-        message.error(res.msg)
-      }
-      // 返回请求值
-      return res
-    },
-    (error) => {
-      // 如果接口出错，当然，也可以根据错误的状态码进行错误信息配置，
-      // 因为接口中没有返回特定状态码，所以没有配置
-      loadingCount -= 1
-      if (loadingCount <= 0) {
-        controlLoading({ isOpen: false })
-      }
-      message.error(error.message)
-      Promise.reject(error)
+const hideLoading = () => {
+  loadingCount -= 1;
+  if (loadingCount <= 0) {
+    loadingCount = 0;
+    controlLoading({ isOpen: false });
+  }
+};
+
+/**
+ * 基于原生 fetch 实现的请求封装，替代 axios，无需额外依赖。
+ * 支持与原 axios service 相同的调用方式：{ method, url, data, params, headers }
+ */
+const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
+  const upperMethod = method.toUpperCase();
+
+  // 拼接 query 参数（对应 axios 的 params）
+  let fullUrl = `${HOST}${url}`;
+  if (params && Object.keys(params).length > 0) {
+    fullUrl += '?' + new URLSearchParams(params).toString();
+  }
+
+  // 构造请求头
+  const requestHeaders = { ...headers };
+  const token = localStorage.getItem('REMONS_TOKEN');
+  if (token) requestHeaders['REMONS_TOKEN'] = token;
+
+  // 构造请求体
+  let body = undefined;
+  if (data && upperMethod !== 'GET') {
+    if (requestHeaders['Content-Type'] === 'application/x-www-form-urlencoded') {
+      body = new URLSearchParams(data).toString();
+    } else {
+      requestHeaders['Content-Type'] = requestHeaders['Content-Type'] || 'application/json';
+      body = JSON.stringify(data);
     }
-  )
-})
-// request拦截器,在请求之前做一些处理
+  }
+
+  // 全局 loading
+  const needLoading = !noLoadingURL.includes(url);
+  if (needLoading) showLoading();
+
+  // 超时控制
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  return fetch(fullUrl, {
+    method: upperMethod,
+    headers: requestHeaders,
+    body,
+    signal: controller.signal,
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then((res) => {
+      if (!res.success && !url.includes('upload')) {
+        message.error(res.msg);
+      }
+      return res;
+    })
+    .catch((error) => {
+      message.error(error.message);
+      return Promise.reject(error);
+    })
+    .finally(() => {
+      clearTimeout(timeoutId);
+      if (needLoading) hideLoading();
+    });
+};
 
 export { service }
