@@ -7,6 +7,7 @@ import MarkMap from '@components/MarkMap';
 import Header from '@components/Header';
 import handleContent from '../../handle.md';
 import style from './index.module.less';
+import '@assets/css/index.global.less';
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
 

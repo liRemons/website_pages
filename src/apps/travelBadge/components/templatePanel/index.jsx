@@ -334,55 +334,57 @@ const TemplatePanel = ({
 
   return (
     <div className="template-panel">
-      {/* ── 自定义模板管理 ── */}
-      <div className="template-panel__manager">
-        <div className="template-panel__manager-header">
-          <span className="template-panel__manager-title" style={{ color: theme.textPrimary }}>{t('template.title')}</span>
-          <button
-            type="button"
-            onClick={() => { setShowSaveInput((v) => !v); setEditingId(null); }}
-            disabled={customTemplates.length >= 10}
-            className={`template-panel__save-toggle-btn ${showSaveInput ? 'template-panel__save-toggle-btn--active' : ''}`}
-            style={{ color: showSaveInput ? theme.textMuted : theme.accent }}
-          >
-            {customTemplates.length >= 10
-              ? t('template.full')
-              : (showSaveInput ? t('template.cancel') : t('template.saveCurrent'))}
-          </button>
-        </div>
-        {showSaveInput && (
-          <div className="template-panel__save-row">
-            <input
-              value={saveTemplateName}
-              onChange={(e) => setSaveTemplateName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && saveCurrentAsTemplate()}
-              placeholder={t('template.inputPlaceholder')}
-              className="template-panel__save-input"
-              style={{ color: theme.textPrimary }}
-              autoFocus
-            />
+      {/* ── 自定义模板管理（仅管理员可保存） ── */}
+      {isAdmin && (
+        <div className="template-panel__manager">
+          <div className="template-panel__manager-header">
+            <span className="template-panel__manager-title" style={{ color: theme.textPrimary }}>{t('template.title')}</span>
             <button
               type="button"
-              className="template-panel__save-toggle-btn"
-              style={{ color: theme.accent }}
-              onClick={saveCurrentAsTemplate}
+              onClick={() => { setShowSaveInput((v) => !v); setEditingId(null); }}
+              disabled={customTemplates.length >= 10}
+              className={`template-panel__save-toggle-btn ${showSaveInput ? 'template-panel__save-toggle-btn--active' : ''}`}
+              style={{ color: showSaveInput ? theme.textMuted : theme.accent }}
             >
-              {t('template.save')}
+              {customTemplates.length >= 10
+                ? t('template.full')
+                : (showSaveInput ? t('template.cancel') : t('template.saveCurrent'))}
             </button>
           </div>
-        )}
-        <div className="template-panel__hint" style={{ color: theme.textSecondary }}>
-          {t('template.savedCount', { count: customTemplates.length })}
+          {showSaveInput && (
+            <div className="template-panel__save-row">
+              <input
+                value={saveTemplateName}
+                onChange={(e) => setSaveTemplateName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveCurrentAsTemplate()}
+                placeholder={t('template.inputPlaceholder')}
+                className="template-panel__save-input"
+                style={{ color: theme.textPrimary }}
+                autoFocus
+              />
+              <button
+                type="button"
+                className="template-panel__save-toggle-btn"
+                style={{ color: theme.accent }}
+                onClick={saveCurrentAsTemplate}
+              >
+                {t('template.save')}
+              </button>
+            </div>
+          )}
+          <div className="template-panel__hint" style={{ color: theme.textSecondary }}>
+            {t('template.savedCount', { count: customTemplates.length })}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* ── 自定义模板列表 ── */}
+      {/* ── 自定义模板列表（管理员可编辑/删除，普通用户只读可应用） ── */}
       {customTemplates.length > 0 && (
         <>
           <div className="template-panel__section-title" style={{ color: theme.textMuted }}>{t('template.myTemplates')}</div>
           <div className="template-panel__grid">
             {customTemplates.map((frame) => (
-              editingId === frame.id ? (
+              isAdmin && editingId === frame.id ? (
                 <div key={frame.id} className="template-panel__card-edit-wrap">
                   <InlineEditForm
                     initialLabel={frame.label}
@@ -396,15 +398,15 @@ const TemplatePanel = ({
                 <TemplateCard
                   key={frame.id}
                   frame={frame}
-                  isCustom={true}
-                  isAdmin={false}
+                  isCustom={isAdmin}
+                  isAdmin={isAdmin}
                   isSystemEditable={false}
                   isActive={activeFrame === frame.id}
                   theme={theme}
                   isDark={isDark}
                   onApply={applyTemplate}
-                  onDelete={deleteCustomTemplate}
-                  onEdit={handleCustomEdit}
+                  onDelete={isAdmin ? deleteCustomTemplate : null}
+                  onEdit={isAdmin ? handleCustomEdit : null}
                 />
               )
             ))}

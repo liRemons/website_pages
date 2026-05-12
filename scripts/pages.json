@@ -1,5 +1,13 @@
 [
   {
+    "pageName": "jsonViewer",
+    "subTitle": "JSON 可视化解析，层级一目了然",
+    "title": "JSON 解析器",
+    "description": "在线 JSON 解析与可视化工具，支持格式化、压缩、层级折叠与复制",
+    "keywords": "JSON解析,JSON格式化,JSON可视化,在线JSON工具,JSON压缩",
+    "seoContent": "免费在线 JSON 解析器，支持 JSON 格式化、压缩、层级折叠展开、一键复制等功能，两栏布局实时解析，移动端自适应，开发调试必备工具。"
+  },
+  {
     "pageName": "createQR",
     "subTitle": "数据化身二维码，离线传输黑科技",
     "title": "生成二维码",

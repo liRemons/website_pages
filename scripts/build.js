@@ -13,7 +13,13 @@ const PERCENT_RE = /\[webpack\.Progress\]\s*(\d+)%/;
 const NOISE_LINE_RE = /^<[siw]>\s*\[webpack\./;
 const SPINNER = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
-const isTTY = !!process.stdout.isTTY;
+// 判断终端是否支持 ANSI 光标控制（上移覆写）
+// Windows CMD/PowerShell 即使 isTTY=true，也不支持 \x1b[nA 光标上移
+// Windows Terminal（WT_SESSION）和 ConEmu（ConEmuANSI=ON）支持完整 ANSI
+const isWindowsAnsiSupported =
+  process.platform === 'win32' &&
+  (!!process.env.WT_SESSION || process.env.ConEmuANSI === 'ON' || !!process.env.TERM_PROGRAM);
+const isTTY = !!process.stdout.isTTY && (process.platform !== 'win32' || isWindowsAnsiSupported);
 
 // 进度数据：key=pageName, value={ percent, status }
 const progressMap = {};
@@ -156,7 +162,6 @@ function buildPage(page, otherParams, spinFrameRef) {
       if (Date.now() - lastProgressChangedAt >= PAGE_BUILD_TIMEOUT_MS) {
         clearInterval(timeoutTimer);
         progressMap[page].status = 'error';
-        redrawAllLines(spinFrameRef.frame);
         restorePageDist(page);
         pendingStderr.push(chalk.red(`  [${page}] ⏰ 打包超时（进度停滞在 ${currentPercent}% 超过 ${PAGE_BUILD_TIMEOUT_MS / 1000}s），已强制终止`));
         child.kill('SIGKILL');
@@ -190,7 +195,6 @@ function buildPage(page, otherParams, spinFrameRef) {
         const m = line.match(PERCENT_RE);
         if (m) {
           progressMap[page].percent = parseInt(m[1], 10);
-          redrawAllLines(spinFrameRef.frame);
           return;
         }
         if (NOISE_LINE_RE.test(line)) return;
@@ -208,7 +212,6 @@ function buildPage(page, otherParams, spinFrameRef) {
     child.on('error', (err) => {
       clearInterval(timeoutTimer);
       progressMap[page].status = 'error';
-      redrawAllLines(spinFrameRef.frame);
       pendingStderr.push(chalk.red(`\n  [${page}] 启动失败: ${err.message}`));
       reject(err);
     });
@@ -218,14 +221,12 @@ function buildPage(page, otherParams, spinFrameRef) {
       if (code === 0) {
         progressMap[page].percent = 100;
         progressMap[page].status = 'done';
-        redrawAllLines(spinFrameRef.frame);
         removePageBackup(page);
         cleanLegacyDistDirs();
         if (!isTTY) console.log(`[${page}] ✅ 打包完成`);
         resolve(page);
       } else {
         progressMap[page].status = 'error';
-        redrawAllLines(spinFrameRef.frame);
         restorePageDist(page);
         let errorMsg = `退出码: ${code}`;
         if (signal) errorMsg = `被信号终止: ${signal}`;
@@ -309,7 +310,7 @@ getPages().then(({ pages, otherParams }) => {
 
   // 从 otherParams 中解析 concurrency=N，默认并发数为 2，避免多进程同时启动导致内存溢出
   const concurrencyMatch = otherParamsStr.match(/concurrency=(\d+)/);
-  const concurrency = concurrencyMatch ? Math.max(1, parseInt(concurrencyMatch[1], 10)) : 2;
+  const concurrency = concurrencyMatch ? Math.max(1, parseInt(concurrencyMatch[1], 10)) : 1;
   if (concurrency < pageList.length) {
     console.log(chalk.gray(`  并发限制: ${concurrency}（其余页面排队等待，可通过 concurrency=N 调整）`));
   }

@@ -119,7 +119,7 @@ export default function App() {
   }
 
   return <> <Container
-    header={<Header name='URL转编码' handleContent={handleContent} />}
+    header={<Header name='URL转编码' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
     main={renderMain()}
   />
     <Fixed />

@@ -8,15 +8,17 @@ import { copy, openApp, getSearchParams } from 'methods-r';
 import { img } from '@utils';
 import homeSvg from './assets/svg/home.svg';
 import shareSvg from './assets/svg/share.svg';
+import HelpDrawer from '../HelpDrawer';
 
-export default function Fixed({ homeUrl = '/homeList', }) {
+export default function Fixed({ homeUrl = '/homeList', handleContent, position = 'right' }) {
   const [visible, setVisible] = useState(false);
+
   const share = () => {
     const params = {
       ...getSearchParams(),
       handleType: 'share'
     };
-    const newParams = new URLSearchParams(params)
+    const newParams = new URLSearchParams(params);
     copy(`${location.origin}${location.pathname}?${newParams.toString()}`);
     message.success('复制当前页面链接成功');
   };
@@ -30,18 +32,29 @@ export default function Fixed({ homeUrl = '/homeList', }) {
     { icon: img(shareSvg, 20), path: '', title: '分享', handle: share },
   ].filter(item => item.isShow !== false);
 
-  return <>
-    <div className={classnames(style.container, visible ? style.containerToRight : '')}>
-      {btns.map(item => <div onClick={item.handle || (() => go(item.path))} className={classnames('circle', style.circle)}>
-        {item.icon}
-      </div>)}
-      <div onClick={() => setVisible(!visible)} className={classnames('circle', style.circle, visible ? style.toRightIcon : '')}>
-        {
-          visible ? <LeftOutlined /> : <RightOutlined />
-        }
+  return (
+    <>
+      <div className={classnames(style.container, visible ? style.containerToRight : '')}>
+         {/* 操作说明按钮（有 handleContent 时显示） */}
+        {handleContent && (
+          <div className={classnames(style.circle)}>
+            <HelpDrawer handleContent={handleContent} />
+          </div>
+        )}
+        {btns.map(item => (
+          <div
+            key={item.title}
+            onClick={item.handle || (() => go(item.path))}
+            className={classnames('circle', style.circle)}
+          >
+            {item.icon}
+          </div>
+        ))}
+       
+        <div onClick={() => setVisible(!visible)} className={classnames('circle', style.circle, visible ? style.toRightIcon : '')}>
+          {visible ? <LeftOutlined /> : <RightOutlined />}
+        </div>
       </div>
-
-    </div>
-
-  </>;
+    </>
+  );
 }

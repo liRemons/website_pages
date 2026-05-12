@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
+    "@textea/json-viewer": "^4.0.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "antd": "^5.20.0",
@@ -71,6 +72,7 @@
     "dayjs": "^1.11.20",
     "express": "^5.2.1",
     "https": "^1.0.0",
+    "json5": "^2.2.3",
     "jsqr": "^1.4.0",
     "lodash.orderby": "^4.6.0",
     "lodash.sortby": "^4.7.0",
@@ -85,6 +87,7 @@
     "react-colorful": "^5.5.1",
     "react-dom": "^17.0.2",
     "react-fast-marquee": "^1.6.5",
+    "react-json-view": "^1.21.3",
     "remons-components": "^2.0.8",
     "vditor": "^3.8.15"
   }

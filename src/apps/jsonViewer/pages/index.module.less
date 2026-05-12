@@ -1,0 +1,251 @@
+@import '../../../assets/css/index.global.less';
+
+/* ── 页面容器：PC 左右两栏，移动端上下布局 ── */
+.page {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding: 12px;
+  height: calc(100vh - 60px);
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .page {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+}
+
+/* ── 左右各占一半 ── */
+.leftPane,
+.rightPane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: -3px -3px 10px @color-white, 3px 3px 10px @color-shadow;
+  background: @color-bg;
+}
+
+@media (max-width: 600px) {
+  .leftPane {
+    min-height: 220px;
+  }
+
+  .rightPane {
+    min-height: 300px;
+  }
+}
+
+/* ── 栏头部：标题 + 操作按钮 ── */
+.paneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.paneTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── 解析中提示 ── */
+.parsingTip {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+/* ── 左栏 textarea 配置栏 ── */
+.textareaOptions {
+  padding: 4px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+/* ── 左栏编辑器：行号 + textarea 横向并排 ── */
+.editorWrap {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 5px @color-shadow, inset -3px -3px 8px @color-white;
+}
+
+.lineNumbers {
+  flex-shrink: 0;
+  width: 40px;
+  padding: 12px 0;
+  text-align: right;
+  font-size: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  line-height: 1.7 * 13px;
+  color: #b0b8c8;
+  background: rgba(0, 0, 0, 0.02);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  user-select: none;
+  overflow: hidden;
+}
+
+.lineNumber {
+  padding-right: 8px;
+  height: 1.7 * 13px;
+}
+
+/* ── 左栏 textarea ── */
+.textareaNoWrap {
+  white-space: nowrap;
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 13px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  line-height: 1.7 * 13px;
+  color: #374151;
+  background: @color-bg;
+  overflow: auto;
+}
+
+/* ── 错误提示 ── */
+.errorTip {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #ef4444;
+  background: #fef2f2;
+  border-top: 1px solid #fee2e2;
+  flex-shrink: 0;
+  word-break: break-all;
+}
+
+/* ── 右栏 viewer 滚动区域 ── */
+.viewerWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── 右栏树形视图外层：行号 + 树 横向并排 ── */
+.treeViewWrap {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 行号列：随树形内容滚动 */
+.treeLineNumbers {
+  flex-shrink: 0;
+  width: 44px;
+  text-align: right;
+  font-size: 13px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  line-height: 22px;
+  color: #b0b8c8;
+  background: rgba(0, 0, 0, 0.02);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  user-select: none;
+  overflow: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.treeLineNumber {
+  padding-right: 8px;
+  height: 22px;
+  line-height: 22px;
+}
+
+/* 树形内容区：自己负责滚动 */
+.treeViewInner {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+
+  /* 隐藏 rjv 内置编辑框、提交/取消按钮（用自定义气泡替代） */
+  :global {
+    .variable-editor,
+    .click-to-edit,
+    .click-to-remove {
+      display: none !important;
+    }
+  }
+}
+
+.viewerNoWrap {
+  :global {
+    .string-value,
+    .object-key,
+    .variable-row {
+      white-space: nowrap;
+    }
+  }
+}
+
+/* ── 空状态提示 ── */
+.emptyTip {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ── 气泡编辑框 ── */
+.editBubble {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.editBubblePath {
+  font-size: 11px;
+  color: #6b7280;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  word-break: break-all;
+  line-height: 1.5;
+  padding: 4px 6px;
+  background: #f3f4f6;
+  border-radius: 5px;
+}
+
+.editBubbleInput {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+}
+
+.editBubbleActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

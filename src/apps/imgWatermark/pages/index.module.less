@@ -41,7 +41,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px 14px 12px;
+  padding: 10px 14px 12px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -266,21 +266,80 @@
   height: auto;
 }
 
+// ── 移动端 Tab 切换栏 ────────────────────────
+.mobileTabs {
+  display: none;
+}
+
 // ── 响应式 ────────────────────────────────────
 @media screen and (max-width: 700px) {
+  .mobileTabs {
+    display: flex;
+    flex-shrink: 0;
+    background: @color-bg;
+    padding: 8px 12px 20px 12px;
+    gap: 8px;
+  }
+
+  .mobileTab {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: @color-muted;
+    background: @color-bg;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    box-shadow: -3px -3px 8px @color-white, 3px 3px 8px @color-shadow;
+
+    &:active {
+      box-shadow: inset 2px 2px 5px @color-shadow, inset -2px -2px 5px @color-white;
+    }
+  }
+
+  .mobileTabActive {
+    color: @color-text;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px @color-shadow, inset -2px -2px 5px @color-white;
+  }
+
+  .mobileTabDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #52c41a;
+    flex-shrink: 0;
+  }
+
   .layout {
     flex-direction: column;
   }
 
   .sidebar {
     width: 100%;
-    height: auto;
+    flex: 1;
     border-right: none;
-    border-bottom: 1px solid rgba(186, 190, 204, 0.4);
+    border-bottom: none;
+    overflow: hidden;
+  }
+
+  .sidebarHidden {
+    display: none;
   }
 
   .preview {
+    flex: 1;
     padding: 14px;
-    min-height: 300px;
+    min-height: unset;
+  }
+
+  .previewHidden {
+    display: none;
   }
 }

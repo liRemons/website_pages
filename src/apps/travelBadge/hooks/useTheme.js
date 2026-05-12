@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
  */
 export const useTheme = () => {
   const [themeMode, setThemeMode] = useState(() => 
-    localStorage.getItem('photo_editor_theme') || 'dark'
+    localStorage.getItem('photo_editor_theme') || 'system'
   );
 
   // 计算实际是否暗色

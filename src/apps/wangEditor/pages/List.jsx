@@ -7,6 +7,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import handleContent from '../handle.md';
 import { Editor, Toolbar } from '@wangeditor/editor-for-react';
 import '@wangeditor/editor/dist/css/style.css';
+import '@assets/css/index.global.less';
 import style from './index.module.less';
 
 export default function List() {
@@ -60,7 +61,7 @@ export default function List() {
 
   return <>
     <Container
-      header={<Header name='富文本编辑器' handleContent={handleContent} />}
+      header={<Header name='富文本编辑器' handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
       main={
         <div className={style.page}>
           {/* 编辑器卡片 */}

@@ -7,6 +7,7 @@ import Container from '@components/Container';
 import CardList from '@components/CardList';
 import Fixed from '@components/Fixed';
 import Header from '@components/Header';
+import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 export default function HomeList() {
   const localStore = useLocalObservable(() => store);

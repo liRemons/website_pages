@@ -18,8 +18,10 @@ import TemplatePanel from './components/templatePanel';
 import ImagePanel from './components/imagePanel';
 import TextPanel from './components/textPanel';
 import CanvasArea from './components/canvasArea';
+import Fixed from '@components/Fixed';
 import { AppTopBar, MobileHeader } from './components/appHeader';
 import { LocaleProvider } from './i18n';
+import handleContent from './handle.md'
 
 // ─── 主应用 ───────────────────────────────────────────────────────────────────
 
@@ -484,6 +486,7 @@ const App = () => {
         )}
         </div>{/* end app-main */}
       </div>
+      <Fixed homeUrl="/tool" handleContent={handleContent} position="left" />
     </ConfigProvider>
   );
 };

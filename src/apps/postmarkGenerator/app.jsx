@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import { BUILTIN_FONTS, STAMP_STYLES } from './constants';
 import { degToRad, drawStampToCanvas } from './canvas/drawers';
 import Fixed from '@components/Fixed';
+import handleContent from './handle.md';
 import './app.css';
 
 /** 样式预览缩略图组件：独立渲染一个小 canvas 作为预览 */
@@ -384,7 +385,7 @@ export default function PostmarkGenerator() {
           </Card>
         </div>
       </div>
-      <Fixed homeUrl="/tool" />
+      <Fixed homeUrl="/tool" handleContent={handleContent} />
     </div>
   );
 }

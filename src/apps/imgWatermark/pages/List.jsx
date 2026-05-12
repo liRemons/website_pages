@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@components/Header';
+import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 import { Input, Slider, Tooltip, ColorPicker } from 'antd';
 import Fixed from '@components/Fixed';
@@ -47,12 +48,13 @@ function List() {
   const [fileName, setFileName] = useState('');
   const [watermarkText, setWatermarkText] = useState('');
   // color 存 css rgba 字符串，直接用于 canvas fillStyle
-  const [color, setColor] = useState('rgba(0,0,0,0.15)');
+  const [color, setColor] = useState('rgba(255,255,255,0.6)');
   const [rotate, setRotate] = useState(30);
   const [fontSize, setFontSize] = useState(18);
   const [spacing, setSpacing] = useState(60);
   const [isDragOver, setIsDragOver] = useState(false);
   const [hasImage, setHasImage] = useState(false);
+  const [mobileTab, setMobileTab] = useState('settings'); // 'settings' | 'preview'
 
   const imgRef = useRef(null);
   const canvasRef = useRef(null);
@@ -136,9 +138,26 @@ function List() {
       {/* img 用 display:none 隐藏，仅作 drawImage 数据源 */}
       <img ref={imgRef} src={imgSrc} alt="" style={{ display: 'none' }} />
 
+      {/* 移动端 Tab 切换栏 */}
+      <div className={style.mobileTabs}>
+        <button
+          className={`${style.mobileTab} ${mobileTab === 'settings' ? style.mobileTabActive : ''}`}
+          onClick={() => setMobileTab('settings')}
+        >
+          参数设置
+        </button>
+        <button
+          className={`${style.mobileTab} ${mobileTab === 'preview' ? style.mobileTabActive : ''}`}
+          onClick={() => { setMobileTab('preview'); }}
+        >
+          预览效果
+          {hasImage && <span className={style.mobileTabDot} />}
+        </button>
+      </div>
+
       <div className={style.layout}>
         {/* ── 左侧控制面板 ── */}
-        <aside className={style.sidebar}>
+        <aside className={`${style.sidebar} ${mobileTab === 'preview' ? style.sidebarHidden : ''}`}>
           <div className={style.panelScroll}>
 
             {/* 上传区域 */}
@@ -237,7 +256,7 @@ function List() {
         </aside>
 
         {/* ── 右侧预览区域 ── */}
-        <main className={style.preview}>
+        <main className={`${style.preview} ${mobileTab === 'settings' ? style.previewHidden : ''}`}>
           {!hasImage && (
             <div className={style.emptyTip}>
               <PictureOutlined className={style.emptyIcon} />
