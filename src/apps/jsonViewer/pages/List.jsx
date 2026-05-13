@@ -16,6 +16,7 @@ import Fixed from '@components/Fixed';
 import { copy } from 'methods-r';
 import '@assets/css/index.global.less';
 import style from './index.module.less';
+import handleContent from '../handle.md'
 
 // 递归将字符串类型的值尝试解析为 JSON（自解析序列化 JSON）
 function autoParseStringValues(value) {
@@ -261,7 +262,7 @@ export default function List() {
   return (
     <>
       <Container
-        header={<Header name="JSON 解析器" />}
+        header={<Header name="JSON 解析器" handleContent={handleContent} />}
         main={
           <div className={style.page}>
             {/* 操作说明 tips */}
