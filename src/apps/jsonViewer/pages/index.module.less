@@ -3,11 +3,20 @@
 /* ── 页面容器：PC 左右两栏，移动端上下布局 ── */
 .page {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 12px;
   padding: 12px;
   height: calc(100vh - 60px);
   box-sizing: border-box;
+}
+
+/* ── 左右两栏容器 ── */
+.panesRow {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  min-height: 0;
 }
 
 @media (max-width: 600px) {
@@ -16,6 +25,19 @@
     height: auto;
     padding: 10px;
   }
+}
+
+/* ── 操作说明 tips 条 ── */
+.tipsBar {
+  width: 100%;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  font-size: 12px;
+  color: #6b7280;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 /* ── 左右各占一半 ── */

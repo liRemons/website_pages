@@ -14,6 +14,7 @@ import Container from '@components/Container';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import { copy } from 'methods-r';
+import '@assets/css/index.global.less';
 import style from './index.module.less';
 
 // 递归将字符串类型的值尝试解析为 JSON（自解析序列化 JSON）
@@ -62,8 +63,10 @@ export default function List() {
   const editInputRef = useRef(null);
   const editBubbleRef = useRef(null);
 
-  // 实时记录鼠标位置（onMouseMove 无条件更新），onSelect 触发时读取
+  // 实时记录鼠标位置（onMouseMove 无条件更新），右键时读取
   const lastMousePos = useRef({ x: window.innerWidth / 2, y: 300 });
+  // 记录最近一次 onSelect 选中的节点信息，供右键弹出气泡使用
+  const lastSelectedNode = useRef(null);
 
   // 点击气泡外部时关闭气泡
   useEffect(() => {
@@ -78,9 +81,8 @@ export default function List() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [editBubble]);
 
-  // onSelect 回调：rjv 点击值节点时触发，拿到准确的 namespace/name/value
+  // onSelect 回调：rjv 点击值节点时只记录节点信息，不弹气泡
   const handleRjvSelect = useCallback((selection) => {
-    // namespace 是父路径，name 是当前 key，完整路径 = [...namespace, name]
     const fullNamespace = [
       ...selection.namespace,
       ...(selection.name !== null && selection.name !== undefined ? [selection.name] : []),
@@ -89,8 +91,17 @@ export default function List() {
     const editValue = rawValue !== null && typeof rawValue === 'object'
       ? JSON.stringify(rawValue, null, 2)
       : String(rawValue ?? '');
-    const { x, y } = lastMousePos.current;
-    setEditBubble({ namespace: fullNamespace, editValue, x, y });
+    lastSelectedNode.current = { namespace: fullNamespace, editValue };
+  }, []);
+
+  // 右键回调：在 JSON 树区域右键时，用记录的节点信息弹出气泡
+  const handleTreeContextMenu = useCallback((e) => {
+    if (!lastSelectedNode.current) return;
+    e.preventDefault();
+    const { namespace, editValue } = lastSelectedNode.current;
+    const x = e.clientX;
+    const y = e.clientY;
+    setEditBubble({ namespace, editValue, x, y });
     setTimeout(() => editInputRef.current?.focus(), 50);
   }, []);
 
@@ -253,6 +264,13 @@ export default function List() {
         header={<Header name="JSON 解析器" />}
         main={
           <div className={style.page}>
+            {/* 操作说明 tips */}
+            <div className={style.tipsBar}>
+              💡 <strong>操作说明：</strong>单击节点选中，右键弹出编辑 / 删除操作
+            </div>
+
+            {/* 左右两栏 */}
+            <div className={style.panesRow}>
             {/* 左栏：输入区 */}
             <div className={style.leftPane}>
               <div className={style.paneHeader}>
@@ -304,7 +322,11 @@ export default function List() {
                     <Button
                       size="small"
                       icon={collapsedLevel !== false ? <ExpandAltOutlined /> : <ShrinkOutlined />}
-                      onClick={() => setCollapsedLevel(collapsedLevel !== false ? false : 1)}
+                      onClick={() => {
+                        const nextLevel = collapsedLevel !== false ? false : 1;
+                        setCollapsedLevel(nextLevel);
+                        setJsonVersion((v) => v + 1);
+                      }}
                     >
                       {collapsedLevel !== false ? '展开全部' : '折叠全部'}
                     </Button>
@@ -316,7 +338,7 @@ export default function List() {
                   <div
                     ref={treeWrapRef}
                     className={style.treeViewInner}
-                    onMouseMove={(e) => { lastMousePos.current = { x: e.clientX, y: e.clientY }; }}
+                    onContextMenu={handleTreeContextMenu}
                   >
                     <ReactJson
                       key={jsonVersion}
@@ -338,6 +360,7 @@ export default function List() {
                   </div>
                 )}
               </div>
+            </div>
             </div>
           </div>
         }
