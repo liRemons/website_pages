@@ -272,96 +272,96 @@ export default function List() {
 
             {/* 左右两栏 */}
             <div className={style.panesRow}>
-            {/* 左栏：输入区 */}
-            <div className={style.leftPane}>
-              <div className={style.paneHeader}>
-                <span className={style.paneTitle}>输入</span>
-                <Space size={4} wrap>
-                  <Button size="small" icon={<FormatPainterOutlined />} onClick={handleFormat}>格式化</Button>
-                  <Button size="small" icon={<CompressOutlined />} onClick={handleCompress}>压缩</Button>
-                  <Divider type="vertical" style={{ margin: '0 2px' }} />
-                  <Button size="small" onClick={handleUniEncode}>Uni 编码</Button>
-                  <Button size="small" onClick={handleUniDecode}>Uni 解码</Button>
-                  <Button size="small" onClick={handleUrlDecode}>URL 解码</Button>
-                  <Divider type="vertical" style={{ margin: '0 2px' }} />
-                  <Button size="small" icon={<CopyOutlined />} onClick={handleCopy}>复制</Button>
-                  <Button size="small" danger icon={<DeleteOutlined />} onClick={handleClear}>清空</Button>
-                </Space>
-              </div>
-              <div className={style.editorWrap}>
-                <textarea
-                  ref={textareaRef}
-                  className={style.textarea}
-                  value={inputText}
-                  onChange={handleInputChange}
-                  placeholder='请输入 JSON 内容，支持 JSON5（注释、尾随逗号）...'
-                  spellCheck={false}
-                />
-              </div>
-              {parseError && <div className={style.errorTip}>⚠️ {parseError}</div>}
-            </div>
-
-            {/* 右栏：展示区 */}
-            <div className={style.rightPane}>
-              <div className={style.paneHeader}>
-                <span className={style.paneTitle}>
-                  解析结果
-                  {isParsing && <span className={style.parsingTip}>解析中…</span>}
-                </span>
-                <Space size={6} wrap>
-                  <Checkbox checked={viewerNoWrap} onChange={(e) => setViewerNoWrap(e.target.checked)}>不换行</Checkbox>
-                  <Checkbox checked={autoExpand} onChange={(e) => handleAutoExpandChange(e.target.checked)}>自解析</Checkbox>
-                  <Select
-                    size="small"
-                    value={theme}
-                    onChange={setTheme}
-                    options={THEME_OPTIONS}
-                    style={{ width: 110 }}
-                    popupMatchSelectWidth={false}
+              {/* 左栏：输入区 */}
+              <div className={style.leftPane}>
+                <div className={style.paneHeader}>
+                  <span className={style.paneTitle}>输入</span>
+                  <Space size={4} wrap>
+                    <Button size="small" icon={<FormatPainterOutlined />} onClick={handleFormat}>格式化</Button>
+                    <Button size="small" icon={<CompressOutlined />} onClick={handleCompress}>压缩</Button>
+                    <Divider type="vertical" style={{ margin: '0 2px' }} />
+                    <Button size="small" onClick={handleUniEncode}>Uni 编码</Button>
+                    <Button size="small" onClick={handleUniDecode}>Uni 解码</Button>
+                    <Button size="small" onClick={handleUrlDecode}>URL 解码</Button>
+                    <Divider type="vertical" style={{ margin: '0 2px' }} />
+                    <Button size="small" icon={<CopyOutlined />} onClick={handleCopy}>复制</Button>
+                    <Button size="small" danger icon={<DeleteOutlined />} onClick={handleClear}>清空</Button>
+                  </Space>
+                </div>
+                <div className={style.editorWrap}>
+                  <textarea
+                    ref={textareaRef}
+                    className={style.textarea}
+                    value={inputText}
+                    onChange={handleInputChange}
+                    placeholder='请输入 JSON 内容，支持 JSON5（注释、尾随逗号）...'
+                    spellCheck={false}
                   />
-                  {parsedJson !== undefined && (
-                    <Button
+                </div>
+                {parseError && <div className={style.errorTip}>⚠️ {parseError}</div>}
+              </div>
+
+              {/* 右栏：展示区 */}
+              <div className={style.rightPane}>
+                <div className={style.paneHeader}>
+                  <span className={style.paneTitle}>
+                    解析结果
+                    {isParsing && <span className={style.parsingTip}>解析中…</span>}
+                  </span>
+                  <Space size={6} wrap>
+                    <Checkbox checked={viewerNoWrap} onChange={(e) => setViewerNoWrap(e.target.checked)}>不换行</Checkbox>
+                    <Checkbox checked={autoExpand} onChange={(e) => handleAutoExpandChange(e.target.checked)}>自解析</Checkbox>
+                    <Select
                       size="small"
-                      icon={collapsedLevel !== false ? <ExpandAltOutlined /> : <ShrinkOutlined />}
-                      onClick={() => {
-                        const nextLevel = collapsedLevel !== false ? false : 1;
-                        setCollapsedLevel(nextLevel);
-                        setJsonVersion((v) => v + 1);
-                      }}
-                    >
-                      {collapsedLevel !== false ? '展开全部' : '折叠全部'}
-                    </Button>
-                  )}
-                </Space>
-              </div>
-              <div className={`${style.viewerWrap} ${viewerNoWrap ? style.viewerNoWrap : ''}`}>
-                {parsedJson !== undefined ? (
-                  <div
-                    ref={treeWrapRef}
-                    className={style.treeViewInner}
-                    onContextMenu={handleTreeContextMenu}
-                  >
-                    <ReactJson
-                      key={jsonVersion}
-                      src={parsedJson}
-                      collapsed={collapsedLevel}
-                      enableClipboard
-                      displayDataTypes={false}
-                      displayObjectSize={false}
-                      name={false}
-                      theme={theme}
-                      iconStyle="triangle"
-                      onSelect={handleRjvSelect}
-                      style={{ fontSize: 13, lineHeight: 1.7, fontFamily: "'Monaco', 'Menlo', 'Ubuntu Mono', monospace", background: 'transparent', padding: '10px 12px' }}
+                      value={theme}
+                      onChange={setTheme}
+                      options={THEME_OPTIONS}
+                      style={{ width: 110 }}
+                      popupMatchSelectWidth={false}
                     />
-                  </div>
-                ) : (
-                  <div className={style.emptyTip}>
-                    {parseError ? '⚠️ JSON 解析失败，请检查输入内容' : '← 在左侧输入 JSON 内容'}
-                  </div>
-                )}
+                    {parsedJson !== undefined && (
+                      <Button
+                        size="small"
+                        icon={collapsedLevel !== false ? <ExpandAltOutlined /> : <ShrinkOutlined />}
+                        onClick={() => {
+                          const nextLevel = collapsedLevel !== false ? false : 1;
+                          setCollapsedLevel(nextLevel);
+                          setJsonVersion((v) => v + 1);
+                        }}
+                      >
+                        {collapsedLevel !== false ? '展开全部' : '折叠全部'}
+                      </Button>
+                    )}
+                  </Space>
+                </div>
+                <div className={`${style.viewerWrap} ${viewerNoWrap ? style.viewerNoWrap : ''}`}>
+                  {parsedJson !== undefined ? (
+                    <div
+                      ref={treeWrapRef}
+                      className={style.treeViewInner}
+                      onContextMenu={handleTreeContextMenu}
+                    >
+                      <ReactJson
+                        key={jsonVersion}
+                        src={parsedJson}
+                        collapsed={collapsedLevel}
+                        enableClipboard
+                        displayDataTypes={false}
+                        displayObjectSize={false}
+                        name={false}
+                        theme={theme}
+                        iconStyle="triangle"
+                        onSelect={handleRjvSelect}
+                        style={{ fontSize: 13, lineHeight: 1.7, fontFamily: "'Monaco', 'Menlo', 'Ubuntu Mono', monospace", background: 'transparent', padding: '10px 12px' }}
+                      />
+                    </div>
+                  ) : (
+                    <div className={style.emptyTip}>
+                      {parseError ? '⚠️ JSON 解析失败，请检查输入内容' : '← 在左侧输入 JSON 内容'}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
             </div>
           </div>
         }
