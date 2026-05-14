@@ -55,7 +55,11 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   // 构造请求体
   let body = undefined;
   if (data && upperMethod !== 'GET') {
-    if (requestHeaders['Content-Type'] === 'application/x-www-form-urlencoded') {
+    if (data instanceof FormData) {
+      // FormData 直接透传，删除 Content-Type 让浏览器自动设置（含 boundary）
+      body = data;
+      delete requestHeaders['Content-Type'];
+    } else if (requestHeaders['Content-Type'] === 'application/x-www-form-urlencoded') {
       body = new URLSearchParams(data).toString();
     } else {
       requestHeaders['Content-Type'] = requestHeaders['Content-Type'] || 'application/json';
@@ -98,3 +102,5 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
 };
 
 export { service }
+
+export default {};

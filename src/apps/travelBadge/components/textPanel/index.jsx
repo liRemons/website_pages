@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { FONT_TEMPLATES } from '../../utils/constants';
+import { Button, Popconfirm, Input, message } from 'antd';
+import { EditOutlined, DeleteOutlined, SyncOutlined, PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { useLocale } from '../../i18n';
 import './index.less';
 
@@ -93,8 +92,52 @@ const TextPanel = ({
   onApplyFontTemplate,
   deleteCustomFontTemplate,
   onEditFontTemplate,
+  isAdmin,
+  systemFontTemplates,
+  onAddSystemFontTemplate,
+  onUpdateSystemFontTemplate,
+  onDeleteSystemFontTemplate,
+  selectedElement,
 }) => {
   const { t } = useLocale();
+  const [isAdding, setIsAdding] = useState(false);
+  const [addLabel, setAddLabel] = useState('');
+  const [addDesc, setAddDesc] = useState('');
+
+  // 新增系统字体模板：取当前选中文字元素的 textProps
+  const handleAddConfirm = () => {
+    if (!addLabel.trim()) {
+      message.warning('请输入模板名称');
+      return;
+    }
+    if (!selectedElement || selectedElement.type !== 'text') {
+      message.warning('请先选中一个文字元素');
+      return;
+    }
+    onAddSystemFontTemplate({
+      label: addLabel.trim(),
+      desc: addDesc.trim() || `${selectedElement.textProps?.fontFamily || ''} · ${selectedElement.textProps?.fontSize || ''}px`,
+      textProps: { ...selectedElement.textProps },
+    });
+    setAddLabel('');
+    setAddDesc('');
+    setIsAdding(false);
+  };
+
+  // 同步当前文字样式到系统字体模板
+  const handleSyncTextProps = (templateId) => {
+    if (!selectedElement || selectedElement.type !== 'text') {
+      message.warning('请先选中一个文字元素');
+      return;
+    }
+    const target = systemFontTemplates.find((t) => t.id === templateId);
+    onUpdateSystemFontTemplate(templateId, {
+      textProps: { ...selectedElement.textProps },
+      desc: `${selectedElement.textProps?.fontFamily || ''} · ${selectedElement.textProps?.fontSize || ''}px`,
+      label: target?.label,
+    });
+  };
+
   return (
     <div className="text-panel">
       <div className="text-panel__title" style={{ color: theme.textPrimary }}>{t('text.title')}</div>
@@ -136,20 +179,102 @@ const TextPanel = ({
       {/* 系统字体模板区 */}
       <div className="text-panel__section-title" style={{ color: theme.textMuted }}>
         {t('template.systemTemplates')}
+        {isAdmin && (
+          <button
+            type="button"
+            className="text-panel__add-sys-btn"
+            style={{ color: isAdding ? theme.textMuted : theme.accent }}
+            onClick={() => setIsAdding((v) => !v)}
+          >
+            {isAdding ? '取消' : '＋ 新增'}
+          </button>
+        )}
       </div>
+
+      {/* 管理员新增表单 */}
+      {isAdmin && isAdding && (
+        <div className="text-panel__add-form" style={{ background: theme.bgTertiary, borderColor: theme.borderLight }}>
+          <div className="text-panel__add-hint" style={{ color: theme.textMuted }}>
+            将当前选中文字元素的样式保存为系统字体模板
+          </div>
+          <Input
+            className="text-panel__add-input"
+            value={addLabel}
+            onChange={(e) => setAddLabel(e.target.value)}
+            placeholder="模板名称"
+            onKeyDown={(e) => { if (e.key === 'Enter') handleAddConfirm(); if (e.key === 'Escape') { setIsAdding(false); setAddLabel(''); setAddDesc(''); } }}
+            autoFocus
+          />
+          <Input
+            className="text-panel__add-input"
+            style={{ marginTop: 6 }}
+            value={addDesc}
+            onChange={(e) => setAddDesc(e.target.value)}
+            placeholder="描述（可选，默认自动生成）"
+            onKeyDown={(e) => { if (e.key === 'Escape') { setIsAdding(false); setAddLabel(''); setAddDesc(''); } }}
+          />
+          <div className="text-panel__add-actions">
+            <Button
+              className="text-panel__add-confirm-btn"
+              type="text"
+              size="small"
+              icon={<CheckOutlined />}
+              style={{ color: theme.accent }}
+              onClick={handleAddConfirm}
+              disabled={!addLabel.trim()}
+            >
+              保存
+            </Button>
+            <Button
+              className="text-panel__add-confirm-btn"
+              type="text"
+              size="small"
+              icon={<CloseOutlined />}
+              style={{ color: theme.textMuted }}
+              onClick={() => { setIsAdding(false); setAddLabel(''); setAddDesc(''); }}
+            >
+              取消
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="text-panel__font-hint" style={{ color: theme.textMuted }}>
         {t('template.fontTemplateHint')}
       </div>
       <div className="text-panel__font-grid">
-        {FONT_TEMPLATES.map((fontTemplate) => (
-          <FontTemplateCard
-            key={fontTemplate.id}
-            fontTemplate={fontTemplate}
-            isCustom={false}
-            theme={theme}
-            onApply={onApplyFontTemplate}
-            onDelete={null}
-          />
+        {(systemFontTemplates || []).map((fontTemplate) => (
+          <div key={fontTemplate.id} className="font-template-card-wrap">
+            <FontTemplateCard
+              fontTemplate={fontTemplate}
+              isCustom={false}
+              theme={theme}
+              onApply={onApplyFontTemplate}
+              onDelete={null}
+              onEditFontTemplate={onEditFontTemplate}
+            />
+            {/* 管理员操作按钮 */}
+            {isAdmin && (
+              <div className="font-template-card__admin-actions" onClick={(e) => e.stopPropagation()}>
+                <Popconfirm
+                  title="用当前文字样式覆盖此模板？"
+                  onConfirm={() => handleSyncTextProps(fontTemplate.id)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <Button type="text" icon={<SyncOutlined />} size="small" title="同步当前样式" />
+                </Popconfirm>
+                <Popconfirm
+                  title="确定删除此系统字体模板？"
+                  onConfirm={() => onDeleteSystemFontTemplate(fontTemplate.id)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <Button type="text" icon={<DeleteOutlined />} size="small" danger title="删除" />
+                </Popconfirm>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>

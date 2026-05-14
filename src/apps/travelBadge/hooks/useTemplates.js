@@ -88,18 +88,20 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
     const canvasH = canvasW / canvasRatio;
 
-    // 完全应用新模板的预设元素
-    const newElements = template.elements.map((tpl, index) => ({
-      id: `el_${Date.now()}_${index}`,
-      type: tpl.type,
-      x: tpl.rx * canvasW,
-      y: tpl.ry * canvasH,
-      width: tpl.rw * canvasW,
-      height: tpl.rh * canvasH,
-      zIndex: 100 + index,
-      templateElement: true,
-      textProps: tpl.textProps ? { ...tpl.textProps } : undefined,
-    }));
+    // 完全应用新模板的预设元素，还原所有保存的属性
+    const newElements = template.elements.map((tpl, index) => {
+      const { src, ...rest } = tpl;
+      const element = {
+        ...rest,
+        id: `el_${Date.now()}_${index}`,
+        templateElement: true,
+      };
+      // image 元素：存库字段 src → 运行时字段 url
+      if (tpl.type === 'image') {
+        element.url = src || tpl.url || '';
+      }
+      return element;
+    });
     setElements(newElements);
   }, [canvasRatio, canvasRef, setActiveFrame, setElements]);
 

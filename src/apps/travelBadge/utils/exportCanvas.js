@@ -25,22 +25,43 @@ const loadImage = (url) =>
     img.src = url;
   });
 
+// 根据 objectFit 计算图片在容器内的实际绘制区域
+const calcObjectFitRect = (img, x, y, width, height, objectFit) => {
+  if (!objectFit || objectFit === 'fill') {
+    return { dx: x, dy: y, dw: width, dh: height };
+  }
+  const imgRatio = img.naturalWidth / img.naturalHeight;
+  const boxRatio = width / height;
+  let dw, dh;
+  if (objectFit === 'contain') {
+    if (imgRatio > boxRatio) { dw = width; dh = width / imgRatio; }
+    else { dh = height; dw = height * imgRatio; }
+  } else if (objectFit === 'cover') {
+    if (imgRatio > boxRatio) { dh = height; dw = height * imgRatio; }
+    else { dw = width; dh = width / imgRatio; }
+  } else {
+    dw = img.naturalWidth; dh = img.naturalHeight;
+  }
+  return { dx: x + (width - dw) / 2, dy: y + (height - dh) / 2, dw, dh };
+};
+
 // 绘制单个图片元素
 const drawImageElement = async (ctx, element) => {
   try {
     const img = await loadImage(element.url);
-    const { x, y, width, height, borderRadius = 0 } = element;
+    const { x, y, width, height, borderRadius = 0, objectFit } = element;
+    const { dx, dy, dw, dh } = calcObjectFitRect(img, x, y, width, height, objectFit);
     
-    // 如果有圆角，使用裁剪路径
-    if (borderRadius > 0) {
+    // 如果有圆角或 objectFit=cover 需要裁剪
+    if (borderRadius > 0 || objectFit === 'cover') {
       ctx.save();
       ctx.beginPath();
       ctx.roundRect(x, y, width, height, borderRadius);
       ctx.clip();
-      ctx.drawImage(img, x, y, width, height);
+      ctx.drawImage(img, dx, dy, dw, dh);
       ctx.restore();
     } else {
-      ctx.drawImage(img, x, y, width, height);
+      ctx.drawImage(img, dx, dy, dw, dh);
     }
   } catch {
     const { x, y, width, height, borderRadius = 0 } = element;
@@ -226,4 +247,46 @@ export const exportToImage = async ({
   link.download = `photo-editor-${Date.now()}.jpg`;
   link.href = dataUrl;
   link.click();
+};
+
+/**
+ * 截取画布内容生成封面缩略图 Blob
+ * @param {object} options
+ * @param {Array}  options.elements        - 画布元素列表
+ * @param {string} options.backgroundColor - 画布背景色
+ * @param {object} options.frameStyle      - 相框样式对象
+ * @param {number} options.canvasWidth     - 画布宽度（px）
+ * @param {number} options.canvasHeight    - 画布高度（px）
+ * @returns {Promise<Blob>} JPEG 格式的封面图 Blob
+ */
+export const captureCanvasCover = async ({
+  elements,
+  backgroundColor = '#ffffff',
+  frameStyle,
+  canvasWidth,
+  canvasHeight,
+}) => {
+  const offscreenCanvas = document.createElement('canvas');
+  offscreenCanvas.width = canvasWidth;
+  offscreenCanvas.height = canvasHeight;
+
+  const ctx = offscreenCanvas.getContext('2d');
+
+  ctx.fillStyle = backgroundColor;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const sortedElements = [...elements].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+  for (const element of sortedElements) {
+    if (element.type === 'image') {
+      await drawImageElement(ctx, element);
+    } else if (element.type === 'text') {
+      drawTextElement(ctx, element);
+    }
+  }
+
+  drawFrame(ctx, canvasWidth, canvasHeight, frameStyle);
+
+  return new Promise((resolve) => {
+    offscreenCanvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
+  });
 };

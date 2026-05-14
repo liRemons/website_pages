@@ -9,6 +9,7 @@ import { useTheme } from './hooks/useTheme';
 import { useTemplates } from './hooks/useTemplates';
 import { useFontTemplates } from './hooks/useFontTemplates';
 import { useSystemTemplates } from './hooks/useSystemTemplates';
+import { useSystemFontTemplates } from './hooks/useSystemFontTemplates';
 import { createChangeZIndex, createAddImageElement, createAddTextElement } from './utils/canvasHelpers';
 import { exportToImage } from './utils/exportCanvas';
 import { loadRemoteFonts, REMOTE_FONTS } from './utils/fontLoader';
@@ -44,7 +45,6 @@ const App = () => {
     addSystemTemplate,
     updateSystemTemplate,
     deleteSystemTemplate,
-    resetSystemTemplates,
   } = useSystemTemplates();
 
   // 核心状态
@@ -91,6 +91,14 @@ const App = () => {
     deleteCustomFontTemplate,
     updateFontTemplate,
   } = useFontTemplates({ selectedElement });
+
+  // 系统字体模板管理
+  const {
+    systemFontTemplates,
+    addSystemFontTemplate,
+    updateSystemFontTemplate: updateSysFontTemplate,
+    deleteSystemFontTemplate: deleteSysFontTemplate,
+  } = useSystemFontTemplates();
 
   // 正在编辑的字体模板（从文字 Tab 点击编辑跳转过来时设置）
   const [editingFontTemplate, setEditingFontTemplate] = useState(null);
@@ -248,11 +256,6 @@ const App = () => {
             isDark={isDark}
             activeFrame={activeFrame}
             customTemplates={customTemplates}
-            saveTemplateName={saveTemplateName}
-            setSaveTemplateName={setSaveTemplateName}
-            showSaveInput={showSaveInput}
-            setShowSaveInput={setShowSaveInput}
-            saveCurrentAsTemplate={saveCurrentAsTemplate}
             deleteCustomTemplate={deleteCustomTemplate}
             updateCustomTemplate={updateCustomTemplate}
             applyTemplate={applyTemplate}
@@ -261,7 +264,6 @@ const App = () => {
             onAddSystemTemplate={addSystemTemplate}
             onUpdateSystemTemplate={updateSystemTemplate}
             onDeleteSystemTemplate={deleteSystemTemplate}
-            onResetSystemTemplates={resetSystemTemplates}
             elements={elements}
             canvasRef={canvasRef}
             canvasRatio={canvasRatio}
@@ -286,6 +288,12 @@ const App = () => {
             onApplyFontTemplate={applyFontTemplate}
             deleteCustomFontTemplate={deleteCustomFontTemplate}
             onEditFontTemplate={onEditFontTemplate}
+            isAdmin={isAdmin}
+            systemFontTemplates={systemFontTemplates}
+            onAddSystemFontTemplate={addSystemFontTemplate}
+            onUpdateSystemFontTemplate={updateSysFontTemplate}
+            onDeleteSystemFontTemplate={deleteSysFontTemplate}
+            selectedElement={selectedElement}
           />
         );
       default:
@@ -376,37 +384,44 @@ const App = () => {
             className="side-panel"
             style={{ background: theme.bgSecondary, borderLeft: `1px solid ${theme.border}` }}
           >
+            {/* 属性浮层：绝对定位向左展开，不挤压布局 */}
+            {selectedElement && (
+              <div
+                className="side-panel__props-drawer"
+                style={{ background: theme.bgSecondary, borderRight: `1px solid ${theme.border}` }}
+              >
+                <div className="side-panel__props-drawer-header" style={{ borderBottom: `1px solid ${theme.border}` }}>
+                  <span className="side-panel__props-drawer-title" style={{ color: theme.textPrimary }}>
+                    {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
+                  </span>
+                </div>
+                <div className="side-panel__props-drawer-body">
+                  <PropsPanel
+                    selectedElement={selectedElement}
+                    onUpdate={updateElement}
+                    onDelete={deleteElement}
+                    onZIndexChange={changeZIndex}
+                    theme={theme}
+                    fontTemplateProps={{
+                      customFontTemplates,
+                      saveFontTemplateName,
+                      setSaveFontTemplateName,
+                      showFontSaveInput,
+                      setShowFontSaveInput,
+                      saveCurrentAsFontTemplate,
+                      updateFontTemplate,
+                      editingFontTemplate,
+                      setEditingFontTemplate,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
             <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={false} theme={theme} />
             {/* Tab 内容区（可滚动） */}
             <div className="side-panel__content">
               {renderPanelContent()}
             </div>
-            {/* 常驻属性区（选中元素时展示，不占用 Tab） */}
-            {selectedElement && (
-              <div
-                className="side-panel__props"
-                style={{ borderTop: `1px solid ${theme.border}` }}
-              >
-                <PropsPanel
-                  selectedElement={selectedElement}
-                  onUpdate={updateElement}
-                  onDelete={deleteElement}
-                  onZIndexChange={changeZIndex}
-                  theme={theme}
-                  fontTemplateProps={{
-                    customFontTemplates,
-                    saveFontTemplateName,
-                    setSaveFontTemplateName,
-                    showFontSaveInput,
-                    setShowFontSaveInput,
-                    saveCurrentAsFontTemplate,
-                    updateFontTemplate,
-                    editingFontTemplate,
-                    setEditingFontTemplate,
-                  }}
-                />
-              </div>
-            )}
           </div>
         )}
 

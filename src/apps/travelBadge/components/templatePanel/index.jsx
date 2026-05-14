@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { DeleteOutlined, SearchOutlined, EditOutlined, ReloadOutlined, CheckOutlined, CloseOutlined, SyncOutlined } from '@ant-design/icons';
-import { Popconfirm } from 'antd';
+import { DeleteOutlined, SearchOutlined, EditOutlined, CheckOutlined, CloseOutlined, SyncOutlined } from '@ant-design/icons';
+import { Popconfirm, Modal } from 'antd';
 import { useLocale } from '../../i18n';
+import { captureCanvasCover } from '../../utils/exportCanvas';
 import './index.less';
 
 // 从相框 style 中提取主色（border 颜色），用于卡片顶部色条
@@ -46,19 +47,23 @@ const TemplateCard = ({
           : undefined,
       }}
     >
-      {/* 顶部预览色条 */}
+      {/* 顶部预览区域 */}
       <div
         className="template-card__color-bar"
         style={{
-          background: frameColor
-            ? `linear-gradient(135deg, ${frameColor}cc, ${frameColor}44)`
-            : `linear-gradient(135deg, ${theme.border}99, ${theme.border}33)`,
+          background: frame.coverUrl
+            ? `${theme.bgTertiary} url(${frame.coverUrl}) center/contain no-repeat`
+            : frameColor
+              ? `linear-gradient(135deg, ${frameColor}cc, ${frameColor}44)`
+              : `linear-gradient(135deg, ${theme.border}99, ${theme.border}33)`,
         }}
       >
-        <div
-          className={`template-card__canvas-mock ${isActive ? 'template-card__canvas-mock--active' : ''}`}
-          style={{ background: theme.bgPrimary, borderColor: frameColor || theme.border }}
-        />
+        {!frame.coverUrl && (
+          <div
+            className={`template-card__canvas-mock ${isActive ? 'template-card__canvas-mock--active' : ''}`}
+            style={{ background: theme.bgPrimary, borderColor: frameColor || theme.border }}
+          />
+        )}
         {isActive && (
           <div className="template-card__check-badge">
             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
@@ -79,19 +84,6 @@ const TemplateCard = ({
             {frame.desc}
           </div>
         )}
-        <div className="template-card__meta">
-          {elementCount > 0 && (
-            <span className="template-card__dot-count" style={{ color: '#007AFF' }}>
-              <span className="template-card__dot" />
-              {elementCount}
-            </span>
-          )}
-          {isCustom && frame.createdAt && (
-            <span className="template-card__created-at" style={{ color: theme.textMuted }}>
-              {frame.createdAt}
-            </span>
-          )}
-        </div>
       </div>
 
       {/* 操作区（hover 时显示，放在 body 下方，不与 color-bar 内容重叠） */}
@@ -221,11 +213,6 @@ const TemplatePanel = ({
   isDark,
   activeFrame,
   customTemplates,
-  saveTemplateName,
-  setSaveTemplateName,
-  showSaveInput,
-  setShowSaveInput,
-  saveCurrentAsTemplate,
   deleteCustomTemplate,
   updateCustomTemplate,
   applyTemplate,
@@ -234,7 +221,6 @@ const TemplatePanel = ({
   onAddSystemTemplate,
   onUpdateSystemTemplate,
   onDeleteSystemTemplate,
-  onResetSystemTemplates,
   elements,
   canvasRef,
   canvasRatio,
@@ -257,6 +243,21 @@ const TemplatePanel = ({
         );
       })
     : systemTemplates;
+
+  // ── 应用模板前确认（画布有内容时提示） ──────────────────────────────────
+  const safeApplyTemplate = (frame) => {
+    if (elements && elements.length > 0) {
+      Modal.confirm({
+        title: '应用模板',
+        content: '当前画布已有内容，应用模板将覆盖现有内容，确定继续？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: () => applyTemplate(frame),
+      });
+    } else {
+      applyTemplate(frame);
+    }
+  };
 
   // ── 自定义模板编辑 ───────────────────────────────────────────────────────
   const handleCustomEdit = (frame) => {
@@ -287,94 +288,108 @@ const TemplatePanel = ({
   };
 
   // ── 用当前画布内容同步覆盖系统模板（🔄 按钮触发） ───────────────────────
-  const handleSyncCanvas = (id) => {
+  const handleSyncCanvas = async (id) => {
     const canvasDom = canvasRef.current;
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
     const canvasH = canvasDom ? canvasDom.getBoundingClientRect().height : 450;
-    const templateElements = (elements || [])
-      .filter((el) => el.type === 'text')
-      .map((el) => ({
-        type: 'text',
-        rx: el.x / canvasW,
-        ry: el.y / canvasH,
-        rw: el.width / canvasW,
-        rh: el.height / canvasH,
-        textProps: { ...el.textProps },
-      }));
+
+    const templateElements = (elements || []).map((el) => {
+      const { id: _id, ...rest } = el;
+      if (rest.type === 'image') {
+        const { url, ...others } = rest;
+        return { ...others, src: url };
+      }
+      return rest;
+    });
+
+    // 重新截取画布生成封面缩略图
+    let coverBlob = null;
+    try {
+      coverBlob = await captureCanvasCover({
+        elements: elements || [],
+        backgroundColor: '#ffffff',
+        canvasWidth: canvasW,
+        canvasHeight: canvasH,
+      });
+    } catch { /* 封面截图失败不阻塞更新 */ }
+
     const originalTemplate = systemTemplates.find((f) => f.id === id);
     onUpdateSystemTemplate(id, {
       label: originalTemplate?.label || '',
       desc: originalTemplate?.desc || '',
+      canvasRatio,
       elements: templateElements,
+      coverBlob,
     });
   };
 
   // ── 系统模板新增（用当前画布内容） ─────────────────────────────────────
-  const handleAddConfirm = (data) => {
+  const handleAddConfirm = async (data) => {
     const canvasDom = canvasRef.current;
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
     const canvasH = canvasDom ? canvasDom.getBoundingClientRect().height : 450;
-    const templateElements = (elements || [])
-      .filter((el) => el.type === 'text')
-      .map((el) => ({
-        type: 'text',
-        rx: el.x / canvasW,
-        ry: el.y / canvasH,
-        rw: el.width / canvasW,
-        rh: el.height / canvasH,
-        textProps: { ...el.textProps },
-      }));
+
+    // 保存元素的所有属性（只排除运行时 id），image 的 url → src
+    const templateElements = (elements || []).map((el) => {
+      const { id: _id, ...rest } = el;
+      if (rest.type === 'image') {
+        const { url, ...others } = rest;
+        return { ...others, src: url };
+      }
+      return rest;
+    });
+
+    // 截取画布生成封面缩略图
+    let coverBlob = null;
+    try {
+      coverBlob = await captureCanvasCover({
+        elements: elements || [],
+        backgroundColor: '#ffffff',
+        canvasWidth: canvasW,
+        canvasHeight: canvasH,
+      });
+    } catch { /* 封面截图失败不阻塞保存 */ }
+
     onAddSystemTemplate({
       label: data.label,
       desc: data.desc,
+      canvasRatio,
       elements: templateElements,
+      coverBlob,
     });
     setIsAdding(false);
   };
 
   return (
     <div className="template-panel">
-      {/* ── 自定义模板管理（仅管理员可保存） ── */}
+      {/* ── 管理员：新增模板按钮 + 内联表单 ── */}
       {isAdmin && (
         <div className="template-panel__manager">
           <div className="template-panel__manager-header">
             <span className="template-panel__manager-title" style={{ color: theme.textPrimary }}>{t('template.title')}</span>
             <button
               type="button"
-              onClick={() => { setShowSaveInput((v) => !v); setEditingId(null); }}
-              disabled={customTemplates.length >= 10}
-              className={`template-panel__save-toggle-btn ${showSaveInput ? 'template-panel__save-toggle-btn--active' : ''}`}
-              style={{ color: showSaveInput ? theme.textMuted : theme.accent }}
+              className={`template-panel__save-toggle-btn ${isAdding ? 'template-panel__save-toggle-btn--active' : ''}`}
+              style={{ color: isAdding ? theme.textMuted : theme.accent }}
+              onClick={() => { setIsAdding((v) => !v); setEditingId(null); }}
             >
-              {customTemplates.length >= 10
-                ? t('template.full')
-                : (showSaveInput ? t('template.cancel') : t('template.saveCurrent'))}
+              {isAdding ? t('template.cancel') : `＋ ${t('admin.addTemplate')}`}
             </button>
           </div>
-          {showSaveInput && (
-            <div className="template-panel__save-row">
-              <input
-                value={saveTemplateName}
-                onChange={(e) => setSaveTemplateName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && saveCurrentAsTemplate()}
-                placeholder={t('template.inputPlaceholder')}
-                className="template-panel__save-input"
-                style={{ color: theme.textPrimary }}
-                autoFocus
+          {isAdding && (
+            <div className="template-panel__card-edit-wrap" style={{ marginBottom: 12 }}>
+              <div className="template-panel__add-hint" style={{ color: theme.textMuted }}>
+                {t('admin.addHint')}
+              </div>
+              <InlineEditForm
+                initialLabel=""
+                initialDesc=""
+                theme={theme}
+                onConfirm={handleAddConfirm}
+                onCancel={() => setIsAdding(false)}
               />
-              <button
-                type="button"
-                className="template-panel__save-toggle-btn"
-                style={{ color: theme.accent }}
-                onClick={saveCurrentAsTemplate}
-              >
-                {t('template.save')}
-              </button>
             </div>
           )}
-          <div className="template-panel__hint" style={{ color: theme.textSecondary }}>
-            {t('template.savedCount', { count: customTemplates.length })}
-          </div>
         </div>
       )}
 
@@ -404,7 +419,7 @@ const TemplatePanel = ({
                   isActive={activeFrame === frame.id}
                   theme={theme}
                   isDark={isDark}
-                  onApply={applyTemplate}
+                  onApply={safeApplyTemplate}
                   onDelete={isAdmin ? deleteCustomTemplate : null}
                   onEdit={isAdmin ? handleCustomEdit : null}
                 />
@@ -441,52 +456,6 @@ const TemplatePanel = ({
         </div>
       </div>
 
-      {/* ── 管理员操作栏（新拟物风格按钮） ── */}
-      {isAdmin && (
-        <div className="template-panel__admin-bar">
-          <button
-            type="button"
-            className="template-panel__save-toggle-btn template-panel__admin-add-btn"
-            style={{ color: theme.accent }}
-            onClick={() => { setIsAdding(true); setEditingId(null); }}
-          >
-            ＋ {t('admin.addTemplate')}
-          </button>
-          <Popconfirm
-            title={t('admin.resetConfirm')}
-            onConfirm={onResetSystemTemplates}
-            okText={t('admin.confirmOk')}
-            cancelText={t('admin.confirmCancel')}
-            placement="bottom"
-          >
-            <button
-              type="button"
-              className="template-panel__save-toggle-btn"
-              style={{ color: theme.textMuted }}
-            >
-              <ReloadOutlined style={{ marginRight: 4 }} />
-              {t('admin.resetTemplates')}
-            </button>
-          </Popconfirm>
-        </div>
-      )}
-
-      {/* 新增模板内联表单 */}
-      {isAdmin && isAdding && (
-        <div className="template-panel__card-edit-wrap" style={{ marginBottom: 12 }}>
-          <div className="template-panel__add-hint" style={{ color: theme.textMuted }}>
-            {t('admin.addHint')}
-          </div>
-          <InlineEditForm
-            initialLabel=""
-            initialDesc=""
-            theme={theme}
-            onConfirm={handleAddConfirm}
-            onCancel={() => setIsAdding(false)}
-          />
-        </div>
-      )}
-
       <div className="template-panel__grid" style={{ marginBottom: 0 }}>
         {filteredSystemTemplates.length > 0 ? filteredSystemTemplates.map((frame) => (
           editingId === frame.id ? (
@@ -509,7 +478,7 @@ const TemplatePanel = ({
               isActive={activeFrame === frame.id}
               theme={theme}
               isDark={isDark}
-              onApply={applyTemplate}
+              onApply={safeApplyTemplate}
               onDelete={onDeleteSystemTemplate}
               onEdit={handleSystemEdit}
               onSyncCanvas={isAdmin ? handleSyncCanvas : null}

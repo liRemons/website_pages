@@ -197,6 +197,14 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       https: true,
       client: {
         progress: true,
+        overlay: {
+          runtimeErrors: (error) => {
+            if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
+              return false;
+            }
+            return true;
+          },
+        },
       },
     },
     // 并行打包模式下子进程 stdout 的任何输出都会把主进程光标推下去，导致进度条 UI 错位

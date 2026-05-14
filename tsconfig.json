@@ -10,6 +10,16 @@
     "alwaysStrict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@axios": ["src/axios"],
+      "@axios/*": ["src/axios/*"],
+      "@assets/*": ["src/assets/*"],
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"]
+    }
   }
 }

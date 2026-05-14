@@ -48,6 +48,92 @@
     text-transform: uppercase;
     padding: 16px 0 8px;
     opacity: 0.55;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__add-sys-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    opacity: 1;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__add-form {
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    box-shadow: var(--nm-concave-sm);
+  }
+
+  &__add-hint {
+    font-size: 10px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+    letter-spacing: 0.2px;
+  }
+
+  &__add-input {
+    width: 100%;
+    display: block;
+    flex: 1;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    outline: none;
+    border: none;
+    box-shadow: var(--nm-concave-sm);
+    background: transparent;
+    transition: box-shadow 0.2s;
+    box-sizing: border-box;
+
+    &:focus {
+      box-shadow: var(--nm-concave), 0 0 0 2px rgba(0, 122, 255, 0.25);
+    }
+  }
+
+  &__add-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  &__add-confirm-btn.ant-btn {
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    box-shadow: var(--nm-convex-sm) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    letter-spacing: 0.1px;
+
+    &:hover {
+      box-shadow: var(--nm-convex) !important;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      box-shadow: var(--nm-concave-sm) !important;
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: var(--nm-concave-sm) !important;
+    }
   }
 
   &__font-hint {
@@ -214,5 +300,24 @@
   &__edit-btn:hover {
     background: #007AFF !important;
     box-shadow: 2px 2px 8px rgba(0,122,255,0.4) !important;
+  }
+
+  &__admin-actions {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+}
+
+// 字体模板卡片包装（用于管理员操作按钮）
+.font-template-card-wrap {
+  position: relative;
+
+  &:hover .font-template-card__admin-actions {
+    opacity: 1;
   }
 }
