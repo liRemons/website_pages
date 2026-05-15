@@ -147,12 +147,6 @@ export default function List() {
     debounceTimer.current = setTimeout(() => parseJson(text, autoExpand), 500);
   };
 
-  const handleCopy = () => {
-    if (!inputText.trim()) return;
-    copy(inputText);
-    message.success('已复制到剪贴板');
-  };
-
   const handleClear = () => {
     setInputText('');
     setParsedJson(undefined);
@@ -258,7 +252,6 @@ export default function List() {
                     <Button size="small" onClick={handleUniDecode}>Uni 解码</Button>
                     <Button size="small" onClick={handleUrlDecode}>URL 解码</Button>
                     <Divider type="vertical" style={{ margin: '0 2px' }} />
-                    <Button size="small" icon={<CopyOutlined />} onClick={handleCopy}>复制</Button>
                     <Button size="small" danger icon={<DeleteOutlined />} onClick={handleClear}>清空</Button>
                   </Space>
                 </div>
