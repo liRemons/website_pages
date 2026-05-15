@@ -147,30 +147,6 @@ export default function List() {
     debounceTimer.current = setTimeout(() => parseJson(text, autoExpand), 500);
   };
 
-  const handleFormat = () => {
-    if (!inputText.trim()) return;
-    try {
-      const result = JSON5.parse(inputText);
-      setInputText(JSON.stringify(result, null, 2));
-      setParsedJson(result);
-      setParseError('');
-    } catch {
-      message.error('JSON 格式有误，无法格式化');
-    }
-  };
-
-  const handleCompress = () => {
-    if (!inputText.trim()) return;
-    try {
-      const result = JSON5.parse(inputText);
-      setInputText(JSON.stringify(result));
-      setParsedJson(result);
-      setParseError('');
-    } catch {
-      message.error('JSON 格式有误，无法压缩');
-    }
-  };
-
   const handleCopy = () => {
     if (!inputText.trim()) return;
     copy(inputText);
@@ -277,8 +253,6 @@ export default function List() {
                 <div className={style.paneHeader}>
                   <span className={style.paneTitle}>输入</span>
                   <Space size={4} wrap>
-                    <Button size="small" icon={<FormatPainterOutlined />} onClick={handleFormat}>格式化</Button>
-                    <Button size="small" icon={<CompressOutlined />} onClick={handleCompress}>压缩</Button>
                     <Divider type="vertical" style={{ margin: '0 2px' }} />
                     <Button size="small" onClick={handleUniEncode}>Uni 编码</Button>
                     <Button size="small" onClick={handleUniDecode}>Uni 解码</Button>
