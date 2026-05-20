@@ -86,7 +86,13 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: rgba(255, 255, 255, 0.35);
+  background:
+    linear-gradient(45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   gap: 8px;
@@ -97,8 +103,6 @@
     cursor: pointer;
 
     &:hover {
-      background: rgba(0, 122, 255, 0.06);
-
       .canvas-empty-state__text {
         color: #007AFF;
       }
@@ -109,7 +113,7 @@
     color: #b0b8c8;
     margin-bottom: 6px;
     line-height: 1;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.08));
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.08));
   }
 
   &__text {

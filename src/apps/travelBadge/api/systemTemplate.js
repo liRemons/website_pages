@@ -1,3 +1,4 @@
+import lrz from 'lrz';
 import { service } from '@axios';
 
 const BASE_URL = '/systemTemplate';
@@ -48,12 +49,23 @@ export const removeSystemTemplate = (id) =>
  * @param {'cover'|'element'} scene  用途标识
  * @returns {Promise<string>} 图片访问路径
  */
-export const uploadTemplateImage = async (file, scene = 'element') => {
-  const formData = new FormData();
-  // 确保传入的是 File 对象（带文件名），formidable 才能正确解析
-  const fileToUpload = file instanceof File
+const compressImageBeforeUpload = async (file) => {
+  if (!file?.type?.startsWith('image/')) return file;
+
+  const sourceFile = file instanceof File
     ? file
     : new File([file], `template_${Date.now()}.png`, { type: file.type || 'image/png' });
+  const result = await lrz(sourceFile, { quality: 0.8 });
+  return result.file || sourceFile;
+};
+
+export const uploadTemplateImage = async (file, scene = 'element') => {
+  const formData = new FormData();
+  const compressedFile = await compressImageBeforeUpload(file);
+  // 确保传入的是 File 对象（带文件名），formidable 才能正确解析
+  const fileToUpload = compressedFile instanceof File
+    ? compressedFile
+    : new File([compressedFile], `template_${Date.now()}.jpg`, { type: compressedFile.type || 'image/jpeg' });
   formData.append('file', fileToUpload);
   formData.append('scene', scene);
 

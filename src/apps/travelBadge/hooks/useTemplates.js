@@ -74,7 +74,10 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
     localStorage.setItem(CUSTOM_TEMPLATES_KEY, JSON.stringify(updated));
   }, [customTemplates]);
 
-  // 应用模板：设置相框 + 将模板预设元素（比例坐标换算为实际像素）追加到画布
+  // 模板基准画布宽度（模板在 PC 端创建时的画布宽度）
+  const TEMPLATE_BASE_WIDTH = 600;
+
+  // 应用模板：设置相框 + 将模板预设元素等比缩放后应用到画布
   const applyTemplate = useCallback((template) => {
     setActiveFrame(template.id);
 
@@ -85,17 +88,28 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
     }
 
     const canvasDom = canvasRef.current;
-    const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
-    const canvasH = canvasW / canvasRatio;
+    const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : TEMPLATE_BASE_WIDTH;
+    const scale = canvasW / TEMPLATE_BASE_WIDTH;
 
-    // 完全应用新模板的预设元素，还原所有保存的属性
+    // 完全应用新模板的预设元素，按比例缩放坐标和尺寸
     const newElements = template.elements.map((tpl, index) => {
       const { src, ...rest } = tpl;
       const element = {
         ...rest,
         id: `el_${Date.now()}_${index}`,
         templateElement: true,
+        x: (rest.x || 0) * scale,
+        y: (rest.y || 0) * scale,
+        width: (rest.width || 100) * scale,
+        height: (rest.height || 100) * scale,
       };
+      // 文字元素：等比缩放字号
+      if (rest.type === 'text' && rest.textProps) {
+        element.textProps = {
+          ...rest.textProps,
+          fontSize: Math.round((rest.textProps.fontSize || 16) * scale),
+        };
+      }
       // image 元素：存库字段 src → 运行时字段 url
       if (tpl.type === 'image') {
         element.url = src || tpl.url || '';
@@ -103,7 +117,7 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
       return element;
     });
     setElements(newElements);
-  }, [canvasRatio, canvasRef, setActiveFrame, setElements]);
+  }, [canvasRef, setActiveFrame, setElements]);
 
   return {
     customTemplates,

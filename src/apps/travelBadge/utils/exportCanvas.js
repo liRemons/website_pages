@@ -49,7 +49,7 @@ const calcObjectFitRect = (img, x, y, width, height, objectFit) => {
 const drawImageElement = async (ctx, element) => {
   try {
     const img = await loadImage(element.url);
-    const { x, y, width, height, borderRadius = 0, objectFit } = element;
+    const { x, y, width, height, borderRadius = 0, objectFit = 'cover' } = element;
     const { dx, dy, dw, dh } = calcObjectFitRect(img, x, y, width, height, objectFit);
     
     // 如果有圆角或 objectFit=cover 需要裁剪
@@ -224,9 +224,11 @@ export const exportToImage = async ({
   const ctx = offscreenCanvas.getContext('2d');
   ctx.scale(scale, scale);
 
-  // 背景
-  ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  // 背景：未设置背景色时保持透明，编辑态棋盘格仅用于视觉提示，不参与导出
+  if (backgroundColor) {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
 
   // 按 zIndex 排序后依次绘制元素
   const sortedElements = [...elements].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
@@ -241,10 +243,12 @@ export const exportToImage = async ({
   // 相框叠加在最上层
   drawFrame(ctx, canvasWidth, canvasHeight, frameStyle);
 
-  // 触发下载（使用 JPEG 格式以减小文件大小）
-  const dataUrl = offscreenCanvas.toDataURL('image/jpeg', 0.9);
+  // 触发下载：无背景色时导出 PNG 以保留透明通道
+  const exportType = backgroundColor ? 'image/jpeg' : 'image/png';
+  const fileExt = backgroundColor ? 'jpg' : 'png';
+  const dataUrl = offscreenCanvas.toDataURL(exportType, 0.9);
   const link = document.createElement('a');
-  link.download = `photo-editor-${Date.now()}.jpg`;
+  link.download = `photo-editor-${Date.now()}.${fileExt}`;
   link.href = dataUrl;
   link.click();
 };
@@ -272,8 +276,10 @@ export const captureCanvasCover = async ({
 
   const ctx = offscreenCanvas.getContext('2d');
 
-  ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  if (backgroundColor) {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
 
   const sortedElements = [...elements].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
   for (const element of sortedElements) {
@@ -287,6 +293,6 @@ export const captureCanvasCover = async ({
   drawFrame(ctx, canvasWidth, canvasHeight, frameStyle);
 
   return new Promise((resolve) => {
-    offscreenCanvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
+    offscreenCanvas.toBlob((blob) => resolve(blob), 'image/png');
   });
 };

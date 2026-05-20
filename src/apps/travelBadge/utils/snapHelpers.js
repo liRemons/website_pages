@@ -93,8 +93,8 @@ export const computeSnapAndGuideLines = (movingElement, otherElements, canvas) =
   );
 
   return {
-    snappedX: Math.max(0, snappedX),
-    snappedY: Math.max(0, snappedY),
+    snappedX,
+    snappedY,
     lines: uniqueLines,
   };
 };

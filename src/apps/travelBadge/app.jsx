@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './index.less';
 import { Button, ConfigProvider } from 'antd';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, CloseOutlined } from '@ant-design/icons';
 import zhCN from 'antd/locale/zh_CN';
 import { FRAME_TEMPLATES } from './utils/constants';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -53,10 +53,11 @@ const App = () => {
   const [activeFrame, setActiveFrame] = useState('none');
   const [activeTab, setActiveTab] = useState('template');
   const [isExporting, setIsExporting] = useState(false);
-  const [canvasBackground, setCanvasBackground] = useState('#ffffff');
+  const [canvasBackground, setCanvasBackground] = useState(null);
   const [canvasRatio, setCanvasRatio] = useState(4 / 3);
   const [drawerHeight, setDrawerHeight] = useState(window.innerHeight / 2);
   const [guideLines, setGuideLines] = useState([]);
+  const [showMobilePropsPanel, setShowMobilePropsPanel] = useState(false);
 
   const currentFrame = systemTemplates.find((f) => f.id === activeFrame);
   const selectedElement = elements.find((el) => el.id === selectedId) || null;
@@ -129,6 +130,7 @@ const App = () => {
       );
       if (!inCanvas && !inPanel && !inPopup) {
         setSelectedId(null);
+        setShowMobilePropsPanel(false);
       }
     };
     document.addEventListener('mousedown', handleDocumentMouseDown);
@@ -143,11 +145,15 @@ const App = () => {
   const deleteElement = useCallback((id) => {
     setElements((prev) => prev.filter((el) => el.id !== id));
     setSelectedId(null);
+    setShowMobilePropsPanel(false);
   }, []);
 
   const selectElement = useCallback((id) => {
     setSelectedId(id);
-  }, []);
+    if (isMobile) {
+      setShowMobilePropsPanel(true);
+    }
+  }, [isMobile]);
 
   const changeZIndex = useCallback(createChangeZIndex(setElements), []);
   const addImageElement = useCallback(
@@ -302,13 +308,26 @@ const App = () => {
   };
 
   // 画布容器样式（背景色，不应用模板相框样式）
-  // 移动端：画布高度不超过空状态时的高度（即宽度 × 3/4），竖图超出时画布保持此上限，图片用 contain 显示
+  // PC 端：固定 600×450；移动端：宽度 100%，高度按比例
+  const transparentGridBackground = {
+    backgroundColor: '#ffffff',
+    backgroundImage: `
+      linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.08) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.08) 75%)
+    `,
+    backgroundSize: '16px 16px',
+    backgroundPosition: '0 0, 0 8px, 8px -8px, -8px 0',
+  };
+
   const canvasWrapStyle = {
     position: 'relative',
-    width: isMobile ? '100%' : 'min(600px, 100%)',
-    aspectRatio: `${canvasRatio}`,
+    width: isMobile ? '100%' : 600,
+    height: isMobile ? undefined : 450,
+    aspectRatio: isMobile ? `${canvasRatio}` : undefined,
     ...(isMobile && canvasRatio < 1 ? { maxHeight: `calc(100vw * 3 / 4)` } : {}),
-    background: canvasBackground,
+    ...(canvasBackground ? { background: canvasBackground } : transparentGridBackground),
     overflow: 'hidden',
     boxSizing: 'border-box',
   };
@@ -394,6 +413,18 @@ const App = () => {
                   <span className="side-panel__props-drawer-title" style={{ color: theme.textPrimary }}>
                     {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
                   </span>
+                  <button
+                    type="button"
+                    className="side-panel__props-drawer-close"
+                    style={{ color: theme.textMuted }}
+                    onClick={() => {
+                      setSelectedId(null);
+                      setShowMobilePropsPanel(false);
+                    }}
+                    title="关闭"
+                  >
+                    <CloseOutlined />
+                  </button>
                 </div>
                 <div className="side-panel__props-drawer-body">
                   <PropsPanel
@@ -446,7 +477,7 @@ const App = () => {
             </div>
 
             {/* 选中元素时：抽屉整体切换为属性视图 */}
-            {selectedElement ? (
+            {selectedElement && showMobilePropsPanel ? (
               <>
                 {/* 属性视图顶栏：返回按钮 + 标题 */}
                 <div
@@ -457,7 +488,7 @@ const App = () => {
                     type="button"
                     className="mobile-drawer__props-back-btn"
                     style={{ color: theme.accent }}
-                    onClick={() => setSelectedId(null)}
+                    onClick={() => setShowMobilePropsPanel(false)}
                   >
                     <LeftOutlined /> 返回
                   </button>

@@ -68,12 +68,10 @@ const DraggableElement = ({
       const rect = canvas.getBoundingClientRect();
       const rawX = moveEvent.clientX - startX;
       const rawY = moveEvent.clientY - startY;
-      const clampedX = Math.max(0, Math.min(rawX, rect.width - element.width));
-      const clampedY = Math.max(0, Math.min(rawY, rect.height - element.height));
 
       // 计算吸附和标线
       const { snappedX, snappedY, lines } = computeSnapAndGuideLines(
-        { x: clampedX, y: clampedY, width: element.width, height: element.height },
+        { x: rawX, y: rawY, width: element.width, height: element.height },
         otherElements || [],
         { width: rect.width, height: rect.height }
       );
@@ -107,11 +105,9 @@ const DraggableElement = ({
       const t = moveEvent.touches[0];
       const rawX = t.clientX - startX;
       const rawY = t.clientY - startY;
-      const clampedX = Math.max(0, Math.min(rawX, rect.width - element.width));
-      const clampedY = Math.max(0, Math.min(rawY, rect.height - element.height));
 
       const { snappedX, snappedY, lines } = computeSnapAndGuideLines(
-        { x: clampedX, y: clampedY, width: element.width, height: element.height },
+        { x: rawX, y: rawY, width: element.width, height: element.height },
         otherElements || [],
         { width: rect.width, height: rect.height }
       );
@@ -208,12 +204,10 @@ const DraggableElement = ({
       );
       onDragGuideLines && onDragGuideLines(lines);
 
-      // 限制元素不超出画布边界：至少保留 20px 宽/高在画布内
-      const MIN_VISIBLE = 20;
-      clampedWidth = Math.max(40, Math.min(newWidth, rect.width));
-      clampedHeight = Math.max(30, Math.min(newHeight, rect.height));
-      clampedX = Math.max(-(clampedWidth - MIN_VISIBLE), Math.min(newX, rect.width - MIN_VISIBLE));
-      clampedY = Math.max(-(clampedHeight - MIN_VISIBLE), Math.min(newY, rect.height - MIN_VISIBLE));
+      clampedWidth = Math.max(40, newWidth);
+      clampedHeight = Math.max(30, newHeight);
+      clampedX = newX;
+      clampedY = newY;
     }
 
     onUpdate(element.id, { width: clampedWidth, height: clampedHeight, x: clampedX, y: clampedY });

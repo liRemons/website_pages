@@ -64,9 +64,7 @@ export default function List() {
   const editInputRef = useRef(null);
   const editBubbleRef = useRef(null);
 
-  // 实时记录鼠标位置（onMouseMove 无条件更新），右键时读取
-  const lastMousePos = useRef({ x: window.innerWidth / 2, y: 300 });
-  // 记录最近一次 onSelect 选中的节点信息，供右键弹出气泡使用
+  // 记录右键触发时选中的节点信息，供右键弹出气泡使用
   const lastSelectedNode = useRef(null);
 
   // 点击气泡外部时关闭气泡
@@ -82,7 +80,7 @@ export default function List() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [editBubble]);
 
-  // onSelect 回调：rjv 点击值节点时只记录节点信息，不弹气泡
+  // onSelect 回调：记录节点信息，不直接弹气泡
   const handleRjvSelect = useCallback((selection) => {
     const fullNamespace = [
       ...selection.namespace,
@@ -95,10 +93,19 @@ export default function List() {
     lastSelectedNode.current = { namespace: fullNamespace, editValue };
   }, []);
 
-  // 右键回调：在 JSON 树区域右键时，用记录的节点信息弹出气泡
+  // 右键回调：先触发当前节点选择，再用选中信息弹出气泡
   const handleTreeContextMenu = useCallback((e) => {
-    if (!lastSelectedNode.current) return;
     e.preventDefault();
+
+    lastSelectedNode.current = null;
+    e.target.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    }));
+
+    if (!lastSelectedNode.current) return;
+
     const { namespace, editValue } = lastSelectedNode.current;
     const x = e.clientX;
     const y = e.clientY;
@@ -267,7 +274,7 @@ export default function List() {
           <div className={style.page}>
             {/* 操作说明 tips */}
             <div className={style.tipsBar}>
-              💡 <strong>操作说明：</strong>单击节点选中，右键弹出编辑 / 删除操作
+              💡 <strong>操作说明：</strong>右键节点弹出编辑 / 删除操作
             </div>
 
             {/* 左右两栏 */}

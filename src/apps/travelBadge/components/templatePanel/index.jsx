@@ -288,18 +288,32 @@ const TemplatePanel = ({
   };
 
   // ── 用当前画布内容同步覆盖系统模板（🔄 按钮触发） ───────────────────────
+  const TEMPLATE_BASE_WIDTH = 600;
+
   const handleSyncCanvas = async (id) => {
     const canvasDom = canvasRef.current;
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
     const canvasH = canvasDom ? canvasDom.getBoundingClientRect().height : 450;
+    const normalizeScale = TEMPLATE_BASE_WIDTH / canvasW;
 
     const templateElements = (elements || []).map((el) => {
       const { id: _id, ...rest } = el;
-      if (rest.type === 'image') {
-        const { url, ...others } = rest;
-        return { ...others, src: url };
+      // 将坐标归一化到 600px 基准
+      const normalized = {
+        ...rest,
+        x: (rest.x || 0) * normalizeScale,
+        y: (rest.y || 0) * normalizeScale,
+        width: (rest.width || 0) * normalizeScale,
+        height: (rest.height || 0) * normalizeScale,
+      };
+      if (normalized.type === 'text' && normalized.textProps) {
+        normalized.textProps = { ...normalized.textProps, fontSize: Math.round((normalized.textProps.fontSize || 16) * normalizeScale) };
       }
-      return rest;
+      if (rest.type === 'image') {
+        const { url, ...others } = normalized;
+        return { ...others, src: rest.url };
+      }
+      return normalized;
     });
 
     // 重新截取画布生成封面缩略图
@@ -328,15 +342,26 @@ const TemplatePanel = ({
     const canvasDom = canvasRef.current;
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : 600;
     const canvasH = canvasDom ? canvasDom.getBoundingClientRect().height : 450;
+    const normalizeScale = TEMPLATE_BASE_WIDTH / canvasW;
 
-    // 保存元素的所有属性（只排除运行时 id），image 的 url → src
+    // 保存元素的所有属性（只排除运行时 id），归一化到 600px 基准
     const templateElements = (elements || []).map((el) => {
       const { id: _id, ...rest } = el;
-      if (rest.type === 'image') {
-        const { url, ...others } = rest;
-        return { ...others, src: url };
+      const normalized = {
+        ...rest,
+        x: (rest.x || 0) * normalizeScale,
+        y: (rest.y || 0) * normalizeScale,
+        width: (rest.width || 0) * normalizeScale,
+        height: (rest.height || 0) * normalizeScale,
+      };
+      if (normalized.type === 'text' && normalized.textProps) {
+        normalized.textProps = { ...normalized.textProps, fontSize: Math.round((normalized.textProps.fontSize || 16) * normalizeScale) };
       }
-      return rest;
+      if (rest.type === 'image') {
+        const { url, ...others } = normalized;
+        return { ...others, src: rest.url };
+      }
+      return normalized;
     });
 
     // 截取画布生成封面缩略图
