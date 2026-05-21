@@ -71,6 +71,11 @@ app.get('/', (req, res) => {
   // res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
   res.sendFile(path.resolve(__dirname, './dist/@website_pages/tool/index.html'))
 })
+
+app.get('/ads.txt', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './ads.txt'))
+})
+
 const https_options = {
    key: fs.readFileSync(path.join(__dirname,'./a.key')),
    cert: fs.readFileSync(path.join(__dirname,'./a.pem'))
