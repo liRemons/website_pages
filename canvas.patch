@@ -1,0 +1,161 @@
+diff --git a/src/apps/travelBadge/api/systemTemplate.js b/src/apps/travelBadge/api/systemTemplate.js
+index 6b80b08..3e03055 100644
+--- a/src/apps/travelBadge/api/systemTemplate.js
++++ b/src/apps/travelBadge/api/systemTemplate.js
+@@ -55,6 +55,12 @@ const compressImageBeforeUpload = async (file) => {
+   const sourceFile = file instanceof File
+     ? file
+     : new File([file], `template_${Date.now()}.png`, { type: file.type || 'image/png' });
++
++  // PNG / WebP / GIF 鍙兘鍖呭惈閫忔槑閫氶亾锛屽帇缂╂垚 JPG 浼氭妸閫忔槑搴曞彉鐧斤紝蹇呴』鍘熸牱涓婁紶銆�
++  if (['image/png', 'image/webp', 'image/gif'].includes(sourceFile.type)) {
++    return sourceFile;
++  }
++
+   const result = await lrz(sourceFile, { quality: 0.8 });
+   return result.file || sourceFile;
+ };
+@@ -63,9 +69,11 @@ export const uploadTemplateImage = async (file, scene = 'element') => {
+   const formData = new FormData();
+   const compressedFile = await compressImageBeforeUpload(file);
+   // 纭繚浼犲叆鐨勬槸 File 瀵硅薄锛堝甫鏂囦欢鍚嶏級锛宖ormidable 鎵嶈兘姝ｇ‘瑙ｆ瀽
++  const fallbackType = compressedFile.type || 'image/png';
++  const fallbackExt = fallbackType.split('/')[1] || 'png';
+   const fileToUpload = compressedFile instanceof File
+     ? compressedFile
+-    : new File([compressedFile], `template_${Date.now()}.jpg`, { type: compressedFile.type || 'image/jpeg' });
++    : new File([compressedFile], `template_${Date.now()}.${fallbackExt}`, { type: fallbackType });
+   formData.append('file', fileToUpload);
+   formData.append('scene', scene);
+ 
+diff --git a/src/apps/travelBadge/app.jsx b/src/apps/travelBadge/app.jsx
+index f5e356e..6337ab6 100644
+--- a/src/apps/travelBadge/app.jsx
++++ b/src/apps/travelBadge/app.jsx
+@@ -77,6 +77,7 @@ const App = () => {
+     elements,
+     canvasRef,
+     canvasRatio,
++    setCanvasRatio,
+     setElements,
+     setActiveFrame,
+   });
+@@ -308,7 +309,7 @@ const App = () => {
+   };
+ 
+   // 鐢诲竷瀹瑰櫒鏍峰紡锛堣儗鏅壊锛屼笉搴旂敤妯℃澘鐩告鏍峰紡锛�
+-  // PC 绔細鍥哄畾 600脳450锛涚Щ鍔ㄧ锛氬搴� 100%锛岄珮搴︽寜姣斾緥
++  // PC / 绉诲姩绔兘鎸夊綋鍓嶇敾甯冩瘮渚嬫覆鏌擄紝淇濊瘉妯℃澘鍧愭爣涓嶄細鍥犻珮搴﹀彉鍖栨紓绉�
+   const transparentGridBackground = {
+     backgroundColor: '#ffffff',
+     backgroundImage: `
+@@ -324,8 +325,8 @@ const App = () => {
+   const canvasWrapStyle = {
+     position: 'relative',
+     width: isMobile ? '100%' : 600,
+-    height: isMobile ? undefined : 450,
+-    aspectRatio: isMobile ? `${canvasRatio}` : undefined,
++    height: undefined,
++    aspectRatio: `${canvasRatio}`,
+     ...(isMobile && canvasRatio < 1 ? { maxHeight: `calc(100vw * 3 / 4)` } : {}),
+     ...(canvasBackground ? { background: canvasBackground } : transparentGridBackground),
+     overflow: 'hidden',
+diff --git a/src/apps/travelBadge/hooks/useTemplates.js b/src/apps/travelBadge/hooks/useTemplates.js
+index 693a69d..04eb568 100644
+--- a/src/apps/travelBadge/hooks/useTemplates.js
++++ b/src/apps/travelBadge/hooks/useTemplates.js
+@@ -7,7 +7,7 @@ const CUSTOM_TEMPLATES_KEY = 'photo_editor_custom_templates';
+  * 鑷畾涔夋ā鏉跨鐞� Hook
+  * 绠＄悊鑷畾涔夋ā鏉跨殑澧炲垹鏀规煡銆佷繚瀛樺綋鍓嶇敾甯冧负妯℃澘銆佸簲鐢ㄦā鏉垮埌鐢诲竷
+  */
+-export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, setActiveFrame }) => {
++export const useTemplates = ({ elements, canvasRef, canvasRatio, setCanvasRatio, setElements, setActiveFrame }) => {
+   const [customTemplates, setCustomTemplates] = useState(() => {
+     try {
+       return JSON.parse(localStorage.getItem(CUSTOM_TEMPLATES_KEY) || '[]');
+@@ -76,10 +76,21 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
+ 
+   // 妯℃澘鍩哄噯鐢诲竷瀹藉害锛堟ā鏉垮湪 PC 绔垱寤烘椂鐨勭敾甯冨搴︼級
+   const TEMPLATE_BASE_WIDTH = 600;
++  const DEFAULT_TEMPLATE_RATIO = 4 / 3;
+ 
+-  // 搴旂敤妯℃澘锛氳缃浉妗� + 灏嗘ā鏉块璁惧厓绱犵瓑姣旂缉鏀惧悗搴旂敤鍒扮敾甯�
++  const getTemplateElementValue = (templateElement, ratioKey, canvasSize) => {
++    const ratioValue = templateElement[ratioKey];
++    if (typeof ratioValue === 'number') {
++      return ratioValue * canvasSize;
++    }
++    return undefined;
++  };
++
++  // 搴旂敤妯℃澘锛氬悓姝ョ敾甯冩瘮渚嬶紝骞舵寜妯℃澘鐢诲竷瀹介珮鍒嗗埆鎭㈠鍏冪礌鍧愭爣鍜屽昂瀵�
+   const applyTemplate = useCallback((template) => {
++    const nextCanvasRatio = template.canvasRatio || DEFAULT_TEMPLATE_RATIO;
+     setActiveFrame(template.id);
++    setCanvasRatio(nextCanvasRatio);
+ 
+     // 鏃犺鏂版ā鏉挎槸鍚︽湁棰勮鍏冪礌锛岄兘鍏堟竻绌虹敾甯�
+     if (!template.elements || template.elements.length === 0) {
+@@ -89,25 +100,28 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
+ 
+     const canvasDom = canvasRef.current;
+     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : TEMPLATE_BASE_WIDTH;
+-    const scale = canvasW / TEMPLATE_BASE_WIDTH;
++    const canvasH = canvasW / nextCanvasRatio;
++    const scaleX = canvasW / TEMPLATE_BASE_WIDTH;
++    const scaleY = canvasH / (TEMPLATE_BASE_WIDTH / nextCanvasRatio);
+ 
+-    // 瀹屽叏搴旂敤鏂版ā鏉跨殑棰勮鍏冪礌锛屾寜姣斾緥缂╂斁鍧愭爣鍜屽昂瀵�
++    // 瀹屽叏搴旂敤鏂版ā鏉跨殑棰勮鍏冪礌锛屾寜鐢诲竷瀹介珮鍒嗗埆缂╂斁鍧愭爣鍜屽昂瀵�
+     const newElements = template.elements.map((tpl, index) => {
+-      const { src, ...rest } = tpl;
++      const { src, rx, ry, rw, rh, ...rest } = tpl;
+       const element = {
+         ...rest,
+         id: `el_${Date.now()}_${index}`,
+         templateElement: true,
+-        x: (rest.x || 0) * scale,
+-        y: (rest.y || 0) * scale,
+-        width: (rest.width || 100) * scale,
+-        height: (rest.height || 100) * scale,
++        x: getTemplateElementValue(tpl, 'rx', canvasW) ?? ((rest.x || 0) * scaleX),
++        y: getTemplateElementValue(tpl, 'ry', canvasH) ?? ((rest.y || 0) * scaleY),
++        width: getTemplateElementValue(tpl, 'rw', canvasW) ?? ((rest.width || 100) * scaleX),
++        height: getTemplateElementValue(tpl, 'rh', canvasH) ?? ((rest.height || 100) * scaleY),
++        zIndex: Math.max(1, rest.zIndex || index + 1),
+       };
+       // 鏂囧瓧鍏冪礌锛氱瓑姣旂缉鏀惧瓧鍙�
+       if (rest.type === 'text' && rest.textProps) {
+         element.textProps = {
+           ...rest.textProps,
+-          fontSize: Math.round((rest.textProps.fontSize || 16) * scale),
++          fontSize: Math.round((rest.textProps.fontSize || 16) * scaleX),
+         };
+       }
+       // image 鍏冪礌锛氬瓨搴撳瓧娈� src 鈫� 杩愯鏃跺瓧娈� url
+@@ -117,7 +131,7 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
+       return element;
+     });
+     setElements(newElements);
+-  }, [canvasRef, setActiveFrame, setElements]);
++  }, [canvasRef, setActiveFrame, setCanvasRatio, setElements]);
+ 
+   return {
+     customTemplates,
+diff --git a/src/apps/travelBadge/utils/canvasHelpers.js b/src/apps/travelBadge/utils/canvasHelpers.js
+index 8b8c131..d9d1e2d 100644
+--- a/src/apps/travelBadge/utils/canvasHelpers.js
++++ b/src/apps/travelBadge/utils/canvasHelpers.js
+@@ -15,8 +15,10 @@ export const createChangeZIndex = (setElements) => (id, direction) => {
+       return prev.map((el) => el.id === id ? { ...el, zIndex: maxZ + 1 } : el);
+     }
+     if (direction === 'bottom') {
+-      const minZ = sorted[0].zIndex || 0;
+-      return prev.map((el) => el.id === id ? { ...el, zIndex: minZ - 1 } : el);
++      return prev.map((el) => {
++        if (el.id === id) return { ...el, zIndex: 1 };
++        return { ...el, zIndex: (el.zIndex || 1) + 1 };
++      });
+     }
+     if (direction === 'up' && index < sorted.length - 1) {
+       const nextZ = sorted[index + 1].zIndex || 0;
