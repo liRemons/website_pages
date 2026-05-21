@@ -77,6 +77,7 @@ const App = () => {
     elements,
     canvasRef,
     canvasRatio,
+    setCanvasRatio,
     setElements,
     setActiveFrame,
   });
@@ -308,7 +309,7 @@ const App = () => {
   };
 
   // 画布容器样式（背景色，不应用模板相框样式）
-  // PC 端：固定 600×450；移动端：宽度 100%，高度按比例
+  // PC / 移动端都按当前画布比例渲染，保证模板坐标不会因高度变化漂移
   const transparentGridBackground = {
     backgroundColor: '#ffffff',
     backgroundImage: `
@@ -324,8 +325,8 @@ const App = () => {
   const canvasWrapStyle = {
     position: 'relative',
     width: isMobile ? '100%' : 600,
-    height: isMobile ? undefined : 450,
-    aspectRatio: isMobile ? `${canvasRatio}` : undefined,
+    height: undefined,
+    aspectRatio: `${canvasRatio}`,
     ...(isMobile && canvasRatio < 1 ? { maxHeight: `calc(100vw * 3 / 4)` } : {}),
     ...(canvasBackground ? { background: canvasBackground } : transparentGridBackground),
     overflow: 'hidden',

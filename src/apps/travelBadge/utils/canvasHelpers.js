@@ -15,8 +15,10 @@ export const createChangeZIndex = (setElements) => (id, direction) => {
       return prev.map((el) => el.id === id ? { ...el, zIndex: maxZ + 1 } : el);
     }
     if (direction === 'bottom') {
-      const minZ = sorted[0].zIndex || 0;
-      return prev.map((el) => el.id === id ? { ...el, zIndex: minZ - 1 } : el);
+      return prev.map((el) => {
+        if (el.id === id) return { ...el, zIndex: 1 };
+        return { ...el, zIndex: (el.zIndex || 1) + 1 };
+      });
     }
     if (direction === 'up' && index < sorted.length - 1) {
       const nextZ = sorted[index + 1].zIndex || 0;

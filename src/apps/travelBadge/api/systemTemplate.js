@@ -55,6 +55,12 @@ const compressImageBeforeUpload = async (file) => {
   const sourceFile = file instanceof File
     ? file
     : new File([file], `template_${Date.now()}.png`, { type: file.type || 'image/png' });
+
+  // PNG / WebP / GIF 可能包含透明通道，压缩成 JPG 会把透明底变白，必须原样上传。
+  if (['image/png', 'image/webp', 'image/gif'].includes(sourceFile.type)) {
+    return sourceFile;
+  }
+
   const result = await lrz(sourceFile, { quality: 0.8 });
   return result.file || sourceFile;
 };
@@ -63,9 +69,11 @@ export const uploadTemplateImage = async (file, scene = 'element') => {
   const formData = new FormData();
   const compressedFile = await compressImageBeforeUpload(file);
   // 确保传入的是 File 对象（带文件名），formidable 才能正确解析
+  const fallbackType = compressedFile.type || 'image/png';
+  const fallbackExt = fallbackType.split('/')[1] || 'png';
   const fileToUpload = compressedFile instanceof File
     ? compressedFile
-    : new File([compressedFile], `template_${Date.now()}.jpg`, { type: compressedFile.type || 'image/jpeg' });
+    : new File([compressedFile], `template_${Date.now()}.${fallbackExt}`, { type: fallbackType });
   formData.append('file', fileToUpload);
   formData.append('scene', scene);
 

@@ -7,7 +7,7 @@ const CUSTOM_TEMPLATES_KEY = 'photo_editor_custom_templates';
  * 自定义模板管理 Hook
  * 管理自定义模板的增删改查、保存当前画布为模板、应用模板到画布
  */
-export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, setActiveFrame }) => {
+export const useTemplates = ({ elements, canvasRef, canvasRatio, setCanvasRatio, setElements, setActiveFrame }) => {
   const [customTemplates, setCustomTemplates] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem(CUSTOM_TEMPLATES_KEY) || '[]');
@@ -76,10 +76,21 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
 
   // 模板基准画布宽度（模板在 PC 端创建时的画布宽度）
   const TEMPLATE_BASE_WIDTH = 600;
+  const DEFAULT_TEMPLATE_RATIO = 4 / 3;
 
-  // 应用模板：设置相框 + 将模板预设元素等比缩放后应用到画布
+  const getTemplateElementValue = (templateElement, ratioKey, canvasSize) => {
+    const ratioValue = templateElement[ratioKey];
+    if (typeof ratioValue === 'number') {
+      return ratioValue * canvasSize;
+    }
+    return undefined;
+  };
+
+  // 应用模板：同步画布比例，并按模板画布宽高分别恢复元素坐标和尺寸
   const applyTemplate = useCallback((template) => {
+    const nextCanvasRatio = template.canvasRatio || DEFAULT_TEMPLATE_RATIO;
     setActiveFrame(template.id);
+    setCanvasRatio(nextCanvasRatio);
 
     // 无论新模板是否有预设元素，都先清空画布
     if (!template.elements || template.elements.length === 0) {
@@ -89,25 +100,28 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
 
     const canvasDom = canvasRef.current;
     const canvasW = canvasDom ? canvasDom.getBoundingClientRect().width : TEMPLATE_BASE_WIDTH;
-    const scale = canvasW / TEMPLATE_BASE_WIDTH;
+    const canvasH = canvasW / nextCanvasRatio;
+    const scaleX = canvasW / TEMPLATE_BASE_WIDTH;
+    const scaleY = canvasH / (TEMPLATE_BASE_WIDTH / nextCanvasRatio);
 
-    // 完全应用新模板的预设元素，按比例缩放坐标和尺寸
+    // 完全应用新模板的预设元素，按画布宽高分别缩放坐标和尺寸
     const newElements = template.elements.map((tpl, index) => {
-      const { src, ...rest } = tpl;
+      const { src, rx, ry, rw, rh, ...rest } = tpl;
       const element = {
         ...rest,
         id: `el_${Date.now()}_${index}`,
         templateElement: true,
-        x: (rest.x || 0) * scale,
-        y: (rest.y || 0) * scale,
-        width: (rest.width || 100) * scale,
-        height: (rest.height || 100) * scale,
+        x: getTemplateElementValue(tpl, 'rx', canvasW) ?? ((rest.x || 0) * scaleX),
+        y: getTemplateElementValue(tpl, 'ry', canvasH) ?? ((rest.y || 0) * scaleY),
+        width: getTemplateElementValue(tpl, 'rw', canvasW) ?? ((rest.width || 100) * scaleX),
+        height: getTemplateElementValue(tpl, 'rh', canvasH) ?? ((rest.height || 100) * scaleY),
+        zIndex: Math.max(1, rest.zIndex || index + 1),
       };
       // 文字元素：等比缩放字号
       if (rest.type === 'text' && rest.textProps) {
         element.textProps = {
           ...rest.textProps,
-          fontSize: Math.round((rest.textProps.fontSize || 16) * scale),
+          fontSize: Math.round((rest.textProps.fontSize || 16) * scaleX),
         };
       }
       // image 元素：存库字段 src → 运行时字段 url
@@ -117,7 +131,7 @@ export const useTemplates = ({ elements, canvasRef, canvasRatio, setElements, se
       return element;
     });
     setElements(newElements);
-  }, [canvasRef, setActiveFrame, setElements]);
+  }, [canvasRef, setActiveFrame, setCanvasRatio, setElements]);
 
   return {
     customTemplates,
