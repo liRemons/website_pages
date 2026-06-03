@@ -15,12 +15,13 @@ const NormalLoginForm = () => {
       account,
       password: encrypt({ DES_IV, DES_KEY, MSG: pwd })
     })
+
     if (res?.success) {
       message.success('成功')
       localStorage.setItem('REMONS_TOKEN', res.data.token);
       const params = new URLSearchParams(window.location.search);
-      if (params.get('form')) {
-        window.location.href = params.get('form')
+      if (params.get('from')) {
+        window.location.href = params.get('from')
       } else {
         window.location.href = window.location.origin
       }
