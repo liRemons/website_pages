@@ -36,7 +36,7 @@ export default function List() {
   const configItems = [
     { label: '字数限制', name: 'count', component: 'inputNumber', componentProps: { min: 300, max: 1900, defaultValue: 1900, precision: 0, step: 100 } },
     { label: '频率(ms)', name: 'wait', component: 'inputNumber', componentProps: { min: 100, max: 2000, defaultValue: 200, precision: 0, step: 100 } },
-    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', onChange: changeReplace } },
+    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', defaultValue: true, onChange: changeReplace } },
   ];
 
   const stopTimer = () => {
