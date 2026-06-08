@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Spin, message, Modal, Input } from 'antd';
 import { FormItem, Form } from 'remons-components';
 import Fixed from '@components/Fixed';
@@ -24,6 +24,10 @@ export default function List() {
   const isRunningRef = useRef(false);
   const timerRef = useRef(null);
 
+  useEffect(() => {
+    form.setFieldsValue({ replace: true });
+  }, [])
+
   const changeReplace = (val) => {
     if (val) {
       form.setFieldsValue({ count: 800, wait: 200 });
@@ -36,7 +40,7 @@ export default function List() {
   const configItems = [
     { label: '字数限制', name: 'count', component: 'inputNumber', componentProps: { min: 300, max: 1900, defaultValue: 1900, precision: 0, step: 100 } },
     { label: '频率(ms)', name: 'wait', component: 'inputNumber', componentProps: { min: 100, max: 2000, defaultValue: 200, precision: 0, step: 100 } },
-    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', defaultValue: true, onChange: changeReplace } },
+    { label: '模式', name: 'replace', component: 'switch', componentProps: { checkedChildren: '替换', unCheckedChildren: '平铺', onChange: changeReplace } },
   ];
 
   const stopTimer = () => {
