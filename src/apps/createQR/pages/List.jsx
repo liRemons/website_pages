@@ -25,7 +25,7 @@ export default function List() {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    form.setFieldsValue({ replace: true });
+    form.setFieldsValue({ replace: true, count: 800, wait: 200 });
   }, [])
 
   const changeReplace = (val) => {
