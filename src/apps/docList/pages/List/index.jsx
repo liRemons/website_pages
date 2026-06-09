@@ -20,8 +20,8 @@ import txtSvg from './assets/svg/txt.svg';
 import docListSvg from './assets/svg/docList.svg';
 import htmlSvg from './assets/svg/html.svg';
 import markdownSvg from './assets/svg/markdown.svg';
-import anchorListSvg from './assets/svg/anchorList.svg';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import anchorListSvg from './assets/svg/anchorList.svg'
+import { LeftOutlined, RightOutlined, EllipsisOutlined, CloseOutlined } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
@@ -242,7 +242,7 @@ export default function List() {
 
     return <div ref={actionButtonsRef} className={classnames(style.actionButtons, actionButtonsVisible ? style.actionButtonsVisible : '')}>
       <span className={classnames(style.actionButton, style.actionToggle, 'circle')} title={actionButtonsVisible ? '收起操作' : '展开操作'} onClick={() => setActionButtonsVisible(!actionButtonsVisible)}>
-        {actionButtonsVisible ? '×' : '⋯'}
+        {actionButtonsVisible ? <CloseOutlined /> : <EllipsisOutlined />}
       </span>
       <div className={style.actionPanel}>
         {actions.map(item => <span className={classnames(style.actionButton, 'circle')} key={item.key} title={item.title} onClick={() => handleClickAction(item.onClick)}>
