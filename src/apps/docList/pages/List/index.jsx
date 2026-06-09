@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
@@ -11,13 +11,15 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import MarkMap from '@components/MarkMap';
-import { Input, Drawer } from 'antd';
+import { Input, Drawer, message } from 'antd';
 import { img } from '@utils';
 import mindSvg from './assets/svg/mind.svg';
 import fullscreenSvg from './assets/svg/fullscreen.svg';
 import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
 import txtSvg from './assets/svg/txt.svg';
 import docListSvg from './assets/svg/docList.svg';
+import htmlSvg from './assets/svg/html.svg';
+import markdownSvg from './assets/svg/markdown.svg';
 import anchorListSvg from './assets/svg/anchorList.svg';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
@@ -32,6 +34,9 @@ export default function List() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
+  const [actionButtonsVisible, setActionButtonsVisible] = useState(false);
+  const actionButtonsRef = useRef(null);
+
   useEffect(() => {
     getList();
   }, []);
@@ -85,6 +90,7 @@ export default function List() {
     setActiveId(id);
     setViewType('html');
     setDrawerVisible(false);
+    setActionButtonsVisible(false);
     localStore.getMarkdown(id);
   };
 
@@ -104,6 +110,147 @@ export default function List() {
     viewType === 'html' ? setViewType('markMap') : setViewType('html')
   }
 
+  const copyTextByCommand = (text) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', 'readonly');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
+
+  const copyHtmlByCommand = (html) => {
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    container.contentEditable = 'true';
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    document.body.appendChild(container);
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(container);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+    document.body.removeChild(container);
+  }
+
+  const removeHiddenNodes = (sourceNode, cloneNode) => {
+    const cloneChildren = Array.from(cloneNode.children);
+    Array.from(sourceNode.children).forEach((sourceChild, index) => {
+      const cloneChild = cloneChildren[index];
+      if (!cloneChild) {
+        return;
+      }
+
+      const computedStyle = window.getComputedStyle(sourceChild);
+      const isHidden = computedStyle.display === 'none' || computedStyle.visibility === 'hidden';
+      if (isHidden) {
+        cloneChild.remove();
+        return;
+      }
+
+      removeHiddenNodes(sourceChild, cloneChild);
+    });
+  }
+
+  const getVisibleHtml = () => {
+    const markdownDom = document.querySelector('.markdown-html > div');
+    if (!markdownDom) {
+      return localStore.htmlInfo;
+    }
+
+    const cloneDom = markdownDom.cloneNode(true);
+    removeHiddenNodes(markdownDom, cloneDom);
+    cloneDom.querySelectorAll('.copy, .code-toggle').forEach(item => item.remove());
+    return cloneDom.innerHTML;
+  }
+
+  const getPlainTextFromHtml = (html) => {
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    return container.innerText;
+  }
+
+  const copyContent = async (type) => {
+    const isHtml = type === 'html';
+    const content = isHtml ? getVisibleHtml() : localStore.markdownInfo;
+    if (!content) {
+      message.warning('暂无可复制内容');
+      return;
+    }
+
+    try {
+      if (isHtml && navigator.clipboard?.write && window.ClipboardItem) {
+        const clipboardItem = new window.ClipboardItem({
+          'text/html': new Blob([content], { type: 'text/html' }),
+          'text/plain': new Blob([getPlainTextFromHtml(content)], { type: 'text/plain' }),
+        });
+        await navigator.clipboard.write([clipboardItem]);
+      } else if (isHtml) {
+        copyHtmlByCommand(content);
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(content);
+      } else {
+        copyTextByCommand(content);
+      }
+      message.success(isHtml ? '已复制带格式 HTML' : '已复制 Markdown');
+    } catch (error) {
+      isHtml ? copyHtmlByCommand(content) : copyTextByCommand(content);
+      message.success(isHtml ? '已复制带格式 HTML' : '已复制 Markdown');
+    }
+  }
+
+  useEffect(() => {
+    if (!actionButtonsVisible) {
+      return undefined;
+    }
+
+    const handleClickOutsideActionButtons = (event) => {
+      if (actionButtonsRef.current?.contains(event.target)) {
+        return;
+      }
+      setActionButtonsVisible(false);
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideActionButtons);
+    document.addEventListener('touchstart', handleClickOutsideActionButtons);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideActionButtons);
+      document.removeEventListener('touchstart', handleClickOutsideActionButtons);
+    };
+  }, [actionButtonsVisible]);
+
+  const renderActionButtons = () => {
+    const actions = [
+      { key: 'copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML',icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
+      { key: 'copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
+      { key: 'fullscreen', title: fullscreen ? '退出全屏' : '全屏', icon: !fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20), onClick: changeFullscreen },
+      { key: 'viewType', title: viewType === 'html' ? '切换思维导图' : '切换文本', icon: viewType === 'html' ? img(mindSvg, 20) : img(txtSvg, 20), onClick: changeViewType },
+    ];
+
+    const handleClickAction = (onClick) => {
+      onClick();
+      setActionButtonsVisible(false);
+    }
+
+    return <div ref={actionButtonsRef} className={classnames(style.actionButtons, actionButtonsVisible ? style.actionButtonsVisible : '')}>
+      <span className={classnames(style.actionButton, style.actionToggle, 'circle')} title={actionButtonsVisible ? '收起操作' : '展开操作'} onClick={() => setActionButtonsVisible(!actionButtonsVisible)}>
+        {actionButtonsVisible ? '×' : '⋯'}
+      </span>
+      <div className={style.actionPanel}>
+        {actions.map(item => <span className={classnames(style.actionButton, 'circle')} key={item.key} title={item.title} onClick={() => handleClickAction(item.onClick)}>
+          {item.icon || item.label}
+        </span>)}
+      </div>
+    </div>
+  }
 
   const { name, handleType } = params;
 
@@ -123,6 +270,8 @@ export default function List() {
   }
 
   const renderNav = () => {
+    if (!anchor?.length) return
+    
     return <>
       {viewType === 'html' && <div className={classnames(style.page_nav, 'shadow_not_active')}>
         <div className={style.search}>
@@ -172,7 +321,7 @@ export default function List() {
   const renderMenuList = () => {
     const arr = [
       { onClick: openListMenu, icon: img(docListSvg, 20), isShow: localStore.articleList?.length !== 0 && handleType !== 'share' },
-      { onClick: openListNav, icon: img(anchorListSvg, 20), isShow: viewType === 'html' && localStore.markdownInfo },
+      { onClick: openListNav, icon: img(anchorListSvg, 20), isShow: viewType === 'html' && localStore.markdownInfo, isShow: !!anchor?.length },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
@@ -187,12 +336,7 @@ export default function List() {
       {IsPC() && handleType !== 'share' && renderList()}
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
-          <span className={classnames(style.fullscreen, 'circle')} onClick={changeFullscreen} >
-            {!fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20)}
-          </span>
-          <span className={classnames(style.viewType, 'circle')} onClick={changeViewType} >
-            {viewType === 'html' ? img(mindSvg, 20) : img(txtSvg, 20)}
-          </span>
+          {renderActionButtons()}
           {
             (localStore.markdownInfo && localStore.htmlInfo) ? VIEW_DETAIL[viewType] : <Empty />
           }
