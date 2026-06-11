@@ -22,6 +22,7 @@ import postmarkGeneratorSvg from './assets/svg/postmarkgenerator.svg';
 import simplesketchesSvg from './assets/svg/simplesketches.svg';
 import productmanagSvg from './assets/svg/productmanage.svg';
 import jsonviewerSvg from './assets/svg/jsonviewer.svg'
+import aiChatSvg from './assets/svg/aiChat.svg'
 import editorSvg from './assets/svg/editor.svg';
 import pagesJson from '../../../../../scripts/pages.json'
 import { img } from '@utils'
@@ -33,6 +34,7 @@ pagesJson.forEach(item => {
 
 export default function ListPage() {
   const list = [
+    { title: 'AI 智能体', icon: img(aiChatSvg), hot: true, url: 'https://remons.cn:3000' },
     { title: '取快递', icon: img(expressSvg), appName: 'express' },
     // { title: '文档', icon: img(docSvg), appName: 'tool', params: { page: 'doc' } },
     { title: '富文本编辑器', icon: img(editorSvg), appName: 'wangEditor' },
@@ -52,7 +54,7 @@ export default function ListPage() {
   ].map(item => {
     return {
       ...item,
-      url: `/${item.appName}`,
+      url: item.url || `/${item.appName}`,
       subTitle: pagesJsonSubTitle[item.appName]
     }
   });
