@@ -14,6 +14,8 @@ class Store {
   
   title = ''
 
+  createTime = ''
+
   constructor() {
     makeAutoObservable(this)
   }
@@ -34,11 +36,12 @@ class Store {
     this.markdownInfo = '';
     this.htmlInfo = '';
     const { data } = await markdownToHTML(payload)
-    const { anchor, info, content, title } = data || {}
+    const { anchor, info, content, title, createTime } = data || {}
     this.anchor = anchor;
     this.markdownInfo = content;
     this.htmlInfo = info;
     this.title = title;
+    this.createTime = createTime;
   }
 }
 

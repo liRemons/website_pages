@@ -6,6 +6,7 @@ import Empty from '@components/Empty';
 import { copy } from 'methods-r';
 import './markdown.global.less';
 import './index.global.less';
+import dayjs from 'dayjs';
 
 let timer = null;
 
@@ -89,7 +90,10 @@ export default function Markdown(props) {
 
 
   return useObserver(() => <> <div className='markdown'>
-    {html ? <div className='markdown-html'><div dangerouslySetInnerHTML={{ __html: html }} onClick={handleClick}></div></div> : <Empty />}
+    {html ? <div className='markdown-html'><div dangerouslySetInnerHTML={{ __html: html }} onClick={handleClick}></div>
+      <div className="create-time">
+        文档更新于 {dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}
+      </div></div> : <Empty />}
     <BackTop target={() => document.getElementsByClassName('markdown')?.[0]} />
   </div>
   </>);
