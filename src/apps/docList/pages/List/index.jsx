@@ -320,8 +320,8 @@ export default function List() {
 
   const renderMenuList = () => {
     const arr = [
-      { onClick: openListMenu, icon: img(docListSvg, 20), isShow: localStore.articleList?.length !== 0 && handleType !== 'share' },
-      { onClick: openListNav, icon: img(anchorListSvg, 20), isShow: viewType === 'html' && localStore.markdownInfo, isShow: !!anchor?.length },
+      { onClick: openListMenu, icon: img(docListSvg, 24), isShow: localStore.articleList?.length !== 0 && handleType !== 'share' },
+      { onClick: openListNav, icon: img(anchorListSvg, 24), isShow: viewType === 'html' && localStore.markdownInfo, isShow: !!anchor?.length },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
