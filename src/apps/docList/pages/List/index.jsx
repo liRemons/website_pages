@@ -33,7 +33,7 @@ export default function List() {
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
-  const [menuVisible, setMenuVisible] = useState(localStore.docListMenuVisible || false);
+  const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible || false);
   const [actionButtonsVisible, setActionButtonsVisible] = useState(false);
   const actionButtonsRef = useRef(null);
 
@@ -316,7 +316,7 @@ export default function List() {
 
   const menuToLeft = () => {
     setMenuVisible(() => !menuVisible)
-    localStore.setItem('docListMenuVisible', !menuVisible)
+    localStorage.setItem('docListMenuVisible', !menuVisible)
   }
 
   const renderMenuList = () => {
