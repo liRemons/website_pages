@@ -344,7 +344,7 @@ export default function List() {
       </div>
       {IsPC() && renderNav()}
     </div>
-    <Fixed />
+    <Fixed propsVisible />
 
     <Drawer
       contentWrapperStyle={{ padding: 0 }}

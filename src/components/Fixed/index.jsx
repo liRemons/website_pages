@@ -10,8 +10,8 @@ import homeSvg from './assets/svg/home.svg';
 import shareSvg from './assets/svg/share.svg';
 import HelpDrawer from '../HelpDrawer';
 
-export default function Fixed({ homeUrl = '/homeList', handleContent, position = 'right' }) {
-  const [visible, setVisible] = useState(false);
+export default function Fixed({ homeUrl = '/homeList', handleContent, position = 'right', propsVisible }) {
+  const [visible, setVisible] = useState(propsVisible || false);
 
   const share = () => {
     const params = {
