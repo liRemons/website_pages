@@ -104,112 +104,6 @@
     }
   }
 
-  code {
-    margin: 0 2px;
-    padding: 2px 7px;
-    background: #f9f2f4;
-    color: #c7254df1;
-    border-radius: 5px;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 0.9em;
-    line-height: 1.5;
-  }
-
-  pre {
-    position: relative;
-    overflow: hidden;
-    margin: 18px 0 22px;
-    padding: 38px 16px 14px;
-    color: #f8f8f2;
-    background-color: #263238;
-    border-radius: 8px;
-    box-shadow: inset 5px 5px 10px #0f1416, inset -5px -5px 10px #3d505a;
-    cursor: auto;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.6;
-
-    code {
-      display: inline-block;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: auto;
-      color: inherit;
-      background-color: transparent;
-      border-radius: 0;
-      font-size: inherit;
-      line-height: inherit;
-
-      .hljs-comment {
-        font-style: italic;
-      }
-    }
-
-    &::before {
-      position: absolute;
-      top: 12px;
-      z-index: 11;
-      width: 50px;
-      height: 16px;
-      content: '';
-      background: url(https://remons.cn:3008/upload/content/icon/code_icon.png)
-        no-repeat;
-      background-size: contain;
-    }
-  }
-
-  pre:hover .copy {
-    display: inline-block;
-  }
-
-  .copy {
-    position: absolute;
-    top: 8px;
-    right: 58px;
-    display: none;
-    color: #c9d1d9;
-    font-size: 12px;
-    cursor: pointer;
-  }
-
-  .code-toggle {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    padding: 0 4px;
-    color: #c9d1d9;
-    font-size: 12px;
-    border-radius: 3px;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.2s;
-
-    &:hover {
-      color: #fff;
-    }
-  }
-
-  pre.code-collapsed {
-    max-height: 64px;
-    overflow: hidden;
-
-    code {
-      overflow: hidden;
-    }
-
-    &::after {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 28px;
-      pointer-events: none;
-      content: '';
-      background: linear-gradient(to bottom, transparent, #263238);
-    }
-  }
 
   img {
     display: block;
@@ -259,4 +153,192 @@
   .header-anchor {
     display: none;
   }
+}
+
+
+code {
+  margin: 0 2px;
+  padding: 2px 7px;
+  background: #f9f2f4;
+  color: #c7254df1;
+  border-radius: 5px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+pre {
+  position: relative;
+  overflow: hidden;
+  margin: 18px 0 22px;
+  padding: 38px 16px 14px;
+  color: #f8f8f2;
+  background-color: #263238;
+  border-radius: 8px;
+  box-shadow: inset 5px 5px 10px #0f1416, inset -5px -5px 10px #3d505a;
+  cursor: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  code {
+    display: inline-block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+    font-size: inherit;
+    line-height: inherit;
+
+    .hljs-comment {
+      font-style: italic;
+    }
+  }
+
+  &::before {
+    position: absolute;
+    top: 12px;
+    z-index: 11;
+    width: 50px;
+    height: 16px;
+    content: '';
+    background: url(https://remons.cn:3008/upload/content/icon/code_icon.png) no-repeat;
+    background-size: contain;
+  }
+}
+
+pre:hover .copy {
+  display: inline-block;
+}
+
+.copy {
+  position: absolute;
+  top: 8px;
+  right: 58px;
+  display: none;
+  color: #c9d1d9;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.code-toggle {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 0 4px;
+  color: #c9d1d9;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+pre.code-collapsed {
+  max-height: 64px;
+  overflow: hidden;
+
+  code {
+    overflow: hidden;
+  }
+
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 28px;
+    pointer-events: none;
+    content: '';
+    background: linear-gradient(to bottom, transparent, #263238);
+  }
+}
+
+
+// mermaid
+/* 针对 mermaid 容器的样式 */
+.mermaid-wrapper {
+  /* 1. 限制最大高度，防止撑开页面 */
+  max-height: 400px;
+  /* 或者固定像素，如 500px */
+  width: 100%;
+
+  /* 2. 隐藏溢出内容，让 panzoom 接管滚动 */
+  overflow: hidden;
+
+  /* 3. 视觉优化 */
+  background-color: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  position: relative;
+  /* 方便定位工具栏 */
+  margin: 20px 0;
+}
+
+/* 确保 svg 能够被 panzoom 控制 */
+.mermaid-wrapper svg {
+  width: 100%;
+  height: auto;
+  /* 保持比例 */
+  display: block;
+}
+
+.mermaid-canvas {
+  overflow: hidden;
+  cursor: grab;
+  padding: 16px;
+}
+
+.mermaid-canvas:active {
+  cursor: grabbing;
+}
+
+.mermaid-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+/* 确保 wrapper 在全屏时占满屏幕 */
+.mermaid-wrapper:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  /* 全屏时的背景色 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 兼容不同浏览器的全屏伪类 */
+.mermaid-wrapper:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.mermaid-wrapper:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+/* 让 SVG 内容在全屏下也能被正确缩放 */
+.mermaid-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
