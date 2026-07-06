@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
+    "@panzoom/panzoom": "^4.6.2",
     "@textea/json-viewer": "^4.0.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
@@ -80,6 +81,7 @@
     "lrz": "^4.9.41",
     "markmap-lib": "^0.13.2",
     "markmap-view": "^0.13.2",
+    "mermaid": "^11.16.0",
     "methods-r": "^1.2.14",
     "mobx": "^6.3.5",
     "mobx-react": "^7.2.0",
