@@ -7,6 +7,7 @@ import { copy } from 'methods-r';
 import './markdown.global.less';
 import './index.global.less';
 import dayjs from 'dayjs';
+import renderMermaid from './renderMermaid';
 
 let timer = null;
 
@@ -18,6 +19,11 @@ export default function Markdown(props) {
     try {
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       setHtml(localStore.htmlInfo);
+      // DOM 更新完毕后渲染 Mermaid
+      setTimeout(async () => {
+        await renderMermaid();
+      }, 100)
+      
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
         setTimeout(() => {
           const a = document.createElement('a');
