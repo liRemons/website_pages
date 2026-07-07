@@ -116,7 +116,7 @@ function MermaidBlock({ source }) {
     panzoomRef.current = Panzoom(contentRef.current, {
       maxScale: 5,
       minScale: 0.1,
-      startScale: IsPC() ? 1 : 2,
+      startScale: 1,
       // 全屏下不限制拖拽边界，方便查看 SVG 任意区域
       contain: isFullscreen ? false : 'outside',
     });
