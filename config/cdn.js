@@ -1,6 +1,6 @@
 const js = [
-  { externalsName: 'react', url: "https://unpkg.com/react@17.0.2/umd/react.production.min.js" },
-  { externalsName: 'react-dom', url: "https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js" },
+  { externalsName: 'react', url: "https://unpkg.com/react@18.3.1/umd/react.production.min.js" },
+  { externalsName: 'react-dom', url: "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx@6.3.2/dist/mobx.umd.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react-lite@3.1.6/dist/mobxreactlite.umd.production.min.js" },
   { externalsName: 'mobx-react', url: "https://unpkg.com/mobx-react@7.3.0/dist/mobxreact.umd.production.min.js" },
