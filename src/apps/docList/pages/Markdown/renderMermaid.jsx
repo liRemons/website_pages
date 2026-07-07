@@ -122,7 +122,7 @@ function MermaidBlock({ source }) {
     });
 
     // 全屏时滚轮事件绑定到全屏元素，否则绑定到 wrapper
-    const wheelTarget = wrapperRef.current;
+    const wheelTarget = (isFullscreen || !isCollapsed) ? wrapperRef.current : null;
     const handleWheel = panzoomRef.current.zoomWithWheel;
     wheelTarget?.addEventListener('wheel', handleWheel);
 
@@ -131,7 +131,7 @@ function MermaidBlock({ source }) {
       panzoomRef.current?.destroy();
       panzoomRef.current = null;
     };
-  }, [svg, isFullscreen]);
+  }, [svg, isFullscreen, isCollapsed]);
 
   // 监听浏览器原生全屏状态变化
   useEffect(() => {
@@ -183,6 +183,8 @@ function MermaidBlock({ source }) {
     }
   }, []);
 
+  const isMove = !isCollapsed || isFullscreen
+
   return (
     <div
       ref={wrapperRef}
@@ -200,7 +202,7 @@ function MermaidBlock({ source }) {
       >
         <div
           ref={contentRef}
-          className="mermaid-content"
+          className={`mermaid-content ${isMove ? 'move' : 'disabled-move'}`}
           dangerouslySetInnerHTML={{ __html: svg }}
         />
       </div>
