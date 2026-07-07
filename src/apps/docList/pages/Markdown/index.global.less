@@ -307,20 +307,37 @@ pre.code-collapsed {
 
 .mermaid-toolbar {
   gap: 4px;
-  padding: 4px;
   z-index: 10;
-  position: relative;
-  background: #f1f1f1;
-  border-bottom: 1px solid #e4e4e4;
   right: 0;
   position: absolute;
-  border-radius: 4px;
+  opacity: 0.8;
 
   .circle {
-    height: 28px;
-    width: 28px;
-    line-height: 22px;
-    font-size: 12px;
+    height: 24px;
+    width: 24px;
+    line-height: 20px;
+    font-size: 10px;
+  }
+}
+
+/* 全屏时样式 */
+.mermaid-fullscreen-target:fullscreen {
+  background: #fff;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  .mermaid-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mermaid-toolbar {
+    top: 4px;
+    right: 8px;
   }
 }
 
