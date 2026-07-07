@@ -239,7 +239,7 @@ export default function List() {
   return (
     <>
       <Container
-        header={<Header name="JSON 解析器" handleContent={handleContent} />}
+        header={<Header name="JSON 解析器" handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
         main={
           <div className={style.page}>
             {/* 操作说明 tips */}
