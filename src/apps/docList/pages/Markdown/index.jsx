@@ -22,7 +22,7 @@ export default function Markdown(props) {
       setTimeout(async () => {
         const { default: renderMermaid } = await import('./renderMermaid');
         await renderMermaid();
-      }, 1000)
+      }, 10)
       
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
         setTimeout(() => {

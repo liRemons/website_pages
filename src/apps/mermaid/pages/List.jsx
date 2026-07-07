@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { openApp } from 'methods-r';
 import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 import MermaidEditor from './components/MermaidEditor';
@@ -17,10 +16,6 @@ import style from './index.module.less';
 export default function List() {
   const [source, setSource] = useState(DEFAULT_SOURCE);
   const [theme, setTheme] = useState('default');
-
-  const handleBack = () => {
-    openApp({ url: `/${APP_NAME}/tool` });
-  };
 
   return (
     <>

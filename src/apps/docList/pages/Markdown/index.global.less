@@ -261,7 +261,8 @@ pre.code-collapsed {
 
 // mermaid
 /* 针对 mermaid 容器的样式 */
-.mermaid-wrapper {
+.mermaid-wrapper,
+.mermaid-loading {
   overflow: hidden;
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -289,6 +290,13 @@ pre.code-collapsed {
       background: linear-gradient(to bottom, transparent, #ebebeb);
     }
   }
+}
+
+.mermaid-loading {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 确保 svg 能够被 panzoom 控制 */

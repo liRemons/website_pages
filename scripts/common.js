@@ -205,7 +205,6 @@ const setExternals = (isEnvProduction) => {
     'markmap-lib': 'markmap',
     vditor: 'Vditor',
     'vditor/dist/index.css': 'Vditor',
-     'mermaid': 'mermaid',
     '@panzoom/panzoom': 'Panzoom' 
   } : {};
 }

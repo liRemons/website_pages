@@ -10,13 +10,13 @@ import {
   DownOutlined,
   FullscreenOutlined,
   FullscreenExitOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
 import { copy, IsPC } from 'methods-r';
-import mermaid from 'mermaid';
+// import mermaid from 'mermaid';
 import Panzoom from '@panzoom/panzoom';
+import useLoadMermaid from '@/hooks/useLoadMermaid';
 
-// 初始化 Mermaid
-mermaid.initialize({ startOnLoad: false, theme: 'default' });
 
 // ==================== Mermaid 工具栏组件 ====================
 function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
@@ -89,10 +89,12 @@ function SourceModal({ code, open, onClose }) {
 
 // ==================== 单个 Mermaid 图表组件 ====================
 function MermaidBlock({ source }) {
+  const { mermaid, loading } = useLoadMermaid()
   const [svg, setSvg] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showSource, setShowSource] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [rendering, setRendering] = useState(false);
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
@@ -100,14 +102,20 @@ function MermaidBlock({ source }) {
 
   // 渲染 Mermaid SVG
   useEffect(() => {
+    if (!mermaid) return;
+    setRendering(true);
+    // 初始化 Mermaid
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
     const id = `mermaid-${Math.random().toString(36).substring(2)}`;
     mermaid.render(id, source).then(({ svg }) => {
       setSvg(svg);
     }).catch((err) => {
       console.error('Mermaid render error:', err);
       setSvg(`<span style="color:red">图表渲染失败: ${err.message}</span>`);
+    }).finally(() => {
+      setRendering(false);
     });
-  }, [source]);
+  }, [source, mermaid]);
 
   // 初始化 Panzoom（全屏状态变化时重建，以适配新的容器尺寸）
   useEffect(() => {
@@ -183,7 +191,15 @@ function MermaidBlock({ source }) {
     }
   }, []);
 
-  const isMove = !isCollapsed || isFullscreen
+  const isMove = !isCollapsed || isFullscreen;
+
+  if (loading) {
+    return (
+      <div className="mermaid-loading">
+       <span> 图表加载中 <LoadingOutlined /></span> 
+      </div>
+    );
+  }
 
   return (
     <div

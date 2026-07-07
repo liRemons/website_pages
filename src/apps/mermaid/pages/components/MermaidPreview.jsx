@@ -8,10 +8,10 @@ import {
   FullscreenExitOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
-import mermaid from 'mermaid';
 import Panzoom from '@panzoom/panzoom';
 import { THEME_OPTIONS } from '../constants';
 import style from '../index.module.less';
+import useLoadMermaid from '@/hooks/useLoadMermaid';
 
 // 渲染 id 自增序号，保证每次 mermaid.render 的 DOM id 唯一
 let renderIdSeq = 0;
@@ -43,6 +43,7 @@ function getSvgSize(svgStr) {
  * - 渲染错误友好提示
  */
 export default function MermaidPreview({ source, theme, onThemeChange }) {
+  const { mermaid, loading } = useLoadMermaid();
   const [svg, setSvg] = useState('');
   const [error, setError] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -54,11 +55,17 @@ export default function MermaidPreview({ source, theme, onThemeChange }) {
 
   // 主题变化时重新初始化 mermaid
   useEffect(() => {
+    if (!mermaid) {
+      return;
+    }
     mermaid.initialize({ startOnLoad: false, theme, securityLevel: 'loose' });
-  }, [theme]);
+  }, [theme, mermaid]);
 
   // 防抖渲染：source / theme 变化后 300ms 再渲染，避免每次按键都渲染
   useEffect(() => {
+    if (!mermaid) {
+      return;
+    }
     const text = (source || '').trim();
     if (!text) {
       setSvg('');
@@ -87,7 +94,7 @@ export default function MermaidPreview({ source, theme, onThemeChange }) {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [source, theme]);
+  }, [source, theme, mermaid]);
 
   // 初始化 Panzoom（svg 或全屏状态变化时重建）
   useEffect(() => {
