@@ -22,6 +22,7 @@ import postmarkGeneratorSvg from './assets/svg/postmarkgenerator.svg';
 import simplesketchesSvg from './assets/svg/simplesketches.svg';
 import productmanagSvg from './assets/svg/productmanage.svg';
 import jsonviewerSvg from './assets/svg/jsonviewer.svg'
+import mermaidSvg from './assets/svg/mermaid.svg';
 import aiChatSvg from './assets/svg/aiChat.svg'
 import editorSvg from './assets/svg/editor.svg';
 import pagesJson from '../../../../../scripts/pages.json'
@@ -45,6 +46,7 @@ export default function ListPage() {
     { title: '生成二维码', icon: img(qrcodeSvg), appName: 'createQR' },
     { title: '解码', icon: img(scanSvg), appName: 'transcoderQR' },
     { title: 'JSON 解析', icon: img(jsonviewerSvg), appName: 'jsonViewer', hot: true },
+    { title: 'Mermaid 图表', icon: img(mermaidSvg), appName: 'mermaid', hot: true },
     { title: '旅行勋章', icon: img(travelbadgeSvg), appName: 'travelBadge', hot: true },
     { title: '邮戳生成器', icon: img(postmarkGeneratorSvg), appName: 'postmarkGenerator', hot: true },
     { title: '简笔画生成器', icon: img(simplesketchesSvg), appName: 'simpleSketches', hot: true },

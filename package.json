@@ -62,6 +62,7 @@
     "@ant-design/icons": "^6.2.2",
     "@panzoom/panzoom": "^4.6.2",
     "@textea/json-viewer": "^4.0.1",
+    "@uiw/react-codemirror": "^4.21.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "antd": "^5.20.0",
