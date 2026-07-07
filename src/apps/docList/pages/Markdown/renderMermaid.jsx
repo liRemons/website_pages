@@ -35,8 +35,9 @@ function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
       icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
       title: isCollapsed ? '展开' : '收起',
       action: 'toggleCollapse',
+      isShow: !isFullscreen
     },
-  ];
+  ].filter(item => item.isShow !== false);
 
   return (
     <div className="mermaid-toolbar">
@@ -96,7 +97,6 @@ function MermaidBlock({ source }) {
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
   const panzoomRef = useRef(null);
-  const fullscreenRef = useRef(null);
 
   // 渲染 Mermaid SVG
   useEffect(() => {
@@ -122,7 +122,7 @@ function MermaidBlock({ source }) {
     });
 
     // 全屏时滚轮事件绑定到全屏元素，否则绑定到 wrapper
-    const wheelTarget = isFullscreen ? fullscreenRef.current : wrapperRef.current;
+    const wheelTarget = wrapperRef.current;
     const handleWheel = panzoomRef.current.zoomWithWheel;
     wheelTarget?.addEventListener('wheel', handleWheel);
 
@@ -164,15 +164,18 @@ function MermaidBlock({ source }) {
         setIsCollapsed((prev) => !prev);
         break;
       case 'toggleFullscreen': {
-        const el = fullscreenRef.current;
+        const el = wrapperRef.current;
         if (!el) return;
+        pz?.setOptions({
+          scale: 1
+        });
         if (document.fullscreenElement) {
           document.exitFullscreen();
+          setIsCollapsed(true);
         } else {
           el.requestFullscreen();
+          setIsCollapsed(false);
         }
-
-        pz?.reset();
         break;
       }
       default:
@@ -192,7 +195,6 @@ function MermaidBlock({ source }) {
         isFullscreen={isFullscreen}
       />
       <div
-        ref={fullscreenRef}
         className="mermaid-fullscreen-target"
         style={{ width: '100%', height: '100%', background: '#f8f9fa' }}
       >
