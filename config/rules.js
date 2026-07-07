@@ -98,7 +98,7 @@ const rules = ({ isEnvDevelopment }) => {
               options: {
                 // filesystem cache 已覆盖二次构建加速，无需 thread-loader
                 cacheDirectory: true,
-                presets: ['@babel/preset-env',  ['@babel/preset-react', { runtime: 'automatic' }]],
+                presets: ['@babel/preset-env', '@babel/preset-react'],
                 plugins: [isEnvDevelopment ? 'react-refresh/babel' : ''].filter(
                   Boolean
                 ),
@@ -114,7 +114,7 @@ const rules = ({ isEnvDevelopment }) => {
               loader: 'babel-loader',
               options: {
                 cacheDirectory: true,
-                presets: ['@babel/preset-env',  ['@babel/preset-react', { runtime: 'automatic' }]],
+                presets: ['@babel/preset-env', '@babel/preset-react'],
                 plugins: [isEnvDevelopment ? 'react-refresh/babel' : ''].filter(
                   Boolean
                 ),
