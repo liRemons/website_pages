@@ -8,8 +8,10 @@ import {
   CodeOutlined,
   UpOutlined,
   DownOutlined,
+  FullscreenOutlined,
+  FullscreenExitOutlined,
 } from '@ant-design/icons';
-import { copy } from 'methods-r';
+import { copy, IsPC } from 'methods-r';
 import mermaid from 'mermaid';
 import Panzoom from '@panzoom/panzoom';
 
@@ -17,12 +19,18 @@ import Panzoom from '@panzoom/panzoom';
 mermaid.initialize({ startOnLoad: false, theme: 'default' });
 
 // ==================== Mermaid 工具栏组件 ====================
-function MermaidToolbar({ onAction, isCollapsed }) {
+function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
+  const isPC = IsPC();
   const buttons = [
     { icon: <PlusOutlined />, title: '放大', action: 'zoomIn' },
     { icon: <MinusOutlined />, title: '缩小', action: 'zoomOut' },
     { icon: <ReloadOutlined />, title: '重置', action: 'reset' },
     { icon: <CodeOutlined />, title: '查看源码', action: 'viewSource' },
+    {
+      icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
+      title: isFullscreen ? '退出全屏' : '全屏',
+      action: 'toggleFullscreen',
+    },
     {
       icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
       title: isCollapsed ? '展开' : '收起',
@@ -35,7 +43,7 @@ function MermaidToolbar({ onAction, isCollapsed }) {
       {buttons.map((btn) => (
         <Tooltip title={btn.title} key={btn.action}>
           <button
-            className="circle"
+            className={`circle${isPC ? '' : ' circle-mobile'}`}
             title={btn.title}
             onClick={() => onAction(btn.action)}
           >
@@ -83,10 +91,12 @@ function MermaidBlock({ source }) {
   const [svg, setSvg] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showSource, setShowSource] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
   const panzoomRef = useRef(null);
+  const fullscreenRef = useRef(null);
 
   // 渲染 Mermaid SVG
   useEffect(() => {
@@ -99,26 +109,40 @@ function MermaidBlock({ source }) {
     });
   }, [source]);
 
-  // 初始化 Panzoom
+  // 初始化 Panzoom（全屏状态变化时重建，以适配新的容器尺寸）
   useEffect(() => {
     if (!contentRef.current || !svg) return;
 
     panzoomRef.current = Panzoom(contentRef.current, {
       maxScale: 5,
       minScale: 0.1,
-      contain: 'outside',
+      startScale: IsPC() ? 1 : 2,
+      // 全屏下不限制拖拽边界，方便查看 SVG 任意区域
+      contain: isFullscreen ? false : 'outside',
     });
 
+    // 全屏时滚轮事件绑定到全屏元素，否则绑定到 wrapper
+    const wheelTarget = isFullscreen ? fullscreenRef.current : wrapperRef.current;
     const handleWheel = panzoomRef.current.zoomWithWheel;
-    const wrapper = wrapperRef.current;
-    wrapper?.addEventListener('wheel', handleWheel);
+    wheelTarget?.addEventListener('wheel', handleWheel);
 
     return () => {
-      wrapper?.removeEventListener('wheel', handleWheel);
+      wheelTarget?.removeEventListener('wheel', handleWheel);
       panzoomRef.current?.destroy();
       panzoomRef.current = null;
     };
-  }, [svg]);
+  }, [svg, isFullscreen]);
+
+  // 监听浏览器原生全屏状态变化
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // 动作处理
   const handleAction = useCallback((action) => {
@@ -139,6 +163,17 @@ function MermaidBlock({ source }) {
       case 'toggleCollapse':
         setIsCollapsed((prev) => !prev);
         break;
+      case 'toggleFullscreen': {
+        const el = fullscreenRef.current;
+        if (!el) return;
+         pz?.reset();
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          el.requestFullscreen();
+        }
+        break;
+      }
       default:
         break;
     }
@@ -153,12 +188,19 @@ function MermaidBlock({ source }) {
       <MermaidToolbar
         onAction={handleAction}
         isCollapsed={isCollapsed}
+        isFullscreen={isFullscreen}
       />
       <div
-        ref={contentRef}
-        className="mermaid-content"
-        dangerouslySetInnerHTML={{ __html: svg }}
-      />
+        ref={fullscreenRef}
+        className="mermaid-fullscreen-target"
+        style={{ width: '100%', height: '100%', background: '#f8f9fa' }}
+      >
+        <div
+          ref={contentRef}
+          className="mermaid-content"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      </div>
       <SourceModal
         code={source}
         open={showSource}
