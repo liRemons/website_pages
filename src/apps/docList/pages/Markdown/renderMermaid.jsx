@@ -166,12 +166,13 @@ function MermaidBlock({ source }) {
       case 'toggleFullscreen': {
         const el = fullscreenRef.current;
         if (!el) return;
-         pz?.reset();
         if (document.fullscreenElement) {
           document.exitFullscreen();
         } else {
           el.requestFullscreen();
         }
+
+        pz?.reset();
         break;
       }
       default:
