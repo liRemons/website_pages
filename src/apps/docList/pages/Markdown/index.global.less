@@ -271,6 +271,10 @@ pre.code-collapsed {
   box-sizing: border-box;
   transition: all 0.3s ease-in-out;
 
+  .mermaid-content.disabled-move {
+    cursor: initial !important;
+  }
+
   &.mermaid-collapsed {
     max-height: 200px;
 
@@ -290,15 +294,6 @@ pre.code-collapsed {
 /* 确保 svg 能够被 panzoom 控制 */
 .mermaid-wrapper svg {
   display: block;
-}
-
-.mermaid-canvas {
-  overflow: hidden;
-  cursor: grab;
-}
-
-.mermaid-canvas:active {
-  cursor: grabbing;
 }
 
 .mermaid-toolbar {
@@ -329,6 +324,7 @@ pre.code-collapsed {
     display: flex;
     justify-content: center;
     align-items: center;
+
   }
 
   .mermaid-toolbar {
