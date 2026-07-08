@@ -8,6 +8,7 @@ const js = [
   { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-view@0.13.2/dist/index.min.js" },
   { externalsName: 'markmap-lib', url: "https://unpkg.com/markmap-lib@0.13.2/dist/browser/index.js" },
   { externalsName: '@panzoom/panzoom', url: "https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js" },
+  { externalsName: 'mermaid', url: "https://unpkg.com/mermaid@11.0.2/dist/mermaid.min.js" },
   { externalsName: ['vditor', 'vditor/dist/index.css'], url: 'https://unpkg.com/vditor@3.11.2/dist/index.min.js' }
 ];
 

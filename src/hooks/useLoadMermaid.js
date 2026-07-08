@@ -1,5 +1,6 @@
 // hooks/useMermaid.js
 import { useState, useEffect } from 'react';
+import { jsMap } from '@/utils/preload';
 
 let mermaidPromise = null;
 
@@ -11,7 +12,7 @@ function loadMermaidScript() {
         return;
       }
       const script = document.createElement('script');
-      script.src = 'https://unpkg.com/mermaid@11.0.2/dist/mermaid.min.js';
+      script.src = jsMap.mermaid;
       script.onload = () => resolve(window.mermaid);
       script.onerror = () => reject(new Error('Mermaid 脚本加载失败'));
       document.head.appendChild(script);
