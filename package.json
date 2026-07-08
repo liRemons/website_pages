@@ -62,7 +62,6 @@
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.20",
     "express": "^5.2.1",
-    "https": "^1.0.0",
     "json5": "^2.2.3",
     "jsqr": "^1.4.0",
     "lodash.orderby": "^4.6.0",
