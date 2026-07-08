@@ -5,7 +5,7 @@ import { getSearchParams } from 'methods-r';
 import { preload } from '@/utils/preload';
 
 export default function App() {
-  preload(['mermaid', '@panzoom/panzoom']);
+  preload(['mermaid']);
   const [page, setPage] = useState('');
   useEffect(() => {
     const { page: pageName } = getSearchParams();

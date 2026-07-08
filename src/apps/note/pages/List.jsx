@@ -11,7 +11,7 @@ import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 import { preload } from '@/utils/preload';
 export default function HomeList() {
-  preload(['mermaid', '@panzoom/panzoom']);
+  preload(['mermaid']);
   const localStore = useLocalObservable(() => store);
 
   useEffect(() => {
