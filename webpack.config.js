@@ -21,7 +21,11 @@ const smp = new SpeedMeasurewebpackplugin()
 
 const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams }) => {
   const srcPagesDir = path.resolve(__dirname, 'src/apps/')
-  const entry = {}
+  const entry = {};
+
+  if (!otherParams || (!otherParams.br && !otherParams.gzip)) {
+    otherParams.br = 'true';
+  }
 
   pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
   const config = {
