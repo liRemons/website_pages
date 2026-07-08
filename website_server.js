@@ -62,22 +62,10 @@ app.use(express.static("dist", {
   },
 }));
 app.get('/', (req, res) => {
-  if (req.protocol === 'http') {
-    res.redirect(302, 'https://remons.cn');
-    res.end()
-  }
   // res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
   res.sendFile(path.resolve(__dirname, './dist/@website_pages/tool/index.html'))
 })
 
-app.get('/ads.txt', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './ads.txt'))
-})
-
-const https_options = {
-   key: fs.readFileSync(path.join(__dirname,'./a.key')),
-   cert: fs.readFileSync(path.join(__dirname,'./a.pem'))
-};
 app.listen(port, () => console.log(`Example app listening on port port!`));
 
 
