@@ -1,10 +1,8 @@
 const express = require("express");
 const path = require('path');
 const app = express();
-const https = require('https');
 const fs = require('fs');
 const port = 8080;
-const https_port = 443;
 
 // 优先返回预压缩文件（br > gz），无需运行时压缩，性能更好
 // brotli 压缩率比 gzip 高 15%-25%，现代浏览器均支持
@@ -80,8 +78,6 @@ const https_options = {
    key: fs.readFileSync(path.join(__dirname,'./a.key')),
    cert: fs.readFileSync(path.join(__dirname,'./a.pem'))
 };
-const httpsServer = https.createServer(https_options, app);
 app.listen(port, () => console.log(`Example app listening on port port!`));
-httpsServer.listen(https_port);
 
 
