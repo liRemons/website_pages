@@ -7,7 +7,6 @@
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
-  background: @color-bg;
 }
 
 /* ── 左右两栏 ── */
@@ -16,7 +15,6 @@
   display: flex;
   flex-direction: row;
   gap: 12px;
-  padding: 12px;
   min-height: 0;
   height: 100%;
   overflow: hidden;
@@ -63,7 +61,6 @@
   border-radius: 10px;
   overflow: hidden;
   box-shadow: -3px -3px 10px @color-white, 3px 3px 10px @color-shadow;
-  background: @color-bg;
 }
 
 /* ── 栏头部：标题 + 操作按钮 ── */
@@ -100,38 +97,14 @@
   min-height: 0;
   display: flex;
   overflow: hidden;
-  background: #fff;
-}
+   width: 100%;
 
-.cmWrap {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-
-  :global(.cm-editor) {
-    height: 100%;
-    background: #fff;
-    border-radius: 0;
+  > div {
+    width: 100%;
   }
 
   :global(.cm-scroller) {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  :global(.cm-gutters) {
-    background: #fafafa;
-    border-right: 1px solid rgba(0, 0, 0, 0.06);
-    color: #b0b8c8;
-  }
-
-  /* 规避全局 less 对所有 textarea 的 !important 样式污染 */
-  :global(textarea) {
-    background: transparent !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    width: auto !important;
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
   }
 }
 
@@ -212,13 +185,13 @@
     overflow: auto;
   }
 
-  .leftPane {
+  .paneLeft {
     flex: none;
-    min-height: 260px;
+    min-height: 200px;
+    max-height: 240px;
   }
 
-  .rightPane {
-    flex: none;
-    min-height: 320px;
+  .paneRight {
+    flex: 1;
   }
 }

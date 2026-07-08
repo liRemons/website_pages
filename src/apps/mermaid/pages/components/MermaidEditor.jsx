@@ -61,7 +61,6 @@ export default function MermaidEditor({ source, onChange }) {
         <CodeMirror
           value={source}
           height="100%"
-          theme="light"
           onChange={onChange}
           placeholder="在此输入 Mermaid 源码，右侧实时渲染…"
           basicSetup={{

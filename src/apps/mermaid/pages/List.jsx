@@ -7,7 +7,12 @@ import Container from '@components/Container';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import { DEFAULT_SOURCE } from './constants';
+import { IsPC } from 'methods-r';
 import style from './index.module.less';
+
+const isPc = IsPC();
+
+console.log(isPc)
 
 /**
  * Mermaid 图表实时渲染器
@@ -17,7 +22,7 @@ import style from './index.module.less';
 export default function List() {
   const [source, setSource] = useState(DEFAULT_SOURCE);
   const [theme, setTheme] = useState('default');
-  const [leftWidth, setLeftWidth] = useState(30); // 左栏宽度百分比
+  const [leftWidth, setLeftWidth] = useState(isPc ? 30:100); // 左栏宽度百分比
   const dragging = useRef(false);
   const rowRef = useRef(null);
 
@@ -59,13 +64,13 @@ export default function List() {
             <div className={style.paneLeft} style={{ width: `${leftWidth}%` }}>
               <MermaidEditor source={source} onChange={setSource} />
             </div>
-            <div
+           {isPc && <div
               className={style.splitter}
               onMouseDown={onMouseDown}
             >
               <div className={style.splitterBar} />
-            </div>
-            <div className={style.paneRight} style={{ width: `${100 - leftWidth}%` }}>
+            </div>}
+            <div className={style.paneRight} style={{ width: `${isPc ? (100 - leftWidth) : leftWidth}%` }}>
               <MermaidPreview source={source} theme={theme} onThemeChange={setTheme} />
             </div>
           </div>
