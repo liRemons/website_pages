@@ -1,11 +1,26 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
+
 const cssRegex = /\.css$/
 const cssModuleRegex = /\.module\.css$/
 const lessRegex = /\.less$/
 const lessModuleRegex = /\.module\.less$/
-const postcssLoader = {
-  loader: 'postcss-loader',
+const postcssLoader = { loader: 'postcss-loader' }
+
+// 提取公共 outputPath 函数，避免重复
+const getOutputPath = (pathData) => {
+  const resourcePath = pathData.filename || ''
+  const basename = path.basename(resourcePath)
+  if (resourcePath.includes('apps')) {
+    const prefix = resourcePath
+      .replace(/\//g, '_')
+      .replace(/\\/g, '_')
+      .split('apps')[1]
+      .split('_')
+      .filter((_) => !!_)[0]
+    return `${prefix}/assets/file/${basename}`
+  }
+  return `assets/file/${basename}`
 }
 
 const rules = ({ isEnvDevelopment }) => {
@@ -20,10 +35,11 @@ const rules = ({ isEnvDevelopment }) => {
       },
     },
   }
+
   return [
     {
       oneOf: [
-        // css
+        // ---- CSS ----
         {
           test: cssRegex,
           exclude: cssModuleRegex,
@@ -38,158 +54,86 @@ const rules = ({ isEnvDevelopment }) => {
             ? ['style-loader', cssMoudleLoader, postcssLoader]
             : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader],
         },
-        // less
+
+        // ---- Less ----
         {
           test: lessModuleRegex,
           exclude: /node_modules/,
           use: isEnvDevelopment
             ? ['style-loader', cssMoudleLoader, postcssLoader, 'less-loader']
-            : [
-                MiniCssExtractPlugin.loader,
-                cssMoudleLoader,
-                postcssLoader,
-                'less-loader',
-              ],
+            : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader, 'less-loader'],
         },
         {
           test: lessRegex,
           exclude: lessModuleRegex,
           use: isEnvDevelopment
             ? ['style-loader', 'css-loader', postcssLoader, 'less-loader']
-            : [
-                MiniCssExtractPlugin.loader,
-                'css-loader',
-                postcssLoader,
-                'less-loader',
-              ],
+            : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, 'less-loader'],
         },
-        // Process images.
+
+        // ---- 图片（替代 url-loader）----
         {
           test: /\.(jpg|png|jpeg|gif)$/,
           include: path.resolve(__dirname, '../src'),
-          use: [
-            {
-              loader: 'url-loader',
-              options: {
-                limit: 1024 * 8,
-                name: '[name].[ext]',
-                esModule: false,
-                outputPath: 'static/assets/images',
-              },
-            },
-          ],
+          type: 'asset',
+          parser: { dataUrlCondition: { maxSize: 1024 * 8 } },
+          generator: { filename: 'static/assets/images/[name].[ext]' },
         },
-        // Static resources in HTML
+
+        // ---- HTML ----
         {
-          test: /\.html$ /,
+          test: /\.html$/,
           include: path.resolve(__dirname, '../src'),
           loader: 'html-loader',
-          options: {
-            esModule: false,
-          },
+          options: { esModule: false },
         },
         {
-          test: /\.(js|jsx|json)$/,
-          type: 'javascript/auto',
+          test: /\.(js|jsx|ts|tsx)$/,
           include: path.resolve(__dirname, '../src'),
           use: [
+            isEnvDevelopment && {
+              loader: require.resolve('@pmmmwh/react-refresh-webpack-plugin/loader'),
+            },
             {
-              loader: 'babel-loader',
+              loader: 'esbuild-loader',
               options: {
-                // filesystem cache 已覆盖二次构建加速，无需 thread-loader
-                cacheDirectory: true,
-                presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: [isEnvDevelopment ? 'react-refresh/babel' : ''].filter(
-                  Boolean
-                ),
+                loader: 'tsx',
+                target: 'es2017',
+                jsx: 'automatic',
               },
             },
           ],
         },
-        {
-          test: /\.(ts|tsx)$/,
-          include: path.resolve(__dirname, '../src'),
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                cacheDirectory: true,
-                presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: [isEnvDevelopment ? 'react-refresh/babel' : ''].filter(
-                  Boolean
-                ),
-              },
-            },
-            {
-              loader: 'ts-loader',
-              options: {
-                transpileOnly: true,
-              },
-            },
-          ],
-        },
-        // SVG：先用 svgo-loader 压缩，再用 file-loader 输出（通常可减少 30%-60% 体积）
+
+        // ---- SVG（替代 file-loader，保留 svgo 压缩）----
         {
           test: /\.svg$/,
+          type: 'asset/resource',
+          generator: { filename: getOutputPath },
           use: [
-            {
-              loader: 'file-loader',
-              options: {
-                outputPath: (url, resourcePath) => {
-                  if (resourcePath.includes('apps')) {
-                    return `${
-                      (resourcePath || '')
-                        .replace(/\//g, '_')
-                        .replace(/\\/g, '_')
-                        .split('apps')[1]
-                        .split('_')
-                        .filter((_) => !!_)[0]
-                    }/assets/file/${url}`
-                  }
-                  return `assets/file/${url}`
-                },
-              },
-            },
             {
               loader: 'svgo-loader',
               options: {
                 plugins: [
                   { name: 'preset-default' },
-                  // 保留 viewBox，确保 SVG 可以通过 CSS 控制尺寸
                   { name: 'removeViewBox', active: false },
                 ],
               },
             },
           ],
         },
-        // Markdown files — import as raw string
+
+        // ---- Markdown（替代 raw-loader）----
         {
           test: /\.md$/,
-          use: 'raw-loader',
+          type: 'asset/source',
         },
-        // Other resources
+
+        // ---- 其他资源（替代 file-loader）----
         {
           test: /\.(pdf|doc|node)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                outputPath: (url, resourcePath) => {
-                  if (resourcePath.includes('apps')) {
-                    return `${
-                      (resourcePath || '')
-                        .replace(/\//g, '_')
-                        .replace(/\\/g, '_')
-                        .split('apps')[1]
-                        .split('_')
-                        .filter((_) => !!_)[0]
-                    }/assets/file/${url}`
-                  }
-                  return `assets/file/${url}`
-                },
-              },
-            },
-          ],
+          type: 'asset/resource',
+          generator: { filename: getOutputPath },
         },
       ],
     },

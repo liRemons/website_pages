@@ -64,10 +64,10 @@ app.use(express.static("dist", {
   },
 }));
 app.get('/', (req, res) => {
-  // if (req.protocol === 'http') {
-  //   res.redirect(302, 'https://remons.cn');
-  //   res.end()
-  // }
+  if (req.protocol === 'http') {
+    res.redirect(302, 'https://remons.cn');
+    res.end()
+  }
   // res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
   res.sendFile(path.resolve(__dirname, './dist/@website_pages/tool/index.html'))
 })

@@ -140,7 +140,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         return new HtmlWebpackPlugin({
           filename: `${pageName}/index.html`,
           chunks: [pageName],
-          template: path.resolve(__dirname, 'src/index.html'),
+          template: path.resolve(__dirname, 'src/index.ejs'),
           templateParameters: (compilation, assets, assetTags, options) =>
             templateParameters({
               compilation,
