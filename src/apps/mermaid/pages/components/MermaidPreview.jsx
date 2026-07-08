@@ -265,7 +265,6 @@ export default function MermaidPreview({ source, theme, onThemeChange }) {
       </div>
 
 
-      <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
       <div className={style.previewWrap}>
         {error && <div className={style.errorTip}>⚠️ {error}</div>}
         <div ref={wrapperRef} className={style.previewCanvas}>
