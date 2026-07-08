@@ -33,7 +33,7 @@ export default function List() {
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
-  const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible || false);
+  const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
   const [actionButtonsVisible, setActionButtonsVisible] = useState(false);
   const actionButtonsRef = useRef(null);
 
@@ -270,7 +270,7 @@ export default function List() {
   }
 
   const renderNav = () => {
-    if (!anchor?.length) return
+    if (!localStore?.anchor?.length) return
     
     return <>
       {viewType === 'html' && <div className={classnames(style.page_nav, 'shadow_not_active')}>
