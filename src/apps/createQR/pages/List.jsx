@@ -8,7 +8,7 @@ import handleContent from '../handle.md';
 import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
-import Pako from 'pako';
+import * as Pako from 'pako';
 import { gzip, base91 } from '@utils';
 
 export default function List() {

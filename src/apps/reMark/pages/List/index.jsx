@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Menu, Modal } from 'antd';
-import { FolderOpenOutlined, FileMarkdownOutlined, EditOutlined, PartitionOutlined, FileTextOutlined } from '@ant-design/icons';
+import { Button, Menu } from 'antd';
+import { FolderOpenOutlined, FileMarkdownOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
-import MarkMap from '@components/MarkMap';
 import Header from '@components/Header';
 import handleContent from '../../handle.md';
 import style from './index.module.less';
@@ -15,7 +14,6 @@ function List() {
   const [files, setFiles] = useState([]);
   const [vditor, setVditor] = useState('');
   const [type, setType] = useState('edit');
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const vditor = new Vditor('markdown', {
@@ -121,17 +119,8 @@ function List() {
     }, 500);
   }
 
-  const previewMarkMap = () => {
-    setVisible(true);
-  }
-
   return <>
     <Fixed />
-    <Modal destroyOnClose title='思维导图' width='80%' visible={visible} onCancel={() => setVisible(false)} footer={null}>
-      <div style={{ height: '500px' }}>
-        {visible && <MarkMap markdownInfo={vditor.getValue()} />}
-      </div>
-    </Modal>
     <Container
       header={<Header name='所见即所得 markdown 编辑查看器' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
       main={<>
@@ -148,7 +137,6 @@ function List() {
               <Button onClick={edit} icon={<EditOutlined />}>仅编辑</Button>
               <Button onClick={importFile} icon={<FileTextOutlined />}>单个导入</Button>
               <Button onClick={importFolder} icon={<FolderOpenOutlined />}>导入文件夹</Button>
-              <Button onClick={previewMarkMap} icon={<PartitionOutlined />}>预览思维导图</Button>
               导入仅识别 markdown 格式文件
             </div>
 

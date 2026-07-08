@@ -1,5 +1,5 @@
 import React from 'react';
-import pako from 'pako';
+import * as pako from 'pako';
 const hostMap = {
   'http:': 'http://remons.cn:3009',
   'https:': 'https://remons.cn:3008',

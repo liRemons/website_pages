@@ -1,19 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button, message, Space, Divider, Select, Checkbox, Input } from 'antd';
 import {
-  FormatPainterOutlined,
-  CompressOutlined,
-  CopyOutlined,
   DeleteOutlined,
   ExpandAltOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons';
-import ReactJson from 'react-json-view';
+import ReactJson from '@microlink/react-json-view';
 import JSON5 from 'json5';
 import Container from '@components/Container';
 import Header from '@components/Header';
 import Fixed from '@components/Fixed';
-import { copy } from 'methods-r';
 import '@assets/css/index.global.less';
 import style from './index.module.less';
 import handleContent from '../handle.md'

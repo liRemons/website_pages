@@ -6,11 +6,11 @@ import Header from '@components/Header';
 import handleContent from '../handle.md';
 import Container from '@components/Container';
 import ScanQr from '@components/ScanQr';
-import { ScanOutlined, UploadOutlined, RedoOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
+import { ScanOutlined, RedoOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 import '@assets/css/index.global.less';
 import { copy } from 'methods-r';
 import { unGzip, base91 } from '@utils';
-import Pako from 'pako';
+import * as Pako from 'pako';
 
 let obj = {};
 

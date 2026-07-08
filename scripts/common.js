@@ -201,8 +201,6 @@ const setExternals = (isEnvProduction) => {
     'react-dom': 'ReactDOM',
     mobx: 'mobx',
     'mobx-react': 'mobxReact',
-    'markmap-view': 'markmap',
-    'markmap-lib': 'markmap',
     vditor: 'Vditor',
     'vditor/dist/index.css': 'Vditor',
   } : {};

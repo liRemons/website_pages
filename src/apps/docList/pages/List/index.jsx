@@ -10,13 +10,10 @@ import '@assets/css/index.global.less';
 import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
-import MarkMap from '@components/MarkMap';
 import { Input, Drawer, message } from 'antd';
 import { img } from '@utils';
-import mindSvg from './assets/svg/mind.svg';
 import fullscreenSvg from './assets/svg/fullscreen.svg';
 import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
-import txtSvg from './assets/svg/txt.svg';
 import docListSvg from './assets/svg/docList.svg';
 import htmlSvg from './assets/svg/html.svg';
 import markdownSvg from './assets/svg/markdown.svg';
@@ -29,7 +26,7 @@ export default function List() {
   const [params, setParams] = useState({});
   const [activeId, setActiveId] = useState('');
   const [anchor, setAnchor] = useState([]);
-  const [viewType, setViewType] = useState('');
+  const viewType = 'html';
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
@@ -67,13 +64,11 @@ export default function List() {
     if (pageId) {
       localStore.getMarkdown(pageId);
       setActiveId(pageId);
-      setViewType('html')
     } else {
       if (localStore.articleList?.length) {
         const info = localStore.articleList[0]
         localStore.getMarkdown(info.id);
         setActiveId(info.id);
-        setViewType('html')
       }
     }
   };
@@ -88,7 +83,6 @@ export default function List() {
     const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
     history.pushState('', '', pageURL);
     setActiveId(id);
-    setViewType('html');
     setDrawerVisible(false);
     setActionButtonsVisible(false);
     localStore.getMarkdown(id);
@@ -105,10 +99,6 @@ export default function List() {
       setFullscreen(false);
     }
   };
-
-  const changeViewType = () => {
-    viewType === 'html' ? setViewType('markMap') : setViewType('html')
-  }
 
   const copyTextByCommand = (text) => {
     const textarea = document.createElement('textarea');
@@ -229,10 +219,9 @@ export default function List() {
 
   const renderActionButtons = () => {
     const actions = [
-      { key: 'copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML',icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
+      { key: 'copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
       { key: 'copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
       { key: 'fullscreen', title: fullscreen ? '退出全屏' : '全屏', icon: !fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20), onClick: changeFullscreen },
-      { key: 'viewType', title: viewType === 'html' ? '切换思维导图' : '切换文本', icon: viewType === 'html' ? img(mindSvg, 20) : img(txtSvg, 20), onClick: changeViewType },
     ];
 
     const handleClickAction = (onClick) => {
@@ -256,7 +245,6 @@ export default function List() {
 
   const VIEW_DETAIL = {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
-    markMap: <MarkMap markdownInfo={localStore.markdownInfo} />
   }
 
   const renderList = () => {
@@ -271,14 +259,14 @@ export default function List() {
 
   const renderNav = () => {
     if (!localStore?.anchor?.length) return
-    
+
     return <>
-      {viewType === 'html' && <div className={classnames(style.page_nav, 'shadow_not_active')}>
+      <div className={classnames(style.page_nav, 'shadow_not_active')}>
         <div className={style.search}>
           <Input placeholder="请输入以搜索" onChange={(e) => debounce(onSearch(e.target.value))} />
         </div>
-        {viewType === 'html' && localStore.htmlInfo && <Anchor anchor={anchor} />}
-      </div>}
+        {localStore.htmlInfo && <Anchor anchor={anchor} />}
+      </div>
     </>
   }
 
@@ -322,7 +310,7 @@ export default function List() {
   const renderMenuList = () => {
     const arr = [
       { onClick: openListMenu, icon: img(docListSvg, 24), isShow: localStore.articleList?.length !== 0 && handleType !== 'share' },
-      { onClick: openListNav, icon: img(anchorListSvg, 24), isShow: viewType === 'html' && localStore.markdownInfo, isShow: !!anchor?.length },
+      { onClick: openListNav, icon: img(anchorListSvg, 24), isShow: !!localStore.anchor?.length },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
