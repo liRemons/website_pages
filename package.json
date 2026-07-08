@@ -56,7 +56,8 @@
     "webpack": "^5.44.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-dev-server": "^4.9.0",
+    "terser-webpack-plugin": "^5.6.1"
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
@@ -89,7 +90,6 @@
     "react-fast-marquee": "^1.6.5",
     "react-json-view": "^1.21.3",
     "remons-components": "^2.0.8",
-    "terser-webpack-plugin": "^5.6.1",
     "vditor": "^3.11.2"
   }
 }
