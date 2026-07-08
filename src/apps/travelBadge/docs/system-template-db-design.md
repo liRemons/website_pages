@@ -10,7 +10,7 @@
 
 ### 1.1 模板封面缩略图（预览用）
 
-保存模板时，前端用 `html2canvas` / `canvas.toBlob` 对当前画布截图，生成一张缩略图，通过 **multipart/form-data** 上传到服务端，换回一个 CDN URL 存入模板的 `coverUrl` 字段。
+保存模板时，前端用 `canvas.toBlob` 对当前画布截图，生成一张缩略图，通过 **multipart/form-data** 上传到服务端，换回一个 CDN URL 存入模板的 `coverUrl` 字段。
 
 ```
 [前端截图] → Blob → FormData → POST /api/upload/image → { url: "https://cdn.xxx.com/covers/xxx.jpg" }
