@@ -14,7 +14,7 @@ const getPages = () => {
       ((process.argv[2] || '').includes('=') ? '' : process.argv[2]) ||
       readdirSync('src/apps').join(',')
 
-    const ignorePages = ['my', 'home'];
+    const ignorePages = ['my'];
     pages = pages.split(',').filter(item => !ignorePages.includes(item)).join(',')
     if (!pages) {
       reject('未找到目录')
