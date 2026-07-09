@@ -25,7 +25,7 @@ function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
     { icon: <PlusOutlined />, title: '放大', action: 'zoomIn' },
     { icon: <MinusOutlined />, title: '缩小', action: 'zoomOut' },
     { icon: <ReloadOutlined />, title: '重置', action: 'reset' },
-    { icon: <CodeOutlined />, title: '查看源码', action: 'viewSource' },
+    { icon: <CodeOutlined />, title: '查看源码', action: 'viewSource', isShow: !isFullscreen },
     {
       icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
       title: isFullscreen ? '退出全屏' : '全屏',
@@ -98,6 +98,7 @@ function MermaidBlock({ source }) {
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
+  const fullscreenRef = useRef(null);
   const panzoomRef = useRef(null);
 
   // 渲染 Mermaid SVG
@@ -119,24 +120,55 @@ function MermaidBlock({ source }) {
 
   // 初始化 Panzoom（全屏状态变化时重建，以适配新的容器尺寸）
   useEffect(() => {
-    if (!contentRef.current || !svg) return;
+    const shouldEnablePanzoom = isFullscreen || !isCollapsed;
+    const contentEl = contentRef.current;
+    const fullscreenEl = fullscreenRef.current;
+    if (panzoomRef.current) {
+      panzoomRef.current?.destroy?.();
+      panzoomRef.current = null;
+      if (contentEl) {
+        contentEl.style.transform = '';
+        contentEl.style.touchAction = '';
+      }
+
+      if (fullscreenEl) {
+        fullscreenEl.style.transform = '';
+        fullscreenEl.style.touchAction = '';
+      }
+    }
+
+    if (!shouldEnablePanzoom) {
+      return; // 直接返回，不进行后续初始化
+    }
 
     panzoomRef.current = Panzoom(contentRef.current, {
       maxScale: 5,
       minScale: 0.1,
       startScale: 1,
-      contain: 'outside',
+      contain: false,
+      smoothScroll: true,
     });
+
 
     // 全屏时滚轮事件绑定到全屏元素，否则绑定到 wrapper
     const wheelTarget = (isFullscreen || !isCollapsed) ? wrapperRef.current : null;
-    const handleWheel = panzoomRef.current.zoomWithWheel;
+
+    const handleWheel = panzoomRef.current?.zoomWithWheel;
     wheelTarget?.addEventListener('wheel', handleWheel);
 
     return () => {
       wheelTarget?.removeEventListener('wheel', handleWheel);
-      panzoomRef.current?.destroy();
+      panzoomRef.current?.destroy?.();
       panzoomRef.current = null;
+      if (contentEl) {
+        contentEl.style.transform = '';
+        contentEl.style.touchAction = '';
+      }
+
+      if (fullscreenEl) {
+        fullscreenEl.style.transform = '';
+        fullscreenEl.style.touchAction = '';
+      }
     };
   }, [svg, isFullscreen, isCollapsed]);
 
@@ -195,7 +227,7 @@ function MermaidBlock({ source }) {
   if (loading) {
     return (
       <div className="mermaid-loading">
-       <span> 图表加载中 <LoadingOutlined /></span> 
+        <span> 图表加载中 <LoadingOutlined /></span>
       </div>
     );
   }
@@ -213,6 +245,7 @@ function MermaidBlock({ source }) {
       />
       <div
         className="mermaid-fullscreen-target"
+        ref={fullscreenRef}
         style={{ width: '100%', height: '100%', background: '#f8f9fa' }}
       >
         <div
