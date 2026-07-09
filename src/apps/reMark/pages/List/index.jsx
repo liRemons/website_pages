@@ -35,6 +35,11 @@ function List() {
       preview: {
         mode: 'both'
       },
+      preview: {
+        hljs: {
+          style: 'monokai'
+        }
+      },
       after: () => {
         setVditor(vditor)
       },
