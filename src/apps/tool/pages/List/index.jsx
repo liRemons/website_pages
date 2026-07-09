@@ -27,6 +27,7 @@ import aiChatSvg from './assets/svg/aiChat.svg'
 import editorSvg from './assets/svg/editor.svg';
 import pagesJson from '../../../../../scripts/pages.json'
 import { img } from '@utils'
+import isLuckeyWork from '@/utils/luckey';
 
 const pagesJsonSubTitle = {};
 pagesJson.forEach(item => {
@@ -35,7 +36,7 @@ pagesJson.forEach(item => {
 
 export default function ListPage() {
   const list = [
-    { title: 'AI 智能体', icon: img(aiChatSvg), hot: true, url: 'https://aichat.remons.cn' },
+    { title: 'AI 智能体', icon: img(aiChatSvg), hot: true, url: 'https://aichat.remons.cn', isShow: !isLuckeyWork },
     { title: '取快递', icon: img(expressSvg), appName: 'express' },
     // { title: '文档', icon: img(docSvg), appName: 'tool', params: { page: 'doc' } },
     { title: '富文本编辑器', icon: img(editorSvg), appName: 'wangEditor' },
@@ -53,7 +54,7 @@ export default function ListPage() {
     { title: '表单引擎', icon: img(tableconfigSvg), appName: 'tableConfig', hot: true },
     { title: '图片水印', icon: img(watermarkSvg), appName: 'imgWatermark', hot: true },
     { title: '订单管理', icon: img(productmanagSvg), appName: 'productManage', hot: true },
-  ].map(item => {
+  ].filter(item => item.isShow !== false).map(item => {
     return {
       ...item,
       url: item.url || `/${item.appName}`,

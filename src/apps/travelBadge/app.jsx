@@ -65,11 +65,6 @@ const App = () => {
   // 模板管理
   const {
     customTemplates,
-    saveTemplateName,
-    setSaveTemplateName,
-    showSaveInput,
-    setShowSaveInput,
-    saveCurrentAsTemplate,
     deleteCustomTemplate,
     updateCustomTemplate,
     applyTemplate,
@@ -104,13 +99,6 @@ const App = () => {
 
   // 正在编辑的字体模板（从文字 Tab 点击编辑跳转过来时设置）
   const [editingFontTemplate, setEditingFontTemplate] = useState(null);
-
-  const onEditFontTemplate = useCallback((fontTemplate) => {
-    // 在画布中新增该模板的文字元素并选中，进入更新模式（属性区常驻，无需跳Tab）
-    applyFontTemplate(fontTemplate);
-    setEditingFontTemplate(fontTemplate);
-    setShowFontSaveInput(true);
-  }, [applyFontTemplate, setShowFontSaveInput]);
 
   // 加载远程字体
   useEffect(() => {
@@ -193,6 +181,13 @@ const App = () => {
       return [...prev, newEl];
     });
   }, [selectedId, elements]);
+  
+  const onEditFontTemplate = useCallback((fontTemplate) => {
+    // 在画布中新增该模板的文字元素并选中，进入更新模式（属性区常驻，无需跳Tab）
+    applyFontTemplate(fontTemplate);
+    setEditingFontTemplate(fontTemplate);
+    setShowFontSaveInput(true);
+  }, [applyFontTemplate, setShowFontSaveInput]);
 
   // 文件上传
   const handleFileUpload = useCallback((event) => {

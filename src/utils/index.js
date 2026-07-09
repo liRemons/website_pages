@@ -1,8 +1,8 @@
 import React from 'react';
 import * as pako from 'pako';
 const hostMap = {
-  'http:': 'http://remons.cn:3009',
-  'https:': 'https://remons.cn:3008',
+  'http:': 'http://120.55.247.73:3009',
+  'https:': 'https://120.55.247.73:3008',
 }
 export const HOST = hostMap[window.location.protocol]
 

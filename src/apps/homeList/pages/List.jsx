@@ -12,14 +12,15 @@ import githubSVG from './assets/svg/github.svg';
 import noteSvg from './assets/svg/note.svg';
 import toolSvg from './assets/svg/tool.svg';
 import { img } from '@utils';
+import isLuckeyWork from '@/utils/luckey';
 
 export default function ListPage() {
   const list = [
     { title: '笔记', icon: img(noteSvg), url: '/note' },
-    { title: 'GitHub', icon: img(githubSVG), url: 'https://github.com/liRemons' },
-    { title: 'npm', icon: img(npmSVG), url: 'https://www.npmjs.com/~remons' },
+    { title: 'GitHub', icon: img(githubSVG), url: 'https://github.com/liRemons', isShow: !isLuckeyWork },
+    { title: 'npm', icon: img(npmSVG), url: 'https://www.npmjs.com/~remons', isShow: !isLuckeyWork },
     { title: '工具', icon: img(toolSvg), url: '/tool', hot: true },
-  ];
+  ].filter(item => item.isShow !== false);
 
   const openPage = ({ url, params }) => {
     if (!url) {
