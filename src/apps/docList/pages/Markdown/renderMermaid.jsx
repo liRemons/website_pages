@@ -20,10 +20,11 @@ import useLoadMermaid from '@/hooks/useLoadMermaid';
 
 // ==================== Mermaid 工具栏组件 ====================
 function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
+   const shouldEnablePanzoom = isFullscreen || !isCollapsed;
   const isPC = IsPC();
   const buttons = [
-    { icon: <PlusOutlined />, title: '放大', action: 'zoomIn' },
-    { icon: <MinusOutlined />, title: '缩小', action: 'zoomOut' },
+    { icon: <PlusOutlined />, title: '放大', action: 'zoomIn', isShow: !!shouldEnablePanzoom },
+    { icon: <MinusOutlined />, title: '缩小', action: 'zoomOut', isShow: !!shouldEnablePanzoom },
     { icon: <ReloadOutlined />, title: '重置', action: 'reset' },
     { icon: <CodeOutlined />, title: '查看源码', action: 'viewSource', isShow: !isFullscreen },
     {
