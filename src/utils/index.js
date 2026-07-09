@@ -1,10 +1,8 @@
 import React from 'react';
 import * as pako from 'pako';
-const hostMap = {
-  'http:': 'http://remons.cn:3009',
-  'https:': 'https://remons.cn:3008',
-}
-export const HOST = hostMap[window.location.protocol]
+import isLuckeyWork from './luckey';
+
+export const HOST = isLuckeyWork ? 'https://luckey.work:3008' : 'https://remons.cn:3008'
 
 export const img = (svg, height) => {
   return <img style={{ height: `${height || 120}px` }} src={svg} alt="" />
