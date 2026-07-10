@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Modal, Button, message, Tooltip } from 'antd';
 import {
   PlusOutlined,
@@ -278,7 +278,13 @@ async function renderMermaidWithControls() {
     pre.replaceWith(container);
 
     // 使用 React 渲染
-    ReactDOM.render(<MermaidBlock source={source} />, container);
+    const root = createRoot(container);
+    
+    root.render(
+      <React.StrictMode>
+        <MermaidBlock source={source} />
+      </React.StrictMode>
+    );
   }
 }
 

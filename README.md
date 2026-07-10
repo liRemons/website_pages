@@ -30,7 +30,16 @@
 
   ```jsx
   import App from './app';
-  ReactDOM.render(<App />, document.getElementById('container'));
+  import { createRoot } from 'react-dom/client';
+
+  const container = document.getElementById('container')
+  const root = createRoot(container);
+    
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
   ```
 
 - app.jsx

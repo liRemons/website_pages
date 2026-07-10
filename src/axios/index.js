@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd'
 import { HOST } from "@utils";
 
@@ -10,14 +10,17 @@ let loadingCount = 0;
 
 const controlLoading = ({ isOpen }) => {
   const loadingDOM = document.getElementById('loading');
+  const root = createRoot(loadingDOM);
   if (isOpen) {
     loadingDOM.setAttribute('class', 'loadingVerlay');
     loadingDOM.style.display = 'flex';
-    ReactDOM.render(<Spin tip="加载中..." size="large"></Spin>, loadingDOM);
+    root.render(
+      <Spin tip="加载中..." size="large" />
+    );
   } else {
     loadingDOM.setAttribute('class', '');
     loadingDOM.style.display = 'none';
-    ReactDOM.render('', loadingDOM);
+    root.render('');
   }
 };
 
