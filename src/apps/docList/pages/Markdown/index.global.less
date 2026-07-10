@@ -167,8 +167,9 @@ code {
   line-height: 1.5;
 }
 
-code.language-mermaid {
-  height: 140px;
+pre:has(code.language-mermaid) {
+  height: 200px;
+  visibility: hidden;
 }
 
 pre {
@@ -263,7 +264,9 @@ pre.code-collapsed {
 }
 
 
-// mermaid
+.mermaid-react-root {
+  min-height: 200px;
+}
 /* 针对 mermaid 容器的样式 */
 .mermaid-wrapper,
 .mermaid-loading {

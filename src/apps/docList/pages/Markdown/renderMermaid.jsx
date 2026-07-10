@@ -13,7 +13,6 @@ import {
   LoadingOutlined
 } from '@ant-design/icons';
 import { copy, IsPC } from 'methods-r';
-// import mermaid from 'mermaid';
 import Panzoom from '@panzoom/panzoom';
 import useLoadMermaid from '@/hooks/useLoadMermaid';
 
