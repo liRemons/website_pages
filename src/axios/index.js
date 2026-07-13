@@ -1,22 +1,24 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { message, Spin } from 'antd'
+import { message, Spin } from 'antd';
 import { HOST } from "@utils";
 
 const TIMEOUT_MS = 20000;
+const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
 const noLoadingURL = [];
 
 let loadingCount = 0;
+let loadingTimer = null; // 用于存储延迟显示 loading 的定时器
 
 const controlLoading = ({ isOpen }) => {
   const loadingDOM = document.getElementById('loading');
+  if (!loadingDOM) return; // 增加防御性编程，防止 DOM 未挂载时报错
+  
   const root = createRoot(loadingDOM);
   if (isOpen) {
     loadingDOM.setAttribute('class', 'loadingVerlay');
     loadingDOM.style.display = 'flex';
-    root.render(
-      <Spin tip="加载中..." size="large" />
-    );
+    root.render(<Spin tip="加载中..." size="large" />);
   } else {
     loadingDOM.setAttribute('class', '');
     loadingDOM.style.display = 'none';
@@ -26,25 +28,37 @@ const controlLoading = ({ isOpen }) => {
 
 const showLoading = () => {
   loadingCount += 1;
-  controlLoading({ isOpen: true });
+  // 如果当前已经有定时器在跑，或者 loading 已经显示，则不需要重新设置定时器
+  if (loadingCount === 1 && !loadingTimer) {
+    loadingTimer = setTimeout(() => {
+      controlLoading({ isOpen: true });
+      loadingTimer = null; // 触发后清空定时器标识
+    }, LOADING_DELAY_MS);
+  }
 };
 
 const hideLoading = () => {
   loadingCount -= 1;
   if (loadingCount <= 0) {
     loadingCount = 0;
-    controlLoading({ isOpen: false });
+    // 如果请求在 1s 内完成，此时定时器还在，直接清除，loading 不会弹出
+    if (loadingTimer) {
+      clearTimeout(loadingTimer);
+      loadingTimer = null;
+    } else {
+      // 如果定时器已经触发（loading 已经显示），则手动关闭
+      controlLoading({ isOpen: false });
+    }
   }
 };
 
 /**
- * 基于原生 fetch 实现的请求封装，替代 axios，无需额外依赖。
- * 支持与原 axios service 相同的调用方式：{ method, url, data, params, headers }
+ * 基于原生 fetch 实现的请求封装
  */
 const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   const upperMethod = method.toUpperCase();
 
-  // 拼接 query 参数（对应 axios 的 params）
+  // 拼接 query 参数
   let fullUrl = `${HOST}${url}`;
   if (params && Object.keys(params).length > 0) {
     fullUrl += '?' + new URLSearchParams(params).toString();
@@ -59,7 +73,6 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   let body = undefined;
   if (data && upperMethod !== 'GET') {
     if (data instanceof FormData) {
-      // FormData 直接透传，删除 Content-Type 让浏览器自动设置（含 boundary）
       body = data;
       delete requestHeaders['Content-Type'];
     } else if (requestHeaders['Content-Type'] === 'application/x-www-form-urlencoded') {
@@ -70,7 +83,7 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
     }
   }
 
-  // 全局 loading
+  // 全局 loading 控制
   const needLoading = !noLoadingURL.includes(url);
   if (needLoading) showLoading();
 
@@ -95,7 +108,12 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
       return res;
     })
     .catch((error) => {
-      message.error(error.message);
+      // 如果是主动取消的超时请求，可以选择不弹提示或弹特定提示
+      if (error.name === 'AbortError') {
+        message.error('请求超时，请稍后重试');
+      } else {
+        message.error(error.message);
+      }
       return Promise.reject(error);
     })
     .finally(() => {
@@ -104,6 +122,5 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
     });
 };
 
-export { service }
-
+export { service };
 export default {};
