@@ -74,29 +74,29 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         maxInitialRequests: 30,
         cacheGroups: {
           // antd 及其依赖单独成包，体积大且稳定，有利于长效缓存
-          antd: {
-            test: /[\\/]node_modules[\\/](antd|@ant-design|rc-[\w-]+)[\\/]/,
-            name: 'chunks/vendor-antd',
-            chunks: 'all',
-            priority: 30,
-            reuseExistingChunk: true,
-          },
+          // antd: {
+          //   test: /[\\/]node_modules[\\/](antd|@ant-design|rc-[\w-]+)[\\/]/,
+          //   name: 'chunks/vendor-antd',
+          //   chunks: 'all',
+          //   priority: 30,
+          //   reuseExistingChunk: true,
+          // },
           // react 生态单独成包
-          react: {
-            test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-            name: 'chunks/vendor-react',
-            chunks: 'all',
-            priority: 25,
-            reuseExistingChunk: true,
-          },
+          // react: {
+          //   test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+          //   name: 'chunks/vendor-react',
+          //   chunks: 'all',
+          //   priority: 25,
+          //   reuseExistingChunk: true,
+          // },
           // mobx 状态管理单独成包
-          mobx: {
-            test: /[\\/]node_modules[\\/](mobx|mobx-react|mobx-react-lite)[\\/]/,
-            name: 'chunks/vendor-mobx',
-            chunks: 'all',
-            priority: 20,
-            reuseExistingChunk: true,
-          },
+          // mobx: {
+          //   test: /[\\/]node_modules[\\/](mobx|mobx-react|mobx-react-lite)[\\/]/,
+          //   name: 'chunks/vendor-mobx',
+          //   chunks: 'all',
+          //   priority: 20,
+          //   reuseExistingChunk: true,
+          // },
           // 其余 node_modules 统一归到 vendor-libs
           vendors: {
             test: /[\\/]node_modules[\\/]/,
