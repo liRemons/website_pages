@@ -1,64 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="<%= description %>" />
-    <meta name="keywords" content="<%= keywords %>" />
-    <meta property="og:title" content="<%= title %>" />
-    <meta property="og:description" content="<%= description %>" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="<%= title %>" />
-    <meta name="twitter:description" content="<%= description %>" />
-    <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?f3bda11b280aec91a3c94d061a6754fc";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6490080027264677"
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="<%= description %>" />
+  <meta name="keywords" content="<%= keywords %>" />
+  <meta property="og:title" content="<%= title %>" />
+  <meta property="og:description" content="<%= description %>" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="<%= title %>" />
+  <meta name="twitter:description" content="<%= description %>" />
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?f3bda11b280aec91a3c94d061a6754fc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6490080027264677"
      crossorigin="anonymous"></script> -->
 
-<title><%= title %></title>
-    <link rel="icon" href="https://remons.cn:3008/upload/info/favicon.ico" />
-    <% for (const i in externals_css) {%>
+  <title>
+    <%= title %>
+  </title>
+  <link rel="icon" />
+  <% for (const i in externals_css) {%>
     <link rel="stylesheet" href="<%= externals_css[i] %>" />
     <%} %>
-    <style>
-      #container {
-        height: 100%;
-        width: 100%;
-      }
+      <style>
+        #container {
+          height: 100%;
+          width: 100%;
+        }
 
-      #loading {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        display: none;
-      }
+        #loading {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          display: none;
+        }
 
-      .loadingVerlay {
-        background-color: rgba(22, 22, 22, 0.225);
-        z-index: 10000;
-      }
-    </style>
-  </head>
+        .loadingVerlay {
+          background-color: rgba(22, 22, 22, 0.225);
+          z-index: 10000;
+        }
+      </style>
+</head>
 
-  <body>
-    <div id="container"></div>
-    <div id="loading"></div>
-    <% for (const i in externals_js) {%>
+<body>
+  <div id="container"></div>
+  <div id="loading"></div>
+  <% for (const i in externals_js) {%>
     <script crossorigin src="<%= externals_js[i] %>"></script>
     <%} %>
-  </body>
+
+      <script>
+        // 查找现有 icon 标签（兼容 rel="icon" 和 rel="shortcut icon"）
+        const link = document.querySelector("link[rel*='icon']");
+        link.href = window.location.origin += '/upload/info/favicon.ico'
+      </script>
+</body>
+
 </html>
