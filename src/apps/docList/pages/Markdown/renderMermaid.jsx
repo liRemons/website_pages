@@ -19,7 +19,7 @@ import useLoadMermaid from '@/hooks/useLoadMermaid';
 
 // ==================== Mermaid 工具栏组件 ====================
 function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
-   const shouldEnablePanzoom = isFullscreen || !isCollapsed;
+  const shouldEnablePanzoom = isFullscreen || !isCollapsed;
   const isPC = IsPC();
   const buttons = [
     { icon: <PlusOutlined />, title: '放大', action: 'zoomIn', isShow: !!shouldEnablePanzoom },
@@ -176,6 +176,10 @@ function MermaidBlock({ source }) {
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+        setIsCollapsed(true);
+      }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => {
@@ -278,7 +282,7 @@ async function renderMermaidWithControls() {
 
     // 使用 React 渲染
     const root = createRoot(container);
-    
+
     root.render(
       <React.StrictMode>
         <MermaidBlock source={source} />
