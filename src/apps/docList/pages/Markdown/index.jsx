@@ -20,12 +20,6 @@ export default function Markdown(props) {
     try {
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       setHtml(localStore.htmlInfo);
-      // DOM 更新完毕 1s 后渲染 Mermaid, 牺牲 cls 换取首屏加载速度
-      setTimeout(async () => {
-        const { default: renderMermaid } = await import('./renderMermaid');
-        await renderMermaid();
-      }, 10)
-
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
         setTimeout(() => {
           const a = document.createElement('a');
@@ -33,9 +27,12 @@ export default function Markdown(props) {
           a.click();
         }, 500);
       }
-      timer = setTimeout(() => {
+      timer = setTimeout(async () => {
         initCodeClassName();
-      }, 200);
+        // DOM 更新完毕 1s 后渲染 Mermaid, 牺牲 cls 换取首屏加载速度
+        const { default: renderMermaid } = await import('./renderMermaid');
+        await renderMermaid();
+      }, 10);
     } catch (error) {
       setHtml('');
     }
