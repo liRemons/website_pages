@@ -176,8 +176,7 @@ function MermaidBlock({ source }) {
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
+      if (!document.fullscreenElement) {
         setIsCollapsed(true);
       }
     };
