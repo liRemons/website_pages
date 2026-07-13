@@ -41,14 +41,6 @@ export default function Markdown(props) {
     }
   };
 
-  const handleCopy = (e) => {
-    const dom = document.querySelector(`.${e.target.fatherClass}`);
-    if (dom) {
-      copy(dom);
-      message.success('复制成功');
-    }
-  };
-
   const initCodeClassName = () => {
     document.querySelectorAll('.markdown-html code[class*="language-"]').forEach((item, index) => {
       const onlyId = `copy-${index}`;
