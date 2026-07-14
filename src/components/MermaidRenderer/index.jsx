@@ -101,7 +101,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
     <div
       ref={wrapperRef}
       className={`${showCollapse ? "mermaid-wrapper" : ""}${isCollapsed && showCollapse ? " mermaid-collapsed" : ""} ${className}`}
-      style={{ minHeight, position: "relative" }}
+      style={{ minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
       {showToolbar && hasDiagram && (
