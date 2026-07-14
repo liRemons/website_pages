@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './index.less';
-import { Button, ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import { LeftOutlined, CloseOutlined } from '@ant-design/icons';
 import zhCN from 'antd/locale/zh_CN';
-import { FRAME_TEMPLATES } from './utils/constants';
 import { useIsMobile } from './hooks/useIsMobile';
 import { useTheme } from './hooks/useTheme';
 import { useTemplates } from './hooks/useTemplates';
@@ -23,6 +22,7 @@ import Fixed from '@components/Fixed';
 import { AppTopBar, MobileHeader } from './components/appHeader';
 import { LocaleProvider } from './i18n';
 import handleContent from './handle.md'
+import '@assets/css/index.global.less';
 
 // ─── 主应用 ───────────────────────────────────────────────────────────────────
 
@@ -181,7 +181,7 @@ const App = () => {
       return [...prev, newEl];
     });
   }, [selectedId, elements]);
-  
+
   const onEditFontTemplate = useCallback((fontTemplate) => {
     // 在画布中新增该模板的文字元素并选中，进入更新模式（属性区常驻，无需跳Tab）
     applyFontTemplate(fontTemplate);
@@ -354,176 +354,176 @@ const App = () => {
         {/* 主内容区（顶部栏下方） */}
         <div className={`app-main ${isMobile ? 'app-main--mobile' : 'app-main--desktop'}`}>
 
-        {/* 移动端顶部标题栏 */}
-        {isMobile && (
-          <MobileHeader
+          {/* 移动端顶部标题栏 */}
+          {isMobile && (
+            <MobileHeader
+              theme={theme}
+              canvasBackground={canvasBackground}
+              onCanvasBackgroundChange={setCanvasBackground}
+              isExporting={isExporting}
+              onExport={handleExport}
+              isAdmin={isAdmin}
+              onToggleAdmin={setIsAdmin}
+            />
+          )}
+
+          {/* 画布编辑区（PC 端：主题胶囊通过 slot 注入工具栏左侧） */}
+          <CanvasArea
+            isMobile={isMobile}
             theme={theme}
-            canvasBackground={canvasBackground}
-            onCanvasBackgroundChange={setCanvasBackground}
             isExporting={isExporting}
-            onExport={handleExport}
-            isAdmin={isAdmin}
-            onToggleAdmin={setIsAdmin}
+            handleExport={handleExport}
+            canvasRef={canvasRef}
+            canvasWrapStyle={canvasWrapStyle}
+            elements={elements}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            selectElement={selectElement}
+            updateElement={updateElement}
+            changeZIndex={changeZIndex}
+            deleteElement={deleteElement}
+            canvasBackground={canvasBackground}
+            setCanvasBackground={setCanvasBackground}
+            guideLines={guideLines}
+            onDragGuideLines={setGuideLines}
+            fileInputRef={fileInputRef}
+            onUploadImage={() => fileInputRef.current?.click()}
           />
-        )}
 
-        {/* 画布编辑区（PC 端：主题胶囊通过 slot 注入工具栏左侧） */}
-        <CanvasArea
-          isMobile={isMobile}
-          theme={theme}
-          isExporting={isExporting}
-          handleExport={handleExport}
-          canvasRef={canvasRef}
-          canvasWrapStyle={canvasWrapStyle}
-          elements={elements}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          selectElement={selectElement}
-          updateElement={updateElement}
-          changeZIndex={changeZIndex}
-          deleteElement={deleteElement}
-          canvasBackground={canvasBackground}
-          setCanvasBackground={setCanvasBackground}
-          guideLines={guideLines}
-          onDragGuideLines={setGuideLines}
-          fileInputRef={fileInputRef}
-          onUploadImage={() => fileInputRef.current?.click()}
-        />
-
-        {/* PC 端右侧操作面板 */}
-        {!isMobile && (
-          <div
-            ref={panelRef}
-            className="side-panel"
-            style={{ background: theme.bgSecondary, borderLeft: `1px solid ${theme.border}` }}
-          >
-            {/* 属性浮层：绝对定位向左展开，不挤压布局 */}
-            {selectedElement && (
-              <div
-                className="side-panel__props-drawer"
-                style={{ background: theme.bgSecondary, borderRight: `1px solid ${theme.border}` }}
-              >
-                <div className="side-panel__props-drawer-header" style={{ borderBottom: `1px solid ${theme.border}` }}>
-                  <span className="side-panel__props-drawer-title" style={{ color: theme.textPrimary }}>
-                    {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
-                  </span>
-                  <button
-                    type="button"
-                    className="side-panel__props-drawer-close"
-                    style={{ color: theme.textMuted }}
-                    onClick={() => {
-                      setSelectedId(null);
-                      setShowMobilePropsPanel(false);
-                    }}
-                    title="关闭"
-                  >
-                    <CloseOutlined />
-                  </button>
-                </div>
-                <div className="side-panel__props-drawer-body">
-                  <PropsPanel
-                    selectedElement={selectedElement}
-                    onUpdate={updateElement}
-                    onDelete={deleteElement}
-                    onZIndexChange={changeZIndex}
-                    theme={theme}
-                    fontTemplateProps={{
-                      customFontTemplates,
-                      saveFontTemplateName,
-                      setSaveFontTemplateName,
-                      showFontSaveInput,
-                      setShowFontSaveInput,
-                      saveCurrentAsFontTemplate,
-                      updateFontTemplate,
-                      editingFontTemplate,
-                      setEditingFontTemplate,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-            <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={false} theme={theme} />
-            {/* Tab 内容区（可滚动） */}
-            <div className="side-panel__content">
-              {renderPanelContent()}
-            </div>
-          </div>
-        )}
-
-        {/* 移动端底部抽屉（浮层，不挤压画布） */}
-        {isMobile && (
-          <div
-            ref={panelRef}
-            className="mobile-drawer"
-            style={{
-              height: drawerHeight,
-              background: theme.bgSecondary,
-              borderTop: `1px solid ${theme.border}`,
-            }}
-          >
-            {/* 拖拽把手 */}
+          {/* PC 端右侧操作面板 */}
+          {!isMobile && (
             <div
-              className="mobile-drawer__handle-bar"
-              onMouseDown={handleDrawerDragStart}
-              onTouchStart={handleDrawerDragStart}
+              ref={panelRef}
+              className="side-panel"
+              style={{ background: theme.bgSecondary, borderLeft: `1px solid ${theme.border}` }}
             >
-              <div className="mobile-drawer__handle-pill" />
-            </div>
-
-            {/* 选中元素时：抽屉整体切换为属性视图 */}
-            {selectedElement && showMobilePropsPanel ? (
-              <>
-                {/* 属性视图顶栏：返回按钮 + 标题 */}
+              {/* 属性浮层：绝对定位向左展开，不挤压布局 */}
+              {selectedElement && (
                 <div
-                  className="mobile-drawer__props-header"
-                  style={{ borderBottom: `1px solid ${theme.border}` }}
+                  className="side-panel__props-drawer"
+                  style={{ background: theme.bgSecondary, borderRight: `1px solid ${theme.border}` }}
                 >
-                  <button
-                    type="button"
-                    className="mobile-drawer__props-back-btn"
-                    style={{ color: theme.accent }}
-                    onClick={() => setShowMobilePropsPanel(false)}
+                  <div className="side-panel__props-drawer-header" style={{ borderBottom: `1px solid ${theme.border}` }}>
+                    <span className="side-panel__props-drawer-title" style={{ color: theme.textPrimary }}>
+                      {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
+                    </span>
+                    <button
+                      type="button"
+                      className="side-panel__props-drawer-close"
+                      style={{ color: theme.textMuted }}
+                      onClick={() => {
+                        setSelectedId(null);
+                        setShowMobilePropsPanel(false);
+                      }}
+                      title="关闭"
+                    >
+                      <CloseOutlined />
+                    </button>
+                  </div>
+                  <div className="side-panel__props-drawer-body">
+                    <PropsPanel
+                      selectedElement={selectedElement}
+                      onUpdate={updateElement}
+                      onDelete={deleteElement}
+                      onZIndexChange={changeZIndex}
+                      theme={theme}
+                      fontTemplateProps={{
+                        customFontTemplates,
+                        saveFontTemplateName,
+                        setSaveFontTemplateName,
+                        showFontSaveInput,
+                        setShowFontSaveInput,
+                        saveCurrentAsFontTemplate,
+                        updateFontTemplate,
+                        editingFontTemplate,
+                        setEditingFontTemplate,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={false} theme={theme} />
+              {/* Tab 内容区（可滚动） */}
+              <div className="side-panel__content">
+                {renderPanelContent()}
+              </div>
+            </div>
+          )}
+
+          {/* 移动端底部抽屉（浮层，不挤压画布） */}
+          {isMobile && (
+            <div
+              ref={panelRef}
+              className="mobile-drawer"
+              style={{
+                height: drawerHeight,
+                background: theme.bgSecondary,
+                borderTop: `1px solid ${theme.border}`,
+              }}
+            >
+              {/* 拖拽把手 */}
+              <div
+                className="mobile-drawer__handle-bar"
+                onMouseDown={handleDrawerDragStart}
+                onTouchStart={handleDrawerDragStart}
+              >
+                <div className="mobile-drawer__handle-pill" />
+              </div>
+
+              {/* 选中元素时：抽屉整体切换为属性视图 */}
+              {selectedElement && showMobilePropsPanel ? (
+                <>
+                  {/* 属性视图顶栏：返回按钮 + 标题 */}
+                  <div
+                    className="mobile-drawer__props-header"
+                    style={{ borderBottom: `1px solid ${theme.border}` }}
                   >
-                    <LeftOutlined /> 返回
-                  </button>
-                  <span className="mobile-drawer__props-title" style={{ color: theme.textPrimary }}>
-                    {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
-                  </span>
-                  <div style={{ width: 52 }} />
-                </div>
-                {/* 属性内容区（可滚动，充分利用整个抽屉高度） */}
-                <div className="mobile-drawer__content">
-                  <PropsPanel
-                    selectedElement={selectedElement}
-                    onUpdate={updateElement}
-                    onDelete={deleteElement}
-                    onZIndexChange={changeZIndex}
-                    theme={theme}
-                    fontTemplateProps={{
-                      customFontTemplates,
-                      saveFontTemplateName,
-                      setSaveFontTemplateName,
-                      showFontSaveInput,
-                      setShowFontSaveInput,
-                      saveCurrentAsFontTemplate,
-                      updateFontTemplate,
-                      editingFontTemplate,
-                      setEditingFontTemplate,
-                    }}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                {/* 未选中时：正常 Tab 视图 */}
-                <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={true} theme={theme} />
-                <div className="mobile-drawer__content">
-                  {renderPanelContent()}
-                </div>
-              </>
-            )}
-          </div>
-        )}
+                    <button
+                      type="button"
+                      className="mobile-drawer__props-back-btn"
+                      style={{ color: theme.accent }}
+                      onClick={() => setShowMobilePropsPanel(false)}
+                    >
+                      <LeftOutlined /> 返回
+                    </button>
+                    <span className="mobile-drawer__props-title" style={{ color: theme.textPrimary }}>
+                      {selectedElement.type === 'text' ? '文字属性' : '图片属性'}
+                    </span>
+                    <div style={{ width: 52 }} />
+                  </div>
+                  {/* 属性内容区（可滚动，充分利用整个抽屉高度） */}
+                  <div className="mobile-drawer__content">
+                    <PropsPanel
+                      selectedElement={selectedElement}
+                      onUpdate={updateElement}
+                      onDelete={deleteElement}
+                      onZIndexChange={changeZIndex}
+                      theme={theme}
+                      fontTemplateProps={{
+                        customFontTemplates,
+                        saveFontTemplateName,
+                        setSaveFontTemplateName,
+                        showFontSaveInput,
+                        setShowFontSaveInput,
+                        saveCurrentAsFontTemplate,
+                        updateFontTemplate,
+                        editingFontTemplate,
+                        setEditingFontTemplate,
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* 未选中时：正常 Tab 视图 */}
+                  <PanelTabs activeTab={activeTab} onChange={setActiveTab} isMobile={true} theme={theme} />
+                  <div className="mobile-drawer__content">
+                    {renderPanelContent()}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>{/* end app-main */}
       </div>
       <Fixed homeUrl="/tool" handleContent={handleContent} position="left" />
