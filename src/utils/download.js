@@ -49,6 +49,7 @@ export function downloadSVGAsPNG(svgStr, filename = "image", scale = 2) {
 
   const img = new Image();
   img.crossOrigin = "anonymous";
+  img.src = url;
   img.onload = () => {
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(w * scale));
@@ -69,28 +70,43 @@ export function downloadSVGAsPNG(svgStr, filename = "image", scale = 2) {
   img.onerror = () => {
     message.error("PNG 生成失败：图片加载失败");
   };
-  img.src = url;
 }
 
 /**
- * 从 SVG 字符串中解析宽高（用于导出）
- * @param {string} svgStr
- * @returns {{w: number, h: number}}
+ * 更健壮的 SVG 尺寸解析器
  */
 function getSvgSize(svgStr) {
-  let w = 0;
-  let h = 0;
-  const wMatch = svgStr.match(/\bwidth="([\d.]+)px?"/i);
-  const hMatch = svgStr.match(/\bheight="([\d.]+)px?"/i);
-  if (wMatch) w = parseFloat(wMatch[1]);
-  if (hMatch) h = parseFloat(hMatch[1]);
-  if (!w || !h) {
-    const vb = svgStr.match(/viewBox="([^"]+)"/i);
-    if (vb) {
-      const parts = vb[1].split(/[\s,]+/).map(Number);
-      w = w || parts[2] || 0;
-      h = h || parts[3] || 0;
+  // 1. 尝试提取 viewBox (这是最准确的“相对比例”来源)
+  const vbMatch = svgStr.match(/viewBox=["']?([^"']+)["']/i);
+  let vbW = 0, vbH = 0;
+  
+  if (vbMatch) {
+    // 处理逗号或空格分隔的情况： "0 0 100 100" 或 "0,0,100,100"
+    const parts = vbMatch[1].split(/[\s,]+/).map(Number);
+    if (parts.length === 4) {
+      vbW = parts[2];
+      vbH = parts[3];
     }
   }
-  return { w: w || 800, h: h || 600 };
+
+  // 2. 尝试提取 width/height 属性
+  // 改进正则：支持单引号、支持单位前的空格、支持百分号
+  const wMatch = svgStr.match(/width=["']?\s*([\d.]+)\s*(?:px|pt|cm|mm|in|%)*["']/i);
+  const hMatch = svgStr.match(/height=["']?\s*([\d.]+)\s*(?:px|pt|cm|mm|in|%)*/i);
+
+  let w = wMatch ? parseFloat(wMatch[1]) : 0;
+  let h = hMatch ? parseFloat(hMatch[1]) : 0;
+
+  // 3. 智能修正逻辑
+  
+  // 情况 A: 如果宽高都没读到，直接使用 viewBox
+  if (vbW && vbH) {
+    return { w: vbW, h: vbH };
+  }
+
+  // 情况 C: 如果一切正常，返回解析值；如果还是不行，给个默认值防止崩溃
+  return { 
+    w: w || vbW || 800, 
+    h: h || vbH || 600 
+  };
 }
