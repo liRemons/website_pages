@@ -101,7 +101,7 @@ export default function Markdown(props) {
 
 
   return useObserver(() => <> <div className='markdown'>
-    {html ? <div className='markdown-html'><div dangerouslySetInnerHTML={{ __html: html }}></div>
+    {html ? <div className='markdown-html'><div style={{ width: 100% }} dangerouslySetInnerHTML={{ __html: html }}></div>
       <div className="create-time">
         文档更新于 {dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}
       </div></div> : <Empty />}
