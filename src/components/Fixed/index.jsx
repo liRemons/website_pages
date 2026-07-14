@@ -44,7 +44,7 @@ export default function Fixed({
     <>
       <div className={classnames(style.container, visible ? style.containerToRight : "")}>
         <div className={classnames(style.circle)}>
-          <ThemeToggle />
+          <ThemeToggle dropdown={true} />
         </div>
 
         {handleContent && (

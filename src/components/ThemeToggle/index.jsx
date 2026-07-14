@@ -38,6 +38,8 @@ export default function ThemeToggle({ dropdown = false, className = "" }) {
         }}
         trigger={["click"]}
         placement="topRight"
+        arrow
+        destroyPopupOnHide
       >
         <div
           className={`circle ${className}`}

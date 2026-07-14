@@ -69,7 +69,7 @@ export default function List() {
               <div className={style.splitterBar} />
             </div>}
             <div className={style.paneRight} style={{ width: `${isPc ? (100 - leftWidth) : leftWidth}%` }}>
-              <MermaidPreview source={source} theme={theme} onThemeChange={setTheme} />
+              <MermaidPreview source={source} />
             </div>
           </div>
         </div>}

@@ -4,7 +4,6 @@ import { openApp } from "methods-r";
 import { img } from "@utils";
 import backSvg from "@assets/svg/back.svg";
 import HelpDrawer from "../HelpDrawer";
-import ThemeToggle from "../ThemeToggle";
 
 export default function Header(props) {
   const { name, showLeft = true, showRight = true, leftPath, handleContent } = props;
@@ -18,7 +17,6 @@ export default function Header(props) {
   const rightComponent = props.rightComponent || (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
       {handleContent && <HelpDrawer handleContent={handleContent} />}
-      <ThemeToggle dropdown={true} />
     </div>
   );
 

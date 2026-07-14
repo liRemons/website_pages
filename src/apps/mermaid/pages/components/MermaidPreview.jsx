@@ -8,26 +8,9 @@ import MermaidRenderer from "@/components/MermaidRenderer";
  * 右栏：Mermaid 图表预览
  * 包装 MermaidRenderer 组件，补充主题选择器
  */
-export default function MermaidPreview({ source, theme, onThemeChange }) {
+export default function MermaidPreview({ source }) {
   return (
     <div className={style.rightPane}>
-      <div className={style.paneHeader}>
-        <span className={style.paneTitle}>
-          图表预览
-          {!source.trim() && <span className={style.subHint}>渲染中...</span>}
-        </span>
-        <Space size={6} wrap>
-          <Select
-            size="small"
-            value={theme}
-            onChange={onThemeChange}
-            options={THEME_OPTIONS}
-            style={{ width: 86 }}
-            popupMatchSelectWidth={false}
-          />
-        </Space>
-      </div>
-
       <div className={style.previewWrap}>
         <MermaidRenderer source={source} debounceMs={300} />
       </div>

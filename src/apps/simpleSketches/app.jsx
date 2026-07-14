@@ -4,6 +4,7 @@ import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import Container from "@components/Container";
 import Header from "@components/Header";
 import Fixed from "@components/Fixed";
+import '@assets/css/index.global.less';
 import handleContent from "./handle.md";
 import "./app.css";
 
@@ -171,7 +172,7 @@ export default function SimpleSketches() {
   return (
     <>
       <Container
-        header={<Header name="图片转白底简笔画" handleContent={handleContent} showLeft={false} />}
+        header={<Header name="图片转白底简笔画" handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
         main={mainContent}
       />
       <Fixed homeUrl="/tool" />
