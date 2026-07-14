@@ -1,157 +1,89 @@
 ﻿import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
-import { Tooltip, Dropdown, message } from "antd";
+import { createRoot } from "react-dom/client";
+import { Dropdown, message, Modal, Button } from "antd";
 import {
-  PlusOutlined,
-  MinusOutlined,
-  AimOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
-  DownloadOutlined,
+  PlusOutlined, MinusOutlined,
+  FullscreenOutlined, FullscreenExitOutlined,
+  DownloadOutlined, ReloadOutlined, CodeOutlined,
+  UpOutlined, DownOutlined,
 } from "@ant-design/icons";
-import Panzoom from "@panzoom/panzoom";
-import useLoadMermaid from "@/hooks/useLoadMermaid";
-import { useTheme } from "@/hooks/useTheme";
 import { downloadSVG, downloadSVGAsPNG } from "@utils";
+import { copy } from "methods-r";
+import { useTheme, ThemeProvider } from "@/hooks/useTheme";
+import useMermaidRender from "./useMermaidRender";
+import usePanzoom from "./usePanzoom";
 import style from "./index.module.less";
+import '@assets/css/index.global.less';
 
-let renderIdSeq = 0;
-
+// ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
   {
     source,
     debounceMs = 300,
     showToolbar = true,
     enablePanzoom = true,
+    showDownload = true,
+    showSourceView = false,
+    showCollapse = false,
+    defaultCollapsed = true,
     className = "",
     minHeight = 200,
   },
   ref
 ) {
-  const { mermaid, loading } = useLoadMermaid();
   const { isDark } = useTheme();
-  const [svg, setSvg] = useState("");
-  const [error, setError] = useState("");
+  const { svg, error, loading } = useMermaidRender({ source, debounceMs, isDark });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [showSource, setShowSource] = useState(false);
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
-  const panzoomRef = useRef(null);
-  const renderSeqRef = useRef(0);
+  const isPanzoomActive = enablePanzoom && (isFullscreen || !isCollapsed || !showCollapse);
+  const panzoomRef = usePanzoom({
+    contentRef, wrapperRef,
+    enabled: isPanzoomActive && !!svg,
+    svg, isFullscreen,
+  });
 
-  // 暴露 handleAction 给父组件
   useImperativeHandle(ref, () => ({
     handleAction(action) {
       const pz = panzoomRef.current;
       switch (action) {
-        case "zoomIn":
-          pz?.zoomIn();
-          break;
-        case "zoomOut":
-          pz?.zoomOut();
-          break;
-        case "reset":
-          pz?.reset();
-          break;
+        case "zoomIn": pz?.zoomIn(); break;
+        case "zoomOut": pz?.zoomOut(); break;
+        case "reset": pz?.reset(); break;
         case "toggleFullscreen": {
           const el = wrapperRef.current;
           if (!el) return;
           pz?.reset();
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            el.requestFullscreen?.();
-          }
+          if (document.fullscreenElement) document.exitFullscreen();
+          else el.requestFullscreen?.();
           break;
         }
-        default:
-          break;
       }
     },
   }));
 
-  // 主题变化时重新初始化 mermaid
-  useEffect(() => {
-    if (!mermaid) return;
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: isDark ? "dark" : "default",
-      securityLevel: "loose",
-    });
-  }, [mermaid, isDark]);
-
-  // 防抖渲染
-  useEffect(() => {
-    if (!mermaid) return;
-    const text = (source || "").trim();
-    if (!text) {
-      setSvg("");
-      setError("");
-      return;
-    }
-    setError("");
-    const seq = ++renderSeqRef.current;
-    const timer = setTimeout(async () => {
-      const id = `mermaid-render-${renderIdSeq++}`;
-      try {
-        const { svg: svgStr } = await mermaid.render(id, text);
-        if (seq !== renderSeqRef.current) return;
-        setSvg(svgStr);
-        setError("");
-      } catch (err) {
-        if (seq !== renderSeqRef.current) return;
-        console.error("Mermaid render error:", err);
-        setError(err?.message?.split("\n")[0] || String(err));
-      } finally {
-        const leftover = document.getElementById(id) || document.getElementById(`d${id}`);
-        if (leftover && leftover.parentNode) leftover.parentNode.removeChild(leftover);
-      }
-    }, debounceMs);
-    return () => clearTimeout(timer);
-  }, [source, isDark, mermaid, debounceMs]);
-
-  // 初始化 Panzoom
-  useEffect(() => {
-    if (!enablePanzoom || !contentRef.current || !svg) return;
-    if (panzoomRef.current) {
-      panzoomRef.current.destroy();
-      panzoomRef.current = null;
-    }
-    panzoomRef.current = Panzoom(contentRef.current, {
-      maxScale: 5,
-      minScale: 0.1,
-      startScale: 1,
-      contain: isFullscreen ? false : "outside",
-    });
-    const wheelTarget = wrapperRef.current;
-    const handleWheel = panzoomRef.current.zoomWithWheel;
-    wheelTarget?.addEventListener("wheel", handleWheel);
-    return () => {
-      wheelTarget?.removeEventListener("wheel", handleWheel);
-      panzoomRef.current?.destroy();
-      panzoomRef.current = null;
-    };
-  }, [svg, isFullscreen, enablePanzoom]);
-
   // 监听原生全屏状态
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    const handler = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      if (!document.fullscreenElement && showCollapse) {
+        setIsCollapsed(true);
+      }
+    };
     document.addEventListener("fullscreenchange", handler);
     return () => document.removeEventListener("fullscreenchange", handler);
-  }, []);
+  }, [showCollapse]);
 
   const handleDownloadSVG = useCallback(() => {
-    if (!svg) {
-      message.warning("暂无图表");
-      return;
-    }
+    if (!svg) { message.warning("暂无图表"); return; }
     downloadSVG(svg, "mermaid");
   }, [svg]);
 
   const handleDownloadPNG = useCallback(() => {
-    if (!svg) {
-      message.warning("暂无图表");
-      return;
-    }
+    if (!svg) { message.warning("暂无图表"); return; }
     downloadSVGAsPNG(svg, "mermaid", 2);
   }, [svg]);
 
@@ -165,50 +97,50 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
 
   const hasDiagram = !!svg;
 
-  if (loading) {
-    return (
-      <div className={style.emptyTip} style={{ minHeight }}>
-        图表加载中...
-      </div>
-    );
-  }
-
   return (
-    <div ref={wrapperRef} className={`${style.wrapper} ${className}`} style={{ minHeight }}>
+    <div
+      ref={wrapperRef}
+      className={`${showCollapse ? "mermaid-wrapper" : ""}${isCollapsed && showCollapse ? " mermaid-collapsed" : ""} ${className}`}
+      style={{ minHeight, position: "relative" }}
+    >
       {/* 工具栏 */}
       {showToolbar && hasDiagram && (
-        <div className={style.toolbar}>
-          <Tooltip title="放大">
-            <button className={style.toolbarBtn} onClick={() => panzoomRef.current?.zoomIn()}>
-              <PlusOutlined />
-            </button>
-          </Tooltip>
-          <Tooltip title="缩小">
-            <button className={style.toolbarBtn} onClick={() => panzoomRef.current?.zoomOut()}>
-              <MinusOutlined />
-            </button>
-          </Tooltip>
-          <Tooltip title="重置">
-            <button className={style.toolbarBtn} onClick={() => panzoomRef.current?.reset()}>
-              <AimOutlined />
-            </button>
-          </Tooltip>
-          <Tooltip title={isFullscreen ? "退出全屏" : "全屏"}>
-            <button className={style.toolbarBtn} onClick={() => {
-              if (document.fullscreenElement) {
-                document.exitFullscreen();
-              } else {
-                wrapperRef.current?.requestFullscreen?.();
-              }
-            }}>
-              {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-            </button>
-          </Tooltip>
-          <Dropdown menu={downloadMenu} trigger={["click"]}>
-            <button className={style.toolbarBtn}>
-              <DownloadOutlined />
-            </button>
-          </Dropdown>
+        <div className={showCollapse ? "mermaid-toolbar" : style.toolbar}>
+          {/* 放大 / 缩小：仅在 panzoom 可用时显示 */}
+          {isPanzoomActive && (
+            <>
+              <div className="circle" onClick={() => panzoomRef.current?.zoomIn()}>
+                <PlusOutlined />
+              </div>
+              <div className="circle" onClick={() => panzoomRef.current?.zoomOut()}>
+                <MinusOutlined />
+              </div>
+            </>
+          )}
+          <div className="circle" onClick={() => panzoomRef.current?.reset()}>
+            <ReloadOutlined />
+          </div>
+          <div className="circle" onClick={() => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else wrapperRef.current?.requestFullscreen?.();
+          }}>
+            {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+          </div>
+          {showDownload && (
+            <Dropdown menu={downloadMenu} trigger={["click"]}>
+              <div className="circle"><DownloadOutlined /></div>
+            </Dropdown>
+          )}
+          {showSourceView && !isFullscreen && (
+            <div className="circle" onClick={() => setShowSource(true)}>
+              <CodeOutlined />
+            </div>
+          )}
+          {showCollapse && !isFullscreen && (
+            <div className="circle" onClick={() => setIsCollapsed((prev) => !prev)}>
+              {isCollapsed ? <DownOutlined /> : <UpOutlined />}
+            </div>
+          )}
         </div>
       )}
 
@@ -222,14 +154,69 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           className={style.previewContent}
           dangerouslySetInnerHTML={{ __html: svg || "" }}
         />
-        {!hasDiagram && !error && (
+        {((!hasDiagram && !error) || loading) && (
           <div className={style.emptyTip}>
-            {source?.trim() ? "渲染中..." : "← 输入 Mermaid 源码"}
+            {source?.trim() ? "渲染中..." : "\u2190 输入 Mermaid 源码"}
           </div>
         )}
       </div>
+
+      {/* 源码弹窗 */}
+      {showSourceView && (
+        <Modal
+          open={showSource}
+          title="Mermaid 源码"
+          width={800}
+          destroyOnClose
+          onCancel={() => setShowSource(false)}
+          footer={[
+            <Button key="copy" type="primary" onClick={() => {
+              if (typeof copy === "function") { copy(source); message.success("复制成功"); }
+              else { navigator.clipboard.writeText(source).then(() => message.success("复制成功")); }
+            }}>
+              复制源码
+            </Button>,
+          ]}
+        >
+          <pre><code>{source}</code></pre>
+        </Modal>
+      )}
     </div>
   );
 });
 
+// ==================== DOM 扫描入口（文档页使用） ====================
+async function renderMermaidWithControls() {
+  const blocks = document.querySelectorAll("code.language-mermaid");
+
+  for (const block of blocks) {
+    const pre = block.parentElement;
+    const source = block.textContent.trim();
+
+    const container = document.createElement("div");
+    container.className = "mermaid-react-root";
+    pre.replaceWith(container);
+
+    const root = createRoot(container);
+
+    root.render(
+      <React.StrictMode>
+        <ThemeProvider>
+          <MermaidRenderer
+            source={source}
+            showToolbar
+            enablePanzoom
+            showDownload
+            showSourceView
+            showCollapse
+            defaultCollapsed
+            minHeight={200}
+          />
+        </ThemeProvider>
+      </React.StrictMode>
+    );
+  }
+}
+
 export default MermaidRenderer;
+export { renderMermaidWithControls };
