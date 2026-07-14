@@ -1,4 +1,4 @@
-const { Configuration, DefinePlugin } = require('webpack')
+﻿const { Configuration, DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -130,6 +130,9 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         '@axios': path.resolve(__dirname, 'src/axios'),
         '@assets': path.resolve(__dirname, 'src/assets'),
         '@utils': path.resolve(__dirname, 'src/utils'),
+        // 强制统一 React 版本，避免 remons-components 等库携带的重复 React 导致 Invalid Hook Call
+        react: path.resolve(__dirname, 'node_modules/react'),
+        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       },
     },
     externals: setExternals(isEnvProduction),
@@ -173,7 +176,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
             minRatio: 0.8,
           })
         : null,
-      // brotli 压缩：通过 br=true 开启，压缩率比 gzip 高 15%-25%，现代浏览器均支持
+      // brotli 压缩：通过 br=true 开启，压缩率比 gzip 高15%-25%，现代浏览器均支持
       // 用法：npm run build br=true
       isEnvProduction && otherParams.br === 'true'
         ? new CompressionPlugin({

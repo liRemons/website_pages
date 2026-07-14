@@ -1,9 +1,9 @@
-/* ── 页面容器 ───────────────────────────────────── */
+﻿/* 页面容器 */
 .qr-page {
   padding: 12px 16px 80px;
 }
 
-/* ── 表单配置行：字数限制 / 频率 / 模式 横向排列 ─── */
+/* 表单配置行：字数限制 / 频率 / 模式 横向排列 */
 .qr-config-row {
   display: flex;
   gap: 12px;
@@ -20,7 +20,7 @@
   width: 100% !important;
 }
 
-/* ── 操作按钮区 ─────────────────────────────────── */
+/* 操作按钮区 */
 /* 移动端：2×2 网格；PC 端：横排 */
 .qr-actions {
   display: flex;
@@ -44,7 +44,7 @@
   }
 }
 
-/* ── 平铺模式：二维码列表 ──────────────────────── */
+/* 平铺模式：二维码列表 */
 .qr-grid {
   display: flex;
   flex-wrap: wrap;
@@ -53,7 +53,7 @@
   margin-top: 16px;
 }
 
-/* ── 替换模式：居中单个展示 ────────────────────── */
+/* 替换模式：居中单个展示 */
 .qr-replace-wrap {
   display: flex;
   flex-direction: column;
@@ -61,21 +61,21 @@
   margin-top: 16px;
 }
 
-/* ── 进度标签 ──────────────────────────────────── */
+/* 进度标签 */
 .qr-progress-label {
   text-align: center;
   font-size: 13px;
-  color: #61677c;
+  color: var(--color-text, #61677c);
   margin-bottom: 10px;
   letter-spacing: 0.2px;
 }
 
 .qr-progress-label strong {
-  color: #1677ff;
+  color: var(--color-primary, #1677ff);
   font-size: 15px;
 }
 
-/* ── 单个二维码卡片 ────────────────────────────── */
+/* 单个二维码卡片 */
 .qrcode {
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@
   height: auto !important;
 }
 
-/* ── 平铺模式序号角标 ─────────────────────────── */
+/* 平铺模式序号角标 */
 .qrcodeIcon {
   width: 26px;
   height: 26px;

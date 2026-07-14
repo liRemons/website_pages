@@ -1,20 +1,956 @@
+﻿@import "./variables.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+
+/* Less 变量（兼容旧引用，值指向 CSS 变量）*/
 @ruler: 16px;
 @color-red: #ae1100;
 @color-bg: #ebecf0;
 @color-shadow: #babecc;
 @color-white: #fff;
 @active-color: #75bcff;
+
+/* ===== 深色模式全局覆盖 ===== */
+[data-theme="dark"] {
+  /* inline code 样式（docList markdown）*/
+  code:not(pre code) {
+    background: #3d4258 !important;
+    color: #f0a0a0 !important;
+  }
+
+  /* 代码块 header 背景 */
+  pre .pre-handle {
+    color: #c9d1d9 !important;
+    background: #1a1d2e !important;
+  }
+
+  /* 代码块背景 */
+  pre {
+    box-shadow: inset 5px 5px 10px #0a0b12, inset -5px -5px 10px #2a2e42 !important;
+  }
+
+  /* mermaid 容器背景 */
+  .mermaid-wrapper,
+  .mermaid-loading,
+  .mermaid-fullscreen-target {
+    background-color: #2e3350 !important;
+  }
+
+  /* mermaid 全屏背景 */
+  .mermaid-fullscreen-target:fullscreen {
+    background: #1a1d2e !important;
+  }
+
+  /* antd Drawer 背景 */
+  .ant-drawer-content,
+  .ant-drawer-wrapper-body {
+    background: #1e2235 !important;
+  }
+
+  .ant-drawer-header {
+    background: #1e2235 !important;
+  }
+
+  .ant-drawer-title {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Card 背景 */
+  .ant-card {
+    background: #1e2235 !important;
+  }
+
+  .ant-card-head {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Modal */
+  .ant-modal-content {
+    background: #1e2235 !important;
+  }
+
+  .ant-modal-header {
+    background: #1e2235 !important;
+  }
+
+  .ant-modal-title {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Select 下拉面板 */
+  .ant-select-dropdown {
+    background: #1e2235 !important;
+  }
+
+  .ant-select-item-option-content {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-select-item-option-active {
+    background: #2e3350 !important;
+  }
+
+  /* antd Input */
+  .ant-input,
+  .ant-input-affix-wrapper {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  /* antd message */
+  .ant-message-notice-content {
+    background: #2e3350 !important;
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Tooltip */
+  .ant-tooltip-inner {
+    background: #2e3350 !important;
+  }
+
+  /* antd Pagination */
+  .ant-pagination-item {
+    background: #1e2235 !important;
+  }
+
+  .ant-pagination-item a {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Table */
+  .ant-table {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  .ant-table-thead > tr > th {
+    background: #2e3350 !important;
+    color: #e8ecf4 !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: #2e3350 !important;
+  }
+
+  /* antd Badge */
+  .ant-badge {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Dropdown */
+  .ant-dropdown-menu {
+    background: #1e2235 !important;
+  }
+
+  .ant-dropdown-menu-item {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-dropdown-menu-item:hover {
+    background: #2e3350 !important;
+  }
+
+  /* antd ColorPicker */
+  .ant-color-picker-trigger {
+    background: #1e2235 !important;
+  }
+
+  /* antd Slider */
+  .ant-slider-rail {
+    background: #3d4258 !important;
+  }
+
+  .ant-slider-track {
+    background: #4f9eff !important;
+  }
+
+  /* antd Switch */
+  .ant-switch {
+    background: #3d4258 !important;
+  }
+
+  /* antd DatePicker 面板 */
+  .ant-picker-panel-container {
+    background: #1e2235 !important;
+  }
+
+  .ant-picker-header {
+    color: #e8ecf4 !important;
+  }
+
+  .ant-picker-cell-inner {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Anchor */
+  .ant-anchor-wrapper {
+    background: transparent !important;
+  }
+
+  .ant-anchor-link-title {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd BackTop */
+  .ant-back-top {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd List */
+  .ant-list-item {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Spin */
+  .ant-spin-dot-item {
+    background-color: #4f9eff !important;
+  }
+
+  /* jsonViewer 错误提示 */
+  [class*=jsonViewer] .errorTip {
+    background: #3d1f1f !important;
+    border-top-color: #5a2a2a !important;
+  }
+
+  [class*=jsonViewer] .editBubble {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  [class*=jsonViewer] .editBubblePath {
+    background: #2e3350 !important;
+    color: #8892a4 !important;
+  }
+
+  [class*=jsonViewer] .tipsBar {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+    color: #8892a4 !important;
+  }
+
+  /* jsonViewer 面板 & 编辑器 */
+  [class*=jsonViewer] [class*=leftPane],
+  [class*=jsonViewer] [class*=rightPane] {
+    background: #1a1d2e !important;
+  }
+
+  [class*=jsonViewer] [class*=paneHeader] {
+    background: #1e2235 !important;
+  }
+
+  [class*=jsonViewer] .lineNumbers {
+    background: #1e2235 !important;
+  }
+
+  [class*=jsonViewer] [class*=emptyTip] {
+    color: #6b7280 !important;
+  }
+
+  /* CodeMirror 编辑器深色模式 */
+  .cm-editor {
+    background: #1a1d2e !important;
+    color: #b0b8c8 !important;
+  }
+
+  .cm-editor .cm-scroller {
+    background: #1a1d2e !important;
+    font-family: var(--font-family-editor, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace) !important;
+  }
+
+  .cm-editor .cm-gutters {
+    background: #1e2235 !important;
+    border-right: 1px solid #2e3350 !important;
+    color: #6b7280 !important;
+  }
+
+  .cm-editor .cm-activeLineGutter {
+    background: #2e3350 !important;
+  }
+
+  .cm-editor .cm-activeLine {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  .cm-editor .cm-cursor {
+    border-left-color: #4f9eff !important;
+  }
+
+  .cm-editor .cm-selectionBackground,
+  .cm-editor.cm-focused .cm-selectionBackground {
+    background: #3d4258 !important;
+  }
+
+  .cm-editor .cm-content {
+    caret-color: #4f9eff !important;
+    color: #b0b8c8 !important;
+  }
+
+  .cm-editor .cm-lineNumbers {
+    color: #6b7280 !important;
+  }
+
+  .cm-editor .cm-placeholder {
+    color: #6b7280 !important;
+  }
+
+  /* Header 深色模式背景 & 文字颜色 */
+  [class*=Header] [class*=header] {
+    background: #1a1d2e !important;
+    color: #e8ecf4 !important;
+  }
+
+  /* wangEditor 编辑区深色模式 */
+  .w-e-text-container {
+    background: #1a1d2e !important;
+    color: #b0b8c8 !important;
+  }
+
+  .w-e-text-container .w-e-text {
+    color: #b0b8c8 !important;
+  }
+
+  .w-e-bar {
+    background: #1e2235 !important;
+  }
+
+  .w-e-bar-item button {
+    color: #b0b8c8 !important;
+  }
+
+  .w-e-bar-item button:hover {
+    background: #2e3350 !important;
+  }
+
+  .w-e-text-container .w-e-text-placeholder {
+    color: #6b7280 !important;
+  }
+
+  /* vditor 编辑器深色模式 (reMark app) */
+  .vditor {
+    background: #1a1d2e !important;
+  }
+
+  .vditor-toolbar {
+    background: #1e2235 !important;
+    border-bottom: 1px solid #2e3350 !important;
+  }
+
+  .vditor-toolbar button {
+    color: #b0b8c8 !important;
+  }
+
+  .vditor-toolbar button:hover {
+    background: #2e3350 !important;
+  }
+
+  .vditor-toolbar button.current {
+    background: #2e3350 !important;
+  }
+
+  .vditor-content {
+    background: #1a1d2e !important;
+  }
+
+  .vditor-reset {
+    color: #b0b8c8 !important;
+    background: #1a1d2e !important;
+  }
+
+  .vditor-ir {
+    background: #1a1d2e !important;
+  }
+
+  .vditor-ir .vditor-reset {
+    color: #b0b8c8 !important;
+  }
+
+  .vditor-sv {
+    background: #1a1d2e !important;
+  }
+
+  .vditor-sv .vditor-reset {
+    color: #b0b8c8 !important;
+  }
+
+  .vditor-wysiwyg {
+    background: #1a1d2e !important;
+  }
+
+  .vditor-wysiwyg .vditor-reset {
+    color: #b0b8c8 !important;
+  }
+
+  .vditor-counter {
+    color: #6b7280 !important;
+  }
+
+  .vditor-panel {
+    background: #1e2235 !important;
+    border: 1px solid #2e3350 !important;
+  }
+
+  .vditor-panel .vditor-panel--arrow {
+    color: #1e2235 !important;
+  }
+
+  .vditor-hint {
+    background: #1e2235 !important;
+    border: 1px solid #2e3350 !important;
+  }
+
+  .vditor-hint .vditor-hint--current {
+    background: #2e3350 !important;
+  }
+
+  .vditor-hint button {
+    color: #b0b8c8 !important;
+  }
+
+  .vditor-hint button:hover {
+    background: #2e3350 !important;
+  }
+
+  .vditor-toolbar--hide {
+    border-bottom: 1px solid #2e3350 !important;
+  }
+
+  /* antd Table 深色模式增强 */
+  .ant-table-wrapper {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-table-cell {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd InputNumber */
+  .ant-input-number {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  .ant-input-number-input {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-input-number-handler-wrap {
+    background: #1e2235 !important;
+  }
+
+  .ant-input-number-handler {
+    border-color: #2e3350 !important;
+    color: #6b7280 !important;
+  }
+
+  /* antd Switch */
+  .ant-switch-inner {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Checkbox */
+  .ant-checkbox-wrapper {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Radio */
+  .ant-radio-wrapper {
+    color: #b0b8c8 !important;
+  }
+
+  /* remons-components Section */
+  .remons-section {
+    background: #1e2235 !important;
+  }
+
+  .remons-section .remons-section-title {
+    color: #e8ecf4 !important;
+  }
+
+  .remons-section .remons-section-subtitle {
+    color: #8892a4 !important;
+  }
+  /* home 页面深色模式 */
+  .ui-input {
+    color: var(--color-text, #61677c) !important;
+    background: var(--color-bg, #ebecf0) !important;
+    box-shadow: var(--shadow-inset-deep, inset 2px 2px 5px #babecc, inset -5px -5px 10px #fff) !important;
+  }
+
+  .ui-input:focus {
+    box-shadow: var(--shadow-inset, inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff) !important;
+  }
+
+  button, .commands-item {
+    color: var(--color-text, #61677c) !important;
+    background: var(--color-bg, #ebecf0) !important;
+    box-shadow: var(--shadow-md, -5px -5px 20px #fff, 5px 5px 20px #babecc) !important;
+  }
+
+  /* productManage 组件深色模式 */
+  [class*=productManage] [class*=colorTag] {
+    color: #e8ecf4 !important;
+  }
+
+  .product-manage-list-field {
+    .ant-form-item {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .productManage-list .ant-descriptions-item-label {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Segmented */
+  .ant-segmented {
+    background: #1e2235 !important;
+  }
+
+  .ant-segmented-item {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-segmented-item-selected {
+    background: #2e3350 !important;
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Tabs */
+  .ant-tabs {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-tabs-tab {
+    color: #8892a4 !important;
+  }
+
+  .ant-tabs-tab-active {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Tag */
+  .ant-tag {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Alert */
+  .ant-alert {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  .ant-alert-message {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Descriptions */
+  .ant-descriptions {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-descriptions-item-label {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-descriptions-item-content {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-descriptions-bordered .ant-descriptions-item-label,
+  .ant-descriptions-bordered .ant-descriptions-item-content {
+    border-color: #2e3350 !important;
+  }
+
+  .ant-descriptions-header {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Menu */
+  .ant-menu {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  .ant-menu-item {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-menu-item-selected {
+    background: #2e3350 !important;
+    color: #e8ecf4 !important;
+  }
+
+  .ant-menu-item-active {
+    background: #2e3350 !important;
+  }
+
+  .ant-menu-submenu-title {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Spin */
+  .ant-spin {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-spin-nested-loading > div > .ant-spin .ant-spin-text {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Modal body */
+  .ant-modal-body {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Input affix */
+  .ant-input-prefix,
+  .ant-input-suffix {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd DatePicker */
+  .ant-picker {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  .ant-picker-input > input {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-picker-suffix {
+    color: #6b7280 !important;
+  }
+
+  .ant-picker-clear {
+    background: #1e2235 !important;
+    color: #6b7280 !important;
+  }
+
+  /* antd RangePicker */
+  .ant-picker-range .ant-picker-active-bar {
+    background: #4f9eff !important;
+  }
+
+  /* antd InputNumber prefix */
+  .ant-input-number-group-addon {
+    color: #b0b8c8 !important;
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  /* antd Button ghost */
+  .ant-btn-background-ghost {
+    color: #b0b8c8 !important;
+    border-color: #2e3350 !important;
+  }
+
+  /* antd Steps */
+  .ant-steps-item-title {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-steps-item-description {
+    color: #8892a4 !important;
+  }
+
+  /* antd Collapse */
+  .ant-collapse {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  .ant-collapse-header {
+    color: #e8ecf4 !important;
+  }
+
+  .ant-collapse-content {
+    background: #1a1d2e !important;
+    color: #b0b8c8 !important;
+    border-color: #2e3350 !important;
+  }
+
+  /* antd Timeline */
+  .ant-timeline-item-content {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Upload */
+  .ant-upload {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-upload-list-item-name {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-upload-text {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd empty */
+  .ant-empty-description {
+    color: #6b7280 !important;
+  }
+
+  /* antd Result */
+  .ant-result-title {
+    color: #e8ecf4 !important;
+  }
+
+  .ant-result-subtitle {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Skeleton */
+  .ant-skeleton-content .ant-skeleton-title {
+    background: #2e3350 !important;
+  }
+
+  .ant-skeleton-content .ant-skeleton-paragraph > li {
+    background: #2e3350 !important;
+  }
+
+  /* antd Avatar */
+  .ant-avatar {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Progress */
+  .ant-progress-text {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-progress-circle .ant-progress-text {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Statistic */
+  .ant-statistic-title {
+    color: #8892a4 !important;
+  }
+
+  .ant-statistic-content {
+    color: #e8ecf4 !important;
+  }
+
+  /* antd Comment */
+  .ant-comment-content-author-name {
+    color: #b0b8c8 !important;
+  }
+
+  .ant-comment-content-author-time {
+    color: #6b7280 !important;
+  }
+
+  .ant-comment-content-detail {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Calendar */
+  .ant-picker-calendar {
+    background: #1e2235 !important;
+  }
+
+  .ant-picker-calendar .ant-picker-panel {
+    background: #1e2235 !important;
+  }
+
+  /* antd Rate */
+  .ant-rate {
+    color: #fadb14 !important;
+  }
+
+  /* antd Watermark */
+  .ant-water-mark {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd Image */
+  .ant-image-mask {
+    color: #b0b8c8 !important;
+  }
+
+  /* antd QRCode */
+  .ant-qrcode {
+    background: #1e2235 !important;
+    border-color: #2e3350 !important;
+  }
+
+  .ant-qrcode-expired {
+    color: #b0b8c8 !important;
+  }
+  /* simpleSketches 深色模式 */
+  .sketch-app {
+    --primary-color: #5b9ef4 !important;
+    --bg-color: #1a1d2e !important;
+    --card-bg: #1e2235 !important;
+  }
+
+  .sketch-app .sketch-toolbar {
+    border-bottom-color: #2e3350 !important;
+  }
+
+  .sketch-app .sketch-toolbar button {
+    color: #b0b8c8 !important;
+  }
+
+  .sketch-app .sketch-canvas-area {
+    background: #1a1d2e !important;
+  }
+
+  .sketch-app .sketch-layer-item {
+    color: #b0b8c8 !important;
+  }
+
+  /* postmarkGenerator 深色模式 */
+  .postmark-app {
+    background: #1a1d2e !important;
+  }
+
+  .postmark-app .postmark-header {
+    background: #1e2235 !important;
+    border-bottom-color: #2e3350 !important;
+  }
+
+  .postmark-app .postmark-header-title {
+    color: #e8ecf4 !important;
+  }
+
+  .postmark-app .postmark-preview {
+    background: #1a1d2e !important;
+  }
+
+  .postmark-app .postmark-sidebar {
+    background: #1e2235 !important;
+  }
+
+  .postmark-app .postmark-sidebar-title {
+    color: #e8ecf4 !important;
+  }
+
+  .postmark-app .postmark-sidebar-item {
+    color: #b0b8c8 !important;
+  }
+
+  /* tableConfig 深色模式 */
+  .table-config-wrapper {
+    background: #1a1d2e !important;
+  }
+
+  .table-config-wrapper .table-config-cell {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  .table-config-wrapper .table-config-header {
+    background: #2e3350 !important;
+    color: #e8ecf4 !important;
+  }
+
+  /* travelBadge 深色模式 */
+  .travel-badge-app {
+    background: #1a1d2e !important;
+  }
+
+  .travel-badge-app .travel-badge-header {
+    background: #1e2235 !important;
+    color: #e8ecf4 !important;
+  }
+
+  .travel-badge-app .travel-badge-panel {
+    background: #1e2235 !important;
+    color: #b0b8c8 !important;
+  }
+
+  .travel-badge-app .travel-badge-canvas {
+    background: #1a1d2e !important;
+  }
+
+  .travel-badge-app .travel-badge-label {
+    color: #8892a4 !important;
+  }
+
+  .travel-badge-app .travel-badge-input {
+    background: #1a1d2e !important;
+    color: #b0b8c8 !important;
+    border-color: #2e3350 !important;
+  }
+  /* imgWatermark 深色模式 */
+  [class*=imgWatermark] [class*=container],
+  [class*=imgWatermark] [class*=sidebar],
+  [class*=imgWatermark] [class*=sidebarFooter],
+  [class*=imgWatermark] [class*=preview],
+  [class*=imgWatermark] [class*=mobileTabs],
+  [class*=imgWatermark] [class*=mobileTab] {
+    background: #1a1d2e !important;
+  }
+
+  [class*=imgWatermark] [class*=fieldLabel] {
+    color: #b0b8c8 !important;
+  }
+
+  [class*=imgWatermark] [class*=fieldValue] {
+    color: #b0b8c8 !important;
+    background: #1e2235 !important;
+    box-shadow: inset 1px 1px 3px #12141f, inset -1px -1px 3px #28304a !important;
+  }
+
+  [class*=imgWatermark] [class*=uploadZone] {
+    box-shadow: -5px -5px 14px #28304a, 5px 5px 14px #12141f !important;
+    border-color: rgba(107, 114, 128, 0.5) !important;
+  }
+
+  [class*=imgWatermark] [class*=uploadIcon],
+  [class*=imgWatermark] [class*=uploadText] {
+    color: #6b7280 !important;
+  }
+
+  [class*=imgWatermark] [class*=downloadBtn] {
+    color: #b0b8c8 !important;
+    background: #1a1d2e !important;
+    box-shadow: -5px -5px 14px #28304a, 5px 5px 14px #12141f !important;
+  }
+
+  [class*=imgWatermark] [class*=emptyTip] {
+    color: #6b7280 !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8) !important;
+  }
+
+  [class*=imgWatermark] [class*=sidebar] {
+    border-right-color: rgba(46, 51, 80, 0.4) !important;
+  }
+
+  [class*=imgWatermark] [class*=sidebarFooter] {
+    border-top-color: rgba(46, 51, 80, 0.35) !important;
+  }
+  /* 通用滚动条 */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+  }
+}
+
+/* ===== 原有全局样式（保持不变） ===== */
 * {
   -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 设置点击高亮的颜色为透明 */
-  -webkit-tap-highlight-color: transparent; /* 其他浏览器也可以添加一行兼容代码 */
-  outline: none; /* 去掉点击元素的默认轮廓线 */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 body,
 html {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, Courier New, monospace;
-  background: @color-bg !important;
+  font-family: var(--font-family-mono);
+  background: var(--color-bg) !important;
 }
 
 body {
@@ -22,7 +958,7 @@ body {
 }
 
 .ant-card {
-  background: @color-bg !important;
+  background: var(--color-bg) !important;
 }
 
 body,
@@ -31,10 +967,8 @@ p,
 select,
 textarea,
 button {
-  font-family: Inter, 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: var(--font-family-base);
   letter-spacing: -0.2px;
-  // font-size: @ruler;
 }
 
 button,
@@ -44,7 +978,6 @@ textarea,
   outline: 0;
   font-size: @ruler;
   padding: 5px 10px;
-  // text-shadow: 1px 1px 0 @color-white !important;
 }
 
 label {
@@ -55,14 +988,14 @@ label {
 
 textarea,
 .ant-input {
-  background-color: @color-bg !important;
+  background-color: var(--color-bg) !important;
   margin-right: @ruler / 2;
-  box-shadow: inset 2px 2px 5px @color-shadow, inset -5px -5px 10px @color-white !important;
+  box-shadow: var(--shadow-inset-deep) !important;
   width: 100%;
   box-sizing: border-box;
   transition: shadow 0.2s ease-in-out !important;
   appearance: none;
-  color: #61677c !important;
+  color: var(--color-text) !important;
 
   &:hover {
     border: none;
@@ -70,8 +1003,7 @@ textarea,
 
   &:focus {
     border: none !important;
-    box-shadow: inset 1px 1px 2px @color-shadow,
-      inset -1px -1px 2px @color-white !important;
+    box-shadow: var(--shadow-inset) !important;
   }
 }
 
@@ -90,33 +1022,32 @@ h6 {
 }
 
 .shadow_not_active {
-  color: #61677c;
+  color: var(--color-text);
   font-weight: bold;
-  box-shadow: -5px -5px 20px @color-white, 5px 5px 20px @color-shadow !important;
+  box-shadow: var(--shadow-md) !important;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   font-weight: 600;
-  border-radius: 3px !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 button,
 .shadow,
 .circle {
   flex-shrink: 0;
-  color: #61677c;
+  color: var(--color-text);
   font-weight: bold;
-  box-shadow: -5px -5px 10px @color-white, 5px 5px 10px @color-shadow !important;
+  box-shadow: var(--shadow-sm) !important;
   transition: shadow 0.2s ease-in-out;
   cursor: pointer;
   font-weight: 600;
 
   &:hover {
-    box-shadow: -2px -2px 5px @color-white, 2px 2px 5px @color-shadow !important;
+    box-shadow: -2px -2px 5px var(--color-shadow-light), 2px 2px 5px var(--color-shadow) !important;
   }
 
   &:active {
-    box-shadow: inset 1px 1px 2px @color-shadow,
-      inset -1px -1px 2px @color-white !important;
+    box-shadow: var(--shadow-inset) !important;
   }
 
   .icon {
@@ -142,7 +1073,7 @@ button,
   &.red {
     display: block;
     width: 100%;
-    color: @color-red;
+    color: var(--color-red);
   }
 
   img {
@@ -150,16 +1081,14 @@ button,
   }
 }
 
-
- .ant-picker-datetime-panel {
-      button {
-          box-shadow: none !important;
-      }
-    }
-
+.ant-picker-datetime-panel {
+  button {
+    box-shadow: none !important;
+  }
+}
 
 .ant-card {
-  background-color: @color-bg;
+  background-color: var(--color-bg);
   margin: 3px;
 
   .ant-card-head {
@@ -193,14 +1122,11 @@ button,
 
 ::-webkit-scrollbar {
   width: 6px;
-  /*高宽分别对应横竖滚动条的尺寸*/
   height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  /*滚动条里面小方块*/
-
   background: rgba(126, 126, 126, 0.322);
   transition: all 0.5s;
 }
@@ -210,7 +1136,6 @@ button,
 }
 
 ::-webkit-scrollbar-track {
-  /*滚动条里面轨道*/
   border-radius: 4px;
   border: none;
   background: transparent;
@@ -232,7 +1157,7 @@ button,
   line-height: 40px;
   height: 40px;
   border-radius: 100% !important;
-  background-color: @color-bg;
+  background-color: var(--color-bg);
   padding: 0;
   text-align: center;
   margin-right: 5px;
@@ -245,11 +1170,15 @@ canvas {
 
 @media screen and (max-width: 500px) {
   .shadow_not_active {
-    box-shadow: -2px -2px 10px @color-white, 2px 2px 10px @color-shadow !important;
+    box-shadow: -2px -2px 10px var(--color-shadow-light), 2px 2px 10px var(--color-shadow) !important;
   }
 
   .shadow,
   .circle {
-    box-shadow: -2px -2px 10px @color-white, 2px 2px 10px @color-shadow !important;
+    box-shadow: -2px -2px 10px var(--color-shadow-light), 2px 2px 10px var(--color-shadow) !important;
   }
 }
+
+
+
+

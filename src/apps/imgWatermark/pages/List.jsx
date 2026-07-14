@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@components/Header';
+import Container from '@components/Container';
+import Fixed from '@components/Fixed';
 import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 import { Input, Slider, Tooltip, ColorPicker } from 'antd';
@@ -131,144 +133,150 @@ function List() {
   };
 
   return (
-    <div className={style.container}>
-      <Header name="图片文字水印" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />
+    <>
+      <Container header={<Header name="图片文字水印" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+        main={
+          <div>
+            {/* img 用 display:none 隐藏，仅作 drawImage 数据源 */}
+            <img ref={imgRef} src={imgSrc} alt="" style={{ display: 'none' }} />
+
+            {/* 移动端 Tab 切换栏 */}
+            <div className={style.mobileTabs}>
+              <button
+                className={`${style.mobileTab} ${mobileTab === 'settings' ? style.mobileTabActive : ''}`}
+                onClick={() => setMobileTab('settings')}
+              >
+                参数设置
+              </button>
+              <button
+                className={`${style.mobileTab} ${mobileTab === 'preview' ? style.mobileTabActive : ''}`}
+                onClick={() => { setMobileTab('preview'); }}
+              >
+                预览效果
+                {hasImage && <span className={style.mobileTabDot} />}
+              </button>
+            </div>
+
+            <div className={style.layout}>
+              {/* ── 左侧控制面板 ── */}
+              <aside className={`${style.sidebar} ${mobileTab === 'preview' ? style.sidebarHidden : ''}`}>
+                <div className={style.panelScroll}>
+
+                  {/* 上传区域 */}
+                  <div
+                    className={`${style.uploadZone} ${isDragOver ? style.dragOver : ''} ${imgSrc ? style.uploadZoneWithImg : ''}`}
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                    onDragLeave={() => setIsDragOver(false)}
+                    onDrop={handleDrop}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileSelect(e.target.files[0])}
+                    />
+                    {imgSrc ? (
+                      <>
+                        <img src={imgSrc} className={style.thumbImg} alt="缩略图" />
+                        <div className={style.thumbOverlay}>
+                          <PictureOutlined />
+                          点击更换图片
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <PictureOutlined className={style.uploadIcon} />
+                        <span className={style.uploadText}>点击或拖拽图片到这里</span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* 水印文字 */}
+                  <div className={style.fieldGroup}>
+                    <label className={style.fieldLabel}>水印文字</label>
+                    <Input
+                      placeholder="请输入水印文字"
+                      value={watermarkText}
+                      onChange={(e) => setWatermarkText(e.target.value)}
+                    />
+                  </div>
+
+                  {/* 旋转角度 */}
+                  <div className={style.fieldGroup}>
+                    <label className={style.fieldLabel}>
+                      旋转角度
+                      <span className={style.fieldValue}>{rotate}°</span>
+                    </label>
+                    <Slider value={rotate} min={0} max={360} onChange={setRotate} />
+                  </div>
+
+                  {/* 字体大小 */}
+                  <div className={style.fieldGroup}>
+                    <label className={style.fieldLabel}>
+                      字体大小
+                      <span className={style.fieldValue}>{fontSize}px</span>
+                    </label>
+                    <Slider value={fontSize} min={10} max={80} onChange={setFontSize} />
+                  </div>
+
+                  {/* 水印间距 */}
+                  <div className={style.fieldGroup}>
+                    <label className={style.fieldLabel}>
+                      水印间距
+                      <span className={style.fieldValue}>{spacing}</span>
+                    </label>
+                    <Slider value={spacing} min={0} max={200} onChange={setSpacing} />
+                  </div>
+
+                  {/* 水印颜色：antd ColorPicker 弹出模式，不撑开布局 */}
+                  <div className={style.fieldGroup}>
+                    <label className={style.fieldLabel}>水印颜色</label>
+                    <ColorPicker
+                      value={color}
+                      onChange={handleColorChange}
+                      showText
+                      format="rgb"
+                    />
+                  </div>
+                </div>
+
+                {/* 下载按钮固定底部 */}
+                <div className={style.sidebarFooter}>
+                  <Tooltip title={!hasImage ? '请先上传图片' : ''}>
+                    <button
+                      className={style.downloadBtn}
+                      onClick={handleDownload}
+                      disabled={!hasImage}
+                    >
+                      <ArrowDownOutlined />
+                      下载处理后的图片
+                    </button>
+                  </Tooltip>
+                </div>
+              </aside>
+
+              {/* ── 右侧预览区域 ── */}
+              <main className={`${style.preview} ${mobileTab === 'settings' ? style.previewHidden : ''}`}>
+                {!hasImage && (
+                  <div className={style.emptyTip}>
+                    <PictureOutlined className={style.emptyIcon} />
+                    <span>上传图片后，实时预览水印效果</span>
+                  </div>
+                )}
+                <div className={style.imageWrap} style={{ display: hasImage ? 'inline-block' : 'none' }}>
+                  <canvas ref={canvasRef} className={style.previewCanvas} />
+                </div>
+              </main>
+            </div>
+          </div>
+        }
+      />
+
       <Fixed />
 
-      {/* img 用 display:none 隐藏，仅作 drawImage 数据源 */}
-      <img ref={imgRef} src={imgSrc} alt="" style={{ display: 'none' }} />
-
-      {/* 移动端 Tab 切换栏 */}
-      <div className={style.mobileTabs}>
-        <button
-          className={`${style.mobileTab} ${mobileTab === 'settings' ? style.mobileTabActive : ''}`}
-          onClick={() => setMobileTab('settings')}
-        >
-          参数设置
-        </button>
-        <button
-          className={`${style.mobileTab} ${mobileTab === 'preview' ? style.mobileTabActive : ''}`}
-          onClick={() => { setMobileTab('preview'); }}
-        >
-          预览效果
-          {hasImage && <span className={style.mobileTabDot} />}
-        </button>
-      </div>
-
-      <div className={style.layout}>
-        {/* ── 左侧控制面板 ── */}
-        <aside className={`${style.sidebar} ${mobileTab === 'preview' ? style.sidebarHidden : ''}`}>
-          <div className={style.panelScroll}>
-
-            {/* 上传区域 */}
-            <div
-              className={`${style.uploadZone} ${isDragOver ? style.dragOver : ''} ${imgSrc ? style.uploadZoneWithImg : ''}`}
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-              onDragLeave={() => setIsDragOver(false)}
-              onDrop={handleDrop}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={(e) => handleFileSelect(e.target.files[0])}
-              />
-              {imgSrc ? (
-                <>
-                  <img src={imgSrc} className={style.thumbImg} alt="缩略图" />
-                  <div className={style.thumbOverlay}>
-                    <PictureOutlined />
-                    点击更换图片
-                  </div>
-                </>
-              ) : (
-                <>
-                  <PictureOutlined className={style.uploadIcon} />
-                  <span className={style.uploadText}>点击或拖拽图片到这里</span>
-                </>
-              )}
-            </div>
-
-            {/* 水印文字 */}
-            <div className={style.fieldGroup}>
-              <label className={style.fieldLabel}>水印文字</label>
-              <Input
-                placeholder="请输入水印文字"
-                value={watermarkText}
-                onChange={(e) => setWatermarkText(e.target.value)}
-              />
-            </div>
-
-            {/* 旋转角度 */}
-            <div className={style.fieldGroup}>
-              <label className={style.fieldLabel}>
-                旋转角度
-                <span className={style.fieldValue}>{rotate}°</span>
-              </label>
-              <Slider value={rotate} min={0} max={360} onChange={setRotate} />
-            </div>
-
-            {/* 字体大小 */}
-            <div className={style.fieldGroup}>
-              <label className={style.fieldLabel}>
-                字体大小
-                <span className={style.fieldValue}>{fontSize}px</span>
-              </label>
-              <Slider value={fontSize} min={10} max={80} onChange={setFontSize} />
-            </div>
-
-            {/* 水印间距 */}
-            <div className={style.fieldGroup}>
-              <label className={style.fieldLabel}>
-                水印间距
-                <span className={style.fieldValue}>{spacing}</span>
-              </label>
-              <Slider value={spacing} min={0} max={200} onChange={setSpacing} />
-            </div>
-
-            {/* 水印颜色：antd ColorPicker 弹出模式，不撑开布局 */}
-            <div className={style.fieldGroup}>
-              <label className={style.fieldLabel}>水印颜色</label>
-              <ColorPicker
-                value={color}
-                onChange={handleColorChange}
-                showText
-                format="rgb"
-              />
-            </div>
-          </div>
-
-          {/* 下载按钮固定底部 */}
-          <div className={style.sidebarFooter}>
-            <Tooltip title={!hasImage ? '请先上传图片' : ''}>
-              <button
-                className={style.downloadBtn}
-                onClick={handleDownload}
-                disabled={!hasImage}
-              >
-                <ArrowDownOutlined />
-                下载处理后的图片
-              </button>
-            </Tooltip>
-          </div>
-        </aside>
-
-        {/* ── 右侧预览区域 ── */}
-        <main className={`${style.preview} ${mobileTab === 'settings' ? style.previewHidden : ''}`}>
-          {!hasImage && (
-            <div className={style.emptyTip}>
-              <PictureOutlined className={style.emptyIcon} />
-              <span>上传图片后，实时预览水印效果</span>
-            </div>
-          )}
-          <div className={style.imageWrap} style={{ display: hasImage ? 'inline-block' : 'none' }}>
-            <canvas ref={canvasRef} className={style.previewCanvas} />
-          </div>
-        </main>
-      </div>
-    </div>
+    </>
   );
 }
 

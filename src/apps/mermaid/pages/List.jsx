@@ -12,8 +12,6 @@ import style from './index.module.less';
 
 const isPc = IsPC();
 
-console.log(isPc)
-
 /**
  * Mermaid 图表实时渲染器
  * 页面外壳（头部栏 + 全高分栏布局）自行实现，未使用共享 Container/Header/Fixed。

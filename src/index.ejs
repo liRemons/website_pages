@@ -1,7 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
+  <script>
+    // 主题初始化：防止首屏闪烁（FOUC），在 DOM 解析前同步设置 data-theme
+    (function() {
+      try {
+        var mode = localStorage.getItem("app-theme-mode") || "system";
+        var theme;
+        if (mode === "system") {
+          theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } else {
+          theme = mode;
+        }
+        document.documentElement.dataset.theme = theme;
+      } catch(e) {}
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,8 +37,6 @@
       s.parentNode.insertBefore(hm, s);
     })();
   </script>
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6490080027264677"
-     crossorigin="anonymous"></script> -->
 
   <title>
     <%= title %>
@@ -65,7 +78,6 @@
     <%} %>
 
       <script>
-        // 查找现有 icon 标签（兼容 rel="icon" 和 rel="shortcut icon"）
         const link = document.querySelector("link[rel*='icon']");
         link.href = window.location.origin += ':3008/upload/info/favicon.ico'
       </script>

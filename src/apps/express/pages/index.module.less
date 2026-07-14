@@ -1,6 +1,7 @@
-.card {
+﻿@import (reference) "../../../assets/css/variables.css";
 
-  box-shadow: -2px -2px 10px #fff, 2px 2px 10px #babecc;
+.card {
+  box-shadow: -2px -2px 10px var(--color-shadow-light, #fff), 2px 2px 10px var(--color-shadow, #babecc);
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 4px;
@@ -8,53 +9,47 @@
   align-items: center;
   position: relative;
   width: 100%;
+  background: var(--color-bg);
+
   .card_main {
-     width: calc(100% - 30px)
-   }
+    width: calc(100% - 30px);
+  }
 
   .handle {
-
     right: 10px;
-
     top: 10px;
-
     position: absolute;
-
   }
 
   .check {
-
     width: 30px;
-
   }
 
   .code {
     font-size: 20px;
     font-weight: bold;
-    color: #222;
+    color: var(--color-text-primary, #222);
     margin-bottom: 6px;
   }
 
   .add {
     font-size: 14px;
     font-weight: bold;
-    color: #333;
+    color: var(--color-text, #333);
     margin-bottom: 10px;
   }
 
   .desc {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-light, #999);
   }
 }
 
 :global {
-
   .ant-checkbox-inner, .ant-checkbox-checked::after {
     border-radius: 50% !important;
   }
   .ant-checkbox-group {
     width: 100%;
   }
-
 }

@@ -1,3 +1,5 @@
+﻿@import (reference) "../../../assets/css/variables.css";
+
 .center {
   display: flex;
   justify-content: space-around;
@@ -13,14 +15,14 @@
       justify-content: space-between;
 
       .name {
-        color: #000;
+        color: var(--color-text-primary, #000);
         margin-bottom: 5px;
         font-size: 18px;
         font-weight: bold;
       }
 
       .introduce {
-        color: #ccc;
+        color: var(--color-text-light, #ccc);
         font-size: 14px;
       }
     }

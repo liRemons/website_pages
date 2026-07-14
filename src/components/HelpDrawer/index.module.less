@@ -1,17 +1,19 @@
+﻿@import (reference) "../../assets/css/variables.css";
+
 .drawerCloseBtn {
   width: 28px;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   cursor: pointer;
   font-size: 14px;
-  color: #595959;
+  color: var(--color-text-secondary, #595959);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #f0f0f0;
-    color: #1d1d1d;
+    background-color: var(--color-border-light, #f0f0f0);
+    color: var(--color-text-heading, #1d1d1d);
   }
 }

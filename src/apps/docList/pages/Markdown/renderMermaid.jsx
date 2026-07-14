@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Modal, Button, message, Tooltip } from 'antd';
+﻿import React, { useState, useRef, useEffect, useCallback } from "react";
+import { createRoot } from "react-dom/client";
+import { Modal, Button, message, Tooltip } from "antd";
 import {
   PlusOutlined,
   MinusOutlined,
@@ -10,60 +10,19 @@ import {
   DownOutlined,
   FullscreenOutlined,
   FullscreenExitOutlined,
-  LoadingOutlined
-} from '@ant-design/icons';
-import { copy, IsPC } from 'methods-r';
-import Panzoom from '@panzoom/panzoom';
-import useLoadMermaid from '@/hooks/useLoadMermaid';
-
-
-// ==================== Mermaid 工具栏组件 ====================
-function MermaidToolbar({ onAction, isCollapsed, isFullscreen }) {
-  const shouldEnablePanzoom = isFullscreen || !isCollapsed;
-  const isPC = IsPC();
-  const buttons = [
-    { icon: <PlusOutlined />, title: '放大', action: 'zoomIn', isShow: !!shouldEnablePanzoom },
-    { icon: <MinusOutlined />, title: '缩小', action: 'zoomOut', isShow: !!shouldEnablePanzoom },
-    { icon: <ReloadOutlined />, title: '重置', action: 'reset' },
-    { icon: <CodeOutlined />, title: '查看源码', action: 'viewSource', isShow: !isFullscreen },
-    {
-      icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
-      title: isFullscreen ? '退出全屏' : '全屏',
-      action: 'toggleFullscreen',
-    },
-    {
-      icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
-      title: isCollapsed ? '展开' : '收起',
-      action: 'toggleCollapse',
-      isShow: !isFullscreen
-    },
-  ].filter(item => item.isShow !== false);
-
-  return (
-    <div className="mermaid-toolbar">
-      {buttons.map((btn) => (
-        <Tooltip title={btn.title} key={btn.action}>
-          <button
-            className={`circle${isPC ? '' : ' circle-mobile'}`}
-            title={btn.title}
-            onClick={() => onAction(btn.action)}
-          >
-            {btn.icon}
-          </button>
-        </Tooltip>
-      ))}
-    </div>
-  );
-}
+} from "@ant-design/icons";
+import { copy, IsPC } from "methods-r";
+import { ThemeProvider } from "@/hooks/useTheme";
+import MermaidRenderer from "@/components/MermaidRenderer";
 
 // ==================== 源码弹窗组件 ====================
 function SourceModal({ code, open, onClose }) {
   const handleCopy = () => {
-    if (typeof copy === 'function') {
+    if (typeof copy === "function") {
       copy(code);
-      message.success('复制成功');
+      message.success("复制成功");
     } else {
-      navigator.clipboard.writeText(code).then(() => message.success('复制成功'));
+      navigator.clipboard.writeText(code).then(() => message.success("复制成功"));
     }
   };
 
@@ -88,91 +47,17 @@ function SourceModal({ code, open, onClose }) {
 }
 
 // ==================== 单个 Mermaid 图表组件 ====================
+// 基于 MermaidRenderer 封装，补充折叠/展开和源码查看功能
 function MermaidBlock({ source }) {
-  const { mermaid, loading } = useLoadMermaid()
-  const [svg, setSvg] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [showSource, setShowSource] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [rendering, setRendering] = useState(false);
 
   const wrapperRef = useRef(null);
-  const contentRef = useRef(null);
-  const fullscreenRef = useRef(null);
-  const panzoomRef = useRef(null);
+  const rendererRef = useRef(null);
+  const [panzoomKey, setPanzoomKey] = useState(0);
 
-  // 渲染 Mermaid SVG
-  useEffect(() => {
-    if (!mermaid) return;
-    setRendering(true);
-    // 初始化 Mermaid
-    mermaid.initialize({ startOnLoad: false, theme: 'default' });
-    const id = `mermaid-${Math.random().toString(36).substring(2)}`;
-    mermaid.render(id, source).then(({ svg }) => {
-      setSvg(svg);
-    }).catch((err) => {
-      console.error('Mermaid render error:', err);
-      setSvg(`<span style="color:red">图表渲染失败: ${err.message}</span>`);
-    }).finally(() => {
-      setRendering(false);
-    });
-  }, [source, mermaid]);
-
-  // 初始化 Panzoom（全屏状态变化时重建，以适配新的容器尺寸）
-  useEffect(() => {
-    const shouldEnablePanzoom = isFullscreen || !isCollapsed;
-    const contentEl = contentRef.current;
-    const fullscreenEl = fullscreenRef.current;
-    if (panzoomRef.current) {
-      panzoomRef.current?.destroy?.();
-      panzoomRef.current = null;
-      if (contentEl) {
-        contentEl.style.transform = '';
-        contentEl.style.touchAction = '';
-      }
-
-      if (fullscreenEl) {
-        fullscreenEl.style.transform = '';
-        fullscreenEl.style.touchAction = '';
-      }
-    }
-
-    if (!shouldEnablePanzoom) {
-      return; // 直接返回，不进行后续初始化
-    }
-
-    panzoomRef.current = Panzoom(contentRef.current, {
-      maxScale: 5,
-      minScale: 0.1,
-      startScale: 1,
-      contain: false,
-      smoothScroll: true,
-    });
-
-
-    // 全屏时滚轮事件绑定到全屏元素，否则绑定到 wrapper
-    const wheelTarget = (isFullscreen || !isCollapsed) ? wrapperRef.current : null;
-
-    const handleWheel = panzoomRef.current?.zoomWithWheel;
-    wheelTarget?.addEventListener('wheel', handleWheel);
-
-    return () => {
-      wheelTarget?.removeEventListener('wheel', handleWheel);
-      panzoomRef.current?.destroy?.();
-      panzoomRef.current = null;
-      if (contentEl) {
-        contentEl.style.transform = '';
-        contentEl.style.touchAction = '';
-      }
-
-      if (fullscreenEl) {
-        fullscreenEl.style.transform = '';
-        fullscreenEl.style.touchAction = '';
-      }
-    };
-  }, [svg, isFullscreen, isCollapsed]);
-
-  // 监听浏览器原生全屏状态变化
+  // 监听原生全屏状态
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
@@ -180,37 +65,25 @@ function MermaidBlock({ source }) {
         setIsCollapsed(true);
       }
     };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  // 动作处理
   const handleAction = useCallback((action) => {
-    const pz = panzoomRef.current;
     switch (action) {
-      case 'zoomIn':
-        pz?.zoomIn();
-        break;
-      case 'zoomOut':
-        pz?.zoomOut();
-        break;
-      case 'reset':
-        pz?.reset();
-        break;
-      case 'viewSource':
+      case "viewSource":
         setShowSource(true);
         break;
-      case 'toggleCollapse':
-        setIsCollapsed((prev) => !prev);
+      case "toggleCollapse":
+        setIsCollapsed((prev) => {
+          const next = !prev;
+          if (!next) setPanzoomKey((k) => k + 1);
+          return next;
+        });
         break;
-      case 'toggleFullscreen': {
+      case "toggleFullscreen": {
         const el = wrapperRef.current;
         if (!el) return;
-        pz?.setOptions({
-          scale: 1
-        });
         if (document.fullscreenElement) {
           document.exitFullscreen();
           setIsCollapsed(true);
@@ -225,66 +98,91 @@ function MermaidBlock({ source }) {
     }
   }, []);
 
-  const isMove = !isCollapsed || isFullscreen;
+  const isPC = IsPC();
+  const shouldEnablePanzoom = isFullscreen || !isCollapsed;
 
-  if (loading) {
-    return (
-      <div className="mermaid-loading">
-        <span> 图表加载中 <LoadingOutlined /></span>
-      </div>
-    );
-  }
+  const toolbarButtons = [
+    { icon: <PlusOutlined />, title: "放大", action: "zoomIn", isShow: !!shouldEnablePanzoom },
+    { icon: <MinusOutlined />, title: "缩小", action: "zoomOut", isShow: !!shouldEnablePanzoom },
+    { icon: <ReloadOutlined />, title: "重置", action: "reset" },
+    { icon: <CodeOutlined />, title: "查看源码", action: "viewSource", isShow: !isFullscreen },
+    {
+      icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
+      title: isFullscreen ? "退出全屏" : "全屏",
+      action: "toggleFullscreen",
+    },
+    {
+      icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
+      title: isCollapsed ? "展开" : "收起",
+      action: "toggleCollapse",
+      isShow: !isFullscreen,
+    },
+  ].filter((item) => item.isShow !== false);
 
   return (
     <div
       ref={wrapperRef}
-      className={`mermaid-wrapper${isCollapsed ? ' mermaid-collapsed' : ''}`}
-      style={{ position: 'relative' }}
+      className={`mermaid-wrapper${isCollapsed ? " mermaid-collapsed" : ""}`}
+      style={{ position: "relative" }}
     >
-      <MermaidToolbar
-        onAction={handleAction}
-        isCollapsed={isCollapsed}
-        isFullscreen={isFullscreen}
-      />
+      <div className="mermaid-toolbar">
+        {toolbarButtons.map((btn) => (
+          <Tooltip title={btn.title} key={btn.action}>
+            <button
+              className={`circle${isPC ? "" : " circle-mobile"}`}
+              title={btn.title}
+              onClick={() => {
+                if (["viewSource", "toggleCollapse", "toggleFullscreen"].includes(btn.action)) {
+                  handleAction(btn.action);
+                } else if (rendererRef.current?.handleAction) {
+                  rendererRef.current.handleAction(btn.action);
+                }
+              }}
+            >
+              {btn.icon}
+            </button>
+          </Tooltip>
+        ))}
+      </div>
+
       <div
         className="mermaid-fullscreen-target"
-        ref={fullscreenRef}
-        style={{ width: '100%', height: '100%', background: '#f8f9fa' }}
+        style={{ width: "100%", height: "100%", background: "var(--color-bg-card, #f8f9fa)" }}
       >
-        <div
-          ref={contentRef}
-          className={`mermaid-content ${isMove ? 'move' : 'disabled-move'}`}
-          dangerouslySetInnerHTML={{ __html: svg }}
+        <MermaidRenderer
+          key={panzoomKey}
+          source={source}
+          showToolbar={false}
+          enablePanzoom={shouldEnablePanzoom}
+          minHeight={0}
+          ref={rendererRef}
         />
       </div>
-      <SourceModal
-        code={source}
-        open={showSource}
-        onClose={() => setShowSource(false)}
-      />
+
+      <SourceModal code={source} open={showSource} onClose={() => setShowSource(false)} />
     </div>
   );
 }
 
 // ==================== 主入口函数 ====================
 async function renderMermaidWithControls() {
-  const blocks = document.querySelectorAll('code.language-mermaid');
+  const blocks = document.querySelectorAll("code.language-mermaid");
 
   for (const block of blocks) {
     const pre = block.parentElement;
     const source = block.textContent.trim();
 
-    // 创建挂载容器
-    const container = document.createElement('div');
-    container.className = 'mermaid-react-root';
+    const container = document.createElement("div");
+    container.className = "mermaid-react-root";
     pre.replaceWith(container);
 
-    // 使用 React 渲染
     const root = createRoot(container);
 
     root.render(
       <React.StrictMode>
-        <MermaidBlock source={source} />
+        <ThemeProvider>
+          <MermaidBlock source={source} />
+        </ThemeProvider>
       </React.StrictMode>
     );
   }
