@@ -34,7 +34,7 @@ const App = () => {
   const drawerDragStartRef = useRef(null);
 
   // 主题管理
-  const { themeMode, setThemeMode, theme, isDark } = useTheme();
+  const { theme, isDark } = useTheme();
 
   // 管理员 mock（生产环境替换为真实鉴权）
   const [isAdmin, setIsAdmin] = useState(false);
@@ -349,7 +349,7 @@ const App = () => {
         }}
       >
         {/* 全局顶部栏（仅 PC 端显示） */}
-        {!isMobile && <AppTopBar theme={theme} themeMode={themeMode} onThemeModeChange={setThemeMode} isAdmin={isAdmin} onToggleAdmin={setIsAdmin} />}
+        {!isMobile && <AppTopBar theme={theme} isAdmin={isAdmin} onToggleAdmin={setIsAdmin} />}
 
         {/* 主内容区（顶部栏下方） */}
         <div className={`app-main ${isMobile ? 'app-main--mobile' : 'app-main--desktop'}`}>
@@ -358,8 +358,6 @@ const App = () => {
         {isMobile && (
           <MobileHeader
             theme={theme}
-            themeMode={themeMode}
-            onThemeModeChange={setThemeMode}
             canvasBackground={canvasBackground}
             onCanvasBackgroundChange={setCanvasBackground}
             isExporting={isExporting}
