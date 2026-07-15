@@ -115,7 +115,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           isMinimize && isCollapsed && !isFullscreen ? 'mermaid-mini' : ''
         )
       }
-      onClick={isMinimize && setIsMinimize((prev) => !prev)}
+      onClick={isMinimize && isCollapsed && !isFullscreen && setIsMinimize((prev) => !prev)}
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
