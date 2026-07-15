@@ -18,6 +18,7 @@ function List() {
   useEffect(() => {
     const vditor = new Vditor('markdown', {
       height: 'calc(100% - 40px)',
+      cdn: 'https://registry.npmmirror.com/vditor/3.11.2/files',
       width: '100%',
       resize: {
         enable: true
