@@ -133,7 +133,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           {[
             {
               isShow: showSourceView && isCollapsed && !isFullscreen,
-              icon: isMinimize ? <ExportOutlined /> : <ImportOutlined />,
+              icon: isMinimize ? <ImportOutlined /> : <ExportOutlined /> ,
               tooltip: isMinimize ? '缩略图' : '最小化',
               onClick: () => setIsMinimize((prev) => !prev),
               className: 'minimize-btn',
