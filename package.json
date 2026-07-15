@@ -61,6 +61,7 @@
     "copy-to-clipboard": "^4.0.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.20",
+    "driver.js": "^1.7.0",
     "express": "^5.2.1",
     "json5": "^2.2.3",
     "jsqr": "^1.4.0",

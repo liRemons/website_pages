@@ -18,6 +18,10 @@ import '@assets/css/index.global.less';
 import classNames from "classnames/bind";
 import { IsPC } from 'methods-r';
 import mermaidSvg from '../../assets/svg/mermaid.svg'
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+
+const driverKey = 'docList-mermaid-driver'
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
@@ -34,6 +38,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   },
   ref
 ) {
+
   const titleMatch = source.match(/---\s*\n\s*title:\s*(.+)\s*\n\s*---/);
   const title = titleMatch ? titleMatch[1].trim() : 'mermaid 图表';
   const { isDark } = useTheme();
@@ -52,6 +57,29 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
     enabled: isPanzoomActive && !!svg,
     svg, isFullscreen,
   });
+
+  useEffect(() => {
+    if (svg && !localStorage[driverKey]) {
+      localStorage[driverKey] = 1;
+      const driverObj = driver({
+        nextBtnText: '下一步',
+        prevBtnText: '上一步',
+        doneBtnText: '我知道了',
+        showProgress: true,
+        allowClose: false,
+        progressText: "第 {{current}} 步，共 {{total}} 步",
+        steps: [
+          { element: '.mermaid-react-root .mermaid-mini', popover: { title: 'mermaid', description: '恭喜您解锁 Mermaid 渲染图表' } },
+          { element: '.mermaid-react-root .mermaid-mini .mermaid-minimize-btn', popover: { title: '缩略图', description: '点击此处按钮可查看缩略图' } },
+          { element: '.mermaid-react-root .mermaid-mini .mermaid-fullscreen-btn', popover: { title: '全屏', description: '点击此处按钮可切换为全屏展示' } },
+          { element: '.mermaid-react-root .mermaid-mini .mermaid-showcode-btn', popover: { title: '源码', description: '点击此处按钮查看源码弹窗' } },
+          { element: '.mermaid-react-root .mermaid-mini .mermaid-collapsed-btn', popover: { title: '展开', description: '点击此处按钮展开大图' } },
+        ]
+      });
+
+      driverObj.drive();
+    }
+  }, [svg])
 
   useImperativeHandle(ref, () => ({
     handleAction(action) {
@@ -104,8 +132,6 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
 
   const hasDiagram = !!svg;
 
-  console.log(isCollapsed);
-  
   return (
     <div
       ref={wrapperRef}
@@ -136,7 +162,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               icon: isMinimize ? <ExportOutlined /> : <ImportOutlined />,
               tooltip: isMinimize ? '缩略图' : '最小化',
               onClick: () => setIsMinimize((prev) => !prev),
-              className: 'minimize-btn',
+              className: 'mermaid-minimize-btn',
             },
             {
               isShow: isPanzoomActive,
@@ -164,6 +190,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
                 if (document.fullscreenElement) document.exitFullscreen();
                 else wrapperRef.current?.requestFullscreen?.();
               },
+              className: 'mermaid-fullscreen-btn',
             },
             {
               isShow: showDownload && isPanzoomActive,
@@ -176,12 +203,14 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               icon: <CodeOutlined />,
               tooltip: '查看源码',
               onClick: () => setShowSource(true),
+              className: 'mermaid-showcode-btn',
             },
             {
               isShow: showCollapse && !isFullscreen,
               icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
               tooltip: isCollapsed ? '展开' : '收起',
               onClick: () => setIsCollapsed((prev) => !prev),
+              className: 'mermaid-collapsed-btn',
             },
           ].map((item, index) => {
             if (item.isShow === false) return null;
@@ -247,6 +276,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
 // ==================== DOM 扫描入口（文档页使用） ====================
 async function renderMermaidWithControls() {
   const blocks = document.querySelectorAll("code.language-mermaid");
+
 
   for (const block of blocks) {
     const pre = block.parentElement;
