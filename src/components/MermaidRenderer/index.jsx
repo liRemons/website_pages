@@ -146,13 +146,15 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
-      <div className="mermaid-title">
-        <span className="mermaid-title-tag">
-          <img src={mermaidSvg} alt="" srcset="" />
-          <span>Mermaid</span>
-        </span>
-        {title}
-      </div>
+      {
+        showSourceView && <div className="mermaid-title">
+          <span className="mermaid-title-tag">
+            <img src={mermaidSvg} alt="" srcset="" />
+            <span>Mermaid</span>
+          </span>
+          {title}
+        </div>
+      }
       {!hasDiagram && <div className="mermaid-toolbar-loading"><LoadingOutlined /></div>}
       {hasDiagram && (
         <div className="mermaid-toolbar">
