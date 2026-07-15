@@ -6,7 +6,7 @@ import {
   FullscreenOutlined, FullscreenExitOutlined,
   DownloadOutlined, ReloadOutlined, CodeOutlined,
   UpOutlined, DownOutlined,
-  ImportOutlined, ExportOutlined
+  ImportOutlined, ExportOutlined, LoadingOutlined
 } from "@ant-design/icons";
 import { downloadSVG, downloadSVGAsPNG } from "@utils";
 import { copy } from "methods-r";
@@ -33,12 +33,15 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   },
   ref
 ) {
+  const titleMatch = source.match(/---\s*\n\s*title:\s*(.+)\s*\n\s*---/);
+  const title = titleMatch ? titleMatch[1].trim() : 'mermaid 图表';
   const { isDark } = useTheme();
+
   const { svg, error, loading } = useMermaidRender({ source, debounceMs, isDark });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [showSource, setShowSource] = useState(false);
-  const [isMinimize, setIsMinimize] = useState(false);
+  const [isMinimize, setIsMinimize] = useState(showSourceView);
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
@@ -114,6 +117,8 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
+      <div className="mermaid-title">{title}</div>
+     {!hasDiagram && <div className="mermaid-toolbar-loading"><LoadingOutlined /></div>}
       {hasDiagram && (
         <div className="mermaid-toolbar">
           {[

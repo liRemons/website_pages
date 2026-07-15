@@ -30,7 +30,7 @@ export default function Markdown(props) {
       timer = setTimeout(async () => {
         initCodeClassName();
         // DOM 更新完毕 1s 后渲染 Mermaid, 牺牲 cls 换取首屏加载速度
-        const { default: renderMermaid } = await import('./renderMermaid');
+        const { renderMermaidWithControls: renderMermaid } = await import('../../../../components/MermaidRenderer');
         await renderMermaid();
       }, 10);
     } catch (error) {
@@ -50,7 +50,7 @@ export default function Markdown(props) {
       code.classList.add(onlyId)
       preNode.insertBefore(handleDOM, preNode.querySelector('code'));
       const codeTypeDOM = <>
-        <img src="https://remons.cn:3008/upload/content/icon/code_icon.png" alt="" />
+        <img src={`https://${window.location.origin}:3008/upload/content/icon/code_icon.png`} alt="" />
         <span>{codeType}</span>
       </>
 
