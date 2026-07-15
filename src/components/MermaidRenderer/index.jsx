@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
 import { createRoot } from "react-dom/client";
-import { Dropdown, message, Modal, Button } from "antd";
+import { Dropdown, message, Modal, Button, Tooltip } from "antd";
 import {
   PlusOutlined, MinusOutlined,
   FullscreenOutlined, FullscreenExitOutlined,
@@ -16,6 +16,7 @@ import usePanzoom from "./usePanzoom";
 import style from "./index.module.less";
 import '@assets/css/index.global.less';
 import classNames from "classnames/bind";
+import { IsPC } from 'methods-r';
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
@@ -115,44 +116,76 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
       {/* 工具栏 */}
       {hasDiagram && (
         <div className="mermaid-toolbar">
-          {showSourceView && isCollapsed && !isFullscreen && <div className="circle" onClick={() => setIsMinimize((prev) => !prev)}>
-            {isMinimize ? <ExportOutlined /> : <ImportOutlined />}
-          </div>}
-          {/* 放大 / 缩小：仅在 panzoom 可用时显示 */}
-          {isPanzoomActive && (
-            <>
-              <div className="circle" onClick={() => panzoomRef.current?.zoomIn()}>
-                <PlusOutlined />
+          {[
+            {
+              isShow: showSourceView && isCollapsed && !isFullscreen,
+              icon: isMinimize ? <ExportOutlined /> : <ImportOutlined />,
+              tooltip: isMinimize ? '展开' : '最小化',
+              onClick: () => setIsMinimize((prev) => !prev),
+              className: 'minimize-btn',
+            },
+            {
+              isShow: isPanzoomActive,
+              icon: <PlusOutlined />,
+              tooltip: '放大',
+              onClick: () => panzoomRef.current?.zoomIn(),
+            },
+            {
+              isShow: isPanzoomActive,
+              icon: <MinusOutlined />,
+              tooltip: '缩小',
+              onClick: () => panzoomRef.current?.zoomOut(),
+            },
+            {
+              isShow: true,
+              icon: <ReloadOutlined />,
+              tooltip: '重置',
+              onClick: () => panzoomRef.current?.reset(),
+            },
+            {
+              isShow: true,
+              icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
+              tooltip: isFullscreen ? '退出全屏' : '全屏',
+              onClick: () => {
+                if (document.fullscreenElement) document.exitFullscreen();
+                else wrapperRef.current?.requestFullscreen?.();
+              },
+            },
+            {
+              isShow: showDownload,
+              icon: <DownloadOutlined />,
+              tooltip: '下载',
+              dropdown: downloadMenu,
+            },
+            {
+              isShow: showSourceView && !isFullscreen,
+              icon: <CodeOutlined />,
+              tooltip: '查看源码',
+              onClick: () => setShowSource(true),
+            },
+            {
+              isShow: showCollapse && !isFullscreen,
+              icon: isCollapsed ? <DownOutlined /> : <UpOutlined />,
+              tooltip: isCollapsed ? '展开' : '收起',
+              onClick: () => setIsCollapsed((prev) => !prev),
+            },
+          ].map((item, index) => {
+            if (item.isShow === false) return null;
+            const btn = item.dropdown ? (
+              <Dropdown key={index} menu={item.dropdown} trigger={["click"]}>
+                <div className={`circle${item.className ? ` ${item.className}` : ''}`}>{item.icon}</div>
+              </Dropdown>
+            ) : (
+              <div key={index} className={`circle${item.className ? ` ${item.className}` : ''}`} onClick={item.onClick}>
+                {item.icon}
               </div>
-              <div className="circle" onClick={() => panzoomRef.current?.zoomOut()}>
-                <MinusOutlined />
-              </div>
-            </>
-          )}
-          <div className="circle" onClick={() => panzoomRef.current?.reset()}>
-            <ReloadOutlined />
-          </div>
-          <div className="circle" onClick={() => {
-            if (document.fullscreenElement) document.exitFullscreen();
-            else wrapperRef.current?.requestFullscreen?.();
-          }}>
-            {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-          </div>
-          {showDownload && (
-            <Dropdown menu={downloadMenu} trigger={["click"]}>
-              <div className="circle"><DownloadOutlined /></div>
-            </Dropdown>
-          )}
-          {showSourceView && !isFullscreen && (
-            <div className="circle" onClick={() => setShowSource(true)}>
-              <CodeOutlined />
-            </div>
-          )}
-          {showCollapse && !isFullscreen && (
-            <div className="circle" onClick={() => setIsCollapsed((prev) => !prev)}>
-              {isCollapsed ? <DownOutlined /> : <UpOutlined />}
-            </div>
-          )}
+            );
+            return item.tooltip && IsPC() ? (
+              <Tooltip key={index} title={item.tooltip}>
+                {btn}
+              </Tooltip>
+            ) : btn;
+          })}
         </div>
       )}
 
