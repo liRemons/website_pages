@@ -126,9 +126,30 @@
 
   .mermaid-title {
     position: absolute;
-    line-height: 36px;
+    line-height: 34px;
     left: 10px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+
+    .mermaid-title-tag {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      border-radius: 4px;
+      background: #fff0f6;
+      color: #c41d7f;
+      margin-right: 2px;
+      line-height: 24px;
+    }
+
+    img {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      margin-right: 4px;
+      display: inline-block;
+    }
   }
 
   .mermaid-toolbar,

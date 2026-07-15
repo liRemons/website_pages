@@ -17,6 +17,7 @@ import style from "./index.module.less";
 import '@assets/css/index.global.less';
 import classNames from "classnames/bind";
 import { IsPC } from 'methods-r';
+import mermaidSvg from '../../assets/svg/mermaid.svg'
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
@@ -117,8 +118,14 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
-      <div className="mermaid-title">{title}</div>
-     {!hasDiagram && <div className="mermaid-toolbar-loading"><LoadingOutlined /></div>}
+      <div className="mermaid-title">
+        <span className="mermaid-title-tag">
+          <img src={mermaidSvg} alt="" srcset="" />
+          <span>Mermaid</span>
+        </span>
+        {title}
+      </div>
+      {!hasDiagram && <div className="mermaid-toolbar-loading"><LoadingOutlined /></div>}
       {hasDiagram && (
         <div className="mermaid-toolbar">
           {[
@@ -157,7 +164,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               },
             },
             {
-              isShow: showDownload,
+              isShow: showDownload && isPanzoomActive,
               icon: <DownloadOutlined />,
               tooltip: '下载',
               dropdown: downloadMenu,

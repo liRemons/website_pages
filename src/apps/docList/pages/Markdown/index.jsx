@@ -50,7 +50,7 @@ export default function Markdown(props) {
       code.classList.add(onlyId)
       preNode.insertBefore(handleDOM, preNode.querySelector('code'));
       const codeTypeDOM = <>
-        <img src={`https://${window.location.origin}:3008/upload/content/icon/code_icon.png`} alt="" />
+        <img src={`${window.location.origin}:3008/upload/content/icon/code_icon.png`} alt="" />
         <span>{codeType}</span>
       </>
 
