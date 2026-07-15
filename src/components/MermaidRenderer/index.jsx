@@ -59,7 +59,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   });
 
   useEffect(() => {
-    if (svg && !localStorage[driverKey]) {
+    if (svg && !localStorage[driverKey] && showSourceView) {
       localStorage[driverKey] = 1;
       const driverObj = driver({
         nextBtnText: '下一步',
