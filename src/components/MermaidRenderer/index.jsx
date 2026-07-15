@@ -104,6 +104,8 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
 
   const hasDiagram = !!svg;
 
+  console.log(isCollapsed);
+  
   return (
     <div
       ref={wrapperRef}
@@ -115,9 +117,6 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           isMinimize && isCollapsed && !isFullscreen ? 'mermaid-mini' : ''
         )
       }
-      onClick={() => {
-        isMinimize && isCollapsed && !isFullscreen && setIsMinimize((prev) => !prev)
-      }}
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
