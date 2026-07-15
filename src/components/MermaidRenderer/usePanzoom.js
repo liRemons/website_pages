@@ -29,7 +29,7 @@ export default function usePanzoom({ contentRef, wrapperRef, enabled, svg, isFul
       maxScale: 5,
       minScale: 0.1,
       startScale: 1,
-      contain: isFullscreen ? false : "outside",
+      contain: false
     });
     const wheelTarget = wrapperRef.current;
     const handleWheel = panzoomRef.current.zoomWithWheel;

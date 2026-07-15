@@ -6,6 +6,7 @@ import {
   FullscreenOutlined, FullscreenExitOutlined,
   DownloadOutlined, ReloadOutlined, CodeOutlined,
   UpOutlined, DownOutlined,
+  ImportOutlined, ExportOutlined
 } from "@ant-design/icons";
 import { downloadSVG, downloadSVGAsPNG } from "@utils";
 import { copy } from "methods-r";
@@ -14,13 +15,13 @@ import useMermaidRender from "./useMermaidRender";
 import usePanzoom from "./usePanzoom";
 import style from "./index.module.less";
 import '@assets/css/index.global.less';
+import classNames from "classnames/bind";
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
   {
     source,
     debounceMs = 300,
-    showToolbar = true,
     enablePanzoom = true,
     showDownload = true,
     showSourceView = false,
@@ -36,6 +37,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [showSource, setShowSource] = useState(false);
+  const [isMinimize, setIsMinimize] = useState(false);
 
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
@@ -100,12 +102,22 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   return (
     <div
       ref={wrapperRef}
-      className={`${showCollapse ? "mermaid-wrapper" : ""}${isCollapsed && showCollapse ? " mermaid-collapsed" : ""} ${className}`}
-      style={{ minHeight, position: "relative", height: '100%' }}
+      className={
+        classNames(
+          showCollapse ? "mermaid-wrapper" : "",
+          isCollapsed && showCollapse && !isMinimize ? " mermaid-collapsed" : "",
+          className,
+          isMinimize && isCollapsed ? 'mermaid-mini' : ''
+        )
+      }
+      style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
     >
       {/* 工具栏 */}
-      {showToolbar && hasDiagram && (
-        <div className={showCollapse ? "mermaid-toolbar" : style.toolbar}>
+      {hasDiagram && (
+        <div className="mermaid-toolbar">
+          {showSourceView && isCollapsed && !isFullscreen && <div className="circle" onClick={() => setIsMinimize((prev) => !prev)}>
+            {isMinimize ? <ExportOutlined /> : <ImportOutlined />}
+          </div>}
           {/* 放大 / 缩小：仅在 panzoom 可用时显示 */}
           {isPanzoomActive && (
             <>
@@ -204,7 +216,6 @@ async function renderMermaidWithControls() {
         <ThemeProvider>
           <MermaidRenderer
             source={source}
-            showToolbar
             enablePanzoom
             showDownload
             showSourceView
