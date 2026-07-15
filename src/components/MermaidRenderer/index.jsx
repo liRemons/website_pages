@@ -111,7 +111,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           showCollapse ? "mermaid-wrapper" : "",
           isCollapsed && showCollapse && !isMinimize ? " mermaid-collapsed" : "",
           className,
-          isMinimize && isCollapsed ? 'mermaid-mini' : ''
+          isMinimize && isCollapsed && !isFullscreen ? 'mermaid-mini' : ''
         )
       }
       style={{ minHeight: isMinimize ? 0 : minHeight, position: "relative", height: '100%' }}
@@ -142,7 +142,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               onClick: () => panzoomRef.current?.zoomOut(),
             },
             {
-              isShow: true,
+              isShow: isPanzoomActive,
               icon: <ReloadOutlined />,
               tooltip: '重置',
               onClick: () => panzoomRef.current?.reset(),
