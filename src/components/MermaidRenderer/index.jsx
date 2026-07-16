@@ -18,10 +18,10 @@ import '@assets/css/index.global.less';
 import classNames from "classnames/bind";
 import { IsPC } from 'methods-r';
 import mermaidSvg from '../../assets/svg/mermaid.svg'
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
+import driverRender from "../../utils/driver";
 
-const driverKey = 'docList-mermaid-driver'
+const mermaidDriverKey = 'docList-mermaid-driver';
+const menuDriverKey = 'docList-menu-driver';
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
@@ -59,15 +59,23 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
   });
 
   useEffect(() => {
-    if (svg && !localStorage[driverKey] && showSourceView) {
-      localStorage[driverKey] = 1;
-      const driverObj = driver({
-        nextBtnText: '下一步',
-        prevBtnText: '上一步',
-        doneBtnText: '我知道了',
-        showProgress: true,
-        allowClose: false,
-        progressText: "第 {{current}} 步，共 {{total}} 步",
+    driverRender([
+      {
+        id: menuDriverKey,
+        condition: () => !localStorage[menuDriverKey] && showSourceView,
+        onOpen: () => localStorage[menuDriverKey] = 1,
+        steps: [
+          { element: '.docList-menu-anchor', popover: { title: '大纲', description: '点击此处您可查看大纲' } },
+          { element: '.docList-menu-list', popover: { title: '列表', description: '点击此处您可查看当前分类下文章列表' } },
+        ]
+      },
+      {
+        id: mermaidDriverKey,
+        condition: () => {
+          const result = svg && !localStorage[mermaidDriverKey] && showSourceView;
+          return result
+        },
+        onOpen: () => localStorage[mermaidDriverKey] = 1,
         steps: [
           { element: '.mermaid-react-root .mermaid-mini', popover: { title: 'mermaid', description: '恭喜您解锁 Mermaid 渲染图表' } },
           { element: '.mermaid-react-root .mermaid-mini .mermaid-minimize-btn', popover: { title: '缩略图', description: '点击此处按钮可查看缩略图' } },
@@ -75,10 +83,8 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           { element: '.mermaid-react-root .mermaid-mini .mermaid-showcode-btn', popover: { title: '源码', description: '点击此处按钮查看源码弹窗' } },
           { element: '.mermaid-react-root .mermaid-mini .mermaid-collapsed-btn', popover: { title: '展开', description: '点击此处按钮展开大图' } },
         ]
-      });
-
-      driverObj.drive();
-    }
+      }
+    ])
   }, [svg])
 
   useImperativeHandle(ref, () => ({
