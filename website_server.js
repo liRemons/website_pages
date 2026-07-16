@@ -13,8 +13,12 @@ const mimeMap = {
   '.svg': 'image/svg+xml',
 };
 
+console.log('start====');
+
 app.use((req, res, next) => {
   const acceptEncoding = req.headers['accept-encoding'] || '';
+  console.log('acceptEncoding==', acceptEncoding)
+
   const originalExt = path.extname(req.path);
   if (!mimeMap[originalExt]) return next();
   // br 优先
