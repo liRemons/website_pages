@@ -9,7 +9,7 @@ import ScanQr from '@components/ScanQr';
 import { ScanOutlined, RedoOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 import '@assets/css/index.global.less';
 import { copy } from 'methods-r';
-import { unGzip, base91 } from '@utils';
+import { unGzip, base91 } from '@/utils/zip';
 import * as Pako from 'pako';
 
 let obj = {};

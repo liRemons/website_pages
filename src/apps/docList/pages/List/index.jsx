@@ -12,15 +12,14 @@ import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message } from 'antd';
 import { img } from '@utils';
-import fullscreenSvg from './assets/svg/fullscreen.svg';
-import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
+// import fullscreenSvg from './assets/svg/fullscreen.svg';
+// import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
 import docListSvg from './assets/svg/docList.svg';
 import htmlSvg from './assets/svg/html.svg';
 import markdownSvg from './assets/svg/markdown.svg';
 import anchorListSvg from './assets/svg/anchorList.svg'
 import { LeftOutlined, RightOutlined, EllipsisOutlined, CloseOutlined } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
-import renderMarkdown from '@/utils/render-markdown';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);

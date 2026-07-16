@@ -8,6 +8,7 @@ const js = [
   { externalsName: ['vditor', 'vditor/dist/index.css'], url: 'https://registry.npmmirror.com/vditor/3.11.2/files/dist/index.min.js' },
   { externalsName: 'antd', url: "https://registry.npmmirror.com/dayjs/1.11.12/files/dayjs.min.js" },
   { externalsName: 'antd', url: "https://registry.npmmirror.com/antd/5.20.0/files/dist/antd.min.js" },
+  { externalsName: 'markdown-it', url: "https://registry.npmmirror.com/markdown-it/14.3.0/files/dist/markdown-it.min.js" },
 ];
 
 const css = [

@@ -9,7 +9,7 @@ import '@assets/css/index.global.less';
 import './qrcode.css';
 import '../model/qrcode';
 import * as Pako from 'pako';
-import { gzip, base91 } from '@utils';
+import { gzip, base91 } from '@/utils/zip';
 
 export default function List() {
   const [loadingText, setLoadingText] = useState('');

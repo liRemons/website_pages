@@ -203,7 +203,8 @@ const setExternals = (isEnvProduction) => {
     'mobx-react': 'mobxReact',
     vditor: 'Vditor',
     'vditor/dist/index.css': 'Vditor',
-    'antd': 'antd'
+    'antd': 'antd',
+    'markdown-it': 'markdownit'
   } : {};
 }
 

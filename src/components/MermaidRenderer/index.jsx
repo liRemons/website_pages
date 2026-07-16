@@ -8,7 +8,7 @@ import {
   UpOutlined, DownOutlined,
   ImportOutlined, ExportOutlined, LoadingOutlined
 } from "@ant-design/icons";
-import { downloadSVG, downloadSVGAsPNG } from "@utils";
+import { downloadSVG, downloadSVGAsPNG } from "@/utils/download";
 import { copy } from "methods-r";
 import { useTheme, ThemeProvider } from "@/hooks/useTheme";
 import useMermaidRender from "./useMermaidRender";
