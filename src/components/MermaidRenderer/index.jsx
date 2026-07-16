@@ -150,7 +150,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
         showSourceView && <div className="mermaid-title">
           <span className="mermaid-title-tag">
             <img src={mermaidSvg} alt="" srcset="" />
-            <span>Mermaid</span>
+            <span className="mermaid-title-text">Mermaid</span>
           </span>
           {title}
         </div>
