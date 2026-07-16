@@ -17,6 +17,8 @@ app.use((req, res, next) => {
   const acceptEncoding = req.headers['accept-encoding'] || '';
   console.log(acceptEncoding, acceptEncoding.includes('br'), 'acceptEncoding===');
   const originalExt = path.extname(req.path);
+  console.log(originalExt, 'originalExt==');
+  
   if (!mimeMap[originalExt]) return next();
   // br 优先
   if (acceptEncoding.includes('br')) {
