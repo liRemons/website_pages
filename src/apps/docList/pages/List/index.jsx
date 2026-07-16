@@ -223,7 +223,7 @@ export default function List() {
     const actions = [
       { key: 'copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
       { key: 'copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
-      { key: 'fullscreen', title: fullscreen ? '退出全屏' : '全屏', icon: !fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20), onClick: changeFullscreen },
+      // { key: 'fullscreen', title: fullscreen ? '退出全屏' : '全屏', icon: !fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20), onClick: changeFullscreen },
     ];
 
     const handleClickAction = (onClick) => {

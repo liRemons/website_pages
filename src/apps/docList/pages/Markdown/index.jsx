@@ -9,6 +9,7 @@ import { copy } from 'methods-r';
 import './markdown.global.less';
 import './index.global.less';
 import dayjs from 'dayjs';
+import codeIcon from '../../assets/code_icon.png'
 
 let timer = null;
 
@@ -50,7 +51,7 @@ export default function Markdown(props) {
       code.classList.add(onlyId)
       preNode.insertBefore(handleDOM, preNode.querySelector('code'));
       const codeTypeDOM = <>
-        <img src={`${window.location.origin}:3008/upload/content/icon/code_icon.png`} alt="" />
+        <img src={codeIcon} alt="" />
         <span>{codeType}</span>
       </>
 
