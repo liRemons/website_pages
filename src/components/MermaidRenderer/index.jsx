@@ -62,7 +62,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
     driverRender([
       {
         id: menuDriverKey,
-        condition: () => !localStorage[menuDriverKey] && showSourceView,
+        condition: () => !localStorage[menuDriverKey] && showSourceView && !IsPC(),
         onOpen: () => localStorage[menuDriverKey] = 1,
         steps: [
           { element: '.docList-menu-anchor', popover: { title: '大纲', description: '点击此处您可查看大纲' } },
