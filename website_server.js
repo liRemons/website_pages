@@ -15,14 +15,11 @@ const mimeMap = {
 
 app.use((req, res, next) => {
   const acceptEncoding = req.headers['accept-encoding'] || '';
-  console.log(acceptEncoding, acceptEncoding.includes('br'), 'acceptEncoding===');
   const originalExt = path.extname(req.path);
-  console.log(originalExt, req.path, 'originalExt==');
   
-  // if (!mimeMap[originalExt]) return next();
+  if (!mimeMap[originalExt]) return next();
   // br 优先
   if (acceptEncoding.includes('br')) {
-    console.log('br====start')
     const brPath = path.join(__dirname, 'dist', req.path + '.br');
     if (fs.existsSync(brPath)) {
       res.setHeader('Content-Encoding', 'br');
