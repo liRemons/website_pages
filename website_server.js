@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   const originalExt = path.extname(req.path);
   console.log(originalExt, req.path, 'originalExt==');
   
-  if (!mimeMap[originalExt]) return next();
+  // if (!mimeMap[originalExt]) return next();
   // br 优先
   if (acceptEncoding.includes('br')) {
     console.log('br====start')
