@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { queryArticleList, getMarkdown, markdownToHTML } from './server'
+import renderMarkdown from '@/utils/render-markdown'
 
 class Store {
   articleList = []
@@ -36,7 +37,8 @@ class Store {
     this.markdownInfo = '';
     this.htmlInfo = '';
     const { data } = await markdownToHTML(payload)
-    const { anchor, info, content, title, createTime } = data || {}
+    const { anchor, info } = renderMarkdown(data.content);
+    const { content, title, createTime } = data || {}
     this.anchor = anchor;
     this.markdownInfo = content;
     this.htmlInfo = info;

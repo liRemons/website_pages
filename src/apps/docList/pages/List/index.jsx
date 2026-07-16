@@ -20,9 +20,11 @@ import markdownSvg from './assets/svg/markdown.svg';
 import anchorListSvg from './assets/svg/anchorList.svg'
 import { LeftOutlined, RightOutlined, EllipsisOutlined, CloseOutlined } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
+import renderMarkdown from '@/utils/render-markdown';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
+  
   const [params, setParams] = useState({});
   const [activeId, setActiveId] = useState('');
   const [anchor, setAnchor] = useState([]);

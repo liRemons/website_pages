@@ -63,11 +63,15 @@
     "dayjs": "^1.11.20",
     "driver.js": "^1.7.0",
     "express": "^5.2.1",
+    "highlight.js": "^11.11.1",
     "json5": "^2.2.3",
     "jsqr": "^1.4.0",
     "lodash.orderby": "^4.6.0",
     "lodash.sortby": "^4.7.0",
     "lrz": "^4.9.41",
+    "markdown-it": "^14.3.0",
+    "markdown-it-anchor": "^9.2.1",
+    "markdown-it-toc-done-right": "^4.2.0",
     "marked": "^18.0.3",
     "methods-r": "^1.2.14",
     "mobx": "^6.3.5",
@@ -78,6 +82,7 @@
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",
     "remons-components": "^2.0.8",
+    "uslug": "^1.0.4",
     "vditor": "^3.11.2"
   }
 }
