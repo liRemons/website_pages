@@ -3,7 +3,7 @@ import { Drawer } from 'antd';
 import { marked } from 'marked';
 import { img } from '@utils';
 import helpSvg from '@assets/svg/help.svg';
-import './handle-md.global.less';
+import RenderMarkdown from '../RenderMarkdown';
 import style from './index.module.less';
 
 marked.use({ breaks: true, gfm: true });
@@ -31,13 +31,10 @@ export default function HelpDrawer({ handleContent, title = '操作说明', plac
           <div className={style.drawerCloseBtn} onClick={() => setDrawerOpen(false)}>✕</div>
         }
         styles={{
-          body: { padding: '16px 20px', overflowY: 'auto' },
+          body: { padding: '10px', overflowY: 'auto' },
         }}
       >
-        <div
-          className="handle-md-body"
-          dangerouslySetInnerHTML={{ __html: marked(handleContent) }}
-        />
+        <RenderMarkdown content={handleContent} />
       </Drawer>
     </>
   );
