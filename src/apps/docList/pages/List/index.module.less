@@ -133,49 +133,27 @@
     .actionButtons {
       position: absolute;
       top: 0px;
-      right: 50px;
+      right: 0;
       z-index: 10;
-      width: 32px;
-      height: 32px;
+      opacity: .6;
       overflow: visible;
+
+      &:hover {
+        opacity: 1;
+      }
     }
 
     .actionPanel {
       position: absolute;
       right: 0px;
       display: flex;
-      gap: 8px;
-      overflow: visible;
-      visibility: hidden;
-      opacity: 0;
-      transform: translateX(20px) scale(0.96);
-      transform-origin: right center;
-      transition: opacity 0.2s ease, transform 0.25s ease, visibility 0.2s ease;
-      pointer-events: none;
-    }
-
-    .actionButtonsVisible .actionPanel {
-      visibility: visible;
-      opacity: 1;
-      transform: translateX(0) scale(1);
-      pointer-events: auto;
+      gap: 2px;
     }
 
     .actionButton {
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .actionButton:hover {
-      transform: translateY(-1px);
-    }
-
-    .actionToggle {
-      position: absolute;
-      top: 0;
-      right: 0;
-      opacity: 0.9;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
     }
   }
 

@@ -132,29 +132,30 @@
     .mermaid-title-tag {
       display: flex;
       align-items: center;
-      border-radius: 2px;
+      border-radius: 4px;
+      overflow: hidden;
       background: #fdf1f6;
       color: #fc366e;
       margin-right: 2px;
     }
 
     .mermaid-title-text {
-      font-size: 10px;
+      font-size: 12px;
       border: 1px #fc366e solid;
       box-sizing: border-box;
       border-left: 0;
-      border-radius: 0 2px 2px 0;
-      padding-right: 2px;
-      padding-left: 3px;
+      border-radius: 0 4px 4px 0;
+      padding-right: 4px;
+      padding-left: 5px;
       display: inline-block;
-      height: 16px;
-      line-height: 14px;
+      height: 20px;
+      line-height: 18px;
       margin-left: -1px;
     }
 
     img {
-      width: 16px;
-      height: 16px;
+      width: auto;
+      height: 20px;
       margin: 0;
       display: inline-block;
     }
@@ -212,6 +213,20 @@
   .driver-popover {
     button {
       box-shadow: none !important;
+    }
+  }
+
+  .mermaid-code-modal {
+    .ant-modal-header {
+      margin: 0;
+    }
+
+    .ant-modal-content {
+      padding: 20px 10px;
+
+      .markdown {
+        padding: 0;
+      }
     }
   }
 }

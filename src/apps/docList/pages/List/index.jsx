@@ -12,8 +12,6 @@ import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message } from 'antd';
 import { img } from '@utils';
-// import fullscreenSvg from './assets/svg/fullscreen.svg';
-// import quitfullscreenSvg from './assets/svg/quitfullscreen.svg';
 import docListSvg from './assets/svg/docList.svg';
 import htmlSvg from './assets/svg/html.svg';
 import markdownSvg from './assets/svg/markdown.svg';
@@ -23,17 +21,14 @@ import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
-  
+
   const [params, setParams] = useState({});
   const [activeId, setActiveId] = useState('');
   const [anchor, setAnchor] = useState([]);
   const viewType = 'html';
-  const [fullscreen, setFullscreen] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
   const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
-  const [actionButtonsVisible, setActionButtonsVisible] = useState(false);
-  const actionButtonsRef = useRef(null);
 
   useEffect(() => {
     getList();
@@ -85,20 +80,7 @@ export default function List() {
     history.pushState('', '', pageURL);
     setActiveId(id);
     setDrawerVisible(false);
-    setActionButtonsVisible(false);
     localStore.getMarkdown(id);
-  };
-
-
-  const changeFullscreen = () => {
-    const ele = document.querySelector('.markdown_screen');
-    if (!fullscreen) {
-      ele.requestFullscreen();
-      setFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setFullscreen(false);
-    }
   };
 
   const copyTextByCommand = (text) => {
@@ -197,46 +179,20 @@ export default function List() {
     }
   }
 
-  useEffect(() => {
-    if (!actionButtonsVisible) {
-      return undefined;
-    }
-
-    const handleClickOutsideActionButtons = (event) => {
-      if (actionButtonsRef.current?.contains(event.target)) {
-        return;
-      }
-      setActionButtonsVisible(false);
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideActionButtons);
-    document.addEventListener('touchstart', handleClickOutsideActionButtons);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideActionButtons);
-      document.removeEventListener('touchstart', handleClickOutsideActionButtons);
-    };
-  }, [actionButtonsVisible]);
-
   const renderActionButtons = () => {
     const actions = [
-      { key: 'copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
-      { key: 'copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
-      // { key: 'fullscreen', title: fullscreen ? '退出全屏' : '全屏', icon: !fullscreen ? img(fullscreenSvg, 20) : img(quitfullscreenSvg, 20), onClick: changeFullscreen },
+      { key: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: img(htmlSvg, 16), onClick: () => copyContent('html') },
+      { key: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 16), onClick: () => copyContent('markdown') },
     ];
 
     const handleClickAction = (onClick) => {
       onClick();
-      setActionButtonsVisible(false);
     }
 
-    return <div ref={actionButtonsRef} className={classnames(style.actionButtons, actionButtonsVisible ? style.actionButtonsVisible : '')}>
-      <span className={classnames(style.actionButton, style.actionToggle, 'circle')} title={actionButtonsVisible ? '收起操作' : '展开操作'} onClick={() => setActionButtonsVisible(!actionButtonsVisible)}>
-        {actionButtonsVisible ? <CloseOutlined /> : <EllipsisOutlined />}
-      </span>
+    return <div className={classnames(style.actionButtons)}>
       <div className={style.actionPanel}>
-        {actions.map(item => <span className={classnames(style.actionButton, 'circle')} key={item.key} title={item.title} onClick={() => handleClickAction(item.onClick)}>
-          {item.icon || item.label}
+        {actions.map(item => <span className={classnames(style.actionButton, item.key, 'circle')} key={item.key} title={item.title} onClick={() => handleClickAction(item.onClick)}>
+          {item.icon}
         </span>)}
       </div>
     </div>
@@ -311,10 +267,12 @@ export default function List() {
   const renderMenuList = () => {
     const arr = [
       { onClick: openListNav, icon: img(anchorListSvg, 24), isShow: !!localStore.anchor?.length, className: 'docList-menu-anchor' },
-      { onClick: openListMenu, icon: img(docListSvg, 24), isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list'  },
+      { onClick: openListMenu, icon: img(docListSvg, 24), isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list' },
+      { className: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
+      { className: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
-    return arr.filter(item => item.isShow).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
+    return arr.filter(item => item.isShow !== false).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
   }
 
   return useObserver(() => <div className={style.container}>
@@ -326,7 +284,7 @@ export default function List() {
       {IsPC() && handleType !== 'share' && renderList()}
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={style.markdown_main}>
-          {renderActionButtons()}
+          {IsPC() && renderActionButtons()}
           {
             (localStore.markdownInfo && localStore.htmlInfo) ? VIEW_DETAIL[viewType] : <Empty />
           }

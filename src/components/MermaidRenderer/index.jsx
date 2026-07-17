@@ -19,9 +19,11 @@ import classNames from "classnames/bind";
 import { IsPC } from 'methods-r';
 import mermaidSvg from '../../assets/svg/mermaid.svg'
 import driverRender from "../../utils/driver";
+import RenderMarkdown from "../RenderMarkdown";
 
 const mermaidDriverKey = 'docList-mermaid-driver';
 const menuDriverKey = 'docList-menu-driver';
+const menuPcDriverKey = 'docList-pc-menu-driver';
 
 // ==================== 统一 Mermaid 渲染组件 ====================
 const MermaidRenderer = forwardRef(function MermaidRenderer(
@@ -67,6 +69,17 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
         steps: [
           { element: '.docList-menu-anchor', popover: { title: '大纲', description: '点击此处您可查看大纲' } },
           { element: '.docList-menu-list', popover: { title: '列表', description: '点击此处您可查看当前分类下文章列表' } },
+          { element: '.docList-menu-copyHtml', popover: { title: '复制', description: '点击此处您可复制 HTML 渲染的格式内容' } },
+          { element: '.docList-menu-copyMarkdown', popover: { title: '复制', description: '点击此处您可复制 markdown 源码' } },
+        ]
+      },
+      {
+        id: menuPcDriverKey,
+        condition: () => !localStorage[menuPcDriverKey] && IsPC() && showSourceView,
+        onOpen: () => localStorage[menuPcDriverKey] = 1,
+        steps: [
+          { element: '.docList-menu-copyHtml', popover: { title: '复制', description: '点击此处您可复制 HTML 渲染的格式内容' } },
+          { element: '.docList-menu-copyMarkdown', popover: { title: '复制', description: '点击此处您可复制 markdown 源码' } },
         ]
       },
       {
@@ -201,7 +214,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               className: 'mermaid-fullscreen-btn',
             },
             {
-              isShow: showDownload && isPanzoomActive,
+              isShow: showDownload && isPanzoomActive && !isFullscreen,
               icon: <DownloadOutlined />,
               tooltip: '下载',
               dropdown: downloadMenu,
@@ -262,19 +275,13 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
         <Modal
           open={showSource}
           title="Mermaid 源码"
+          className="mermaid-code-modal"
           width={800}
           destroyOnClose
           onCancel={() => setShowSource(false)}
-          footer={[
-            <Button key="copy" type="primary" onClick={() => {
-              if (typeof copy === "function") { copy(source); message.success("复制成功"); }
-              else { navigator.clipboard.writeText(source).then(() => message.success("复制成功")); }
-            }}>
-              复制源码
-            </Button>,
-          ]}
+          footer={false}
         >
-          <pre><code>{source}</code></pre>
+          <RenderMarkdown isShowCollapsed={false} isSlotMermaid={false} content={'```mermaid\n' + source + '```'} />
         </Modal>
       )}
     </div>
