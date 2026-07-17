@@ -59,7 +59,6 @@ export default () => {
 
   return <ConfigProvider locale={zhCN}>
      <Container
-      style={{ padding: '0 0 10px 0' }}
       header={<Header name='时间处理' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
       main={
         <Form {...layout} form={form}>
