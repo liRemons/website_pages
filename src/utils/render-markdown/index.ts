@@ -6,7 +6,7 @@ import hljs from 'highlight.js/lib/core';
 import uslug from 'uslug';
 import { tab } from "@mdit/plugin-tab";
 
-import renderTab from './render-tab';
+import renderTab, { tabsName } from './render-tab';
 // languages
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
@@ -25,7 +25,6 @@ hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('plaintext', plaintext);
 hljs.registerLanguage('less', less);
-
 
 
 type AnchorItem = {
@@ -52,7 +51,7 @@ function renderMarkdown(content: string) {
     },
   })
     .use(tab, {
-      name: "tabs",
+      name: tabsName,
     })
     .use(markdownItAnchor, {
       permalink: true,
@@ -72,8 +71,13 @@ function renderMarkdown(content: string) {
       },
     })
     ;
-  renderTab();
+
   const info = MD.render(content);
+  setTimeout(() => {
+  renderTab();
+
+  }, 10)
+  
   const format = (data: Array<any>) => {
     return data.map((item): AnchorItem => {
       const obj = {
