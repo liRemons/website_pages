@@ -19,7 +19,7 @@ export default () => {
 
   useEffect(() => {
      const timer = setInterval(() => {
-        form.setFieldValue('nowDate', dayjs())
+        form.setFieldValue('nowDate', dayjs().add(1, 'second'))
       }, 1000)
       return () => {
         clearInterval(timer)
