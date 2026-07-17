@@ -498,7 +498,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
                       </Button>
                     </Space>
                   </div>
-                  <RenderMarkdown codeType='json' content={generatedFiles} />
+                  <RenderMarkdown codeType='json' content={generatedFiles['config.json']} />
                 </>
               ),
             },
