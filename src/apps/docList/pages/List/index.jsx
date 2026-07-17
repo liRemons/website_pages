@@ -71,6 +71,9 @@ export default function List() {
 
   const handleClickPage = (data) => {
     const { id } = data;
+    if (id === activeId)  {
+      return;
+    }
     const params = {
       ...getSearchParams(),
       pageId: id,

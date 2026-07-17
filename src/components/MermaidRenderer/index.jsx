@@ -100,25 +100,6 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
     ])
   }, [svg])
 
-  useImperativeHandle(ref, () => ({
-    handleAction(action) {
-      const pz = panzoomRef.current;
-      switch (action) {
-        case "zoomIn": pz?.zoomIn(); break;
-        case "zoomOut": pz?.zoomOut(); break;
-        case "reset": pz?.reset(); break;
-        case "toggleFullscreen": {
-          const el = wrapperRef.current;
-          if (!el) return;
-          pz?.reset();
-          if (document.fullscreenElement) document.exitFullscreen();
-          else el.requestFullscreen?.();
-          break;
-        }
-      }
-    },
-  }));
-
   // 监听原生全屏状态
   useEffect(() => {
     const handler = () => {
@@ -208,6 +189,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
               tooltip: isFullscreen ? '退出全屏' : '全屏',
               onClick: () => {
+                panzoomRef.current?.reset()
                 if (document.fullscreenElement) document.exitFullscreen();
                 else wrapperRef.current?.requestFullscreen?.();
               },
