@@ -11,6 +11,7 @@ import nginx from 'highlight.js/lib/languages/nginx';
 import xml from 'highlight.js/lib/languages/xml';
 import css from 'highlight.js/lib/languages/css';
 import plaintext from 'highlight.js/lib/languages/plaintext';
+import less from 'highlight.js/lib/languages/less';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('bash', bash);
@@ -19,6 +20,7 @@ hljs.registerLanguage('json', json);
 hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('plaintext', plaintext);
+hljs.registerLanguage('less', less);
 
 type AnchorItem = {
   title: string;

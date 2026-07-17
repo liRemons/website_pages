@@ -30,6 +30,7 @@ import {
   importConfig,
   generateExampleConfig,
 } from '../../utils/configParser';
+import RenderMarkdown from '@/components/RenderMarkdown';
 
 const { TextArea } = Input;
 
@@ -403,12 +404,7 @@ const ConfigBuilder = ({ onPreview, initialConfig }) => {
         ]}
         width={800}
       >
-        <TextArea
-          value={jsonContent}
-          readOnly
-          rows={20}
-          style={{ fontFamily: 'Monaco, Menlo, monospace' }}
-        />
+        <RenderMarkdown content={'```json\n' + jsonContent + '```'} />
       </Modal>
 
       {/* 导入配置弹窗 */}

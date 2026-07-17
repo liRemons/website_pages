@@ -71,9 +71,6 @@ tableConfig/
 # 核心 UI 库
 npm install antd@^5.20.0 --save
 
-# 代码高亮
-npm install prismjs@^1.30.0 --save
-
 # 可拖拽面板
 npm install react-resizable@^3.1.3 --save
 
@@ -85,7 +82,7 @@ npm install @ant-design/icons@^5.0.0 --save
 ## 完整安装命令
 
 ```bash
-npm install antd@^5.20.0 prismjs@^1.30.0 react-resizable@^3.1.3 moment @ant-design/icons@^5.0.0 --save
+npm install antd@^5.20.0 react-resizable@^3.1.3 moment @ant-design/icons@^5.0.0 --save
 ```
 
 ## 使用方式

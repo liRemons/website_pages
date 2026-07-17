@@ -9,11 +9,10 @@ import {
 } from '@ant-design/icons';
 import SearchForm from './SearchForm';
 import DataTable from './DataTable';
-import MarkdownRenderer from '../MarkdownRenderer';
-import CodeHighlighter from '../CodeHighlighter';
 import { validateConfig } from '../../utils/configParser';
 import { generateReactCode, generateProjectFiles } from '../../utils/codeGenerator';
 import './ResizablePanels.less';
+import RenderMarkdown from '@/components/RenderMarkdown';
 
 /**
  * 可拖拽调整大小的面板组件
@@ -384,6 +383,15 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
     </>
   );
 
+  console.log({
+    generatedFiles,
+    data: generatedFiles[selectedFile],
+    selectedFile
+  });
+
+  const codeType = selectedFile?.split('.')?.[1];
+  
+
   // 右侧代码预览面板
   const rightPanel = (
     <>
@@ -409,10 +417,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
           </Button>
         </Space>
       </div>
-      <CodeHighlighter
-        code={generatedFiles[selectedFile] || ''}
-        fileName={selectedFile}
-      />
+      <RenderMarkdown content={codeType === 'md' ? generatedFiles[selectedFile] : '```' + codeType + '\n' + generatedFiles[selectedFile] + '```'} />
     </>
   );
 
@@ -493,10 +498,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
                       </Button>
                     </Space>
                   </div>
-                  <CodeHighlighter
-                    code={generatedFiles['config.json'] || '{}'}
-                    language="json"
-                  />
+                  <RenderMarkdown content={'```json\n' + generatedFiles['config.json'] + '```'} />
                 </>
               ),
             },
@@ -521,7 +523,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
                     overflow: 'auto',
                     border: '1px solid #e8e8e8',
                   }}>
-                    <MarkdownRenderer content={generatedFiles['README.md'] || ''} />
+                    <RenderMarkdown content={generatedFiles['README.md']} />
                   </div>
                 </>
               ),
