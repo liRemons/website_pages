@@ -9,10 +9,12 @@ const js = [
   { externalsName: 'antd', url: "https://registry.npmmirror.com/dayjs/1.11.12/files/dayjs.min.js" },
   { externalsName: 'antd', url: "https://registry.npmmirror.com/antd/5.20.0/files/dist/antd.min.js" },
   { externalsName: 'markdown-it', url: "https://registry.npmmirror.com/markdown-it/14.3.0/files/dist/markdown-it.min.js" },
+  { externalsName: '@wangeditor/editor', url: "https://registry.npmmirror.com/@wangeditor/editor/5.1.23/files/dist/index.js" },
 ];
 
 const css = [
   { externalsName: ['vditor', 'vditor/dist/index.css'], url: "https://registry.npmmirror.com/vditor/3.11.2/files/dist/index.css", },
+  { externalsName: '@wangeditor/editor/dist/css/style.css', url: "https://registry.npmmirror.com/@wangeditor/editor/5.1.23/files/dist/css/style.css", },
 ]
 
 module.exports = {
