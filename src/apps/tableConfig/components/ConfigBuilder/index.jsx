@@ -404,7 +404,7 @@ const ConfigBuilder = ({ onPreview, initialConfig }) => {
         ]}
         width={800}
       >
-        <RenderMarkdown content={'```json\n' + jsonContent + '```'} />
+        <RenderMarkdown content={jsonContent} codeType='json' />
       </Modal>
 
       {/* 导入配置弹窗 */}

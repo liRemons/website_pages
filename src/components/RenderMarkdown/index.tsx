@@ -16,6 +16,7 @@ interface Props {
   showBackTop?: boolean;
   isSlotMermaid?: boolean;
   isShowCollapsed?: boolean;
+  codeType?: string;
 }
 
 
@@ -71,18 +72,24 @@ const initCodeClassName = (props: Props) => {
       </span>
       <span>
         {copyDOM}
-      {isShowCollapsed && <CodeToggle />}
+        {isShowCollapsed && <CodeToggle />}
       </span>
     </>)
   });
 };
 
 export default function RenderMarkdown(props: Props) {
-  const { content, createTime, showBackTop, isSlotMermaid = true } = props;
+  const { content, createTime, showBackTop, isSlotMermaid = true, codeType } = props;
   const [html, setHtml] = useState('');
   useEffect(() => {
     let timer = null;
-    setHtml(renderMarkdown(content)?.info);
+    if (!codeType || codeType?.toLocaleLowerCase() === 'md') {
+      setHtml(renderMarkdown(content)?.info);
+    } else {
+      const text = '```' + codeType + '\n' + content + '\n```'
+      setHtml(renderMarkdown(text)?.info);
+    }
+
 
 
     timer = setTimeout(async () => {

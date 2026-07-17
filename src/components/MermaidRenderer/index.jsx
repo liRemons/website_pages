@@ -263,7 +263,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           onCancel={() => setShowSource(false)}
           footer={false}
         >
-          <RenderMarkdown isShowCollapsed={false} isSlotMermaid={false} content={'```mermaid\n' + source + '```'} />
+          <RenderMarkdown isShowCollapsed={false} isSlotMermaid={false} codeType='mermaid' content={source} />
         </Modal>
       )}
     </div>

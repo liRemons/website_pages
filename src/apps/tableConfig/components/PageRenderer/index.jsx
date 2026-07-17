@@ -390,7 +390,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
   });
 
   const codeType = selectedFile?.split('.')?.[1];
-  
+
 
   // 右侧代码预览面板
   const rightPanel = (
@@ -417,7 +417,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
           </Button>
         </Space>
       </div>
-      <RenderMarkdown content={codeType === 'md' ? generatedFiles[selectedFile] : '```' + codeType + '\n' + generatedFiles[selectedFile] + '```'} />
+      <RenderMarkdown codeType={codeType} content={generatedFiles[selectedFile]} />
     </>
   );
 
@@ -498,7 +498,7 @@ const PageRenderer = ({ config, mode = 'preview' }) => {
                       </Button>
                     </Space>
                   </div>
-                  <RenderMarkdown content={'```json\n' + generatedFiles['config.json'] + '```'} />
+                  <RenderMarkdown codeType='json' content={generatedFiles} />
                 </>
               ),
             },
