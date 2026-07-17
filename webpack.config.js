@@ -46,9 +46,9 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
     },
     optimization: {
       // 稳定的 moduleId 策略：新增/删除模块不影响无关 chunk 的 hash，提升浏览器缓存命中率
-      moduleIds: 'deterministic',
-      // runtime 单独抽出，避免业务代码变动污染 vendor chunk 的 hash
-      runtimeChunk: 'single',
+      // moduleIds: 'deterministic',
+      // // runtime 单独抽出，避免业务代码变动污染 vendor chunk 的 hash
+      // runtimeChunk: 'multiple',
       minimize: true,
       minimizer: [
         isEnvProduction &&
@@ -67,54 +67,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
             extractComments: false,    // 不生成额外的 LICENSE.txt 文件
           }),
       ].filter(Boolean),
-      splitChunks: {
-        chunks: 'all',
-        minSize: 20000,
-        maxAsyncRequests: 30,
-        maxInitialRequests: 30,
-        cacheGroups: {
-          // antd 及其依赖单独成包，体积大且稳定，有利于长效缓存
-          // antd: {
-          //   test: /[\\/]node_modules[\\/](antd|@ant-design|rc-[\w-]+)[\\/]/,
-          //   name: 'chunks/vendor-antd',
-          //   chunks: 'all',
-          //   priority: 30,
-          //   reuseExistingChunk: true,
-          // },
-          // react 生态单独成包
-          // react: {
-          //   test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-          //   name: 'chunks/vendor-react',
-          //   chunks: 'all',
-          //   priority: 25,
-          //   reuseExistingChunk: true,
-          // },
-          // mobx 状态管理单独成包
-          // mobx: {
-          //   test: /[\\/]node_modules[\\/](mobx|mobx-react|mobx-react-lite)[\\/]/,
-          //   name: 'chunks/vendor-mobx',
-          //   chunks: 'all',
-          //   priority: 20,
-          //   reuseExistingChunk: true,
-          // },
-          // 其余 node_modules 统一归到 vendor-libs
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'chunks/vendor-libs',
-            chunks: 'all',
-            priority: 10,
-            reuseExistingChunk: true,
-          },
-          // 业务代码中被多页面复用的公共模块
-          common: {
-            name: 'chunks/common',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 5,
-            reuseExistingChunk: true,
-          },
-        },
-      },
+      splitChunks: false
     },
     cache: {
       type: 'filesystem',
