@@ -1,6 +1,5 @@
-﻿@import "./variables.css";
+﻿@import './variables.css';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-
 
 /* Less 变量（兼容旧引用，值指向 CSS 变量）*/
 @ruler: 16px;
@@ -11,7 +10,7 @@
 @active-color: #75bcff;
 
 /* ===== 深色模式全局覆盖 ===== */
-[data-theme="dark"] {
+[data-theme='dark'] {
   /* inline code 样式（docList markdown）*/
   code:not(pre code) {
     background: #3d4258 !important;
@@ -41,7 +40,7 @@
     background: #1a1d2e !important;
   }
 
-    /* antd Drawer 背景 */
+  /* antd Drawer 背景 */
   .ant-drawer-content,
   .ant-drawer-wrapper-body {
     background: #1e2235 !important;
@@ -97,7 +96,9 @@
     color: #b0b8c8 !important;
   }
 
-  :where(.css-dev-only-do-not-override-mncuj7).ant-form-item .ant-form-item-label >label {
+  :where(.css-dev-only-do-not-override-mncuj7).ant-form-item
+    .ant-form-item-label
+    > label {
     color: #b0b8c8 !important;
   }
 
@@ -216,42 +217,42 @@
   }
 
   /* jsonViewer 错误提示 */
-  [class*=jsonViewer] .errorTip {
+  [class*='jsonViewer'] .errorTip {
     background: #3d1f1f !important;
     border-top-color: #5a2a2a !important;
   }
 
-  [class*=jsonViewer] .editBubble {
+  [class*='jsonViewer'] .editBubble {
     background: #1e2235 !important;
     border-color: #2e3350 !important;
   }
 
-  [class*=jsonViewer] .editBubblePath {
+  [class*='jsonViewer'] .editBubblePath {
     background: #2e3350 !important;
     color: #8892a4 !important;
   }
 
-  [class*=jsonViewer] .tipsBar {
+  [class*='jsonViewer'] .tipsBar {
     background: #1e2235 !important;
     border-color: #2e3350 !important;
     color: #8892a4 !important;
   }
 
   /* jsonViewer 面板 & 编辑器 */
-  [class*=jsonViewer] [class*=leftPane],
-  [class*=jsonViewer] [class*=rightPane] {
+  [class*='jsonViewer'] [class*='leftPane'],
+  [class*='jsonViewer'] [class*='rightPane'] {
     background: #1a1d2e !important;
   }
 
-  [class*=jsonViewer] [class*=paneHeader] {
+  [class*='jsonViewer'] [class*='paneHeader'] {
     background: #1e2235 !important;
   }
 
-  [class*=jsonViewer] .lineNumbers {
+  [class*='jsonViewer'] .lineNumbers {
     background: #1e2235 !important;
   }
 
-  [class*=jsonViewer] [class*=emptyTip] {
+  [class*='jsonViewer'] [class*='emptyTip'] {
     color: #6b7280 !important;
   }
 
@@ -263,7 +264,14 @@
 
   .cm-editor .cm-scroller {
     background: #1a1d2e !important;
-    font-family: var(--font-family-editor, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace) !important;
+    font-family: var(
+      --font-family-editor,
+      SFMono-Regular,
+      Consolas,
+      'Liberation Mono',
+      Menlo,
+      monospace
+    ) !important;
   }
 
   .cm-editor .cm-gutters {
@@ -303,7 +311,7 @@
   }
 
   /* Header 深色模式背景 & 文字颜色 */
-  [class*=Header] [class*=header] {
+  [class*='Header'] [class*='header'] {
     background: #1a1d2e !important;
     color: #e8ecf4 !important;
   }
@@ -482,21 +490,36 @@
   .ui-input {
     color: var(--color-text, #61677c) !important;
     background: var(--color-bg, #ebecf0) !important;
-    box-shadow: var(--shadow-inset-deep, inset 2px 2px 5px #babecc, inset -5px -5px 10px #fff) !important;
+    box-shadow: var(
+      --shadow-inset-deep,
+      inset 2px 2px 5px #babecc,
+      inset -5px -5px 10px #fff
+    ) !important;
   }
 
   .ui-input:focus {
-    box-shadow: var(--shadow-inset, inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff) !important;
+    box-shadow: var(
+      --shadow-inset,
+      inset 1px 1px 2px #babecc,
+      inset -1px -1px 2px #fff
+    ) !important;
   }
 
-  button, .commands-item {
-    color: var(--color-text, #61677c) !important;
-    background: var(--color-bg, #ebecf0) !important;
-    box-shadow: var(--shadow-md, -5px -5px 20px #fff, 5px 5px 20px #babecc) !important;
+  button,
+  .commands-item {
+    &.not(.markdown-tabs-tab-button) {
+      color: var(--color-text, #61677c) !important;
+      background: var(--color-bg, #ebecf0) !important;
+      box-shadow: var(
+        --shadow-md,
+        -5px -5px 20px #fff,
+        5px 5px 20px #babecc
+      ) !important;
+    }
   }
 
   /* productManage 组件深色模式 */
-  [class*=productManage] [class*=colorTag] {
+  [class*='productManage'] [class*='colorTag'] {
     color: #e8ecf4 !important;
   }
 
@@ -886,51 +909,51 @@
     border-color: #2e3350 !important;
   }
   /* imgWatermark 深色模式 */
-  [class*=imgWatermark] [class*=container],
-  [class*=imgWatermark] [class*=sidebar],
-  [class*=imgWatermark] [class*=sidebarFooter],
-  [class*=imgWatermark] [class*=preview],
-  [class*=imgWatermark] [class*=mobileTabs],
-  [class*=imgWatermark] [class*=mobileTab] {
+  [class*='imgWatermark'] [class*='container'],
+  [class*='imgWatermark'] [class*='sidebar'],
+  [class*='imgWatermark'] [class*='sidebarFooter'],
+  [class*='imgWatermark'] [class*='preview'],
+  [class*='imgWatermark'] [class*='mobileTabs'],
+  [class*='imgWatermark'] [class*='mobileTab'] {
     background: #1a1d2e !important;
   }
 
-  [class*=imgWatermark] [class*=fieldLabel] {
+  [class*='imgWatermark'] [class*='fieldLabel'] {
     color: #b0b8c8 !important;
   }
 
-  [class*=imgWatermark] [class*=fieldValue] {
+  [class*='imgWatermark'] [class*='fieldValue'] {
     color: #b0b8c8 !important;
     background: #1e2235 !important;
     box-shadow: inset 1px 1px 3px #12141f, inset -1px -1px 3px #28304a !important;
   }
 
-  [class*=imgWatermark] [class*=uploadZone] {
+  [class*='imgWatermark'] [class*='uploadZone'] {
     box-shadow: -5px -5px 14px #28304a, 5px 5px 14px #12141f !important;
     border-color: rgba(107, 114, 128, 0.5) !important;
   }
 
-  [class*=imgWatermark] [class*=uploadIcon],
-  [class*=imgWatermark] [class*=uploadText] {
+  [class*='imgWatermark'] [class*='uploadIcon'],
+  [class*='imgWatermark'] [class*='uploadText'] {
     color: #6b7280 !important;
   }
 
-  [class*=imgWatermark] [class*=downloadBtn] {
+  [class*='imgWatermark'] [class*='downloadBtn'] {
     color: #b0b8c8 !important;
     background: #1a1d2e !important;
     box-shadow: -5px -5px 14px #28304a, 5px 5px 14px #12141f !important;
   }
 
-  [class*=imgWatermark] [class*=emptyTip] {
+  [class*='imgWatermark'] [class*='emptyTip'] {
     color: #6b7280 !important;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
   }
 
-  [class*=imgWatermark] [class*=sidebar] {
+  [class*='imgWatermark'] [class*='sidebar'] {
     border-right-color: rgba(46, 51, 80, 0.4) !important;
   }
 
-  [class*=imgWatermark] [class*=sidebarFooter] {
+  [class*='imgWatermark'] [class*='sidebarFooter'] {
     border-top-color: rgba(46, 51, 80, 0.35) !important;
   }
   /* 通用滚动条 */
@@ -1015,15 +1038,15 @@ textarea,
   background-color: transparent;
 }
 
-  /* antd Drawer 背景 */
-  .ant-drawer-content,
-  .ant-drawer-wrapper-body {
-    font-family: var(--font-family-base) !important;
+/* antd Drawer 背景 */
+.ant-drawer-content,
+.ant-drawer-wrapper-body {
+  font-family: var(--font-family-base) !important;
 
-    code{
-      font-family: var(--font-family-editor) !important;
-    }
+  code {
+    font-family: var(--font-family-editor) !important;
   }
+}
 
 h1,
 h2,
@@ -1057,7 +1080,8 @@ button,
   font-weight: 600;
 
   &:hover {
-    box-shadow: -2px -2px 5px var(--color-shadow-light), 2px 2px 5px var(--color-shadow) !important;
+    box-shadow: -2px -2px 5px var(--color-shadow-light),
+      2px 2px 5px var(--color-shadow) !important;
   }
 
   &:active {
@@ -1184,15 +1208,13 @@ canvas {
 
 @media screen and (max-width: 500px) {
   .shadow_not_active {
-    box-shadow: -2px -2px 10px var(--color-shadow-light), 2px 2px 10px var(--color-shadow) !important;
+    box-shadow: -2px -2px 10px var(--color-shadow-light),
+      2px 2px 10px var(--color-shadow) !important;
   }
 
   .shadow,
   .circle {
-    box-shadow: -2px -2px 10px var(--color-shadow-light), 2px 2px 10px var(--color-shadow) !important;
+    box-shadow: -2px -2px 10px var(--color-shadow-light),
+      2px 2px 10px var(--color-shadow) !important;
   }
 }
-
-
-
-

@@ -2,6 +2,7 @@ import markdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTOC from 'markdown-it-toc-done-right';
 import mila from 'markdown-it-link-attributes';
+import clonedeep from 'lodash.clonedeep'
 import hljs from 'highlight.js/lib/core';
 import uslug from 'uslug';
 import { tab } from "@mdit/plugin-tab";
@@ -61,6 +62,9 @@ function renderMarkdown(content: string) {
     })
     .use(markdownItTOC, {
       callback: (html: string, ast: any) => {
+        if (anchor.length) {
+          return;
+        }
         anchor = ast.c;
       },
     })
@@ -74,11 +78,14 @@ function renderMarkdown(content: string) {
 
   const info = MD.render(content);
   setTimeout(() => {
-  renderTab();
-
+    renderTab();
   }, 10)
-  
+
   const format = (data: Array<any>) => {
+    if (!data) {
+      return []
+    }
+
     return data.map((item): AnchorItem => {
       const obj = {
         href: uslugify(item.n.trim()),
@@ -92,8 +99,11 @@ function renderMarkdown(content: string) {
     });
   };
 
+  // console.log(anchor, format(clonedeep(anchor)));
+
+
   return {
-    anchor: format(anchor),
+    anchor: format(clonedeep(anchor)),
     info,
   }
 }

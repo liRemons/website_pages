@@ -67,6 +67,7 @@
     "highlight.js": "^11.11.1",
     "json5": "^2.2.3",
     "jsqr": "^1.4.0",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.orderby": "^4.6.0",
     "lodash.sortby": "^4.7.0",
     "lrz": "^4.9.41",
