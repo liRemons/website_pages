@@ -45,27 +45,24 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       publicPath: `/@${packageJSON.name}/`,
     },
     optimization: {
-      // 稳定的 moduleId 策略：新增/删除模块不影响无关 chunk 的 hash，提升浏览器缓存命中率
-      // moduleIds: 'deterministic',
-      // // runtime 单独抽出，避免业务代码变动污染 vendor chunk 的 hash
-      // runtimeChunk: 'multiple',
+      moduleIds: 'named',
       minimize: true,
       minimizer: [
         isEnvProduction &&
-          new TerserPlugin({
-            // 使用 terser 替代 uglify-js：支持 ES6+，压缩率更高
-            terserOptions: {
-              compress: {
-                drop_console: true,    // 去掉 console.log
-                drop_debugger: true,   // 去掉 debugger
-                pure_funcs: ['console.log', 'console.info'],
-              },
-              format: {
-                comments: false,       // 去掉所有注释
-              },
+        new TerserPlugin({
+          // 使用 terser 替代 uglify-js：支持 ES6+，压缩率更高
+          terserOptions: {
+            compress: {
+              drop_console: true,    // 去掉 console.log
+              drop_debugger: true,   // 去掉 debugger
+              pure_funcs: ['console.log', 'console.info'],
             },
-            extractComments: false,    // 不生成额外的 LICENSE.txt 文件
-          }),
+            format: {
+              comments: false,       // 去掉所有注释
+            },
+          },
+          extractComments: false,    // 不生成额外的 LICENSE.txt 文件
+        }),
       ].filter(Boolean),
       splitChunks: false
     },
@@ -122,28 +119,28 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       // 用法：npm run build gzip=true
       isEnvProduction && otherParams.gzip === 'true'
         ? new CompressionPlugin({
-            algorithm: 'gzip',
-            test: /\.(js|css|html|svg)$/,
-            filename: '[path][base].gz',
-            threshold: 10240,
-            minRatio: 0.8,
-          })
+          algorithm: 'gzip',
+          test: /\.(js|css|html|svg)$/,
+          filename: '[path][base].gz',
+          threshold: 10240,
+          minRatio: 0.8,
+        })
         : null,
       // brotli 压缩：通过 br=true 开启，压缩率比 gzip 高15%-25%，现代浏览器均支持
       // 用法：npm run build br=true
       isEnvProduction && otherParams.br === 'true'
         ? new CompressionPlugin({
-            algorithm: 'brotliCompress',
-            test: /\.(js|css|html|svg)$/,
-            filename: '[path][base].br',
-            threshold: 10240,
-            minRatio: 0.8,
-            compressionOptions: {
-              level: 11, // brotli 最高压缩级别（0-11）
-            },
-          })
+          algorithm: 'brotliCompress',
+          test: /\.(js|css|html|svg)$/,
+          filename: '[path][base].br',
+          threshold: 10240,
+          minRatio: 0.8,
+          compressionOptions: {
+            level: 11, // brotli 最高压缩级别（0-11）
+          },
+        })
         : null,
-        isEnvDevelopment && new ReactRefreshPlugin(),
+      isEnvDevelopment && new ReactRefreshPlugin(),
     ].filter(Boolean),
     devServer: {
       static: {
@@ -181,9 +178,9 @@ module.exports = (env, args) => {
   const isEnvProduction = mode === 'production';
   const pages = env.pages.split(',')
   const otherParams = {}
-  ;(env.otherParams || '').split(',').forEach((item) => {
-    otherParams[item.split('=')[0]] = item.split('=')[1]
-  })
+    ; (env.otherParams || '').split(',').forEach((item) => {
+      otherParams[item.split('=')[0]] = item.split('=')[1]
+    })
   const webpackConfig = getConfig({
     isEnvDevelopment,
     mode,
