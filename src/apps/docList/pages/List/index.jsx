@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
@@ -11,12 +11,7 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message } from 'antd';
-import { img } from '@utils';
-import docListSvg from './assets/svg/docList.svg';
-import htmlSvg from './assets/svg/html.svg';
-import markdownSvg from './assets/svg/markdown.svg';
-import anchorListSvg from './assets/svg/anchorList.svg'
-import { LeftOutlined, RightOutlined, EllipsisOutlined, CloseOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
@@ -71,7 +66,7 @@ export default function List() {
 
   const handleClickPage = (data) => {
     const { id } = data;
-    if (id === activeId)  {
+    if (id === activeId) {
       return;
     }
     const params = {
@@ -184,8 +179,8 @@ export default function List() {
 
   const renderActionButtons = () => {
     const actions = [
-      { key: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: img(htmlSvg, 16), onClick: () => copyContent('html') },
-      { key: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: img(markdownSvg, 16), onClick: () => copyContent('markdown') },
+      { key: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
+      { key: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
     ];
 
     const handleClickAction = (onClick) => {
@@ -269,10 +264,10 @@ export default function List() {
 
   const renderMenuList = () => {
     const arr = [
-      { onClick: openListNav, icon: img(anchorListSvg, 24), isShow: !!localStore.anchor?.length, className: 'docList-menu-anchor' },
-      { onClick: openListMenu, icon: img(docListSvg, 24), isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list' },
-      { className: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', icon: img(htmlSvg, 20), onClick: () => copyContent('html') },
-      { className: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', icon: img(markdownSvg, 20), onClick: () => copyContent('markdown') },
+      { onClick: openListNav, icon: <ProfileTwoTone />, isShow: !!localStore.anchor?.length, className: 'docList-menu-anchor' },
+      { onClick: openListMenu, icon: <FolderOpenTwoTone />, isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list' },
+      { className: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
+      { className: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow !== false).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
