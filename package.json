@@ -53,7 +53,7 @@
     "@microlink/react-json-view": "^1.31.22",
     "@panzoom/panzoom": "^4.6.2",
     "@textea/json-viewer": "^4.0.1",
-    "@uiw/react-codemirror": "^4.21.0",
+    "@uiw/react-codemirror": "^4.25.11",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "antd": "^5.20.0",

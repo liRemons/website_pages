@@ -205,7 +205,7 @@ const setExternals = (isEnvProduction) => {
     'vditor/dist/index.css': 'Vditor',
     'antd': 'antd',
     'markdown-it': 'markdownit',
-    '@wangeditor/editor': 'wangEditor'
+    '@wangeditor/editor': 'wangEditor',
   } : {};
 }
 
