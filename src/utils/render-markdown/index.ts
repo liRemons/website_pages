@@ -4,6 +4,9 @@ import markdownItTOC from 'markdown-it-toc-done-right';
 import mila from 'markdown-it-link-attributes';
 import hljs from 'highlight.js/lib/core';
 import uslug from 'uslug';
+import { tab } from "@mdit/plugin-tab";
+
+import renderTab from './render-tab';
 // languages
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
@@ -22,6 +25,8 @@ hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('plaintext', plaintext);
 hljs.registerLanguage('less', less);
+
+
 
 type AnchorItem = {
   title: string;
@@ -46,6 +51,9 @@ function renderMarkdown(content: string) {
       return '';
     },
   })
+    .use(tab, {
+      name: "tabs",
+    })
     .use(markdownItAnchor, {
       permalink: true,
       permalinkBefore: false,
@@ -62,7 +70,9 @@ function renderMarkdown(content: string) {
         target: "_blank",
         rel: "noopener", // 增加此属性可提升安全性
       },
-    });
+    })
+    ;
+  renderTab();
   const info = MD.render(content);
   const format = (data: Array<any>) => {
     return data.map((item): AnchorItem => {
