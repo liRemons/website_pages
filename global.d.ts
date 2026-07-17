@@ -7,3 +7,4 @@ declare module '*.css' {
 declare module 'uslug';
 declare module 'markdown-it';
 declare module 'methods-r';
+declare module 'markdown-it-link-attributes'

@@ -1,6 +1,7 @@
 import markdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTOC from 'markdown-it-toc-done-right';
+import mila from 'markdown-it-link-attributes';
 import hljs from 'highlight.js/lib/core';
 import uslug from 'uslug';
 // languages
@@ -56,6 +57,12 @@ function renderMarkdown(content: string) {
         anchor = ast.c;
       },
     })
+    .use(mila, {
+      attrs: {
+        target: "_blank",
+        rel: "noopener", // 增加此属性可提升安全性
+      },
+    });
   const info = MD.render(content);
   const format = (data: Array<any>) => {
     return data.map((item): AnchorItem => {
