@@ -72,7 +72,6 @@
     "markdown-it": "^14.3.0",
     "markdown-it-anchor": "^9.2.1",
     "markdown-it-toc-done-right": "^4.2.0",
-    "marked": "^18.0.3",
     "methods-r": "^1.2.14",
     "mobx": "^6.3.5",
     "mobx-react": "^7.2.0",

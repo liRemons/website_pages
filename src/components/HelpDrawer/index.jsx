@@ -1,12 +1,9 @@
 ﻿import React, { useState } from 'react';
 import { Drawer } from 'antd';
-import { marked } from 'marked';
 import { img } from '@utils';
 import helpSvg from '@assets/svg/help.svg';
 import RenderMarkdown from '../RenderMarkdown';
 import style from './index.module.less';
-
-marked.use({ breaks: true, gfm: true });
 
 export default function HelpDrawer({ handleContent, title = '操作说明', placement = 'bottom' }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
