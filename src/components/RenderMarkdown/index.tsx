@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CopyOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { CopyFilled, CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { createRoot } from 'react-dom/client';
 import { message, BackTop } from 'antd';
 import Empty from '@/components/Empty';
@@ -51,7 +51,7 @@ const initCodeClassName = (props: Props) => {
         copy(dom);
         message.success('复制成功');
       }
-    }}><CopyOutlined /></span>
+    }}><CopyFilled /></span>
     const root = createRoot(handleDOM)
 
     function CodeToggle() {
@@ -64,7 +64,7 @@ const initCodeClassName = (props: Props) => {
           preNode?.classList.add('code-collapsed');
         }
       }}>
-        {isCollapsed ? <UpOutlined /> : <DownOutlined />}
+        {isCollapsed ? <CaretRightOutlined /> : <CaretDownOutlined />}
       </span>
     }
     root.render(<>
