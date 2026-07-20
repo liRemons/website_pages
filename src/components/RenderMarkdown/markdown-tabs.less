@@ -5,134 +5,156 @@
 
 /* 整个 Tab 组的容器 */
 .markdown-tabs-tabs-wrapper {
-    border-radius: 4px;
-    margin-top: 2px;
-    mask-image: linear-gradient(to right, black 0%, black 100%);
-}
+  border-radius: 4px;
+  margin-top: 2px;
+  mask-image: linear-gradient(to right, black 0%, black 100%);
 
-/* 头部导航栏 */
-.markdown-tabs-tabs-header {
+  /* 头部导航栏 */
+  .markdown-tabs-tabs-header {
     position: sticky;
     display: flex;
-    border-bottom: 1px solid #ccc;
     overflow-y: hidden;
     overflow-x: auto;
     top: -10px;
     z-index: 2;
-    background: var(--color-bg);
+    background: #ebebef;
+    border-radius: 4px;
 
     &::-webkit-scrollbar {
-        display: none;
+      display: none;
     }
 
     /* 伪元素：作为遮罩层覆盖在内容上方 */
     &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
-        /* 关键：确保遮罩层不拦截鼠标/触摸事件 */
-        z-index: 10;
-        opacity: 0;
-        /* 默认隐藏 */
-        transition: opacity 0.3s ease;
-        /* 可选：平滑过渡 */
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      /* 关键：确保遮罩层不拦截鼠标/触摸事件 */
+      z-index: 10;
+      opacity: 0;
+      /* 默认隐藏 */
+      transition: opacity 0.4s ease;
+      /* 可选：平滑过渡 */
     }
 
     /* 状态类：左侧有蒙层 */
     &.has-left-mask::after {
-        opacity: 1;
-        background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 15%);
+      opacity: 1;
+      background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 15%);
     }
 
     /* 状态类：右侧有蒙层 */
     &.has-right-mask::after {
-        opacity: 1;
-        background: linear-gradient(to left, rgba(255, 255, 255, .6) 0%, rgba(255, 255, 255, 0) 10%);
+      opacity: 1;
+      background: linear-gradient(to left, rgba(255, 255, 255, .6) 0%, rgba(255, 255, 255, 0) 10%);
     }
 
     /* 状态类：左右都有蒙层 */
     &.has-both-masks::after {
-        opacity: 1;
-        background: linear-gradient(to right, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, 0) 15%, rgba(255, 255, 255, 0) 85%, rgba(255, 255, 255, 1) 100%);
+      opacity: 1;
+      background: linear-gradient(to right, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, 0) 15%, rgba(255, 255, 255, 0) 85%, rgba(255, 255, 255, 1) 100%);
     }
-}
+  }
 
-/* 单个导航按钮 */
-.markdown-tabs-tab-button {
+  /* 单个导航按钮 */
+  .markdown-tabs-tab-button {
     box-shadow: none !important;
     padding: 6px 8px;
     cursor: pointer;
     font-size: 14px;
     background: transparent;
-    transition: all 0.2s;
-    border-radius: 4px 4px 0 0;
-    margin-right: 2px;
-    border: 1px #ccc solid !important;
+    transition: background 0.4s;
+    border-radius: 8px 8px 0 0;
+    // border: 1px solid #ccc !important;
     border-bottom: 0 !important;
     font-weight: normal;
+    position: relative;
+    background: #e4e4f5;
+    margin: 0 2px;
 
     &:last-child {
-        border-right: none;
-        margin-right: 0;
+      border-right: none;
     }
 
     &:hover {
-        box-shadow: none !important;
+      background: #e4e4f5;
+      box-shadow: none !important;
+      color: #007bff;
+    }
+
+    &::after {
+      content: ' ';
+      z-index: 1;
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      bottom: 0;
+      left: 100%;
+    }
+
+    &::before {
+      content: " ";
+      z-index: 1;
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      bottom: 0;
+      right: 100%;
     }
 
     &.active {
-        color: #007bff;
-        position: relative;
+      color: #007bff;
+      background: #ebecf0;
+      position: relative;
+      border: 1px solid #e1e1e1 !important;
+      border-bottom: 0 !important;
 
-        &::after {
-            content: ' ';
-            position: absolute;
-            width: calc(100%);
-            height: 2px;
-            background: #007bff;
-            bottom: 0px;
-            left: 0;
-            border-radius: 2px;
-        }
+      &::after {
+        background: radial-gradient(16px at right top, transparent 50%, #ebecf0 50%);
+      }
+
+      &::before {
+        background: radial-gradient(16px at left top, transparent 50%, #ebecf0 50%);
+      }
+
+
     }
-}
+  }
 
-/* 内容区域 */
-.markdown-tabs-tabs-container {
+  /* 内容区域 */
+  .markdown-tabs-tabs-container {
     position: relative;
-}
+  }
 
-.markdown-tabs-tab-content {
+  .markdown-tabs-tab-content {
     // display: none;
     opacity: 0;
     height: 0;
     margin: 0;
     overflow: hidden;
     /* 默认隐藏 */
-    transition: all 0.4s ease-in-out;
-}
+    transition: all 0.4s;
 
-/* 激活状态的内容显示 */
-.markdown-tabs-tab-content.active {
-    opacity: 1;
-    height: auto;
-    margin: 10px 0;
+    &.active {
+      opacity: 1;
+      height: auto;
+    }
+  }
 }
-
 
 [data-theme='dark'] {
-    .markdown-tabs-tabs-header {
-        border-color: #000;
-    }
+  .markdown-tabs-tabs-header {
+    border-color: #000;
+  }
 
-    .markdown-tabs-tab-button {
-        border-color: #000 !important;
-        color: #afafaf;
-        background: #263238;
-        background: #000;
-    }
+  .markdown-tabs-tab-button {
+    border-color: #000 !important;
+    color: #afafaf;
+    background: #263238;
+    background: #000;
+  }
 }
