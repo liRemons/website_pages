@@ -17,6 +17,7 @@ import xml from 'highlight.js/lib/languages/xml';
 import css from 'highlight.js/lib/languages/css';
 import plaintext from 'highlight.js/lib/languages/plaintext';
 import less from 'highlight.js/lib/languages/less';
+import typescript from 'highlight.js/lib/languages/typescript';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('bash', bash);
@@ -26,6 +27,7 @@ hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('plaintext', plaintext);
 hljs.registerLanguage('less', less);
+hljs.registerLanguage('typescript', typescript);
 
 
 type AnchorItem = {
