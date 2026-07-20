@@ -17,7 +17,6 @@
     overflow-x: auto;
     top: -10px;
     z-index: 2;
-    background: #ebebef;
 
     &::-webkit-scrollbar {
       display: none;
@@ -68,7 +67,6 @@
     background: transparent;
     transition: background 0.4s;
     border-radius: 8px 8px 0 0;
-    // border: 1px solid #ccc !important;
     border-bottom: 0 !important;
     font-weight: normal;
     position: relative;
@@ -91,7 +89,7 @@
       width: 8px;
       height: 8px;
       position: absolute;
-      bottom: 0;
+      bottom: -1px;
       left: 100%;
     }
 
@@ -101,7 +99,7 @@
       width: 8px;
       height: 8px;
       position: absolute;
-      bottom: 0;
+      bottom: -1px;
       right: 100%;
     }
 
@@ -119,8 +117,6 @@
       &::before {
         background: radial-gradient(16px at left top, transparent 50%, #ebecf0 50%);
       }
-
-
     }
   }
 
@@ -130,7 +126,6 @@
   }
 
   .markdown-tabs-tab-content {
-    // display: none;
     opacity: 0;
     height: 0;
     margin: 0;
@@ -147,13 +142,29 @@
 
 [data-theme='dark'] {
   .markdown-tabs-tabs-header {
-    border-color: #000;
+    border-color: #1a1d2e;
   }
 
   .markdown-tabs-tab-button {
-    border-color: #000 !important;
+    border-color: #1a1d2e !important;
     color: #afafaf;
     background: #263238;
-    background: #000;
+
+    &:hover {
+      background: #1a1d2e;
+    }
+
+    &.active {
+      background: #1a1d2e;
+      border: 1px solid #1a1d2e !important;
+
+      &::after {
+        background: radial-gradient(16px at right top, transparent 50%, #1a1d2e 50%);
+      }
+
+      &::before {
+        background: radial-gradient(16px at left top, transparent 50%, #1a1d2e 50%);
+      }
+    }
   }
 }
