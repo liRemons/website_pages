@@ -38,6 +38,74 @@ function listenScroll() {
   }, { passive: false });
 }
 
+
+function addMask() {
+  // 获取滚动容器
+   const parentElement = document.querySelector('.markdown');
+
+  // 1. 封装一个处理单个滚动元素的函数
+  function initScrollMask(scrollEl) {
+    // 防止重复初始化
+    if (scrollEl.dataset.maskInited) return;
+    scrollEl.dataset.maskInited = 'true';
+
+    const updateMaskState = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollEl;
+
+      const hasLeft = scrollLeft > 1;
+      const hasRight = scrollLeft + clientWidth < scrollWidth - 1;
+
+      // 清除所有状态类
+      scrollEl.classList.remove('has-left-mask', 'has-right-mask', 'has-both-masks');
+
+      // 根据条件添加对应的状态类
+      if (hasLeft && hasRight) {
+        scrollEl.classList.add('has-both-masks');
+      } else if (hasLeft) {
+        scrollEl.classList.add('has-left-mask');
+      } else if (hasRight) {
+        scrollEl.classList.add('has-right-mask');
+      }
+    };
+
+    // 绑定滚动事件
+    scrollEl.addEventListener('scroll', updateMaskState);
+
+    // 初始执行一次
+    updateMaskState();
+  }
+
+  // 2. 初始化页面中已存在的滚动元素
+  document.querySelectorAll('.markdown-tabs-tabs-header').forEach(initScrollMask);
+
+  // 3. 使用 MutationObserver 监听 DOM 变化
+  // 这样即使后续通过 JS 动态插入了新的 .scroll-content，也能自动绑定蒙层逻辑
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return; // 忽略文本节点
+
+        // 如果新增的节点本身就是 .markdown-tabs-tabs-header
+        if (node.classList.contains('markdown-tabs-tabs-header')) {
+          initScrollMask(node);
+        }
+        // 如果新增的节点内部包含了 .markdown-tabs-tabs-header
+        node.querySelectorAll('.markdown-tabs-tabs-header').forEach(initScrollMask);
+      });
+    });
+  });
+
+  observer.observe(parentElement, { childList: true, subtree: true });
+
+  // 4. 窗口大小改变时，重新计算所有滚动元素的蒙层状态
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.markdown-tabs-tabs-header').forEach(el => {
+      el.dispatchEvent(new Event('scroll'));
+    });
+  });
+
+}
+
 function renderTab() {
   // 获取页面上所有的 Tab 组容器
   const wrappers = document.querySelectorAll(`.${tabsName}-tabs-wrapper`);
@@ -48,29 +116,33 @@ function renderTab() {
 
     if (!header || !contents) return;
 
-    // 获取该组内的所有按钮和内容块
-    const items = header.querySelectorAll(`.${tabsName}-tab-button`);
+    // 获取该组内的所有内容块（只需获取一次，无需在每次点击时重复查询）
     const panels = contents.querySelectorAll(`.${tabsName}-tab-content`);
 
-    // 为每个按钮绑定点击事件
-    items.forEach((item, index) => {
-      item.addEventListener('click', () => {
-        // 1. 移除该组内所有按钮的 active 类
-        items.forEach(i => i.classList.remove('active'));
-        // 2. 移除该组内所有内容块的 active 类
-        panels.forEach(p => p.classList.remove('active'));
+    // 将点击事件绑定在 header 上（事件委托）
+    header.addEventListener('click', (e) => {
+      // 1. 判断点击的是否为 Tab 按钮（防止点到 header 的其他空白区域）
+      const item = e.target.closest(`.${tabsName}-tab-button`);
+      if (!item || !header.contains(item)) return;
 
-        // 3. 激活当前点击的按钮
-        item.classList.add('active');
-        // 4. 激活对应的内容块 (通过 index 匹配)
-        if (panels[index]) {
-          panels[index].classList.add('active');
-        }
-      });
+      // 2. 获取当前点击按钮的索引
+      const items = header.querySelectorAll(`.${tabsName}-tab-button`);
+      const index = Array.from(items).indexOf(item);
+
+      // 3. 移除该组内所有按钮和内容块的 active 类
+      items.forEach(i => i.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+
+      // 4. 激活当前点击的按钮和对应的内容块
+      item.classList.add('active');
+      if (panels[index]) {
+        panels[index].classList.add('active');
+      }
     });
   });
 
-  listenScroll()
+  listenScroll();
+  addMask();
 }
 
 export default renderTab;
