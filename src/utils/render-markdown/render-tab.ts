@@ -41,7 +41,7 @@ function listenScroll() {
 
 function addMask() {
   // 获取滚动容器
-   const parentElement = document.querySelector('.markdown');
+  const parentElement = document.querySelector('.markdown');
 
   // 1. 封装一个处理单个滚动元素的函数
   function initScrollMask(scrollEl) {
@@ -118,7 +118,7 @@ function renderTab() {
 
     // 获取该组内的所有内容块（只需获取一次，无需在每次点击时重复查询）
     const panels = contents.querySelectorAll(`.${tabsName}-tab-content`);
-
+    const markdown = document.querySelector('.markdown')
     // 将点击事件绑定在 header 上（事件委托）
     header.addEventListener('click', (e) => {
       // 1. 判断点击的是否为 Tab 按钮（防止点到 header 的其他空白区域）
@@ -135,6 +135,13 @@ function renderTab() {
 
       // 4. 激活当前点击的按钮和对应的内容块
       item.classList.add('active');
+      if (markdown?.scrollTop && item.offsetParent.offsetTop && markdown?.scrollTop > item.offsetParent.offsetTop) {
+        markdown?.scrollTo({
+          top: item.offsetParent.offsetTop,
+          behavior: 'smooth'
+        })
+      }
+
       if (panels[index]) {
         panels[index].classList.add('active');
       }
