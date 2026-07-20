@@ -47,7 +47,7 @@ function addMask() {
   function initScrollMask(scrollEl) {
     // 防止重复初始化
     if (scrollEl.dataset.maskInited) return;
-    scrollEl.dataset.maskInited = 'true';
+    scrollEl.parentElement.dataset.maskInited = 'true';
 
     const updateMaskState = () => {
       const { scrollLeft, scrollWidth, clientWidth } = scrollEl;
@@ -56,15 +56,15 @@ function addMask() {
       const hasRight = scrollLeft + clientWidth < scrollWidth - 1;
 
       // 清除所有状态类
-      scrollEl.classList.remove('has-left-mask', 'has-right-mask', 'has-both-masks');
+      scrollEl.parentElement.classList.remove('has-left-mask', 'has-right-mask', 'has-both-masks');
 
       // 根据条件添加对应的状态类
       if (hasLeft && hasRight) {
-        scrollEl.classList.add('has-both-masks');
+        scrollEl.parentElement.classList.add('has-both-masks');
       } else if (hasLeft) {
-        scrollEl.classList.add('has-left-mask');
+        scrollEl.parentElement.classList.add('has-left-mask');
       } else if (hasRight) {
-        scrollEl.classList.add('has-right-mask');
+        scrollEl.parentElement.classList.add('has-right-mask');
       }
     };
 

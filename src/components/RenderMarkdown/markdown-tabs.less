@@ -8,6 +8,42 @@
   border-radius: 4px;
   margin-top: 2px;
   mask-image: linear-gradient(to right, black 0%, black 100%);
+  position: relative;
+
+  /* 伪元素：作为遮罩层覆盖在内容上方 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    pointer-events: none;
+    /* 关键：确保遮罩层不拦截鼠标/触摸事件 */
+    z-index: 10;
+    opacity: 0;
+    /* 默认隐藏 */
+    transition: opacity 0.4s ease;
+    /* 可选：平滑过渡 */
+  }
+
+  /* 状态类：左侧有蒙层 */
+  &.has-left-mask::after {
+    opacity: 1;
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 15%);
+  }
+
+  /* 状态类：右侧有蒙层 */
+  &.has-right-mask::after {
+    opacity: 1;
+    background: linear-gradient(to left, rgba(255, 255, 255, .6) 0%, rgba(255, 255, 255, 0) 10%);
+  }
+
+  /* 状态类：左右都有蒙层 */
+  &.has-both-masks::after {
+    opacity: 1;
+    background: linear-gradient(to right, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, 0) 15%, rgba(255, 255, 255, 0) 85%, rgba(255, 255, 255, 1) 100%);
+  }
 
   /* 头部导航栏 */
   .markdown-tabs-tabs-header {
@@ -23,40 +59,6 @@
       display: none;
     }
 
-    /* 伪元素：作为遮罩层覆盖在内容上方 */
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      /* 关键：确保遮罩层不拦截鼠标/触摸事件 */
-      z-index: 10;
-      opacity: 0;
-      /* 默认隐藏 */
-      transition: opacity 0.4s ease;
-      /* 可选：平滑过渡 */
-    }
-
-    /* 状态类：左侧有蒙层 */
-    &.has-left-mask::after {
-      opacity: 1;
-      background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 15%);
-    }
-
-    /* 状态类：右侧有蒙层 */
-    &.has-right-mask::after {
-      opacity: 1;
-      background: linear-gradient(to left, rgba(255, 255, 255, .6) 0%, rgba(255, 255, 255, 0) 10%);
-    }
-
-    /* 状态类：左右都有蒙层 */
-    &.has-both-masks::after {
-      opacity: 1;
-      background: linear-gradient(to right, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, 0) 15%, rgba(255, 255, 255, 0) 85%, rgba(255, 255, 255, 1) 100%);
-    }
   }
 
   /* 单个导航按钮 */
