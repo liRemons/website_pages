@@ -10,7 +10,7 @@ interface AlertTypeMap {
 function renderAlert(tokens: Array<{ markup: string }>, index: number): string {
     const typeMap: AlertTypeMap = {
         warning: '注意',
-        note: '注释',
+        note: '注',
         tip: '提示',
         important: '重要',
         caution: '警告',
