@@ -185,6 +185,12 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
               onClick: () => panzoomRef.current?.reset(),
             },
             {
+              isShow: showDownload && isPanzoomActive,
+              icon: <DownloadOutlined />,
+              tooltip: '下载',
+              dropdown: downloadMenu,
+            },
+            {
               isShow: true,
               icon: isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />,
               tooltip: isFullscreen ? '退出全屏' : '全屏',
@@ -194,12 +200,6 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
                 else wrapperRef.current?.requestFullscreen?.();
               },
               className: 'mermaid-fullscreen-btn',
-            },
-            {
-              isShow: showDownload && isPanzoomActive && !isFullscreen,
-              icon: <DownloadOutlined />,
-              tooltip: '下载',
-              dropdown: downloadMenu,
             },
             {
               isShow: showSourceView && !isFullscreen,
@@ -218,7 +218,7 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
           ].map((item, index) => {
             if (item.isShow === false) return null;
             const btn = item.dropdown ? (
-              <Dropdown key={index} menu={item.dropdown} trigger={["click"]}>
+              <Dropdown key={index} menu={item.dropdown} trigger={["click"]} getPopupContainer={() => wrapperRef.current}>
                 <div className={`circle${item.className ? ` ${item.className}` : ''}`}>{item.icon}</div>
               </Dropdown>
             ) : (
