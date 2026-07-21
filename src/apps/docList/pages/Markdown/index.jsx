@@ -20,5 +20,10 @@ export default function Markdown(props) {
     }
   }, [localStore.htmlInfo, props.id]);
 
-  return useObserver(() => <RenderMarkdown showBackTop content={localStore.markdownInfo} createTime={localStore.createTime} />);
+  return useObserver(() => <RenderMarkdown
+    showBackTop
+    content={localStore.markdownInfo}
+    createTime={localStore.createTime}
+    editButton={<a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
+  />);
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CopyFilled, CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { createRoot } from 'react-dom/client';
-import { message, BackTop } from 'antd';
+import { message, BackTop, Button } from 'antd';
 import Empty from '@/components/Empty';
 import { copy } from 'methods-r';
 import dayjs from 'dayjs';
@@ -18,11 +18,12 @@ interface Props {
   isSlotMermaid?: boolean;
   isShowCollapsed?: boolean;
   codeType?: string;
+  editButton?: React.ReactNode;
 }
 
 
 const initCodeClassName = (props: Props) => {
-  const { isSlotMermaid = true, isShowCollapsed = true } = props;
+  const { isSlotMermaid = true, isShowCollapsed = true, editButton } = props;
   document.querySelectorAll('.markdown-html code[class*="language-"]').forEach((item, index) => {
     const codeType = item.className.replace('language-', '').trim();
     const slotMermaidClassName = (isSlotMermaid && codeType === 'mermaid') ? 'mermaid-render-noCode' : ''
@@ -80,7 +81,7 @@ const initCodeClassName = (props: Props) => {
 };
 
 export default function RenderMarkdown(props: Props) {
-  const { content, createTime, showBackTop, isSlotMermaid = true, codeType } = props;
+  const { content, createTime, showBackTop, isSlotMermaid = true, codeType, editButton } = props;
   const [html, setHtml] = useState('');
   useEffect(() => {
     let timer = null;
@@ -112,12 +113,19 @@ export default function RenderMarkdown(props: Props) {
     <div className='markdown'>
       {
         html ?
-          <div className='markdown-html'><div style={{ width: '100%' }} dangerouslySetInnerHTML={{ __html: html }} />
-            {
-              createTime && <div className="create-time">
-                文档更新于 {dayjs(createTime).format('YYYY-MM-DD HH:mm:ss')}
-              </div>
-            }
+          <div className='markdown-html'>
+            <div style={{ width: '100%' }} dangerouslySetInnerHTML={{ __html: html }} />
+            <div className="markdown-footer">
+              {
+                createTime && <div className="create-time">
+                  文档更新于 {dayjs(createTime).format('YYYY-MM-DD HH:mm:ss')}
+                </div>
+              }
+              &nbsp;
+              {
+                editButton
+              }
+            </div>
           </div>
           : <Empty />
       }

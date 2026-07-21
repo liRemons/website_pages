@@ -12,3 +12,4 @@ export const img = (svg, height) => {
   });
 };
 
+export const USER_TOKEN = 'REMONS_TOKEN'

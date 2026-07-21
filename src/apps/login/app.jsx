@@ -2,10 +2,11 @@ import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { encrypt, DES_KEY, DES_IV } from './model/const';
-import { useObserver, useLocalObservable } from 'mobx-react';
+import { useLocalObservable } from 'mobx-react';
 import store from './model/store';
 import styled from './index.module.less'
 import FormItem from '../../components/Form';
+import { USER_TOKEN } from '@/utils';
 
 const NormalLoginForm = () => {
   const localStore = useLocalObservable(() => store);
@@ -18,7 +19,7 @@ const NormalLoginForm = () => {
 
     if (res?.success) {
       message.success('成功')
-      localStorage.setItem('REMONS_TOKEN', res.data.token);
+      localStorage.setItem(USER_TOKEN, res.data.token);
       const params = new URLSearchParams(window.location.search);
       if (params.get('from')) {
         window.location.href = params.get('from')

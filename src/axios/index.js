@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd';
-import { HOST } from "@utils";
+import { HOST, USER_TOKEN } from "@utils";
 
 const TIMEOUT_MS = 20000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
@@ -66,8 +66,8 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
 
   // 构造请求头
   const requestHeaders = { ...headers };
-  const token = localStorage.getItem('REMONS_TOKEN');
-  if (token) requestHeaders['REMONS_TOKEN'] = token;
+  const token = localStorage.getItem(USER_TOKEN);
+  if (token) requestHeaders[USER_TOKEN] = token;
 
   // 构造请求体
   let body = undefined;
