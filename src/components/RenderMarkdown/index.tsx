@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CopyFilled, CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { createRoot } from 'react-dom/client';
-import { message, BackTop, Button } from 'antd';
+import { message, BackTop } from 'antd';
 import Empty from '@/components/Empty';
 import { copy } from 'methods-r';
 import dayjs from 'dayjs';

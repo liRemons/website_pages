@@ -114,12 +114,12 @@ const MermaidRenderer = forwardRef(function MermaidRenderer(
 
   const handleDownloadSVG = useCallback(() => {
     if (!svg) { message.warning("暂无图表"); return; }
-    downloadSVG(svg, "mermaid");
+    downloadSVG(svg, title);
   }, [svg]);
 
   const handleDownloadPNG = useCallback(() => {
     if (!svg) { message.warning("暂无图表"); return; }
-    downloadSVGAsPNG(svg, "mermaid", 2);
+    downloadSVGAsPNG(svg, title, 2);
   }, [svg]);
 
   const downloadMenu = {

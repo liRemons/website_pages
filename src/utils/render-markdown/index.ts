@@ -108,9 +108,6 @@ function renderMarkdown(content: string) {
     });
   };
 
-  // console.log(anchor, format(clonedeep(anchor)));
-
-
   return {
     anchor: format(clonedeep(anchor)),
     info,
