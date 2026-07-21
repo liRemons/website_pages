@@ -72,6 +72,9 @@ function renderMarkdown(content: string) {
       },
     })
     .use(mila, {
+      matcher(href: string) {
+        return href.match(/^https?:\/\//);
+      },
       attrs: {
         target: "_blank",
         rel: "noopener", // 增加此属性可提升安全性
