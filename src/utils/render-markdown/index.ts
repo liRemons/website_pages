@@ -6,7 +6,8 @@ import clonedeep from 'lodash.clonedeep'
 import hljs from 'highlight.js/lib/core';
 import uslug from 'uslug';
 import { tab } from "@mdit/plugin-tab";
-
+import { alert } from "@mdit/plugin-alert";
+import renderAlert from './render-alert';
 import renderTab, { tabsName } from './render-tab';
 // languages
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -76,7 +77,10 @@ function renderMarkdown(content: string) {
         rel: "noopener", // 增加此属性可提升安全性
       },
     })
-    ;
+    .use(alert, {
+      titleRender: renderAlert
+    });
+  ;
 
   const info = MD.render(content);
   setTimeout(() => {

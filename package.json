@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
+    "@mdit/plugin-alert": "^1.0.1",
     "@mdit/plugin-tab": "^1.0.1",
     "@microlink/react-json-view": "^1.31.22",
     "@panzoom/panzoom": "^4.6.2",
