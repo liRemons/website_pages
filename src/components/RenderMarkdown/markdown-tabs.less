@@ -73,9 +73,11 @@
     border-bottom: 0 !important;
     font-weight: normal;
     position: relative;
-    background: #dbdbff;
     margin: 0 2px;
     min-width: 50px;
+    border: 1px solid #ccc !important;
+    border-bottom: 0 !important;
+    background: #ebecf0;
 
     &:last-child {
       border-right: none;
@@ -109,10 +111,9 @@
 
     &.active {
       color: #007bff;
-      background: #ebecf0;
       position: relative;
-      border: 1px solid #ccc !important;
-      border-bottom: 0 !important;
+      background: #dbdbff;
+      border-color: transparent !important;
 
       &::after {
         background: radial-gradient(16px at right top, transparent 50%, #ebecf0 50%);
