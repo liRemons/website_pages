@@ -133,17 +133,17 @@ function renderTab() {
       items.forEach(i => i.classList.remove('active'));
       panels.forEach(p => p.classList.remove('active'));
 
+
+      item.classList.add('active');
+      if (panels[index]) {
+        panels[index].classList.add('active');
+      }
       // 4. 激活当前点击的按钮和对应的内容块
       if (markdown?.scrollTop && item.offsetParent.offsetTop && markdown?.scrollTop > item.offsetParent.offsetTop) {
         markdown?.scrollTo({
           top: item.offsetParent.offsetTop,
           behavior: 'smooth'
         })
-      }
-
-      item.classList.add('active');
-      if (panels[index]) {
-        panels[index].classList.add('active');
       }
     });
   });
