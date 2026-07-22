@@ -8,8 +8,8 @@ class Store {
     makeAutoObservable(this);
   }
 
-  async queryTechClassList() {
-    const { data: techClassList } = await queryTechClassList();
+  async queryTechClassList(payload = {}) {
+    const { data: techClassList } = await queryTechClassList(payload);
     techClassList.forEach(item => {
       item.url = item.icon;
       item.title = item.name;

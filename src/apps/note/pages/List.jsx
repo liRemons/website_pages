@@ -15,7 +15,7 @@ export default function HomeList() {
   const localStore = useLocalObservable(() => store);
 
   useEffect(() => {
-    localStore.queryTechClassList();
+    localStore.queryTechClassList({ websiteRole: window.location.host });
   }, []);
 
   const openPage = (data) => {

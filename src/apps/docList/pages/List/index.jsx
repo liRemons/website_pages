@@ -51,7 +51,7 @@ export default function List() {
     const params = getSearchParams();
     setParams(params);
     const { id: techClassId, pageId } = params;
-    await localStore.queryArticleList({ techClassId });
+    await localStore.queryArticleList({ techClassId, websiteRole: window.location.host });
     if (pageId) {
       localStore.getMarkdown(pageId);
       setActiveId(pageId);
