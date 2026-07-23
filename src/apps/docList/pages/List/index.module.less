@@ -139,12 +139,13 @@
     }
 
     .actionButtons {
-      position: absolute;
-      bottom: 36px;
-      right: 0;
+      position: fixed;
+      bottom: 240px;
+      right: 16px;
       z-index: 10;
       opacity: .6;
       overflow: visible;
+      transition: opacity 0.3s ease-in-out;
 
       &:hover {
         opacity: 1;
@@ -152,16 +153,9 @@
     }
 
     .actionPanel {
-      position: absolute;
-      right: 0px;
       display: flex;
-      gap: 2px;
-    }
-
-    .actionButton {
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
+      flex-direction: column;
+      gap: 10px;
     }
   }
 
