@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
 import { createRoot } from "react-dom/client";
-import { Dropdown, message, Modal, Button, Tooltip } from "antd";
+import { Dropdown, message, Modal, Tooltip } from "antd";
 import {
   PlusOutlined, MinusOutlined,
   FullscreenOutlined, FullscreenExitOutlined,
@@ -9,7 +9,6 @@ import {
   ImportOutlined, ExportOutlined, LoadingOutlined
 } from "@ant-design/icons";
 import { downloadSVG, downloadSVGAsPNG } from "@/utils/download";
-import { copy } from "methods-r";
 import { useTheme, ThemeProvider } from "@/hooks/useTheme";
 import useMermaidRender from "./useMermaidRender";
 import usePanzoom from "./usePanzoom";
@@ -19,7 +18,8 @@ import classNames from "classnames/bind";
 import { IsPC } from 'methods-r';
 import mermaidSvg from '../../assets/svg/mermaid.svg'
 import driverRender from "../../utils/driver";
-import RenderMarkdown from "../RenderMarkdown";
+import RenderMarkdown from 'remons-render-markdown';
+import 'remons-render-markdown/dist/index.css'
 
 const mermaidDriverKey = 'docList-mermaid-driver';
 const menuDriverKey = 'docList-menu-driver';

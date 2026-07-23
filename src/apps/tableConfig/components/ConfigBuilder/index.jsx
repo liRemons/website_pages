@@ -30,7 +30,8 @@ import {
   importConfig,
   generateExampleConfig,
 } from '../../utils/configParser';
-import RenderMarkdown from '@/components/RenderMarkdown';
+import RenderMarkdown from 'remons-render-markdown';
+import 'remons-render-markdown/dist/index.css'
 
 const { TextArea } = Input;
 

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import store from '../../model/store';
 import { useLocalObservable, useObserver } from 'mobx-react';
-import RenderMarkdown from '@/components/RenderMarkdown';
+import RenderMarkdown from 'remons-render-markdown';
+import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
 
 export default function Markdown(props) {

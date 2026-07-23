@@ -12,7 +12,8 @@ import DataTable from './DataTable';
 import { validateConfig } from '../../utils/configParser';
 import { generateReactCode, generateProjectFiles } from '../../utils/codeGenerator';
 import './ResizablePanels.less';
-import RenderMarkdown from '@/components/RenderMarkdown';
+import RenderMarkdown from 'remons-render-markdown';
+import 'remons-render-markdown/dist/index.css'
 
 /**
  * 可拖拽调整大小的面板组件
