@@ -30,11 +30,12 @@ import {
   importConfig,
   generateExampleConfig,
 } from '../../utils/configParser';
-import RenderMarkdown from 'remons-render-markdown';
+import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css'
 
 const { TextArea } = Input;
 
+initHighlighter(languagesCommon);
 /**
  * 配置构建器主组件
  * 用于可视化配置搜索条件和表格

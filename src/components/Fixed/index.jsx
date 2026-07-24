@@ -43,16 +43,6 @@ export default function Fixed({
   return (
     <>
       <div className={classnames(style.container, visible ? style.containerToRight : "")}>
-        <div className={classnames(style.circle)}>
-          <ThemeToggle dropdown={true} />
-        </div>
-
-        {handleContent && (
-          <div className={classnames(style.circle)}>
-            <HelpDrawer handleContent={handleContent} />
-          </div>
-        )}
-
         {btns.map((item) => (
           <div
             key={item.title}
@@ -62,6 +52,16 @@ export default function Fixed({
             {item.icon}
           </div>
         ))}
+
+        <div className={classnames(style.circle)}>
+          <ThemeToggle dropdown={true} />
+        </div>
+
+        {handleContent && (
+          <div className={classnames(style.circle)}>
+            <HelpDrawer handleContent={handleContent} />
+          </div>
+        )}
 
         <div
           onClick={() => setVisible(!visible)}

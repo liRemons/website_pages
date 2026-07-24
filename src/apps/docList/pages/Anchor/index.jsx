@@ -53,7 +53,7 @@ export default function MyAnchor(props) {
 
   return <>
     {
-      anchor.length ? <Anchor onChange={activeAnchorToCenter} getContainer={() => document.querySelector('.markdown')}>
+      anchor.length ? <Anchor onChange={activeAnchorToCenter} getContainer={() => document.querySelector('.markdown-main-content')}>
         {
           renderAnchor(anchor)
         }

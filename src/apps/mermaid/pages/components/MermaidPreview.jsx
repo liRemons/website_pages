@@ -1,8 +1,6 @@
 ﻿import React from "react";
-import { Space, Select } from "antd";
-import { THEME_OPTIONS } from "../constants";
 import style from "../index.module.less";
-import MermaidRenderer from "@/components/MermaidRenderer";
+import { renderMermaid } from "remons-render-markdown";
 
 /**
  * 右栏：Mermaid 图表预览
@@ -12,7 +10,12 @@ export default function MermaidPreview({ source }) {
   return (
     <div className={style.rightPane}>
       <div className={style.previewWrap}>
-        <MermaidRenderer source={source} debounceMs={300} />
+        {
+          renderMermaid({
+            source: source,
+            debounceMs: 300, // 防抖时间，防止频繁渲染
+          })
+        }
       </div>
     </div>
   );

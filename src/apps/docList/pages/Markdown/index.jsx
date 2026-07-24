@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import store from '../../model/store';
 import { useLocalObservable, useObserver } from 'mobx-react';
-import RenderMarkdown from 'remons-render-markdown';
+import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
+
+initHighlighter(languagesCommon);
 
 export default function Markdown(props) {
   const localStore = useLocalObservable(() => store);
@@ -26,6 +28,8 @@ export default function Markdown(props) {
     showBackTop
     content={localStore.markdownInfo}
     createTime={localStore.createTime}
+    showDriverGuide
+    backTopTarget={document.querySelector('.markdown-main-content')}
     editButton={isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
   />);
 }

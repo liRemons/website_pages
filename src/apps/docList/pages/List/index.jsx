@@ -281,7 +281,7 @@ export default function List() {
       </div>}
       {IsPC() && handleType !== 'share' && renderList()}
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
-        <div className={style.markdown_main}>
+        <div className={classnames(style.markdown_main, 'markdown-main-content')}>
           {IsPC() && renderActionButtons()}
           {
             (localStore.markdownInfo && localStore.htmlInfo) ? VIEW_DETAIL[viewType] : <Empty />
