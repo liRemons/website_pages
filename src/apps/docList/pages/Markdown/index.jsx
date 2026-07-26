@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import store from '../../model/store';
 import { useLocalObservable, useObserver } from 'mobx-react';
+import nginx from 'highlight.js/lib/languages/nginx';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
 
-initHighlighter(languagesCommon);
+initHighlighter(｛
+   ...languagesCommon,
+   nginx
+｝);
 
 export default function Markdown(props) {
   const localStore = useLocalObservable(() => store);
