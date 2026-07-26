@@ -6,10 +6,10 @@ import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
 
-initHighlighter(｛
+initHighlighter({
    ...languagesCommon,
    nginx
-｝);
+});
 
 export default function Markdown(props) {
   const localStore = useLocalObservable(() => store);
