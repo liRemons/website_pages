@@ -203,6 +203,9 @@ export default function List() {
   }
 
   const renderList = () => {
+    if (localStore.articleList?.length <= 1) {
+      return null;
+    }
     return <div className={classnames(style.page_list, 'shadow_not_active')}>
       <div className={style.page_list_main}>
         {
@@ -265,7 +268,7 @@ export default function List() {
   const renderMenuList = () => {
     const arr = [
       { onClick: openListNav, icon: <ProfileTwoTone />, isShow: !!localStore.anchor?.length, className: 'docList-menu-anchor' },
-      { onClick: openListMenu, icon: <FolderOpenTwoTone />, isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list' },
+      { onClick: openListMenu, icon: <FolderOpenTwoTone />, isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list', isShow: localStore.articleList?.length > 1 },
       { className: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
       { className: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
