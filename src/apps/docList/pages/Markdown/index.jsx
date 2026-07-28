@@ -33,7 +33,7 @@ export default function Markdown(props) {
   return useObserver(() => <RenderMarkdown
     showBackTop
     content={localStore.markdownInfo}
-    createTime={localStore.createTime}
+    createTime={localStore.createTime ? +new Date(localStore.createTime) : false}
     showDriverGuide
     backTopTarget={document.querySelector('.markdown-main-content')}
     editButton={isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
