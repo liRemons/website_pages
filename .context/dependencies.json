@@ -1,231 +1,175 @@
 {
-  "project": "website_pages",
-  "description": "模块间依赖关系图",
-
-  "sharedModules": {
-    "components": {
-      "path": "src/components/",
-      "items": ["CardList", "Container", "Empty", "Fixed", "Form", "Header", "HelpDrawer", "ScanQr", "ThemeToggle"]
-    },
-    "axios": {
-      "path": "src/axios/index.js",
-      "exports": ["service"]
-    },
-    "utils": {
-      "path": "src/utils/",
-      "items": ["index.js (HOST, USER_TOKEN, img)", "download.js", "driver.ts", "isLogin.ts", "luckey.js", "preload.js", "zip.js"]
-    },
-    "hooks": {
-      "path": "src/hooks/",
-      "items": ["useLoadMermaid.js", "useTheme.js"]
-    },
-    "assets": {
-      "path": "src/assets/",
-      "items": ["css/variables.css", "css/index.global.less", "svg/"]
-    }
-  },
-
-  "apps": [
-    {
-      "name": "createQR",
-      "description": "生成二维码",
-      "hasModel": true,
-      "modelFiles": ["model/qrcode.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "docList",
-      "description": "文章列表",
-      "hasModel": true,
-      "modelFiles": ["model/server.js", "model/store.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "express",
-      "description": "快递查询",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "home",
-      "description": "首页",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "homeList",
-      "description": "主页（工具分类列表）",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "imgWatermark",
-      "description": "图片水印",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "jsonViewer",
-      "description": "JSON 解析器",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "login",
-      "description": "登录",
-      "hasModel": true,
-      "modelFiles": ["model/const.js", "model/server.js", "model/store.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "mermaid",
-      "description": "Mermaid 图表编辑器",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils", "hooks"]
-    },
-    {
-      "name": "my",
-      "description": "个人中心",
-      "hasModel": true,
-      "modelFiles": ["model/const.js", "model/server.js", "model/store.js", "model/utils.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "note",
-      "description": "学习笔记",
-      "hasModel": true,
-      "modelFiles": ["model/server.js", "model/store.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "postmarkGenerator",
-      "description": "邮戳生成器",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "productManage",
-      "description": "订单管理",
-      "hasModel": true,
-      "modelFiles": ["model/const.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "reMark",
-      "description": "Markdown 编辑器（所见即所得）",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "scanqr",
-      "description": "扫描二维码",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "simpleSketches",
-      "description": "简笔画生成器",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "tableConfig",
-      "description": "表单引擎（低代码）",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "timeCalculator",
-      "description": "时间计算",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "tool",
-      "description": "实用工具列表",
-      "hasModel": true,
-      "modelFiles": ["model/server.js", "model/store.js"],
-      "dependsOn": ["components", "axios", "utils"]
-    },
-    {
-      "name": "transcoderQR",
-      "description": "二维码解析",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "travelBadge",
-      "description": "旅行勋章",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "axios", "utils"],
-      "hasInternalModules": ["api", "components", "hooks", "i18n", "utils"]
-    },
-    {
-      "name": "urlCoder",
-      "description": "URL 编码",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    },
-    {
-      "name": "wangEditor",
-      "description": "富文本编辑器",
-      "hasModel": false,
-      "modelFiles": [],
-      "dependsOn": ["components", "utils"]
-    }
+  "config\\rules.js": [
+    "mini-css-extract-plugin",
+    "path"
   ],
-
-  "appsGroup": {
-    "withModel": ["createQR", "docList", "login", "my", "note", "productManage", "tool"],
-    "withoutModel": [
-      "express", "home", "homeList", "imgWatermark", "jsonViewer",
-      "mermaid", "postmarkGenerator", "reMark", "scanqr", "simpleSketches",
-      "tableConfig", "timeCalculator", "transcoderQR", "travelBadge",
-      "urlCoder", "wangEditor"
-    ]
-  },
-
-  "cdnExternals": [
-    { "name": "react", "url": "https://registry.npmmirror.com/react/18.3.1/files/umd/react.production.min.js" },
-    { "name": "react-dom", "url": "https://registry.npmmirror.com/react-dom/18.3.1/files/umd/react-dom.production.min.js" },
-    { "name": "mobx", "url": "https://registry.npmmirror.com/mobx/6.3.2/files/dist/mobx.umd.production.min.js" },
-    { "name": "mobx-react-lite", "url": "https://registry.npmmirror.com/mobx-react-lite/3.1.6/files/dist/mobxreactlite.umd.production.min.js" },
-    { "name": "mobx-react", "url": "https://registry.npmmirror.com/mobx-react/7.3.0/files/dist/mobxreact.umd.production.min.js" },
-    { "name": "mermaid", "url": "https://registry.npmmirror.com/mermaid/11.16.0/files/dist/mermaid.min.js" },
-    { "name": "vditor", "url": "https://registry.npmmirror.com/vditor/3.11.2/files/dist/index.min.js" },
-    { "name": "antd", "url": "https://registry.npmmirror.com/antd/5.20.0/files/dist/antd.min.js" },
-    { "name": "markdown-it", "url": "https://registry.npmmirror.com/markdown-it/14.3.0/files/dist/markdown-it.min.js" },
-    { "name": "@wangeditor/editor", "url": "https://registry.npmmirror.com/@wangeditor/editor/5.1.23/files/dist/index.js" }
+  "scripts\\build.js": [
+    "child_process",
+    "path",
+    "fs",
+    "./common",
+    "chalk",
+    "../package.json"
   ],
-
-  "coreNpmDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "mobx": "^6.3.5",
-    "mobx-react": "^7.2.0",
-    "antd": "^5.20.0",
-    "@ant-design/icons": "^6.2.2",
-    "dayjs": "^1.11.20",
-    "express": "^5.2.1",
-    "markdown-it": "^14.3.0",
-    "@wangeditor/editor": "^5.1.23",
-    "vditor": "^3.11.2",
-    "remons-components": "^2.0.8",
-    "remons-render-markdown": "^1.0.0"
-  }
+  "scripts\\common.js": [
+    "fs-extra",
+    "fs",
+    "fs",
+    "log4js",
+    "chalk",
+    "./log",
+    "../package.json",
+    "../config/cdn"
+  ],
+  "scripts\\dev.js": [
+    "child_process",
+    "./common"
+  ],
+  "scripts\\log.js": [
+    "path"
+  ],
+  "src\\apps\\createQR\\pages\\List.jsx": [
+    "@assets/css/index.global.less",
+    "./qrcode.css",
+    "../model/qrcode"
+  ],
+  "src\\apps\\docList\\pages\\Anchor\\index.jsx": [
+    "./index.global.less"
+  ],
+  "src\\apps\\docList\\pages\\List\\index.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\docList\\pages\\Markdown\\index.jsx": [
+    "remons-render-markdown/dist/index.css"
+  ],
+  "src\\apps\\express\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\home\\pages\\List.jsx": [
+    "./home.css",
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\homeList\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\imgWatermark\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\jsonViewer\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\mermaid\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\my\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\note\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\postmarkGenerator\\app.jsx": [
+    "@assets/css/index.global.less",
+    "./app.less"
+  ],
+  "src\\apps\\productManage\\components\\list.jsx": [
+    "./index.less",
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\reMark\\pages\\List\\index.jsx": [
+    "@assets/css/index.global.less",
+    "vditor/dist/index.css"
+  ],
+  "src\\apps\\scanqr\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\simpleSketches\\app.jsx": [
+    "@assets/css/index.global.less",
+    "./app.css"
+  ],
+  "src\\apps\\tableConfig\\app.jsx": [
+    "./styles/index.less"
+  ],
+  "src\\apps\\tableConfig\\components\\ConfigBuilder\\index.jsx": [
+    "remons-render-markdown/dist/index.css"
+  ],
+  "src\\apps\\tableConfig\\components\\PageRenderer\\index.jsx": [
+    "./ResizablePanels.less",
+    "remons-render-markdown/dist/index.css"
+  ],
+  "src\\apps\\tableConfig\\utils\\codeGenerator.js": [
+    "./index.less"
+  ],
+  "src\\apps\\timeCalculator\\pages\\List.jsx": [
+    "./index.module.less",
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\tool\\pages\\List\\index.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\transcoderQR\\pages\\List.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\travelBadge\\app.jsx": [
+    "./index.less",
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\travelBadge\\components\\appHeader\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\canvasArea\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\draggableElement\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\imagePanel\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\panelTabs\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\propsPanel\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\templatePanel\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\travelBadge\\components\\textPanel\\index.jsx": [
+    "./index.less"
+  ],
+  "src\\apps\\urlCoder\\app.jsx": [
+    "@assets/css/index.global.less"
+  ],
+  "src\\apps\\wangEditor\\pages\\List.jsx": [
+    "@wangeditor/editor/dist/css/style.css",
+    "@assets/css/index.global.less"
+  ],
+  "src\\components\\HelpDrawer\\index.jsx": [
+    "remons-render-markdown/dist/index.css"
+  ],
+  "src\\utils\\driver.ts": [
+    "driver.js/dist/driver.css"
+  ],
+  "webpack.config.js": [
+    "webpack",
+    "html-webpack-plugin",
+    "mini-css-extract-plugin",
+    "css-minimizer-webpack-plugin",
+    "@pmmmwh/react-refresh-webpack-plugin",
+    "compression-webpack-plugin",
+    "terser-webpack-plugin",
+    "webpack-bundle-analyzer",
+    "path",
+    "./config/rules",
+    "./scripts/pages.json",
+    "./package.json",
+    "./scripts/common",
+    "speed-measure-webpack-plugin",
+    "antd-dayjs-webpack-plugin"
+  ],
+  "website_server.js": [
+    "express",
+    "path",
+    "fs"
+  ]
 }
