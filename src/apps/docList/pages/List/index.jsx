@@ -277,7 +277,7 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName} （${localStore.title}）`: localStore.title || name} handleContent={handleContent} />
+    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName} (${localStore.title})`: localStore.title || name} handleContent={handleContent} />
     <div className={style.main}>
       {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
