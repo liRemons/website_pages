@@ -17,13 +17,18 @@ class Store {
 
   createTime = ''
 
+  techClassName = ''
+
   constructor() {
     makeAutoObservable(this)
   }
 
   async queryArticleList(payload) {
     const { data: articleList } = await queryArticleList(payload)
-    this.articleList = articleList
+    this.articleList = articleList;
+    if (articleList?.length) {
+      this.techClassName = articleList[0].techClassName
+    }
   }
 
   // async getMarkdown(payload) {
