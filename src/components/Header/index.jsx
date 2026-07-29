@@ -25,7 +25,7 @@ export default function Header(props) {
       <div className={style.left}>
         {showLeft && leftComponent}
       </div>
-      {name}
+      <div className={style.name}>{name}</div>
       <div>
         {showRight && rightComponent}
       </div>
