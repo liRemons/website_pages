@@ -15,6 +15,18 @@
   .left {
     display: flex;
   }
+
+  .name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  @media screen and (max-width: 600px) {
+    .name {
+      font-size: 14px;
+    }
+  }
 }
 
 .drawerCloseBtn {
