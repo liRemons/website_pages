@@ -11,7 +11,7 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message } from 'antd';
-import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
@@ -209,7 +209,7 @@ export default function List() {
     return <div className={classnames(style.page_list, 'shadow_not_active')}>
       <div className={style.page_list_main}>
         {
-          localStore.articleList?.length ? localStore.articleList.map(item => <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}> {item.title}</div>) : <Empty />
+          localStore.articleList?.length ? localStore.articleList.map(item => <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}><FileTextTwoTone /> {item.title}</div>) : <Empty />
         }
       </div>
     </div>
