@@ -46,6 +46,7 @@ class Store {
     const { anchor, info } = markdownFormat(data.content);
     const params = getSearchParams();
     const { isDebug } = params || {};
+    
     const { content, title, createTime } = data || {}
     this.anchor = anchor;
     if (isDebug) {
