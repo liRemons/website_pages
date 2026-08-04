@@ -54,8 +54,8 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
           terserOptions: {
             compress: {
               // drop_console: true,    // 去掉 console.log
-              drop_debugger: true,   // 去掉 debugger
-              pure_funcs: ['console.log', 'console.info'],
+              // drop_debugger: true,   // 去掉 debugger
+              // pure_funcs: ['console.log', 'console.info'],
             },
             format: {
               comments: false,       // 去掉所有注释
