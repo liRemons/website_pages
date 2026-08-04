@@ -104,3 +104,7 @@
   --radius-lg: 10px;
   --radius-round: 50%;
 }
+
+.ant-anchor-link-title {
+  white-space: inherit !important;
+}
