@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { queryArticleList, markdownToHTML } from './server'
 import { markdownFormat } from 'remons-render-markdown';
+import { getSearchParams } from 'methods-r';
 
 class Store {
   articleList = []
@@ -43,8 +44,13 @@ class Store {
     this.htmlInfo = '';
     const { data } = await markdownToHTML(payload)
     const { anchor, info } = markdownFormat(data.content);
+    const params = getSearchParams();
+    const { isDebug } = params || {};
     const { content, title, createTime } = data || {}
     this.anchor = anchor;
+    if (isDebug) {
+      console.log('debug anchor', anchor);
+    }
     this.markdownInfo = content;
     this.htmlInfo = info;
     this.title = title;
