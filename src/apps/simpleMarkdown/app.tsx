@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Input, message } from 'antd';
+import { Input, message, Modal, Button } from 'antd';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css';
 import { HOST } from '@/utils'
@@ -19,6 +19,7 @@ const MIN_EDITOR_PERCENT = 20;
 const MAX_EDITOR_PERCENT = 80;
 
 export default function App() {
+  const [modal] = Modal.useModal();
   const [markdown, setMarkdown] = useState(defaultMarkdown);
   const [isMobile, setIsMobile] = useState(false);
   const [editorPercent, setEditorPercent] = useState(30);
@@ -117,13 +118,11 @@ export default function App() {
     });
 
     if (res?.success) {
-      const link = document.createElement('a');
-      link.href = `${HOST}${res.path}`;
-      link.target = '_blank';
-      // 某些浏览器需要添加到 DOM 才能点击
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const path = `${HOST}${res.path}`;
+      const newWindow = window.open(path, '_blank');
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        alert(`文件已生成，请手动打开新窗口查看：${path}`);
+      }
     } else {
       message.error('打印失败，请重试');
     }
@@ -162,12 +161,6 @@ export default function App() {
 
   const dividerClass = `${style.divider} ${isMobile ? style.vertical : style.horizontal}${isDragging ? ` ${style.dragging}` : ''}`;
 
-  const printButton = (
-    <div onClick={handlePrint} className={style.printBtn}>
-      打印
-    </div>
-  );
-
   return (
     <>
       <Container
@@ -188,7 +181,9 @@ export default function App() {
               onTouchStart={handleDragStart}
             />
             <div className={style.previewPane}>
-              {printButton}
+              <Button disabled={!markdown} onClick={handlePrint} className={style.printBtn}>
+                打印
+              </Button>
               <div className={style.previewContent} id="previewContent">
                 <RenderMarkdown
                   isPrintPreview
