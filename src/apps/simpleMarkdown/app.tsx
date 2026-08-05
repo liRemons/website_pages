@@ -117,7 +117,13 @@ export default function App() {
     });
 
     if (res?.success) {
-      window.open(`${HOST}${res.path}`, '_blank');
+      const link = document.createElement('a');
+      link.href = `${HOST}${res.path}`;
+      link.target = '_blank';
+      // 某些浏览器需要添加到 DOM 才能点击
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } else {
       message.error('打印失败，请重试');
     }
