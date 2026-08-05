@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Menu } from 'antd';
+import { Button, Menu, Alert  } from 'antd';
 import { FolderOpenOutlined, FileMarkdownOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
@@ -17,7 +17,7 @@ function List() {
 
   useEffect(() => {
     const vditor = new Vditor('markdown', {
-      height: 'calc(100% - 40px)',
+      height: 'calc(100% - 124px)',
       cdn: 'https://registry.npmmirror.com/vditor/3.11.2/files',
       width: '100%',
       resize: {
@@ -139,11 +139,11 @@ function List() {
             />
           </div>}
           <div className={style.content}>
+            <Alert type="info" message={<span>现已支持纯预览markdown组件，并支持导出/打印为PDF，<a href={`/${APP_NAME}/simpleMarkdown`} target="_blank">点击前往</a></span>} />
             <div className={style.btn}>
               <Button onClick={edit} icon={<EditOutlined />}>仅编辑</Button>
               <Button onClick={importFile} icon={<FileTextOutlined />}>单个导入</Button>
               <Button onClick={importFolder} icon={<FolderOpenOutlined />}>导入文件夹</Button>
-              导入仅识别 markdown 格式文件
             </div>
 
             <div id="markdown"></div>

@@ -7,6 +7,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path')
+const fs = require('fs')
 const rules = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
 const packageJSON = require('./package.json')
@@ -27,7 +28,11 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
     otherParams.br = 'true';
   }
 
-  pages.forEach((el) => (entry[el] = path.resolve(srcPagesDir, el, 'main.jsx')))
+  pages.forEach((el) => {
+    const tsxPath = path.resolve(srcPagesDir, el, 'main.tsx')
+    const jsPath = path.resolve(srcPagesDir, el, 'main.jsx')
+    entry[el] = fs.existsSync(tsxPath) ? tsxPath : jsPath
+  })
   const config = {
     entry,
     mode,

@@ -114,7 +114,7 @@
   {
     "pageName": "reMark",
     "subTitle": "所见即所得，书写流畅新体验",
-    "title": "所见即所得 Markdown 编辑查看器",
+    "title": "Markdown 编辑查看器",
     "description": "所见即所得 markdown 编辑查看器，用于快速查看编辑 markdown 格式的文档，支持解析文件夹",
     "keywords": "Markdown编辑器,在线Markdown,所见即所得,实时预览,Markdown预览,技术文档编辑,README编辑,文件夹",
     "seoContent": "免费在线 Markdown 编辑器，支持解析文件夹，支持所见即所得实时预览，左侧编辑右侧渲染，让 Markdown 文档撰写更直观高效。支持标题、代码块、表格、图片等全部 Markdown 语法，适合写技术文档、README、博客草稿，无需安装任何软件。"
@@ -182,5 +182,13 @@
     "description": "邮戳生成器，用于生成邮戳，支持记录地点和日期，生成邮戳印章",
     "keywords": "邮戳生成,在线邮戳,复古邮戳,印章生成,旅行打卡邮戳,创意贺卡,邮票印章设计",
     "seoContent": "在线复古邮戳印章生成器，自定义地点名称、日期、颜色、字体与印章样式，实时预览并下载高清邮戳图片。多种经典风格可选，支持旋转角度调整与本地字体加载，适合设计师制作复古风格素材、旅行记录打卡、创意贺卡制作等场景。"
+  },
+    {
+    "pageName": "simpleMarkdown",
+    "subTitle": "Markdown 预览器，快速撰写导出技术文档",
+    "title": "简易 Markdown 预览",
+    "description": "简易 Markdown 编辑器，用于快速撰写技术文档，支持打印导出 PDF",
+    "keywords": "Markdown预览器,markdown编辑器导出PDF,Markdown 转PDF,Markdown编辑器,在线Markdown,所见即所得,实时预览,Markdown预览,技术文档编辑,README编辑,文件夹",
+    "seoContent": "免费在线 Markdown 编辑器，支持解析文件夹，支持所见即所得实时预览，左侧编辑右侧渲染，让 Markdown 文档撰写更直观高效。支持标题、代码块、表格、图片等全部 Markdown 语法，适合写技术文档、README、博客草稿，无需安装任何软件。"
   }
 ]

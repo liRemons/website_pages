@@ -1,0 +1,97 @@
+@import (reference) "../../../assets/css/variables.css";
+
+.page {
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 移动端：上下布局 */
+@media (max-width: 767px) {
+  .page {
+    flex-direction: column;
+  }
+}
+
+/* 左侧编辑区 */
+.editorPane {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border, #e8e8e8);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.editor {
+  flex: 1;
+  resize: none;
+  padding: 16px;
+  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 分割条 */
+.divider {
+  z-index: 10;
+  flex-shrink: 0;
+  background: var(--color-border, #e8e8e8);
+  transition: background 0.2s;
+}
+
+.dragging {
+   background: var(--color-border, #b9b9b9);
+}
+
+/* 桌面：水平分割条（左右布局，拖拽改变宽度） */
+.horizontal {
+  width: 4px;
+  cursor: col-resize;
+}
+
+/* 移动端：垂直分割条（上下布局，拖拽改变高度） */
+.vertical {
+  height: 4px;
+  cursor: row-resize;
+}
+
+.dragging {
+  &.horizontal {
+    width: 6px;
+  }
+
+  &.vertical {
+    height: 6px;
+  }
+}
+
+/* 右侧预览区 */
+.previewPane {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  min-width: 0;
+}
+
+.previewContent {
+  min-height: 100%;
+}
+
+/* 打印按钮 */
+.printBtn {
+  position: fixed;
+  right: 24px;
+  z-index: 10;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--color-primary, #1890ff);
+  color: #fff;
+  font-size: 14px;
+  user-select: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
