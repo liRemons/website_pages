@@ -114,6 +114,7 @@ export default function App() {
       data: {
         dom: document.getElementById('previewContent')?.innerHTML,
         css: getRelevantCSS(document.getElementById('previewContent') as HTMLElement),
+        fileName: document.getElementById('previewContent')?.querySelector('h1')?.id || ''
       },
     });
 
