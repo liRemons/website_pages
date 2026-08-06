@@ -112,7 +112,7 @@ export default function App() {
       method: 'post',
       url: '/content/createHtml',
       data: {
-        dom: document.getElementById('previewContent')?.outerHTML,
+        dom: document.getElementById('previewContent')?.innerHTML,
         css: getRelevantCSS(document.getElementById('previewContent') as HTMLElement),
       },
     });
