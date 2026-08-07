@@ -185,7 +185,7 @@ export default function App() {
             <div className={style.editorPane} style={isMobile ? { height: `${editorPercent}%` } : { width: `${editorPercent}%` }}>
               <div className={style.uploadArea}>
                 <Upload
-                  accept=".md"
+                  accept="*"
                   showUploadList={false}
                   beforeUpload={handleFileUpload}
                 >
