@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Input, message, Modal, Button } from 'antd';
+import { Input, message, Modal, Button, Upload } from 'antd';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css';
 import { HOST } from '@/utils'
@@ -107,6 +107,19 @@ export default function App() {
     return Array.from(relevantRules).join('\n');
   }
 
+  const handleFileUpload = (file: File) => {
+    if (!file.name.endsWith('.md')) {
+      message.error('仅支持上传 .md 文件');
+      return Upload.LIST_IGNORE;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setMarkdown(e.target?.result as string);
+    };
+    reader.readAsText(file);
+    return false;
+  }
+
   const handlePrint = async () => {
     const res = await service({
       method: 'post',
@@ -170,6 +183,15 @@ export default function App() {
           <div className={style.page} ref={containerRef}>
 
             <div className={style.editorPane} style={isMobile ? { height: `${editorPercent}%` } : { width: `${editorPercent}%` }}>
+              <div className={style.uploadArea}>
+                <Upload
+                  accept=".md"
+                  showUploadList={false}
+                  beforeUpload={handleFileUpload}
+                >
+                  <Button size="small" type="dashed">上传 .md 文件</Button>
+                </Upload>
+              </div>
               <Input.TextArea
                 className={style.editor}
                 value={markdown}
