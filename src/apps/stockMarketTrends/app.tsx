@@ -59,6 +59,9 @@ interface IStockStats {
   turnover: string;
   pe: string;
   totalMarketCap: string;
+  turnoverPct: number;
+  lb: number;
+  amplitude?: number;
 }
 
 /** 解析后的单只股票数据 */
@@ -125,8 +128,11 @@ const parseOneStock = (line: string): IStockData | null => {
   const changePct: number = parseFloat(fields[32]);
   const volume: string = fields[6];       // 成交量（手）
   const turnover: string = fields[37];    // 成交额（元）
+  const turnoverPct: number = parseFloat(fields[38]); // 换手率（%）
   const pe: string = fields[39];          // 市盈率
   const totalMarketCap: string = fields[45]; // 总市值
+  const lb:number = parseFloat(fields[49]); // 量比
+  const amplitude = parseFloat(fields[43]); // 振幅
 
   // 涨跌颜色逻辑（A股：红涨绿跌）
   const isUp: boolean = changePct > 0;
@@ -162,6 +168,9 @@ const parseOneStock = (line: string): IStockData | null => {
       turnover,
       pe,
       totalMarketCap,
+      turnoverPct,
+      lb,
+      amplitude
     },
     orderBook: orderBookData,
     updateTime: formatTime(fields[30]),
@@ -317,9 +326,9 @@ function StockDashboard(): JSX.Element {
                     <Row gutter={16}>
                       {/* 左侧：关键指标 */}
                       <Col span={14}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', fontSize: 13 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', fontSize: 13 }}>
                           {/* 最新价 & 涨跌幅 */}
-                          <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: 16, gridColumn: '1 / -1' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: 6, gridColumn: '1 / -1' }}>
                             <Title level={2} style={{ margin: 0, color: stock.color }}>
                               {stock.price.toFixed(2)}
                             </Title>
@@ -342,15 +351,9 @@ function StockDashboard(): JSX.Element {
                           </div>
                           {/* 最高价 */}
                           <div>
-                            <Text type="secondary">最高</Text>
+                            <Text type="secondary">最低/最高</Text>
                             <br />
-                            {stock.stats.high}
-                          </div>
-                          {/* 最低价 */}
-                          <div>
-                            <Text type="secondary">最低</Text>
-                            <br />
-                            {stock.stats.low}
+                            {stock.stats.low} - {stock.stats.high}
                           </div>
                           {/* 昨收价 */}
                           <div>
@@ -358,11 +361,26 @@ function StockDashboard(): JSX.Element {
                             <br />
                             {stock.stats.preClose}
                           </div>
-                          {/* 换手率 */}
+                          {/* 成交额 */}
                           <div>
-                            <Text type="secondary">换手</Text>
+                            <Text type="secondary">成交额</Text>
                             <br />
-                            {(parseFloat(stock.stats.turnover) / 100000000).toFixed(2)}亿
+                            {(parseFloat(stock.stats.turnover) / 10000).toFixed(2)}亿
+                          </div>
+                          <div>
+                            <Text type="secondary">换手率</Text>
+                            <br />
+                            {stock.stats.turnoverPct?.toFixed(2)}%
+                          </div>
+                          <div>
+                            <Text type="secondary">量比</Text>
+                            <br />
+                            {stock.stats.lb?.toFixed(2)}%
+                          </div>
+                          <div>
+                            <Text type="secondary">振幅</Text>
+                            <br />
+                            {stock.stats.amplitude?.toFixed(2)}%
                           </div>
                           {/* 总市值 */}
                           <div>
