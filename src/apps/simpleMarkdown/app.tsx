@@ -241,7 +241,7 @@ export default function App() {
               onTouchStart={handleDragStart}
             />
             <div className={style.previewPane}>
-              <Button disabled={!markdown} onClick={handlePrint} className={style.printBtn}>
+              <Button disabled={!markdown} onClick={() => handlePrint()} className={style.printBtn}>
                 打印
               </Button>
               <div className={style.previewContent} id="previewContent">
