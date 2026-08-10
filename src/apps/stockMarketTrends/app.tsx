@@ -13,6 +13,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Card, Row, Col, Typography, Input, Button, Tag, Statistic } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined, SearchOutlined } from '@ant-design/icons';
 import { getSearchParams } from 'methods-r';
+import { isAfterClose } from './utils';
 import Header from '@components/Header';
 import Container from '@components/Container';
 import Fixed from '@components/Fixed';
@@ -174,6 +175,7 @@ const parseOneStock = (line: string): IStockData | null => {
  * 股票行情监控面板，支持多股票批量查询与实时展示
  */
 function StockDashboard(): JSX.Element {
+  const isClose = isAfterClose(new Date());
   // 输入框中的股票代码字符串
   const [inputValue, setInputValue] = useState<string>(DEFAULT_STOCK_CODES);
   // 解析后的股票数据列表
@@ -217,6 +219,10 @@ function StockDashboard(): JSX.Element {
   // 组件挂载时执行一次初始化查询
   useEffect(() => {
     fetchData(inputValue);
+
+    if (!isClose) {
+      return;
+    }
     // 如需自动刷新，可取消下方注释：
     const timer = setInterval(() => fetchData(inputValue), 10 * 1000);
     return () => clearInterval(timer);
@@ -282,7 +288,7 @@ function StockDashboard(): JSX.Element {
               </Row>
               {
                 !!stockCount && <div style={{ marginTop: 8, color: '#999', fontSize: 12 }}>
-                  当前监控: {stockCount} 只股票 | 自动刷新中...
+                  当前监控: {stockCount} 只股票 | {isClose ? '已收盘' : '自动刷新中...' }
                 </div>
               }
             </Card>
