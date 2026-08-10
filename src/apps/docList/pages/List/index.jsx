@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
@@ -11,12 +11,11 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message } from 'antd';
-import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone, PrinterTwoTone } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
   const localStore = useLocalObservable(() => store);
-
   const [params, setParams] = useState({});
   const [activeId, setActiveId] = useState('');
   const [anchor, setAnchor] = useState([]);
@@ -24,6 +23,7 @@ export default function List() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
   const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
+  const popupRef = useRef(null); // 使用 ref 来存储 popup 窗口引用
 
   useEffect(() => {
     getList();
@@ -45,7 +45,6 @@ export default function List() {
       setAnchor(deepAnchor(JSON.parse(JSON.stringify(localStore.anchor))))
     }
   }
-
 
   const getList = async () => {
     const params = getSearchParams();
@@ -69,10 +68,7 @@ export default function List() {
     if (id === activeId) {
       return;
     }
-    const params = {
-      ...getSearchParams(),
-      pageId: id,
-    };
+    const params = { ...getSearchParams(), pageId: id, };
     const newParams = new URLSearchParams(params);
     const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
     history.pushState('', '', pageURL);
@@ -100,7 +96,6 @@ export default function List() {
     container.style.position = 'fixed';
     container.style.left = '-9999px';
     document.body.appendChild(container);
-
     const selection = window.getSelection();
     const range = document.createRange();
     range.selectNodeContents(container);
@@ -118,14 +113,12 @@ export default function List() {
       if (!cloneChild) {
         return;
       }
-
       const computedStyle = window.getComputedStyle(sourceChild);
       const isHidden = computedStyle.display === 'none' || computedStyle.visibility === 'hidden';
       if (isHidden) {
         cloneChild.remove();
         return;
       }
-
       removeHiddenNodes(sourceChild, cloneChild);
     });
   }
@@ -135,7 +128,6 @@ export default function List() {
     if (!markdownDom) {
       return localStore.htmlInfo;
     }
-
     const cloneDom = markdownDom.cloneNode(true);
     removeHiddenNodes(markdownDom, cloneDom);
     cloneDom.querySelectorAll('.copy, .code-toggle').forEach(item => item.remove());
@@ -155,7 +147,6 @@ export default function List() {
       message.warning('暂无可复制内容');
       return;
     }
-
     try {
       if (isHtml && navigator.clipboard?.write && window.ClipboardItem) {
         const clipboardItem = new window.ClipboardItem({
@@ -177,16 +168,45 @@ export default function List() {
     }
   }
 
+  // 使用 useCallback 确保 onMessage 函数引用稳定
+  const onMessage = useCallback((event) => {
+    if (event.origin !== window.origin) return;
+    if (event.data?.type === 'READY') {
+      // 子窗口准备好了，发送实际数据
+      if (popupRef?.current) {
+        popupRef.current.postMessage({ type: 'DATA', payload: { type: 'printData', content: localStore.markdownInfo } }, window.origin);
+      }
+    }
+    if (event.data?.type === 'RESULT') {
+      window.removeEventListener('message', onMessage);
+      popupRef.current = null; // 清理 popup 引用
+    }
+  }, [localStore.markdownInfo]); // 依赖 localStore.markdownInfo，当其变化时 onMessage 会更新
+
+  // 使用 useEffect 确保组件卸载时清理事件监听器
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('message', onMessage);
+      if (popupRef?.current && !popupRef.current.closed) {
+        popupRef.current.close();
+      }
+    };
+  }, [onMessage]);
+
+  const toPrintPage = () => {
+    popupRef.current = window.open('/@website_pages/simpleMarkdown', '_blank');
+    window.addEventListener('message', onMessage);
+  }
+
   const renderActionButtons = () => {
     const actions = [
       { key: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
       { key: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
+      { key: 'docList-menu-print', title: '打印', label: '打印', icon: <PrinterTwoTone />, onClick: toPrintPage },
     ];
-
     const handleClickAction = (onClick) => {
       onClick();
     }
-
     return <div className={classnames(style.actionButtons)}>
       <div className={style.actionPanel}>
         {actions.map(item => <span className={classnames(style.actionButton, item.key, 'circle')} key={item.key} title={item.title} onClick={() => handleClickAction(item.onClick)}>
@@ -197,7 +217,6 @@ export default function List() {
   }
 
   const { name, handleType } = params;
-
   const VIEW_DETAIL = {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
   }
@@ -209,7 +228,10 @@ export default function List() {
     return <div className={classnames(style.page_list, 'shadow_not_active')}>
       <div className={style.page_list_main}>
         {
-          localStore.articleList?.length ? localStore.articleList.map(item => <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}><FileTextTwoTone /> {item.title}</div>) : <Empty />
+          localStore.articleList?.length ?
+            localStore.articleList.map(item =>
+              <div key={item.id} onClick={() => handleClickPage(item)} className={classnames(style.page_list_title, activeId === item.id ? style.active : '')}><FileTextTwoTone /> {item.title}</div>)
+            : <Empty />
         }
       </div>
     </div>
@@ -217,7 +239,6 @@ export default function List() {
 
   const renderNav = () => {
     if (!localStore?.anchor?.length) return
-
     return <>
       <div className={classnames(style.page_nav, 'shadow_not_active')}>
         <div className={style.search}>
@@ -277,7 +298,7 @@ export default function List() {
   }
 
   return useObserver(() => <div className={style.container}>
-    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName} (${localStore.title})`: localStore.title || name} handleContent={handleContent} />
+    <Header showRight={handleType !== 'share'} showLeft={handleType !== 'share'} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName} (${localStore.title})` : localStore.title || name} handleContent={handleContent} />
     <div className={style.main}>
       {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
@@ -294,20 +315,9 @@ export default function List() {
       {IsPC() && renderNav()}
     </div>
     <Fixed propsVisible />
-
-    <Drawer
-      contentWrapperStyle={{ padding: 0 }}
-      width='80%'
-      closable={false}
-      title={drawerConentTitle()}
-      placement='left'
-      onClose={() => setDrawerVisible(false)}
-      visible={drawerVisible}
-    >
+    <Drawer contentWrapperStyle={{ padding: 0 }} width='80%' closable={false} title={drawerConentTitle()} placement='left' onClose={() => setDrawerVisible(false)} visible={drawerVisible} >
       <div className={style.main}>
-        {
-          drawerConent()
-        }
+        {drawerConent()}
       </div>
     </Drawer>
   </div >);

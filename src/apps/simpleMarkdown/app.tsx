@@ -31,8 +31,35 @@ export default function App() {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
+
+    const message = (event) => {
+      if (event.origin !== window.origin) return;
+      if (event.data?.type === 'DATA') {
+        if (event.data?.type === 'DATA' && event.data.payload?.type === 'printData' && !event.data.payload?.content) {
+          setMarkdown(event.data.payload?.content);
+
+          setTimeout(() => {
+            handlePrint('once');
+          }, 2000);
+        }
+        // 处理完后回传结果
+        window.opener?.postMessage({
+          type: 'RESULT',
+          payload: { success: true }
+        }, window.origin);
+      }
+    }
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener('message', message);
+
+    // 页面加载完成后通知父窗口
+    window.addEventListener('load', () => {
+      window.opener?.postMessage({ type: 'READY' }, window.origin);
+    });
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('message', message);
+    }
   }, []);
 
   // 拖拽处理
@@ -120,14 +147,15 @@ export default function App() {
     return false;
   }
 
-  const handlePrint = async () => {
+  const handlePrint = async (type?: string) => {
     const res = await service({
       method: 'post',
       url: '/content/createHtml',
       data: {
         dom: document.getElementById('previewContent')?.innerHTML,
         css: getRelevantCSS(document.getElementById('previewContent') as HTMLElement),
-        fileName: document.getElementById('previewContent')?.querySelector('h1')?.id || ''
+        fileName: document.getElementById('previewContent')?.querySelector('h1')?.id || '',
+        type: type || '',
       },
     });
 
@@ -135,7 +163,17 @@ export default function App() {
       const path = `${HOST}${res.path}`;
       const newWindow = window.open(path, '_blank');
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        alert(`文件已生成，请手动打开新窗口查看：${path}`);
+        if (type === 'once') {
+          alert(`文件已生成，请手动打开新窗口查看：${path}, 1小时内有效,请及时保存`);
+        } else {
+          alert(`文件已生成，请手动打开新窗口查看：${path}`);
+        }
+      } else {
+        if (type === 'once') {
+          message.success('打印成功正在打开预览窗口, 1小时内有效, 请及时保存');
+        } else {
+          message.success('打印成功，文件已生成，正在打开预览窗口');
+        }
       }
     } else {
       message.error('打印失败，请重试');
