@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { Drawer } from 'antd';
+import { Drawer, message } from 'antd';
 import { img } from '@utils';
 import helpSvg from '@assets/svg/help.svg';
 import RenderMarkdown,{ initHighlighter, languagesCommon } from 'remons-render-markdown';
@@ -11,11 +11,15 @@ initHighlighter(languagesCommon);
 export default function HelpDrawer({ handleContent, title = '操作说明', placement = 'bottom' }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  if (!handleContent) return null;
-
   return (
     <>
-      <div className="circle" onClick={() => setDrawerOpen(true)} title={title}>
+      <div className="circle" onClick={() => {
+        if (handleContent) {
+          handleContent();
+        }else {
+          message.error('暂无内容');
+        }
+      }} title={title}>
         {img(helpSvg, 20)}
       </div>
 

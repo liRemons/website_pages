@@ -16,7 +16,7 @@ export default function Header(props) {
 
   const rightComponent = props.rightComponent || (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      {handleContent && <HelpDrawer handleContent={handleContent} />}
+      <HelpDrawer handleContent={handleContent} />
     </div>
   );
 

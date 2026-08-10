@@ -2,9 +2,97 @@
 
 .card {
     background: #fff !important;
+    margin: 0 !important;
 
-    :global(.ant-card-body) {
-        padding: 16px !important;
-        border-top: 1px solid #e8e8e8 !important;
+    :global {
+        .ant-card-body {
+            position: relative;
+            padding: 10px 16px !important;
+            padding-top: 4px !important;
+            border-top: 1px solid #e8e8e8 !important;
+        }
+
+        .ant-row {
+            margin: 0 !important;
+        }
     }
+
+}
+
+.detailBtn {
+    color: #1677ff;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.cardTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stockName {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.updateTime {
+    font-size: 12px;
+    position: absolute;
+    right: 10px;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px 16px;
+    font-size: 13px;
+
+    >div {
+        white-space: nowrap;
+    }
+}
+
+.priceRow {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 6px;
+    grid-column: 1 / -1;
+}
+
+.priceTitle {
+    margin: 0;
+}
+
+.statValue {
+    font-size: 18px;
+    margin-left: 12px;
+}
+
+.changeAmt {
+    margin-left: 8px;
+}
+
+.searchCard {
+    margin: 0 !important;
+
+    :global {
+        .ant-card-body {
+            padding: 10px 0 !important;
+            padding-top: 4px !important;
+            border-top: 1px solid #e8e8e8 !important;
+        }
+    }
+}
+
+.monitorInfo {
+    margin-top: 8px;
+    color: #999;
+    font-size: 12px;
+}
+
+.dataBlock {
+    margin-bottom: 6px;
+    gridColumn: 1 / -1;
 }

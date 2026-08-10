@@ -20,6 +20,7 @@ import {
   Button,
   Tag,
   Statistic,
+  Modal,
 } from 'antd'
 import {
   ArrowUpOutlined,
@@ -208,6 +209,8 @@ function StockDashboard(): JSX.Element {
   const [stockList, setStockList] = useState<IStockData[]>([])
   // 数据加载状态
   const [loading, setLoading] = useState<boolean>(false)
+  // 弹窗中展示的股票盘口数据
+  const [detailStock, setDetailStock] = useState<IStockData | null>(null)
 
   /**
    * 从腾讯行情接口获取股票数据
@@ -303,7 +306,7 @@ function StockDashboard(): JSX.Element {
         main={
           <div>
             {/* 顶部搜索栏 */}
-            <Card style={{ marginBottom: 10 }}>
+            <Card className={style.searchCard}>
               <Row gutter={16} align="middle">
                 <Col flex="auto">
                   <Input
@@ -320,12 +323,11 @@ function StockDashboard(): JSX.Element {
                     onClick={handleSearch}
                     loading={loading}
                   >
-                    查询行情
                   </Button>
                 </Col>
               </Row>
               {!!stockCount && (
-                <div style={{ marginTop: 8, color: '#999', fontSize: 12 }}>
+                <div className={style.monitorInfo}>
                   当前监控: {stockCount} 只股票 |{' '}
                   {isClose ? '已收盘' : '自动刷新中...'}
                 </div>
@@ -333,7 +335,7 @@ function StockDashboard(): JSX.Element {
             </Card>
 
             {/* 股票列表网格 */}
-            <Row gutter={[16, 16]}>
+            <Row gutter={[8, 8]}>
               {stockList.map((stock: IStockData) => (
                 <Col xs={24} lg={12} xl={8} key={stock.id}>
                   <Card
@@ -341,50 +343,52 @@ function StockDashboard(): JSX.Element {
                     className={style.card}
                     title={
                       <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
+                        className={style.cardTitle}
                       >
                         <span>
                           <Tag color="blue">
                             {stock.code.replace(/^(s[hz])/, '')}
                           </Tag>
-                          <span style={{ fontWeight: 'bold', fontSize: 16 }}>
+                          <span className={style.stockName}>
                             {stock.name}
                           </span>
                         </span>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          {stock.updateTime}
-                        </Text>
                       </div>
                     }
+                    extra={<>
+                      <div className={style.detailBtn} onClick={() => setDetailStock(stock)}>五档盘口</div>
+                      <div className={style.detailBtn} style={{ marginLeft: 12 }} onClick={(e) => {
+                        e.stopPropagation()
+                        const code = stock.code.replace(/^(s[hz])/, '')
+                        // 先尝试打开同花顺 App，失败则降级到网页版
+                        // try {
+                        //   window.location.href = `hexin://stock?code=${code}`
+                        // } catch (err) {
+                        //   // scheme 未注册时静默忽略
+                        // }
+                        window.open(`https://stockpage.10jqka.com.cn/${code}/`, '_blank')
+                      }}>同花顺</div>
+                    </>}
                   >
+                    {/* 更新时间 */}
+                    <Text type="secondary" className={style.updateTime} style={{ display: 'block', marginBottom: 8 }}>
+                      {stock.updateTime}
+                    </Text>
                     {/* 中部详细数据 & 盘口 */}
                     <Row gutter={16}>
                       {/* 左侧：关键指标 */}
-                      <Col span={IsPC() ? 14 : 24}>
+                      <Col span={IsPC() ? 24 : 24}>
                         <div
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '4px 16px',
-                            fontSize: 13,
-                          }}
+                          className={style.gridContainer}
                         >
                           {/* 最新价 & 涨跌幅 */}
                           <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'baseline',
-                              marginBottom: 6,
-                              gridColumn: '1 / -1',
-                            }}
+                            className={style.priceRow}
                           >
                             <Title
                               level={2}
-                              style={{ margin: 0, color: stock.color }}
+                              className={style.priceTitle}
+                              style={{ color: stock.color }}
                             >
                               {stock.price.toFixed(2)}
                             </Title>
@@ -405,7 +409,7 @@ function StockDashboard(): JSX.Element {
                                 )
                               }
                             />
-                            <Text style={{ color: stock.color, marginLeft: 8 }}>
+                            <Text className={style.changeAmt} style={{ color: stock.color }}>
                               {stock.changeAmt > 0 ? '+' : ''}
                               {stock.changeAmt}
                             </Text>
@@ -432,10 +436,7 @@ function StockDashboard(): JSX.Element {
                           <div>
                             <Text type="secondary">成交额</Text>
                             <br />
-                            {(parseFloat(stock.stats.turnover) / 10000).toFixed(
-                              2
-                            )}
-                            亿
+                            {(parseFloat(stock.stats.turnover) / 10000).toFixed(2)}亿
                           </div>
                           <div>
                             <Text type="secondary">换手率</Text>
@@ -456,36 +457,44 @@ function StockDashboard(): JSX.Element {
                           <div>
                             <Text type="secondary">市值</Text>
                             <br />
-                            {parseFloat(stock.stats.totalMarketCap).toFixed(2)}
-                            亿
+                            {parseFloat(stock.stats.totalMarketCap).toFixed(2)}亿
                           </div>
                         </div>
                       </Col>
-
-                      {/* 右侧：五档盘口 */}
-                      {IsPC() && (
-                        <Col span={10}>
-                          <Table
-                            dataSource={stock.orderBook}
-                            columns={orderColumns}
-                            pagination={false}
-                            size="small"
-                            bordered={false}
-                            style={{ fontSize: 12 }}
-                            rowClassName={(
-                              _record: IOrderBookRow,
-                              index: number
-                            ): string =>
-                              index % 2 === 0 ? '' : 'table-row-light-gray'
-                            }
-                          />
-                        </Col>
-                      )}
                     </Row>
                   </Card>
                 </Col>
               ))}
             </Row>
+
+            {/* 五档盘口详情弹窗 */}
+            <Modal
+              title={
+                detailStock
+                  ? `${detailStock.name} (${detailStock.code.replace(/^(s[hz])/, '')}) - 五档盘口`
+                  : '五档盘口'
+              }
+              open={!!detailStock}
+              onCancel={() => setDetailStock(null)}
+              footer={null}
+              width={400}
+            >
+              {detailStock && (
+                <Table
+                  dataSource={detailStock.orderBook}
+                  columns={orderColumns}
+                  pagination={false}
+                  size="small"
+                  bordered
+                  rowClassName={(
+                    _record: IOrderBookRow,
+                    index: number
+                  ): string =>
+                    index % 2 === 0 ? '' : 'table-row-light-gray'
+                  }
+                />
+              )}
+            </Modal>
           </div>
         }
         header={<Header name="股票行情监控" leftPath={`/${APP_NAME}/tool`} />}
