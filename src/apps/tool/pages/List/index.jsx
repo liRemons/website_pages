@@ -25,6 +25,7 @@ import jsonviewerSvg from './assets/svg/jsonviewer.svg'
 import mermaidSvg from './assets/svg/mermaid.svg';
 import aiChatSvg from './assets/svg/aiChat.svg'
 import editorSvg from './assets/svg/editor.svg';
+import stockMarketTrendsSvg from './assets/svg/stockMarketTrends.svg';
 import pagesJson from '../../../../../scripts/pages.json'
 import { img } from '@utils'
 import isLuckeyWork from '@/utils/luckey';
@@ -54,6 +55,7 @@ export default function ListPage() {
     { title: '表单引擎', icon: img(tableconfigSvg), appName: 'tableConfig', hot: true },
     { title: '图片水印', icon: img(watermarkSvg), appName: 'imgWatermark', hot: true },
     { title: '订单管理', icon: img(productmanagSvg), appName: 'productManage', hot: true },
+    { title: '股票行情监控', icon: img(stockMarketTrendsSvg), appName: 'stockMarketTrends', hot: true },
   ].filter(item => item.isShow !== false).map(item => {
     return {
       ...item,
