@@ -218,13 +218,16 @@ function StockDashboard(): JSX.Element {
 
   // 组件挂载时执行一次初始化查询
   useEffect(() => {
+    let timer = null;
     fetchData(inputValue);
 
-    if (!isClose) {
+    if (isClose) {
+      timer && clearInterval(timer);
+      timer = null;
       return;
     }
     // 如需自动刷新，可取消下方注释：
-    const timer = setInterval(() => fetchData(inputValue), 10 * 1000);
+    timer = setInterval(() => fetchData(inputValue), 10 * 1000);
     return () => clearInterval(timer);
   }, [fetchData, inputValue]);
 
@@ -288,7 +291,7 @@ function StockDashboard(): JSX.Element {
               </Row>
               {
                 !!stockCount && <div style={{ marginTop: 8, color: '#999', fontSize: 12 }}>
-                  当前监控: {stockCount} 只股票 | {isClose ? '已收盘' : '自动刷新中...' }
+                  当前监控: {stockCount} 只股票 | {isClose ? '已收盘' : '自动刷新中...'}
                 </div>
               }
             </Card>
