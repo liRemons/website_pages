@@ -35,9 +35,8 @@ export default function App() {
     const message = (event) => {
       if (event.origin !== window.origin) return;
       if (event.data?.type === 'DATA') {
-        if (event.data?.type === 'DATA' && event.data.payload?.type === 'printData' && !event.data.payload?.content) {
+        if ( event.data.payload?.type === 'printData' && event.data.payload?.content) {
           setMarkdown(event.data.payload?.content);
-
           setTimeout(() => {
             handlePrint('once');
           }, 2000);
