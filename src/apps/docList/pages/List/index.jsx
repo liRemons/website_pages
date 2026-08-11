@@ -292,6 +292,7 @@ export default function List() {
       { onClick: openListMenu, icon: <FolderOpenTwoTone />, isShow: localStore.articleList?.length !== 0 && handleType !== 'share', className: 'docList-menu-list', isShow: localStore.articleList?.length > 1 },
       { className: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
       { className: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
+      { className: 'docList-menu-print', title: '打印', label: '打印', icon: <PrinterTwoTone />, onClick: toPrintPage },
       { onClick: menuToLeft, className: menuVisible ? style.toRightIcon : '', icon: menuVisible ? <RightOutlined /> : <LeftOutlined />, isShow: true }
     ];
     return arr.filter(item => item.isShow !== false).map((item, index) => <span className={classnames(item.className, 'circle')} key={index} onClick={item.onClick}>{item.icon}</span>)
