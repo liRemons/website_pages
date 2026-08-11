@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Input, message, Modal, Button, Upload } from 'antd';
-import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
+import RenderMarkdown, { initHighlighter, languagesCommon, markdownFormat } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css';
 import { HOST } from '@/utils'
 import '@assets/css/index.global.less';
@@ -155,6 +155,7 @@ export default function App() {
         css: getRelevantCSS(document.getElementById('previewContent') as HTMLElement),
         fileName: document.getElementById('previewContent')?.querySelector('h1')?.id || '',
         type: type || '',
+        tocTree: markdownFormat(markdown)?.anchor
       },
     });
 

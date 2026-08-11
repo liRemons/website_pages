@@ -28,11 +28,13 @@ import {
   SearchOutlined,
 } from '@ant-design/icons'
 import { getSearchParams, IsPC } from 'methods-r'
-import { isAfterClose } from './utils'
+import { isAfterClose } from './utils';
 import Header from '@components/Header'
 import Container from '@components/Container'
 import Fixed from '@components/Fixed'
 import '@assets/css/index.global.less'
+import orderbook from './orderbook.svg';
+import tonghuashun from './tonghuashun.svg';
 
 import style from './index.module.less'
 
@@ -356,7 +358,9 @@ function StockDashboard(): JSX.Element {
                       </div>
                     }
                     extra={<>
-                      <div className={style.detailBtn} onClick={() => setDetailStock(stock)}>五档盘口</div>
+                      <div className={style.detailBtn} onClick={() => setDetailStock(stock)}>
+                        <img src={orderbook} title="盘口" />
+                      </div>
                       <div className={style.detailBtn} style={{ marginLeft: 12 }} onClick={(e) => {
                         e.stopPropagation()
                         const code = stock.code.replace(/^(s[hz])/, '')
@@ -367,7 +371,9 @@ function StockDashboard(): JSX.Element {
                         //   // scheme 未注册时静默忽略
                         // }
                         window.open(`https://stockpage.10jqka.com.cn/${code}/`, '_blank')
-                      }}>同花顺</div>
+                      }}>
+                        <img src={tonghuashun} title="同花顺 App" />
+                      </div>
                     </>}
                   >
                     {/* 更新时间 */}
