@@ -69,6 +69,7 @@
     width: 20%;
     height: calc(100% - 20px);
     margin-right: 14px;
+    position: relative;
 
     .page_list_main {
       height: 100%;
@@ -105,7 +106,34 @@
     }
   }
 
+  .collapse_toggle {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    z-index: 10;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-size: 12px;
+    opacity: 0.9;
+    border: 1px solid var(--color-border);
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.expand_toggle {}
+
+    &.collapse_toggle {
+    }
+  }
+
   .page_main {
+    position: relative;
     width: 100%;
   }
 
@@ -173,9 +201,11 @@
   .markdown-tabs-tabs-header {
     background-color: var(--color-bg) !important;
   }
+
   .ant-anchor-wrapper {
     margin-left: 4px
   }
+
   .ant-drawer-content {
 
     .ant-drawer-body,

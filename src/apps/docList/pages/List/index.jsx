@@ -23,6 +23,7 @@ export default function List() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerType, setDrawerType] = useState('');
   const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
+  const [listCollapsed, setListCollapsed] = useState(localStorage.docListListCollapsed === 'true');
   const popupRef = useRef(null); // 使用 ref 来存储 popup 窗口引用
 
   useEffect(() => {
@@ -221,8 +222,17 @@ export default function List() {
     html: <Markdown id={activeId} setAnchor={setAnchor} />,
   }
 
+  const toggleListCollapse = () => {
+    const next = !listCollapsed;
+    setListCollapsed(next);
+    localStorage.setItem('docListListCollapsed', String(next));
+  };
+
   const renderList = () => {
     if (localStore.articleList?.length <= 1) {
+      return null;
+    }
+    if (listCollapsed) {
       return null;
     }
     return <div className={classnames(style.page_list, 'shadow_not_active')}>
@@ -304,8 +314,14 @@ export default function List() {
       {!IsPC() && <div className={classnames(style.h5_menu, menuVisible ? style.menuLeft : style.menuLeftNone)}>
         {renderMenuList()}
       </div>}
+
       {IsPC() && handleType !== 'share' && renderList()}
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
+        {IsPC() && handleType !== 'share' && localStore.articleList?.length > 1 && (
+          <div className={classnames(style.collapse_toggle, (listCollapsed ? style.expand_toggle : style.collapse_toggle), 'circle')} onClick={toggleListCollapse} title={listCollapsed ? "展开列表" : "收起列表"}>
+            {listCollapsed ? <RightOutlined /> : <LeftOutlined />}
+          </div>
+        )}
         <div className={classnames(style.markdown_main, 'markdown-main-content')}>
           {IsPC() && renderActionButtons()}
           {
