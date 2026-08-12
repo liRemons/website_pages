@@ -10,7 +10,7 @@ import '@assets/css/index.global.less';
 import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
-import { Input, Drawer, message } from 'antd';
+import { Input, Drawer, message, Modal } from 'antd';
 import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone, PrinterTwoTone } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
@@ -195,8 +195,20 @@ export default function List() {
   }, [onMessage]);
 
   const toPrintPage = () => {
-    popupRef.current = window.open('/@website_pages/simpleMarkdown', '_blank');
-    window.addEventListener('message', onMessage);
+    if (!localStore.markdownInfo) {
+      message.warning('暂无可打印内容');
+      return;
+    }
+    Modal.confirm({
+      title: '打印确认',
+      content: '即将打开新窗口进行打印，是否继续？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: () => {
+        popupRef.current = window.open('/@website_pages/simpleMarkdown', '_blank');
+        window.addEventListener('message', onMessage);
+      },
+    });
   }
 
   const renderActionButtons = () => {
