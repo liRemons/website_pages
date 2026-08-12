@@ -164,13 +164,13 @@ export default function App() {
       const newWindow = window.open(path, '_blank');
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
         if (type === 'once') {
-          alert(`文件已生成，请手动打开新窗口查看：${path}, 1小时内有效,请及时保存`);
+          alert(`文件已生成，请手动打开新窗口查看：${path}, 10分钟内有效,请及时保存`);
         } else {
           alert(`文件已生成，请手动打开新窗口查看：${path}`);
         }
       } else {
         if (type === 'once') {
-          message.success('打印成功正在打开预览窗口, 1小时内有效, 请及时保存');
+          message.success('打印成功正在打开预览窗口, 10分钟内有效, 请及时保存');
         } else {
           message.success('打印成功，文件已生成，正在打开预览窗口');
         }
