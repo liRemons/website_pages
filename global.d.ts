@@ -4,6 +4,16 @@ declare module '*.css' {
   export default content;
 }
 
+declare module '*.less' {
+  const content: Record<string, string>;
+  export default content;
+}
+
+declare module '*.md' {
+  const content: string;
+  export default content;
+}
+
 declare module 'uslug';
 declare module 'markdown-it';
 declare module 'methods-r';
@@ -11,3 +21,8 @@ declare module 'markdown-it-link-attributes';
 declare module '@mdit/plugin-tab';
 declare module 'lodash.clonedeep';
 declare module '@mdit/plugin-alert';
+declare module 'remons-render-markdown';
+declare module 'highlight.js/lib/languages/*';
+
+// Webpack DefinePlugin 注入的全局变量
+declare const APP_NAME: string;

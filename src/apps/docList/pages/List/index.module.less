@@ -70,6 +70,19 @@
     height: calc(100% - 20px);
     margin-right: 14px;
     position: relative;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+
+    &.page_list_visible {
+      width: 20%;
+      opacity: 1;
+    }
+
+    &.page_list_collapsed {
+      width: 0;
+      margin-right: 0;
+      opacity: 0;
+    }
 
     .page_list_main {
       height: 100%;
@@ -107,20 +120,13 @@
   }
 
   .collapse_toggle {
-    position: absolute;
-    top: 0px;
-    left: 0;
+    position: fixed;
+    top: 10px;
+    left: 68px;
     z-index: 10;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    font-size: 12px;
     opacity: 0.9;
-    border: 1px solid var(--color-border);
 
     &:hover {
       opacity: 1;
@@ -128,8 +134,7 @@
 
     &.expand_toggle {}
 
-    &.collapse_toggle {
-    }
+    &.collapse_toggle {}
   }
 
   .page_main {
@@ -156,6 +161,20 @@
     }
   }
 
+  .actionButtons {
+    position: fixed;
+    top: 10px;
+    right: 68px;
+    z-index: 10;
+    opacity: .6;
+    overflow: visible;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   .page_main,
   .page_max_main {
     background-color: var(--color-bg, #ebecf0);
@@ -164,20 +183,6 @@
       position: relative;
       overflow-y: auto;
       height: 100%;
-    }
-
-    .actionButtons {
-      position: fixed;
-      top: 10px;
-      right: 68px;
-      z-index: 10;
-      opacity: .6;
-      overflow: visible;
-      transition: opacity 0.3s ease-in-out;
-
-      &:hover {
-        opacity: 1;
-      }
     }
 
     .actionPanel {

@@ -5,6 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react",
+    "allowJs": true,
     "strict": true,
     "strictPropertyInitialization": false,
     "alwaysStrict": false,
