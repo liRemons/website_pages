@@ -65,6 +65,7 @@ const NormalLoginForm = () => {
 
   return (
     <div className={styled.login}>
+      <img className={styled.loginImg} src={require('./assets/login.svg')} alt="login" />
       <Form
         name="normal_login"
         className="login-form"
