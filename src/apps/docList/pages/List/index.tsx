@@ -140,7 +140,7 @@ export default function List() {
   // 是否为移动端
   const isMobile = !IsPC();
   // PC 端且非分享模式
-  const isPCAndNotShare = !isMobile && !isShareMode;
+  const isPCAndNotShare = !isMobile && !isShareMode && showList;
   // 是否显示文章列表收起/展开按钮
   const showCollapseToggle = isPCAndNotShare && showList;
   // 是否显示 PC 端操作按钮和导航
