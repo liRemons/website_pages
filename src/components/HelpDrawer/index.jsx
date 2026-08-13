@@ -15,7 +15,7 @@ export default function HelpDrawer({ handleContent, title = '操作说明', plac
     <>
       <div className="circle" onClick={() => {
         if (handleContent) {
-          handleContent();
+          setDrawerOpen(true);
         }else {
           message.error('暂无内容');
         }
