@@ -19,11 +19,11 @@ export default function HomeList() {
   }, []);
 
   const openPage = (data) => {
-    const { name, id } = data;
+    const { id } = data;
     openApp({
       url: `/${APP_NAME}/docList`,
       params: {
-        name, id
+        id
       }
     });
   };
