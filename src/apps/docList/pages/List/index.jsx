@@ -11,7 +11,7 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import Anchor from '../Anchor';
 import { Input, Drawer, message, Modal } from 'antd';
-import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone, PrinterTwoTone } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, FileMarkdownTwoTone, Html5TwoTone, FolderOpenTwoTone, ProfileTwoTone, FileTextTwoTone, PrinterTwoTone, UpCircleTwoTone, DownCircleTwoTone } from '@ant-design/icons';
 import { getSearchParams, debounce, IsPC } from 'methods-r';
 
 export default function List() {
@@ -24,6 +24,7 @@ export default function List() {
   const [drawerType, setDrawerType] = useState('');
   const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
   const [listCollapsed, setListCollapsed] = useState(localStorage.docListListCollapsed === 'true');
+  const [mermaidCollapsed, setMermaidCollapsed] = useState(localStorage.mermaidCollapsed !== 'false');
   const popupRef = useRef(null); // 使用 ref 来存储 popup 窗口引用
 
   useEffect(() => {
@@ -211,12 +212,20 @@ export default function List() {
     });
   }
 
+  const toggleMermaidCollapsed = () => {
+    const next = !mermaidCollapsed;
+    setMermaidCollapsed(next);
+    localStorage.setItem('mermaidCollapsed', String(next));
+    window.location.reload();
+  };
+
   const renderActionButtons = () => {
     const actions = [
+      { key: 'docList-menu-mermaid-collapse', title: mermaidCollapsed ? '一键展开 mermaid' : '一键收起 mermaid', label: mermaidCollapsed ? '一键展开 mermaid' : '一键收起 mermaid', icon: mermaidCollapsed ? <DownCircleTwoTone /> : <UpCircleTwoTone />, onClick: toggleMermaidCollapsed, isShow: localStore.markdownInfo?.includes('mermaid') },
       { key: 'docList-menu-copyHtml', title: '复制渲染后的带格式 HTML', label: 'HTML', icon: <Html5TwoTone />, onClick: () => copyContent('html') },
       { key: 'docList-menu-copyMarkdown', title: '复制原始 Markdown', label: 'MD', icon: <FileMarkdownTwoTone />, onClick: () => copyContent('markdown') },
       { key: 'docList-menu-print', title: '打印', label: '打印', icon: <PrinterTwoTone />, onClick: toPrintPage },
-    ];
+    ].filter(item => item.isShow !== false);
     const handleClickAction = (onClick) => {
       onClick();
     }
@@ -231,7 +240,7 @@ export default function List() {
 
   const { name, handleType } = params;
   const VIEW_DETAIL = {
-    html: <Markdown id={activeId} setAnchor={setAnchor} />,
+    html: <Markdown id={activeId} setAnchor={setAnchor} defaultCollapsed={mermaidCollapsed} />,
   }
 
   const toggleListCollapse = () => {

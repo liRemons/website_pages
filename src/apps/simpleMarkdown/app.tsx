@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Input, message, Modal, Button, Upload } from 'antd';
 import RenderMarkdown, { initHighlighter, languagesCommon, markdownFormat } from 'remons-render-markdown';
 import 'remons-render-markdown/dist/index.css';
+import chartConfig from '@/utils/chart-config';
 import { HOST } from '@/utils'
 import '@assets/css/index.global.less';
 import { service } from '@/axios';
@@ -247,6 +248,7 @@ export default function App() {
               </Button>
               <div className={style.previewContent} id="previewContent">
                 <RenderMarkdown
+                  chartConfig={chartConfig}
                   isPrintPreview
                   showBackTop={false}
                   content={markdown}

@@ -4,17 +4,19 @@ import { useLocalObservable, useObserver } from 'mobx-react';
 import nginx from 'highlight.js/lib/languages/nginx';
 import python from 'highlight.js/lib/languages/python';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
+import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
 
 initHighlighter({
-   ...languagesCommon,
-   python,
-   nginx
+  ...languagesCommon,
+  python,
+  nginx
 });
 
 export default function Markdown(props) {
   const localStore = useLocalObservable(() => store);
+  const defaultCollapsed = !!props.defaultCollapsed;
 
   useEffect(() => {
     try {
@@ -30,11 +32,14 @@ export default function Markdown(props) {
     }
   }, [localStore.htmlInfo, props.id]);
 
+
   return useObserver(() => <RenderMarkdown
     showBackTop
     content={localStore.markdownInfo}
     createTime={localStore.createTime ? +new Date(localStore.createTime) : false}
     showDriverGuide
+    defaultCollapsed={defaultCollapsed}
+    chartConfig={chartConfig}
     backTopTarget={document.querySelector('.markdown-main-content')}
     editButton={isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
   />);
