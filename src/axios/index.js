@@ -98,6 +98,10 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
     signal: controller.signal,
   })
     .then((response) => {
+      if (response.status === 403) {
+        window.location.href = `${window.location.origin}/${APP_NAME}/login`;
+        return Promise.reject(error);
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     })
