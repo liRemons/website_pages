@@ -249,6 +249,7 @@ export default function App() {
               </Button>
               <div className={style.previewContent} id="previewContent">
                 <RenderMarkdown
+                  isSlotMermaid
                   chartConfig={chartConfig}
                   isPrintPreview
                   showBackTop={false}

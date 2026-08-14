@@ -37,6 +37,7 @@ export default function Markdown(props) {
     content={localStore.markdownInfo}
     createTime={localStore.createTime ? +new Date(localStore.createTime) : false}
     showDriverGuide
+    isSlotMermaid
     defaultCollapsed={defaultCollapsed}
     chartConfig={chartConfig}
     backTopTarget={document.querySelector('.markdown-main-content')}
