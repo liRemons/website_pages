@@ -32,7 +32,6 @@ export default function Markdown(props) {
     }
   }, [localStore.htmlInfo, props.id]);
 
-
   return useObserver(() => <RenderMarkdown
     showBackTop
     content={localStore.markdownInfo}

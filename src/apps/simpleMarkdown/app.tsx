@@ -36,7 +36,7 @@ export default function App() {
     const message = (event) => {
       if (event.origin !== window.origin) return;
       if (event.data?.type === 'DATA') {
-        if ( event.data.payload?.type === 'printData' && event.data.payload?.content) {
+        if (event.data.payload?.type === 'printData' && event.data.payload?.content) {
           setMarkdown(event.data.payload?.content);
           setTimeout(() => {
             handlePrint('once');
@@ -148,6 +148,7 @@ export default function App() {
   }
 
   const handlePrint = async (type?: string) => {
+    const { anchor } = await markdownFormat(markdown);
     const res = await service({
       method: 'post',
       url: '/content/createHtml',
@@ -156,7 +157,7 @@ export default function App() {
         css: getRelevantCSS(document.getElementById('previewContent') as HTMLElement),
         fileName: document.getElementById('previewContent')?.querySelector('h1')?.id || '',
         type: type || '',
-        tocTree: markdownFormat(markdown)?.anchor
+        tocTree: anchor
       },
     });
 

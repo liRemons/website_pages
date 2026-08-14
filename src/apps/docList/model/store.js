@@ -43,7 +43,7 @@ class Store {
     this.markdownInfo = '';
     this.htmlInfo = '';
     const { data } = await markdownToHTML(payload)
-    const { anchor, info } = markdownFormat(data.content);
+    const { anchor, info } = await markdownFormat(data.content);
     const params = getSearchParams();
     const { isDebug } = params || {};
     
