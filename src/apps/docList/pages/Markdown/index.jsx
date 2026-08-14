@@ -7,6 +7,7 @@ import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-
 import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
+import dayjs from 'dayjs';
 
 initHighlighter({
   ...languagesCommon,
@@ -35,12 +36,15 @@ export default function Markdown(props) {
   return useObserver(() => <RenderMarkdown
     showBackTop
     content={localStore.markdownInfo}
-    createTime={localStore.createTime ? +new Date(localStore.createTime) : false}
     showDriverGuide
     isSlotMermaid
+    footer={<div style={{ textAlign: 'right', marginBottom: '6px' }}>
+      <span>文档更新时间：{dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+      &nbsp;&nbsp;
+      {isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
+    </div>}
     defaultCollapsed={defaultCollapsed}
     chartConfig={chartConfig}
     backTopTarget={document.querySelector('.markdown-main-content')}
-    editButton={isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
   />);
 }
