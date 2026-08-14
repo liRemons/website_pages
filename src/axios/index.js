@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd';
 import { HOST, USER_TOKEN } from "@utils";
 
-const TIMEOUT_MS = 20000;
+const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
 const noLoadingURL = [];
 
@@ -18,7 +18,7 @@ const controlLoading = ({ isOpen }) => {
   if (isOpen) {
     loadingDOM.setAttribute('class', 'loadingVerlay');
     loadingDOM.style.display = 'flex';
-    root.render(<Spin tip="加载中..." size="large" />);
+    root.render(<Spin description="加载中..." size="large" />);
   } else {
     loadingDOM.setAttribute('class', '');
     loadingDOM.style.display = 'none';
