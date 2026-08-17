@@ -56,7 +56,6 @@ export default function List() {
   return (
     <>
       <Container
-        isAnimationBackground={false}
         header={<Header name="Mermaid 编辑器" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
         main={<div className={style.page}>
           <div className={style.panesRow} ref={rowRef}>
