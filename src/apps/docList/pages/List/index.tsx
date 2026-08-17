@@ -152,7 +152,14 @@ export default function List() {
 
   /** 移动端 Drawer 内容映射：根据 drawerType 渲染对应面板 */
   const drawerContentMap: Record<Exclude<DrawerType, ''>, () => React.ReactNode> = {
-    list: () => <PageList articleList={localStore.articleList} activeId={activeId} onPageClick={handleClickPage} styles={style} />,
+    list: () => (
+      <PageList
+        articleList={localStore.articleList}
+        activeId={activeId}
+        onPageClick={handleClickPage}
+        styles={style}
+      />
+    ),
     nav: () => <PageNav anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} />
   };
 
@@ -197,7 +204,7 @@ export default function List() {
     <Drawer open={drawerVisible} styles={{ wrapper: { padding: 0 } }} width='80%' closable={false} title={isMobile ? drawerTitleMap[drawerType] : null} placement='left' onClose={() => setDrawerVisible(false)}>
       <div className={classnames(style.main)}>
         <div className={style.page_list}>
-        {isMobile && drawerType && drawerContentMap[drawerType]?.()}
+          {isMobile && drawerType && drawerContentMap[drawerType]?.()}
 
         </div>
       </div>
