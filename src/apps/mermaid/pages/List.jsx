@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import '@assets/css/index.global.less';
 import handleContent from '../handle.md';
 import MermaidEditor from './components/MermaidEditor';
 import MermaidPreview from './components/MermaidPreview';
@@ -8,6 +7,7 @@ import Header from '@components/Header';
 import Fixed from '@components/Fixed';
 import { DEFAULT_SOURCE } from './constants';
 import { IsPC } from 'methods-r';
+import '@assets/css/index.global.less';
 import style from './index.module.less';
 
 const isPc = IsPC();

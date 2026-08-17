@@ -7,6 +7,7 @@
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
+  background: var(--color-bg, linear-gradient(137deg, rgb(229, 244, 255) 0%, rgb(239, 231, 255) 100%));
 }
 
 /* 左右两栏 */
@@ -50,7 +51,7 @@
   background: var(--color-text-muted, #bbb);
 }
 
-/* 左右各占一半（neumorphic 卡片） */
+/* 左右各占一半（毛玻璃卡片） */
 .leftPane,
 .rightPane {
   height: 100%;
@@ -60,7 +61,11 @@
   flex-direction: column;
   border-radius: var(--radius-lg, 10px);
   overflow: hidden;
-  box-shadow: var(--shadow-md, -3px -3px 10px #fff, 3px 3px 10px #babecc);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.15));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.8));
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.06));
 }
 
 /* 栏头部：标题 + 操作按钮 */

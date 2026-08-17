@@ -11,6 +11,7 @@
 
 /* ===== 深色模式全局覆盖 ===== */
 [data-theme='dark'] {
+
   /* antd Drawer 背景 */
   .ant-drawer-content,
   .ant-drawer-wrapper-body {
@@ -70,9 +71,7 @@
     color: #b0b8c8 !important;
   }
 
-  :where(.css-dev-only-do-not-override-mncuj7).ant-form-item
-    .ant-form-item-label
-    > label {
+  :where(.css-dev-only-do-not-override-mncuj7).ant-form-item .ant-form-item-label>label {
     color: #b0b8c8 !important;
   }
 
@@ -102,17 +101,17 @@
     color: #b0b8c8 !important;
   }
 
-  .ant-table-thead > tr > th {
+  .ant-table-thead>tr>th {
     background: #2e3350 !important;
     color: #e8ecf4 !important;
   }
 
-  .ant-table-tbody > tr > td {
+  .ant-table-tbody>tr>td {
     background: #1e2235 !important;
     color: #b0b8c8 !important;
   }
 
-  .ant-table-tbody > tr:hover > td {
+  .ant-table-tbody>tr:hover>td {
     background: #2e3350 !important;
   }
 
@@ -238,14 +237,12 @@
 
   .cm-editor .cm-scroller {
     background: #1a1d2e !important;
-    font-family: var(
-      --font-family-editor,
-      SFMono-Regular,
-      Consolas,
-      'Liberation Mono',
-      Menlo,
-      monospace
-    ) !important;
+    font-family: var(--font-family-editor,
+        SFMono-Regular,
+        Consolas,
+        'Liberation Mono',
+        Menlo,
+        monospace) !important;
   }
 
   .cm-editor .cm-gutters {
@@ -460,6 +457,7 @@
   .remons-section .remons-section-subtitle {
     color: #8892a4 !important;
   }
+
   /* home 页面深色模式 */
   .ui-input {
     color: var(--color-text, #61677c) !important;
@@ -594,7 +592,7 @@
     color: #b0b8c8 !important;
   }
 
-  .ant-spin-nested-loading > div > .ant-spin .ant-spin-text {
+  .ant-spin-nested-loading>div>.ant-spin .ant-spin-text {
     color: #b0b8c8 !important;
   }
 
@@ -615,7 +613,7 @@
     border-color: #2e3350 !important;
   }
 
-  .ant-picker-input > input {
+  .ant-picker-input>input {
     color: #b0b8c8 !important;
   }
 
@@ -708,7 +706,7 @@
     background: #2e3350 !important;
   }
 
-  .ant-skeleton-content .ant-skeleton-paragraph > li {
+  .ant-skeleton-content .ant-skeleton-paragraph>li {
     background: #2e3350 !important;
   }
 
@@ -781,6 +779,7 @@
   .ant-qrcode-expired {
     color: #b0b8c8 !important;
   }
+
   /* simpleSketches 深色模式 */
   .sketch-app {
     --primary-color: #5b9ef4 !important;
@@ -877,6 +876,7 @@
     color: #b0b8c8 !important;
     border-color: #2e3350 !important;
   }
+
   /* imgWatermark 深色模式 */
   [class*='imgWatermark'] [class*='container'],
   [class*='imgWatermark'] [class*='sidebar'],
@@ -934,6 +934,7 @@
   [class*='imgWatermark'] [class*='sidebarFooter'] {
     border-top-color: rgba(46, 51, 80, 0.35) !important;
   }
+
   /* 通用滚动条 */
   ::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2) !important;
@@ -978,6 +979,7 @@ textarea,
 button {
   font-family: var(--font-family-base);
   letter-spacing: -0.2px;
+  outline: none;
 }
 
 button,
@@ -1016,6 +1018,7 @@ textarea,
   &:focus {
     border: 1px solid var(--color-active) !important;
     box-shadow: 0 0 0 2px rgba(117, 188, 255, 0.2) !important;
+    outline: none;
   }
 }
 
@@ -1036,6 +1039,7 @@ textarea,
   &.ant-input-affix-wrapper-focused {
     border-color: var(--color-active) !important;
     box-shadow: 0 0 0 2px rgba(117, 188, 255, 0.2) !important;
+    outline: none;
   }
 
   /* 移除内部 input 的边框，避免双重边框 */
