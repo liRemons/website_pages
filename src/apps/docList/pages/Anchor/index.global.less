@@ -1,6 +1,7 @@
 ﻿@import (reference) '../../../../assets/css/variables.css';
 
 .ant-anchor-link-active {
+
   h1,
   h2,
   h3,
@@ -26,6 +27,7 @@
 }
 
 .ant-anchor-link-title:hover {
+
   h1,
   h2,
   h3,
@@ -65,5 +67,18 @@
 
 .ant-anchor-wrapper {
   overflow-y: auto;
-  max-height: calc(100vh - 136px) !important;
+  max-height: calc(100vh - 92px) !important;
+}
+
+
+.ant-affix {
+  top: 0 !important;
+  height: 100% !important;
+}
+
+@media screen and (max-width: 480px) {
+  .ant-anchor-wrapper {
+    overflow-y: auto;
+    max-height: calc(100vh - 56px) !important;
+  }
 }

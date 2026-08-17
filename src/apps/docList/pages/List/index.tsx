@@ -195,8 +195,11 @@ export default function List() {
     <Fixed propsVisible handleContent={handleContent} actions={null} />
     {/* 移动端 Drawer 抽屉 */}
     <Drawer open={drawerVisible} styles={{ wrapper: { padding: 0 } }} width='80%' closable={false} title={isMobile ? drawerTitleMap[drawerType] : null} placement='left' onClose={() => setDrawerVisible(false)}>
-      <div className={style.main}>
+      <div className={classnames(style.main)}>
+        <div className={style.page_list}>
         {isMobile && drawerType && drawerContentMap[drawerType]?.()}
+
+        </div>
       </div>
     </Drawer>
   </div>);

@@ -59,6 +59,7 @@
     height: 100%;
     padding: 10px 0;
     overflow: hidden;
+    border-radius: var(--radius-base) !important;
   }
 
   .page_main {
@@ -68,7 +69,7 @@
   .page_list {
     width: 20%;
     height: calc(100% - 20px);
-    margin-right: 14px;
+    margin-right: 6px;
     position: relative;
     transition: all 0.3s ease-in-out;
     overflow: hidden;
@@ -144,7 +145,7 @@
 
   .page_nav {
     height: auto;
-    margin-left: 14px;
+    margin-left: 6px;
   }
 
   @media screen and (max-width: 600px) {
@@ -193,11 +194,34 @@
 
   .page_nav {
     width: 20%;
+    position: relative;
 
-    .search {
+    .searchToggle {
+      position: absolute;
+      top: 2px;
+      right: 0;
+      z-index: 10;
+      margin: 0 4px;
+    }
+
+    .searchBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+
+      &:hover {
+        color: var(--color-active);
+        border-color: var(--color-border-dark);
+        background: rgba(255, 255, 255, 0.95);
+      }
+    }
+
+    .searchBox {
       display: flex;
       margin: 0 4px;
-      margin-bottom: 10px;
+      background-color: var(--color-bg-input, #fff);
     }
   }
 }
@@ -212,11 +236,13 @@
   }
 
   .ant-drawer-content {
+    background: var(--color-bg, #ebecf0) !important;
 
     .ant-drawer-body,
     .ant-drawer-header {
       padding: 0;
-      background: var(--color-bg, #ebecf0);
+      background: transparent;
+
     }
 
     .ant-drawer-header {
