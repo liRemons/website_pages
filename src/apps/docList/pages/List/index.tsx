@@ -3,7 +3,7 @@
  * 功能：展示文章列表、Markdown 渲染、锚点导航、复制/打印、mermaid 折叠等
  * 支持 PC 端三栏布局和移动端 Drawer 抽屉模式
  */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
@@ -15,7 +15,7 @@ import '@assets/css/index.global.less';
 import style from './index.module.less';
 import Markdown from '../Markdown';
 import { Drawer } from 'antd';
-import { getSearchParams, IsPC } from 'methods-r';
+import { getSearchParams, IsPC, debounce } from 'methods-r';
 import copyContent from './hooks/copyContent';
 import printPage from './hooks/printPage';
 import ActionButtons from './components/ActionButtons';
@@ -100,14 +100,17 @@ export default function List() {
     localStore.getMarkdown(id);
   };
 
-  /** 搜索锚点目录，空关键词时恢复完整目录 */
-  const onSearch = (searchTitle: string) => {
-    if (!searchTitle) {
-      setAnchor(JSON.parse(JSON.stringify(localStore.anchor)));
-    } else {
-      setAnchor(deepAnchor(JSON.parse(JSON.stringify(localStore.anchor)), searchTitle));
-    }
-  };
+  /** 搜索锚点目录，空关键词时恢复完整目录（debounce 保持稳定引用） */
+  const onSearch = useCallback(
+    debounce((searchTitle: string) => {
+      if (!searchTitle) {
+        setAnchor(JSON.parse(JSON.stringify(localStore.anchor)));
+      } else {
+        setAnchor(deepAnchor(JSON.parse(JSON.stringify(localStore.anchor)), searchTitle));
+      }
+    }),
+    []
+  );
 
   /** 切换 mermaid 折叠状态并刷新页面 */
   const toggleMermaidCollapsed = () => {
@@ -160,7 +163,7 @@ export default function List() {
         styles={style}
       />
     ),
-    nav: () => <PageNav anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} />
+    nav: () => <PageNav originAnchor={localStore.anchor} anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} />
   };
 
   return useObserver(() => <div className={style.container}>
@@ -196,7 +199,7 @@ export default function List() {
         </div>
       </div>
       {/* PC 端锚点导航面板 */}
-      {showPCControls && <PageNav anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} />}
+      {showPCControls && <PageNav anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} originAnchor={localStore.anchor} />}
     </div>
     {/* 右下角固定按钮 */}
     <Fixed propsVisible handleContent={handleContent} actions={null} />
@@ -205,7 +208,6 @@ export default function List() {
       <div className={classnames(style.main)}>
         <div className={style.page_list}>
           {isMobile && drawerType && drawerContentMap[drawerType]?.()}
-
         </div>
       </div>
     </Drawer>

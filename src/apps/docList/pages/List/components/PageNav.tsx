@@ -7,10 +7,9 @@ import classnames from 'classnames';
 import Anchor from '../../Anchor';
 import { Input } from 'antd';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
-import { debounce } from 'methods-r';
 import { PageNavProps } from '../types';
 
-export default function PageNav({ anchor, htmlInfo, onSearch, styles }: PageNavProps) {
+export default function PageNav({ anchor, htmlInfo, onSearch, styles, originAnchor }: PageNavProps) {
   const [searchVisible, setSearchVisible] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<any>(null);
@@ -34,10 +33,10 @@ export default function PageNav({ anchor, htmlInfo, onSearch, styles }: PageNavP
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchVisible, onSearch]);
 
-  if (!anchor?.length) return null;
+  if (!originAnchor?.length) return null;
 
   return (
-    <div className={classnames(styles.page_nav, 'shadow_not_active')}>
+    <div className={classnames(styles.page_nav, 'shadow_not_active', searchVisible ? 'search_visible' : 'search_hidden')}>
       {/* 搜索按钮：固定在顶部，脱离文档流 */}
       <div className={styles.searchToggle} ref={searchRef}>
         {!searchVisible ? (
@@ -50,7 +49,7 @@ export default function PageNav({ anchor, htmlInfo, onSearch, styles }: PageNavP
               ref={inputRef}
               placeholder="请输入以搜索"
               autoFocus
-              onChange={(e) => debounce(onSearch(e.target.value))}
+              onChange={(e) => onSearch(e.target.value)}
               suffix={
                 <CloseOutlined
                   onMouseDown={(e) => e.preventDefault()}

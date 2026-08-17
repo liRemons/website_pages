@@ -199,11 +199,14 @@
     position: relative;
 
     .searchToggle {
+      width: 100%;
       position: absolute;
       top: 8px;
       right: 0;
-      z-index: 10;
+      z-index: 999;
       margin: 0 4px;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .searchBtn {
@@ -223,6 +226,7 @@
     .searchBox {
       display: flex;
       margin: 0 4px;
+      width: calc(100% - 18px);
       background-color: var(--color-bg-input, #fff);
     }
   }
@@ -253,6 +257,13 @@
       .ant-drawer-title {
         line-height: 40px;
       }
+    }
+  }
+
+  .search_visible {
+    padding-top: 40px !important;
+
+    .searchBox {
     }
   }
 }

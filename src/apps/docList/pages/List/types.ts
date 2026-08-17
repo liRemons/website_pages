@@ -59,6 +59,7 @@ export interface PageNavProps {
   htmlInfo: string;
   onSearch: (title: string) => void;
   styles: Record<string, string>;
+  originAnchor: AnchorItem[];
 }
 
 /** 移动端菜单项类型 */
