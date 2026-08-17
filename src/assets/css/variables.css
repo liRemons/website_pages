@@ -4,6 +4,7 @@
 [data-theme="light"] {
   /* ── 基础颜色 ── */
   --color-bg: linear-gradient(137deg, rgb(229, 244, 255) 0%, rgb(239, 231, 255) 100%);
+  --color-animation-bg: url(../img/811e589a2221e49ba274b9b2e59ca05c.webp) no-repeat center/cover;
   --color-bg-card: rgba(255, 255, 255, 0.15);
   --color-bg-white: rgba(255, 255, 255, 0.25);
   --color-bg-overlay: rgba(255, 255, 255, 0.1);
@@ -60,6 +61,7 @@
 /* ===== 深色主题 ===== */
 [data-theme="dark"] {
   --color-bg: linear-gradient(137deg, #1a1d2e 0%, #252a40 100%);
+  --color-animation-bg: url(../img/f253f68decd90ce426f88fe5145ec848.webp) no-repeat center/cover;
   --color-bg-card: rgba(30, 34, 53, 0.7);
   --color-bg-white: rgba(46, 51, 80, 0.8);
   --color-bg-overlay: rgba(30, 34, 53, 0.85);

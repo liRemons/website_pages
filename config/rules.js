@@ -73,7 +73,7 @@ const rules = ({ isEnvDevelopment }) => {
 
         // ---- 图片（替代 url-loader）----
         {
-          test: /\.(jpg|png|jpeg|gif)$/,
+          test: /\.(jpg|png|jpeg|gif|webp)$/,
           include: path.resolve(__dirname, '../src'),
           type: 'asset',
           parser: { dataUrlCondition: { maxSize: 1024 * 8 } },
