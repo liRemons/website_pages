@@ -2,7 +2,7 @@ const { execSync, spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const { getPages, getDist } = require('./common');
-const chalk = require('chalk');
+const chalk = require('./chalk');
 const pakeageJSON = require('../package.json');
 
 // Windows 下 .bin/ 下的符号链接无法直接执行，需使用 .cmd 后缀
@@ -144,7 +144,7 @@ function buildPage(page, otherParams, spinFrameRef) {
       '--progress',
       '--env', `pages=${page}`,
       '--env', `otherParams=${otherParams}`,
-    ], { stdio: 'pipe' });
+    ], { stdio: 'pipe', shell: process.platform === 'win32' });
 
     // 超时保护：检测进度值是否停滞，而非仅检测是否有输出
     // webpack 卡死时 --progress 仍会持续输出相同百分比，lastActivityAt 会一直刷新
@@ -337,7 +337,7 @@ getPages().then(({ pages, otherParams }) => {
       if (pendingStderr.length > 0) {
         process.stderr.write(pendingStderr.join('\n') + '\n');
       }
-      console.log(chalk.bold.green(`\n✅ 全部完成，耗时 ${elapsed}s\n`));
+      console.log(chalk.green(chalk.bold(`\n✅ 全部完成，耗时 ${elapsed}s\n`)));
       cleanLegacyDistDirs();
       getDist(done);
     })

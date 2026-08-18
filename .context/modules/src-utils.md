@@ -14,14 +14,11 @@
 - `downloadSVGAsPNG` — * 通用下载：将 Blob 或 URL 作为文件下载（download.js）
 - `encoded` — * 通用下载：将 Blob 或 URL 作为文件下载（download.js）
 - `getSvgSize` — * 通用下载：将 Blob 或 URL 作为文件下载（download.js）
-- `renderGuide` — 当前正在展示的 driver 实例与索引，防止重复调用导致多个引导同时打开（driver.ts）
-- `driverObj` — 当前正在展示的 driver 实例与索引，防止重复调用导致多个引导同时打开（driver.ts）
 
 **主要导出**:
 - src\utils\download.js:downloadFile
 - src\utils\download.js:downloadSVG
 - src\utils\download.js:downloadSVGAsPNG
-- src\utils\driver.ts:driverRender
 - src\utils\index.js:HOST
 - src\utils\index.js:img
 - src\utils\index.js:USER_TOKEN
@@ -35,7 +32,6 @@
 | 文件 | 行数 | 导出 |
 |------|------|------|
 | src\utils\download.js | 112 | downloadFile, downloadSVG, downloadSVGAsPNG |
-| src\utils\driver.ts | 85 | driverRender |
 | src\utils\index.js | 16 | HOST, img, USER_TOKEN |
 | src\utils\isLogin.ts | 7 | - |
 | src\utils\luckey.js | 5 | LUCKEY_HOST |

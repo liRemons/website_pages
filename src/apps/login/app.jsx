@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { encrypt, DES_KEY, DES_IV } from './model/const';
-import { useLocalObservable } from 'mobx-react';
+import { useLocalObservable } from 'mobx-react-lite';
 import store from './model/store';
 import styled from './index.module.less'
 import FormItem from '../../components/Form';

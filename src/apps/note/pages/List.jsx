@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useObserver, useLocalObservable } from 'mobx-react';
+import { useObserver, useLocalObservable } from 'mobx-react-lite';
 import { openApp } from 'methods-r';
 import store from '../model/store';
 import Empty from '@components/Empty';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, FormItem, SearchForm as BaseSearchForm } from 'remons-components';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /**
  * 搜索表单渲染组件
@@ -97,11 +97,11 @@ const SearchForm = ({ config = {}, onSearch, onReset, loading }) => {
     fields.forEach(field => {
       if (field.type === 'rangePicker' && values[field.name]) {
         const [start, end] = values[field.name];
-        processedValues[`${field.name}Start`] = start ? moment(start).format('YYYY-MM-DD') : undefined;
-        processedValues[`${field.name}End`] = end ? moment(end).format('YYYY-MM-DD') : undefined;
+        processedValues[`${field.name}Start`] = start ? dayjs(start).format('YYYY-MM-DD') : undefined;
+        processedValues[`${field.name}End`] = end ? dayjs(end).format('YYYY-MM-DD') : undefined;
         delete processedValues[field.name];
       } else if ((field.type === 'datePicker') && values[field.name]) {
-        processedValues[field.name] = moment(values[field.name]).format('YYYY-MM-DD');
+        processedValues[field.name] = dayjs(values[field.name]).format('YYYY-MM-DD');
       }
     });
 

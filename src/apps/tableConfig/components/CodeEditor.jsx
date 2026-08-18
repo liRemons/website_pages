@@ -59,7 +59,7 @@ const CodeEditor = ({
         { label: '状态渲染', code: '(value) => <Badge status={value ? "success" : "error"} text={value ? "启用" : "禁用"} />' },
         { label: '链接渲染', code: '(value, record) => <a onClick={() => console.log(record)}>{value}</a>' },
         { label: '图片渲染', code: '(value) => <Image src={value} width={60} />' },
-        { label: '日期格式化', code: '(value) => value && moment(value).format("YYYY-MM-DD HH:mm")' },
+        { label: '日期格式化', code: '(value) => value && dayjs(value).format("YYYY-MM-DD HH:mm")' },
       ],
       object: [
         { label: '静态选项', code: '[{ label: "选项1", value: "1" }, { label: "选项2", value: "2" }]' },

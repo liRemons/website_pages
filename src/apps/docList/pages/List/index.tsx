@@ -4,7 +4,7 @@
  * 支持 PC 端三栏布局和移动端 Drawer 抽屉模式
  */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useObserver, useLocalObservable } from 'mobx-react';
+import { useObserver, useLocalObservable } from 'mobx-react-lite';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
 import handleContent from '../../handle.md';

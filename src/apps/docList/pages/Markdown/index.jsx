@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import store from '../../model/store';
-import { useLocalObservable, useObserver } from 'mobx-react';
+import { useLocalObservable, useObserver } from 'mobx-react-lite';
 import nginx from 'highlight.js/lib/languages/nginx';
 import python from 'highlight.js/lib/languages/python';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';

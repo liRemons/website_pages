@@ -15,12 +15,8 @@ declare module '*.md' {
 }
 
 declare module 'uslug';
-declare module 'markdown-it';
 declare module 'methods-r';
-declare module 'markdown-it-link-attributes';
-declare module '@mdit/plugin-tab';
 declare module 'lodash.clonedeep';
-declare module '@mdit/plugin-alert';
 declare module 'remons-render-markdown';
 declare module 'highlight.js/lib/languages/*';
 

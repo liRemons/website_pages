@@ -18,7 +18,7 @@ import {
   EyeOutlined, 
   PlusOutlined,
 } from '@ant-design/icons';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /**
  * 数据表格渲染组件
@@ -54,14 +54,14 @@ const DataTable = ({
     
     try {
       // 创建安全的执行环境
-      const renderFunc = new Function('value', 'record', 'index', 'moment', 'Tag', 'Badge', 'Image', `
+      const renderFunc = new Function('value', 'record', 'index', 'dayjs', 'Tag', 'Badge', 'Image', `
         try {
           return (${renderCode})(value, record, index);
         } catch (e) {
           return value;
         }
       `);
-      return renderFunc(value, record, index, moment, Tag, Badge, Image);
+      return renderFunc(value, record, index, dayjs, Tag, Badge, Image);
     } catch (error) {
       console.error('Render function error:', error);
       return value;

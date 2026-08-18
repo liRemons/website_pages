@@ -2,7 +2,7 @@ const fsExtra = require('fs-extra')
 const { readdirSync } = require('fs')
 const fs = require('fs')
 const log4js = require('log4js')
-const chalk = require('chalk')
+const chalk = require('./chalk')
 const { logCongfig } = require('./log')
 const pakeageJSON = require('../package.json');
 const { js, css } = require('../config/cdn')
@@ -33,9 +33,9 @@ const getPages = () => {
     const otherParams =
       process.argv.findIndex((i) => (i || '').includes('=')) !== -1
         ? process.argv.slice(
-            process.argv.findIndex((i) => i.includes('=')),
-            process.argv.length
-          )
+          process.argv.findIndex((i) => i.includes('=')),
+          process.argv.length
+        )
         : []
     pages.split(',').forEach((el, index) => console.log(`${index + 1}:`, el))
     // 不在打包前删除旧 dist，避免线上页面在打包期间中断服务
@@ -118,17 +118,17 @@ const getDist = (pages) => {
       files.forEach((f) => {
         const filePath = f.split('__size__')[0]
         const sizeKb = f.split('__size__')[1]
-        if (filePath.endsWith('.js'))        groups.js.push({ filePath, sizeKb })
-        else if (filePath.endsWith('.css'))  groups.css.push({ filePath, sizeKb })
+        if (filePath.endsWith('.js')) groups.js.push({ filePath, sizeKb })
+        else if (filePath.endsWith('.css')) groups.css.push({ filePath, sizeKb })
         else if (filePath.endsWith('.html')) groups.html.push({ filePath, sizeKb })
-        else                                 groups.assets.push({ filePath, sizeKb })
+        else groups.assets.push({ filePath, sizeKb })
       })
       const rows = []
       const addGroup = (label, items, color) =>
         items.forEach((f) => rows.push({ label, name: f.filePath.split('/').pop(), sizeKb: f.sizeKb, color }))
       addGroup('html', groups.html, chalk.white)
-      addGroup('js',   groups.js,   chalk.yellow)
-      addGroup('css',  groups.css,  chalk.magenta)
+      addGroup('js', groups.js, chalk.yellow)
+      addGroup('css', groups.css, chalk.magenta)
       if (groups.assets.length) {
         const assetsTotalKb = groups.assets.map((f) => +f.sizeKb).reduce((a, b) => a + b, 0).toFixed(2)
         rows.push({ label: 'asset', name: `${groups.assets.length} 个静态文件`, sizeKb: assetsTotalKb, color: chalk.gray })
@@ -151,7 +151,7 @@ const getDist = (pages) => {
     // 渲染所有应用表格（连续，共用边框）
     allAppRows.forEach(({ page, pageKb, rows }, appIdx) => {
       const isFirst = appIdx === 0
-      const isLast  = appIdx === allAppRows.length - 1
+      const isLast = appIdx === allAppRows.length - 1
 
       // 顶部边框：第一个用 ┌，后续用 ├（与上一个底部合并）
       if (isFirst) {
@@ -162,8 +162,8 @@ const getDist = (pages) => {
 
       // 标题行：bgCyan 铺满整行
       const titleLabel = ` ${page} `
-      const titleSize  = ` ${formatSize(+pageKb)} `
-      const titlePad   = innerW - displayWidth(titleLabel) - displayWidth(titleSize)
+      const titleSize = ` ${formatSize(+pageKb)} `
+      const titlePad = innerW - displayWidth(titleLabel) - displayWidth(titleSize)
       console.log(
         '│' +
         chalk.bgCyan(chalk.black(titleLabel)) +

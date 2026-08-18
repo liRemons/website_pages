@@ -27,8 +27,10 @@ const rules = ({ isEnvDevelopment }) => {
   const cssMoudleLoader = {
     loader: 'css-loader',
     options: {
+      esModule: false,
       sourceMap: false,
       modules: {
+        exportLocalsConvention: 'asIs',
         localIdentName: isEnvDevelopment
           ? '[path][name]-[local]'
           : '[hash:base64:10]',
@@ -60,15 +62,15 @@ const rules = ({ isEnvDevelopment }) => {
           test: lessModuleRegex,
           exclude: /node_modules/,
           use: isEnvDevelopment
-            ? ['style-loader', cssMoudleLoader, postcssLoader, 'less-loader']
-            : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader, 'less-loader'],
+            ? ['style-loader', cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }]
+            : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }],
         },
         {
           test: lessRegex,
           exclude: lessModuleRegex,
           use: isEnvDevelopment
-            ? ['style-loader', 'css-loader', postcssLoader, 'less-loader']
-            : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, 'less-loader'],
+            ? ['style-loader', 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }]
+            : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }],
         },
 
         // ---- 图片（替代 url-loader）----
@@ -85,7 +87,6 @@ const rules = ({ isEnvDevelopment }) => {
           test: /\.html$/,
           include: path.resolve(__dirname, '../src'),
           loader: 'html-loader',
-          options: { esModule: false },
         },
         {
           test: /\.(js|jsx|ts|tsx)$/,

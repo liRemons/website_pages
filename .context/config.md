@@ -28,10 +28,7 @@
 | 包名 | 版本 |
 |------|------|
 | @ant-design/icons | ^6.2.2 |
-| @mdit/plugin-alert | ^1.0.1 |
-| @mdit/plugin-tab | ^1.0.1 |
 | @microlink/react-json-view | ^1.31.22 |
-| @panzoom/panzoom | ^4.6.2 |
 | @textea/json-viewer | ^4.0.1 |
 | @uiw/react-codemirror | ^4.25.11 |
 | @wangeditor/editor | ^5.1.23 |
@@ -41,7 +38,6 @@
 | copy-to-clipboard | ^4.0.2 |
 | crypto-js | ^4.1.1 |
 | dayjs | ^1.11.20 |
-| driver.js | ^1.7.0 |
 | express | ^5.2.1 |
 | highlight.js | ^11.11.1 |
 | json5 | ^2.2.3 |
@@ -50,10 +46,6 @@
 | lodash.orderby | ^4.6.0 |
 | lodash.sortby | ^4.7.0 |
 | lrz | ^4.9.41 |
-| markdown-it | ^14.3.0 |
-| markdown-it-anchor | ^9.2.1 |
-| markdown-it-link-attributes | ^4.0.1 |
-| markdown-it-toc-done-right | ^4.2.0 |
 | methods-r | ^1.2.14 |
 | mobx | ^6.3.5 |
 | mobx-react | ^7.2.0 |
@@ -99,7 +91,6 @@
 | terser-webpack-plugin | ^5.6.1 |
 | tsconfig-paths-webpack-plugin | ^3.5.2 |
 | typescript | ^4.5.5 |
-| uglify-js | ^3.15.5 |
 | webpack | ^5.108.4 |
 | webpack-bundle-analyzer | ^4.5.0 |
 | webpack-cli | ^4.7.2 |

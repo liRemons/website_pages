@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Header from '@components/Header';
 import handleContent from '../../handle.md';
 import Container from '@components/Container';
-import { useLocalObservable, useObserver } from 'mobx-react';
+import { useLocalObservable, useObserver } from 'mobx-react-lite';
 import style from '../index.module.less';
 import store from '../../model/store';
 import { Empty } from 'antd';

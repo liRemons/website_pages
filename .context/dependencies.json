@@ -147,9 +147,6 @@
   "src\\components\\HelpDrawer\\index.jsx": [
     "remons-render-markdown/dist/index.css"
   ],
-  "src\\utils\\driver.ts": [
-    "driver.js/dist/driver.css"
-  ],
   "webpack.config.js": [
     "webpack",
     "html-webpack-plugin",

@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { Card, Avatar, Popover } from 'antd';
 import store from '../model/store';
 import { HOST } from '@utils';
-import { useObserver, useLocalObservable } from 'mobx-react';
+import { useObserver, useLocalObservable } from 'mobx-react-lite';
 import { GithubOutlined, WechatOutlined, DingdingOutlined, MailOutlined, MobileOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { formatter } from '../model/const'
 
