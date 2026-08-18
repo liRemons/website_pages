@@ -62,15 +62,15 @@ const rules = ({ isEnvDevelopment }) => {
           test: lessModuleRegex,
           exclude: /node_modules/,
           use: isEnvDevelopment
-            ? ['style-loader', cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }]
-            : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }],
+            ? ['style-loader', cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'parens-division' } } }]
+            : [MiniCssExtractPlugin.loader, cssMoudleLoader, postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'parens-division' } } }],
         },
         {
           test: lessRegex,
           exclude: lessModuleRegex,
           use: isEnvDevelopment
-            ? ['style-loader', 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }]
-            : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'always' } } }],
+            ? ['style-loader', 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'parens-division' } } }]
+            : [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, { loader: 'less-loader', options: { lessOptions: { resolveUrl: false, math: 'parens-division' } } }],
         },
 
         // ---- 图片（替代 url-loader）----
