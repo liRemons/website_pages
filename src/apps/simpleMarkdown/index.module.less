@@ -54,7 +54,7 @@
 }
 
 .dragging {
-   background: var(--color-border, #b9b9b9);
+  background: var(--color-border, #b9b9b9);
 }
 
 /* 桌面：水平分割条（左右布局，拖拽改变宽度） */
@@ -107,5 +107,13 @@
 
   &:hover {
     opacity: 0.8;
+  }
+}
+
+:global {
+  @media print {
+    .markdown table thead {
+      background-color: #f5f5f5;
+    }
   }
 }
