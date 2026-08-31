@@ -49,8 +49,7 @@
     "webpack-dev-server": "^5.2.0"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.3.3",
-    "@ant-design/icons-svg": "^4.5.0",
+    "@ant-design/icons": "^5.6.1",
     "@microlink/react-json-view": "^1.31.22",
     "@textea/json-viewer": "^4.0.1",
     "@uiw/react-codemirror": "^4.25.11",
