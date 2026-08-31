@@ -69,6 +69,7 @@
     "lodash.sortby": "^4.7.0",
     "lrz": "^4.9.41",
     "markdown-it": "^14.3.0",
+    "markdown-it-container": "^4.0.0",
     "methods-r": "^1.2.14",
     "mobx": "^6.13.6",
     "mobx-react": "^9.2.0",
@@ -78,7 +79,7 @@
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",
     "remons-components": "^2.0.8",
-    "remons-render-markdown": "^1.0.27-beta.10",
+    "remons-render-markdown": "^1.0.27-beta.11",
     "uslug": "^1.0.4",
     "vditor": "^3.11.2"
   }

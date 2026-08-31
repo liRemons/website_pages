@@ -22,3 +22,5 @@ declare module 'highlight.js/lib/languages/*';
 
 // Webpack DefinePlugin 注入的全局变量
 declare const APP_NAME: string;
+
+declare module 'markdown-it-container';

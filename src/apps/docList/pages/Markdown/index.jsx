@@ -7,6 +7,10 @@ import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-
 import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
+import renderAmap, { initAmapContainers } from '@/utils/render-amap';
+import renderCopyPassword,{ initCopyPasswordContainers } from '@/utils/render-copy-password';
+import '../../../../utils/render-amap/index.less';
+import '../../../../utils/render-copy-password/index.less';
 import dayjs from 'dayjs';
 
 initHighlighter({
@@ -31,10 +35,20 @@ export default function Markdown(props) {
       }
     } catch (error) {
     }
+
+    setTimeout(() => {
+      initAmapContainers();
+      initCopyPasswordContainers();
+    }, 100)
   }, [localStore.htmlInfo, props.id]);
 
   return useObserver(() => <RenderMarkdown
     showBackTop
+    customRenderers={[
+      (md) => md.use(renderAmap),
+      (md) => md.use(renderCopyPassword),
+    ]}
+    excludedSelectors={['.amap-container', '.copy-password-container']}
     content={localStore.markdownInfo}
     showDriverGuide
     isSlotMermaid
