@@ -74,8 +74,8 @@ export default function List() {
   const getList = async () => {
     const params = getSearchParams();
     setParams(params);
-    const { id: techClassId, pageId } = params;
-    await localStore.queryArticleList({ techClassId, websiteRole: window.location.host });
+    const { id: techClassId, pageId, handleType } = params;
+    await localStore.queryArticleList({ techClassId, websiteRole: window.location.host, isShareMode: handleType === 'share' });
     if (pageId) {
       // URL 指定了文章 ID，直接加载
       localStore.getMarkdown(pageId);
