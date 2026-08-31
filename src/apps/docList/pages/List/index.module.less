@@ -233,6 +233,12 @@
 }
 
 :global {
+  .markdown-html {
+    p:empty {
+      display: none;
+    }
+  }
+
   .markdown-tabs-tabs-header {
     background-color: var(--color-bg) !important;
   }
@@ -263,8 +269,7 @@
   .search_visible {
     padding-top: 40px !important;
 
-    .searchBox {
-    }
+    .searchBox {}
   }
 }
 
