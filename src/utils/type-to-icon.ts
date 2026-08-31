@@ -1,5 +1,6 @@
 import price from '@/assets/svg/price.svg';
 import time from '@/assets/svg/time.svg';
+import address from '@/assets/svg/address.svg';
 import { img } from '@utils';
 
 export const typeToIcon = (type: string): any => {
@@ -9,6 +10,7 @@ export const typeToIcon = (type: string): any => {
     'redbook': 'https://remons.cn:3008/upload/content/icon/xiaohongshu.svg',
     'price': img(price),
     'time': img(time),
+    address: img(address),
   }
   return iconMap[type] || '';
 };
