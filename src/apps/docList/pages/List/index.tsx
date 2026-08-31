@@ -168,10 +168,11 @@ export default function List() {
 
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
-    <Header showRight={!isShareMode} showLeft={!isShareMode} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName}: ${localStore.title}` : localStore.title || name} handleContent={handleContent} />
+    <Header showLeft={!isShareMode} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName}: ${localStore.title}` : localStore.title || name} handleContent={handleContent} />
     <div className={style.main}>
       {/* 移动端左侧菜单（className 切换实现滑入/滑出动画） */}
       {isMobile && <MobileMenu
+        isShareMode={isShareMode}
         menuVisible={menuVisible}
         onToggleMenu={menuToLeft}
         onOpenListMenu={openListMenu}
@@ -195,7 +196,7 @@ export default function List() {
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={classnames(style.markdown_main, 'markdown-main-content')}>
           {/* Markdown 内容区域 */}
-          {hasContent ? <Markdown id={activeId} setAnchor={setAnchor} defaultCollapsed={mermaidCollapsed} /> : <Empty />}
+          {hasContent ? <Markdown id={activeId} setAnchor={setAnchor} defaultCollapsed={mermaidCollapsed} isShareMode={isShareMode} /> : <Empty />}
         </div>
       </div>
       {/* PC 端锚点导航面板 */}

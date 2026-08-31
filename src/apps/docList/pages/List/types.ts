@@ -82,6 +82,7 @@ export interface MobileMenuProps {
   hasAnchor: boolean;
   hasMultipleArticles: boolean;
   styles: Record<string, string>;
+  isShareMode?: boolean;
 }
 
 /** PC 端列表收起/展开按钮组件 Props */

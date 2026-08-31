@@ -50,7 +50,7 @@ export default function Markdown(props) {
     ]}
     excludedSelectors={['.amap-container', '.copy-password-container']}
     content={localStore.markdownInfo}
-    showDriverGuide
+    showDriverGuide={!props.isShareMode}
     isSlotMermaid
     footer={<div style={{ textAlign: 'right', marginBottom: '6px' }}>
       <span>文档更新时间：{dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>

@@ -18,11 +18,12 @@ export default function MobileMenu({
   hasAnchor,
   hasMultipleArticles,
   styles,
+  isShareMode,
 }: MobileMenuProps) {
   /** 构建菜单项列表 */
   const menuItems: MenuItem[] = [
     { className: 'docList-menu-anchor', icon: <ProfileTwoTone />, onClick: onOpenListNav, isShow: hasAnchor },
-    { className: 'docList-menu-list', icon: <FolderOpenTwoTone />, onClick: onOpenListMenu, isShow: hasMultipleArticles },
+    { className: 'docList-menu-list', icon: <FolderOpenTwoTone />, onClick: onOpenListMenu, isShow: hasMultipleArticles && !isShareMode },
     { className: 'docList-menu-copyHtml', icon: <Html5TwoTone />, onClick: () => onCopyContent('html'), title: '复制渲染后的带格式 HTML' },
     { className: 'docList-menu-copyMarkdown', icon: <FileMarkdownTwoTone />, onClick: () => onCopyContent('markdown'), title: '复制原始 Markdown' },
     { className: 'docList-menu-print', icon: <PrinterTwoTone />, onClick: onPrintPage, title: '打印' },
