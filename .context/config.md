@@ -29,7 +29,6 @@
 |------|------|
 | @ant-design/icons | ^6.2.2 |
 | @microlink/react-json-view | ^1.31.22 |
-| @textea/json-viewer | ^4.0.1 |
 | @uiw/react-codemirror | ^4.25.11 |
 | @wangeditor/editor | ^5.1.23 |
 | @wangeditor/editor-for-react | ^1.0.6 |
