@@ -15,7 +15,7 @@ const AmapContainer: React.FC<{ url: string; label: string }> = ({ url, label })
   return (
     <div className="amap-container">
       <span className="amap-label">
-        <img src={typeToIcon('amap')} />
+        {typeToIcon('amap')}
         <span className="amap-label-text">{label}</span>
       </span>
       <div className="amap-actions">
