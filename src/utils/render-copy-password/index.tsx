@@ -11,12 +11,13 @@ const CopyPasswordContainer: React.FC<{ content: string; type: string; icon: str
     copy(content);
   };
 
-  const url = icon || typeToIcon(type) || '';
+
+  const url = icon || typeToIcon(type);
 
   return (
     <div className="copy-password-container">
       <div className="copy-password-info">
-        {url && <img src={url} className="copy-password-icon" />}
+        {typeToIcon(type, 'copy-password-icon') || typeToIcon('password', 'copy-password-icon')}
         <span className="copy-password-content">{content}</span>
       </div>
       <div className="copy-password-actions">

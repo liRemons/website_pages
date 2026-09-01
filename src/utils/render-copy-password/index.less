@@ -1,25 +1,23 @@
 /* copyPassword 容器样式 */
 .copy-password-container {
-  margin: 10px 0;
-  padding: 8px 12px;
-  display: flex;
+  margin: 6px 0;
+  display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: var(--border-radius, 8px);
+  border-radius: 22px 40px 40px 22px;
+  overflow: hidden;
   box-shadow: var(--shadow-sm);
   background-color: var(--color-bg-card);
   border: 1px solid var(--color-border);
+  width: 100%;
 
   .copy-password-info {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
+    gap: 4px;
     min-width: 0;
 
     .copy-password-icon {
-      font-size: 16px;
-      height: 34px;
       flex-shrink: 0;
       display: inline-flex;
       align-items: center;
@@ -27,21 +25,20 @@
 
     .copy-password-content {
       font-size: 12px;
+      flex: 1;
       color: var(--color-text-secondary, #999);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      flex: 1;
     }
   }
 
   .copy-password-actions {
     flex-shrink: 0;
-    margin-left: 12px;
+    display: inline-flex;
 
     .copy-password-btn {
-      padding: 10px 12px;
-      border: 1px solid var(--color-button-border, #d9d9d9) !important;
+      padding: 8px;
       border-radius: 100px;
       background: var(--color-button, #fff);
       color: var(--color-text, #333);
@@ -50,12 +47,12 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06)) !important;
       backdrop-filter: blur(10px);
       transition: all 0.2s ease;
-      background: linear-gradient(90deg, #1a66ff, #1a8cff);
-      color: #fff;
+      box-shadow: var(--shadow-sm);
+      background-color: var(--color-bg-card);
+      border-left: 1px solid var(--color-border);
+      box-sizing: border-box;
     }
   }
 }
