@@ -21,6 +21,7 @@ import {
 import dayjs from "dayjs";
 import { BUILTIN_FONTS, STAMP_STYLES } from "./constants";
 import { degToRad, drawStampToCanvas } from "./canvas/drawers";
+import { downloadFile } from "@/utils/download";
 import Container from "@components/Container";
 import Header from "@components/Header";
 import Fixed from "@components/Fixed";
@@ -132,6 +133,18 @@ export default function PostmarkGenerator() {
     });
   }, [location, subtitle, dateStr, color, stampSize, locationFont, locationFontSize, dateFontFamily, dateFontSize, rotationDeg, stampStyle, wornEffect]);
 
+  const downloadStamp = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        messageApi.error("下载失败：无法生成图片");
+        return;
+      }
+      downloadFile(blob, `邮戳_${location}_${dateStr}.png`);
+    }, "image/png");
+  }, [location, dateStr, messageApi]);
+
   useEffect(() => {
     redrawStamp();
   }, [redrawStamp]);
@@ -150,7 +163,7 @@ export default function PostmarkGenerator() {
                   <canvas ref={canvasRef} className="stamp-canvas" />
                 </div>
                 <Space className="preview-actions" style={{ justifyContent: "center", width: "100%" }}>
-                  <Button type="primary" icon={<DownloadOutlined />} onClick={redrawStamp}>
+                  <Button type="primary" icon={<DownloadOutlined />} onClick={downloadStamp}>
                     下载邮戳
                   </Button>
                 </Space>
