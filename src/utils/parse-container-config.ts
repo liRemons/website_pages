@@ -137,7 +137,7 @@ export function createContainerComponent(tagName: string) {
         const dataAttrs = Object.entries(config)
           .map(([key, val]) => `data-${key}="${md.utils.escapeHtml(val || '')}"`)
           .join(' ');
-        return `<div class="render-md-plugin-${tagName}-container ${config.class || ''}" ${placeholderAttr} ${dataAttrs}></div>`;
+        return `<span class="render-md-plugin-${tagName}-container ${config.class || ''}" ${placeholderAttr} ${dataAttrs}></span>`;
       });
     };
   };
