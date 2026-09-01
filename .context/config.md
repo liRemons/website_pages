@@ -55,7 +55,6 @@
 | react-fast-marquee | ^1.6.5 |
 | remons-components | ^2.0.8 |
 | remons-render-markdown | ^1.0.0 |
-| uslug | ^1.0.4 |
 | vditor | ^3.11.2 |
 
 ## 开发依赖

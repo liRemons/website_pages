@@ -14,7 +14,6 @@ declare module '*.md' {
   export default content;
 }
 
-declare module 'uslug';
 declare module 'methods-r';
 declare module 'lodash.clonedeep';
 declare module 'remons-render-markdown';

@@ -18,7 +18,7 @@ function List() {
   useEffect(() => {
     const vditor = new Vditor('markdown', {
       height: 'calc(100% - 124px)',
-      cdn: 'https://registry.npmmirror.com/vditor/3.11.2/files',
+      cdn: 'https://registry.npmmirror.com/vditor/4.0.0/files',
       width: '100%',
       resize: {
         enable: true
@@ -46,6 +46,7 @@ function List() {
       },
       blur: (val) => { }
     })
+
   }, [])
 
   const changeFolder = (e) => {
