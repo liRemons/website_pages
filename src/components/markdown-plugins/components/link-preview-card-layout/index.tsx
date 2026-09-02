@@ -44,11 +44,11 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
   return (
     <div className="link-preview-card-container">
       <a href={finalUrl} target={hasProtocol ? '_blank' : '_self'} rel={hasProtocol ? 'noopener' : undefined} className="link-preview-card">
-        {displayImage && !imageError && (
+        {/* {displayImage && !imageError && (
           <div className="link-preview-image">
             <img src={displayImage} alt={displayTitle} onError={() => setImageError(true)} />
           </div>
-        )}
+        )} */}
         <div className="link-preview-info">
           <div className="link-preview-title">
             {favicon || <img className="link-preview-favicon" src={displayFavicon || websiteSvg} alt="" onError={(e) => { (e.target as HTMLImageElement).src = websiteSvg; }} />}
