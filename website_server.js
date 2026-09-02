@@ -8,7 +8,7 @@ const port = 8080;
 const ENABLE_OGP_INJECTION = true;
 
 // API服务器地址（用于获取文章信息），可通过环境变量配置
-const API_BASE_URL = process.env.API_BASE_URL || '';
+const API_BASE_URL = 'https://remons.cn:3008' || '';
 
 // HTML特殊字符转义
 function escapeHtml(str) {
@@ -63,6 +63,8 @@ app.use(async (req, res, next) => {
 
   try {
     // 调用 API 获取文章信息
+    console.log(API_BASE_URL, '=API_BASE_URL===_');
+    
     const apiUrl = `${API_BASE_URL}/ogp/article-info?pageId=${encodeURIComponent(pageId)}&id=${encodeURIComponent(id)}`;
     const response = await fetch(apiUrl, {
       // 忽略 SSL 证书验证（本地开发环境）
