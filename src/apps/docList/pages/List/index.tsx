@@ -70,6 +70,28 @@ export default function List() {
     getList();
   }, []);
 
+  // 文章加载后，动态更新 document.title 和 OGP meta 标签
+  useEffect(() => {
+    const articleTitle = localStore.title;
+    if (!articleTitle) return;
+    
+    const fullTitle = localStore.techClassName 
+      ? `${articleTitle} - ${localStore.techClassName}` 
+      : articleTitle;
+    
+    // 更新 document.title
+    document.title = fullTitle;
+    
+    // 更新 OGP meta 标签
+    const setMeta = (selector: string, content: string) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute('content', content);
+    };
+    
+    setMeta('meta[property="og:title"]', fullTitle);
+    setMeta('meta[name="twitter:title"]', fullTitle);
+  }, [localStore.title, localStore.techClassName]);
+
   /** 获取文章列表并初始化当前文章 */
   const getList = async () => {
     const params = getSearchParams();
