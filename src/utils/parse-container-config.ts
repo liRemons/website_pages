@@ -11,12 +11,16 @@ import JSON5 from 'json5';
  * @returns 解析后的配置对象，解析失败返回空对象
  */
 export function parseContainerConfig(tokenInfo: string, tagName: string): Record<string, string> {
-  const m = tokenInfo.trim().match(new RegExp(`^${tagName}\\s*(.*)$`));
+  const text = tokenInfo.trim();
+  // 使用 [\s\S] 匹配多行内容，提取 tagName 之后的全部文本
+  const m = text.match(new RegExp(`^${tagName}\\s*([\\s\\S]*)$`));
   if (m && m[1]) {
     try {
       // 兼容末尾带有 ::: 的情况，去除 ::: 及之后的内容
       const configStr = m[1].trim().split(':::')[0].trim();
-      return JSON5.parse(configStr);
+      if (configStr) {
+        return JSON5.parse(configStr);
+      }
     } catch (e) {
       console.warn(`[${tagName}] Failed to parse config:`, e);
     }
@@ -75,7 +79,29 @@ export function createContainerPlugin(
     render: (tokens: any[], idx: number) => {
       const token = tokens[idx];
       if (token.nesting === 1) {
-        const config = parseContainerConfig(token.info, tagName);
+        let config = parseContainerConfig(token.info, tagName);
+        // 如果从 token.info 没解析到配置，尝试从容器内部 token 中读取多行 JSON
+        if (Object.keys(config).length === 0) {
+          for (let i = idx + 1; i < tokens.length; i++) {
+            if (tokens[i].nesting === -1) {
+              const innerContent = tokens
+                .slice(idx + 1, i)
+                .map(t => {
+                  // inline token 的内容在 children 中
+                  if (t.children && t.children.length > 0) {
+                    return t.children.map((c: any) => c.content || c.markup || '').join('');
+                  }
+                  return t.content || t.markup || '';
+                })
+                .join('')
+                .trim();
+              if (innerContent) {
+                config = parseContainerConfig(`${tagName} ${innerContent}`, tagName);
+              }
+              break;
+            }
+          }
+        }
         return renderOpen(config, md, true);
       } else {
         return '</div>';
