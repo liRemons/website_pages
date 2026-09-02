@@ -43,7 +43,7 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
 
   return (
     <div className="link-preview-card-container">
-      <a href={finalUrl} target={hasProtocol ? '_blank' : '_self'} rel={hasProtocol ? 'noopener' : undefined} className="link-preview-card">
+      <div className="link-preview-card">
         {/* {displayImage && !imageError && (
           <div className="link-preview-image">
             <img src={displayImage} alt={displayTitle} onError={() => setImageError(true)} />
@@ -57,7 +57,7 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
           {displayDesc && <div className="link-preview-desc">{displayDesc}</div>}
           <div className="link-preview-site">{displaySiteName}</div>
         </div>
-      </a>
+      </div>
       <div className="link-preview-actions">
         {
           actions || <Fragment>
