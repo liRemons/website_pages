@@ -25,6 +25,8 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
   const [imageError, setImageError] = useState(false);
 
   const url = content?.trim();
+  const hasProtocol = /^https?:\/\//i.test(url);
+  const finalUrl = hasProtocol ? url : `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
 
   useEffect(() => {
     if (!url) {
@@ -34,7 +36,7 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
     }
     setImageError(false);
 
-    fetch(`${HOST}/ogp/fetch?url=${encodeURIComponent(url)}`)
+    fetch(`${HOST}/ogp/fetch?url=${encodeURIComponent(finalUrl)}`)
       .then(res => res.json())
       .then(res => {
         if (res.success && res.data) {
@@ -49,7 +51,7 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
 
   const handleCopy = () => {
     message.success('链接已复制到剪贴板');
-    copy(url);
+    copy(finalUrl);
   };
 
   if (loading) {
@@ -63,24 +65,15 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
     );
   }
 
-  if (error || !ogpData) {
-    return (
-      <div className="link-preview-card-container">
-        <a href={url} target="_blank" rel="noopener" className="link-preview-fallback">
-          <LinkOutlined /> {url}
-        </a>
-      </div>
-    );
-  }
 
-  const displayTitle = ogpData.title || url;
-  const displayDesc = ogpData.description || '';
-  const displayImage = ogpData.image || '';
-  const displayFavicon = ogpData.favicon || '';
-  let displaySiteName = ogpData.siteName || '';
+  const displayTitle = ogpData?.title || `链接预览 ${new URL(finalUrl).hostname}`;
+  const displayDesc = ogpData?.description || finalUrl;
+  const displayImage = ogpData?.image || '';
+  const displayFavicon = ogpData?.favicon || '';
+  let displaySiteName = ogpData?.siteName || '';
   try {
     if (!displaySiteName) {
-      displaySiteName = new URL(url).hostname;
+      displaySiteName = new URL(finalUrl).hostname;
     }
   } catch (e) {
     // ignore
@@ -88,7 +81,7 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
 
   return (
     <div className="link-preview-card-container">
-      <a href={url} target="_blank" rel="noopener" className="link-preview-card">
+      <a href={finalUrl} target={hasProtocol ? '_blank' : '_self'} rel={hasProtocol ? 'noopener' : undefined} className="link-preview-card">
         {displayImage && !imageError && (
           <div className="link-preview-image">
             <img src={displayImage} alt={displayTitle} onError={() => setImageError(true)} />
@@ -105,10 +98,10 @@ const LinkPreviewCard: React.FC<{ content: string }> = ({ content }) => {
       </a>
       <div className="link-preview-actions">
         <div className="link-preview-btn" onClick={handleCopy}>
-          复制链接
+          <LinkOutlined /> 复制链接
         </div>
-        <a href={url} target="_blank" rel="noopener" className="link-preview-btn link-preview-btn-primary">
-          <ExportOutlined style={{ fontSize: '14px' }} /> 跳转打开
+        <a href={finalUrl} target={hasProtocol ? '_blank' : '_self'} rel={hasProtocol ? 'noopener' : undefined} className="link-preview-btn link-preview-btn-primary">
+          <ExportOutlined /> 跳转打开
         </a>
       </div>
     </div>
