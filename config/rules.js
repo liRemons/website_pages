@@ -11,6 +11,9 @@ const postcssLoader = { loader: 'postcss-loader' }
 const getOutputPath = (pathData) => {
   const resourcePath = pathData.filename || ''
   const basename = path.basename(resourcePath)
+  const ext = path.extname(basename)
+  const name = path.basename(basename, ext)
+  const hashedName = `${name}.[contenthash:10]${ext}`
   if (resourcePath.includes('apps')) {
     const prefix = resourcePath
       .replace(/\//g, '_')
@@ -18,9 +21,9 @@ const getOutputPath = (pathData) => {
       .split('apps')[1]
       .split('_')
       .filter((_) => !!_)[0]
-    return `${prefix}/assets/file/${basename}`
+    return `${prefix}/assets/file/${hashedName}`
   }
-  return `assets/file/${basename}`
+  return `assets/file/${hashedName}`
 }
 
 const rules = ({ isEnvDevelopment }) => {
@@ -79,7 +82,7 @@ const rules = ({ isEnvDevelopment }) => {
           include: path.resolve(__dirname, '../src'),
           type: 'asset',
           parser: { dataUrlCondition: { maxSize: 1024 * 8 } },
-          generator: { filename: 'static/assets/images/[name].[ext]' },
+          generator: { filename: 'static/assets/images/[name].[contenthash:10][ext]' },
         },
 
         // ---- HTML ----
