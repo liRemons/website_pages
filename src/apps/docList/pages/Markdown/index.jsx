@@ -10,6 +10,7 @@ import isLogin from '@/utils/isLogin';
 import renderAmap from '@/utils/render-amap';
 import renderCopyPassword from '@/utils/render-copy-password';
 import renderBadge from '@/utils/render-badge';
+import renderLinkCard from '@/utils/render-link-preview-card';
 import dayjs from 'dayjs';
 
 initHighlighter({
@@ -42,8 +43,9 @@ export default function Markdown(props) {
       (md) => md.use(renderAmap),
       (md) => md.use(renderCopyPassword),
       (md) => md.use(renderBadge),
+      (md) => md.use(renderLinkCard),
     ]}
-    excludedSelectors={['.amap-container', '.copy-password-container', '.badge-container']}
+    excludedSelectors={['.amap-container', '.copy-password-container', '.badge-container', '.link-preview-card-container']}
     content={localStore.markdownInfo}
     showDriverGuide={!props.isShareMode}
     isSlotMermaid

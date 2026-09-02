@@ -34,7 +34,7 @@ export function parseContainerConfig(tokenInfo: string, tagName: string): Record
 export function createContainerPlugin(
   md: any,
   tagName: string,
-  renderOpen: (config: Record<string, string>, md: any) => string,
+  renderOpen: (config: Record<string, string>, md: any, isBlock?: boolean) => string,
 ) {
   // 添加 inline rule 处理单行完整容器 :::tagName{...}:::
   md.inline.ruler.before('escape', `${tagName}_inline`, (state: any, silent: boolean) => {
@@ -57,7 +57,7 @@ export function createContainerPlugin(
     const token = tokens[idx];
     try {
       const config = JSON5.parse(token.content);
-      return renderOpen(config, md);
+      return renderOpen(config, md, false);
     } catch (e) {
       console.warn(`[${tagName}] Failed to parse inline config:`, e);
       return '';
@@ -76,7 +76,7 @@ export function createContainerPlugin(
       const token = tokens[idx];
       if (token.nesting === 1) {
         const config = parseContainerConfig(token.info, tagName);
-        return renderOpen(config, md);
+        return renderOpen(config, md, true);
       } else {
         return '</div>';
       }
@@ -98,8 +98,14 @@ export function createContainerComponent(tagName: string) {
     const mount = (el: HTMLElement) => {
       const props: Record<string, string> = {};
       for (const attr of el.attributes) {
-        if (attr.name.startsWith('data-')) {
+        if (attr.name.startsWith('data-') && !attr.name.endsWith('-placeholder')) {
           props[attr.name.slice(5)] = attr.value;
+        }
+      }
+      if (Object.keys(props).length === 0) {
+        const textContent = el.textContent?.trim();
+        if (textContent) {
+          props.content = textContent;
         }
       }
       el.removeAttribute(placeholderAttr);
@@ -133,11 +139,15 @@ export function createContainerComponent(tagName: string) {
     }
 
     return (md: any) => {
-      createContainerPlugin(md, tagName, (config) => {
+      createContainerPlugin(md, tagName, (config, md, isBlock) => {
         const dataAttrs = Object.entries(config)
           .map(([key, val]) => `data-${key}="${md.utils.escapeHtml(val || '')}"`)
           .join(' ');
-        return `<span class="render-md-plugin-${tagName}-container ${config.class || ''}" ${placeholderAttr} ${dataAttrs}></span>`;
+        const className = `render-md-plugin-${tagName}-container ${config.class || ''}`;
+        if (isBlock) {
+          return `<div class="${className}" ${placeholderAttr} ${dataAttrs}>`;
+        }
+        return `<span class="${className}" ${placeholderAttr} ${dataAttrs}></span>`;
       });
     };
   };
