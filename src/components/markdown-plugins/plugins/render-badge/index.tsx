@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
-import { typeToIcon } from '../type-to-icon';
-import { createContainerComponent } from '../parse-container-config';
+import { typeToIcon } from '@/utils/type-to-icon';
+import { createContainerComponent } from '../../utils/parse-container-config';
 import './index.less'
 
 const BadgeContainer: React.FC<{ type: string; content: string; block: string; url?: string; }> = ({ type, content, block, url }) => {

@@ -14,3 +14,7 @@ export const img = (svg, height, className) => {
 };
 
 export const USER_TOKEN = 'REMONS_TOKEN'
+
+export const hasProtocolFun = url => /^https?:\/\//i.test(url)
+
+

@@ -7,10 +7,10 @@ import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-
 import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
-import renderAmap from '@/utils/render-amap';
-import renderCopyPassword from '@/utils/render-copy-password';
-import renderBadge from '@/utils/render-badge';
-import renderLinkCard from '@/utils/render-link-preview-card';
+import renderAmap from '@/components/markdown-plugins/plugins/render-amap';
+import renderCopyPassword from '@/components/markdown-plugins/plugins/render-copy-password';
+import renderBadge from '@/components/markdown-plugins/plugins/render-badge';
+import renderLinkCard from '@/components/markdown-plugins/plugins/render-link-preview-card';
 import dayjs from 'dayjs';
 
 initHighlighter({
