@@ -50,7 +50,7 @@ export default function Markdown(props) {
     footer={<div style={{ textAlign: 'right', marginBottom: '6px' }}>
       <span>文档更新时间：{dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
       &nbsp;&nbsp;
-      {isLogin() && <a target="_blank" href={`https://manage.remons.cn/manage/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
+      {isLogin() && <a target="_blank" href={`https://manage.remons.cn/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
     </div>}
     defaultCollapsed={defaultCollapsed}
     chartConfig={chartConfig}
