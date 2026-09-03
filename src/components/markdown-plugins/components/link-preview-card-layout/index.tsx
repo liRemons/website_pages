@@ -15,7 +15,7 @@ interface LinkPreviewCardLayoutProps {
 }
 
 const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, description, favicon, actions }) => {
-  const { ogpData, loading, imageError, setImageError, finalUrl, hasProtocol } = useOgp(url);
+  const { ogpData, loading, finalUrl } = useOgp(url);
 
   if (loading) {
     return (

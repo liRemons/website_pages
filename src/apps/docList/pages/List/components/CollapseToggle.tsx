@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, DoubleLeftOutlined, AlignLeftOutlined } from '@ant-design/icons';
 import { CollapseToggleProps } from '../types';
 
 export default function CollapseToggle({ listCollapsed, onToggle, styles }: CollapseToggleProps) {
@@ -15,7 +15,7 @@ export default function CollapseToggle({ listCollapsed, onToggle, styles }: Coll
       onClick={onToggle}
       title={listCollapsed ? '展开列表' : '收起列表'}
     >
-      {listCollapsed ? <RightOutlined /> : <LeftOutlined />}
+      {listCollapsed ? <AlignLeftOutlined /> : <DoubleLeftOutlined />}
     </div>
   );
 }
