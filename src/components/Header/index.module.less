@@ -14,13 +14,22 @@
 
   .left {
     display: flex;
-    min-width: 42px;
+    margin-right: 10px;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .right {
   }
 
   .name {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    width: 100%;
+    text-align: left;
   }
 
   @media screen and (max-width: 600px) {
@@ -45,5 +54,13 @@
   &:hover {
     background-color: var(--color-border-light, #f0f0f0);
     color: var(--color-text-heading, #1d1d1d);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    line-height: 40px;
+    padding: 5px 10px;
+    width: calc(100% - 20px);
   }
 }
