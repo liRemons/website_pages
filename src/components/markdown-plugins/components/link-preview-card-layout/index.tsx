@@ -15,7 +15,7 @@ interface LinkPreviewCardLayoutProps {
 }
 
 const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, description, favicon, actions }) => {
-  const { ogpData, loading, finalUrl } = useOgp(url);
+  const { ogpData, loading, finalUrl, imageError, setImageError } = useOgp(url);
 
   if (loading) {
     return (
@@ -44,11 +44,11 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
   return (
     <div className="link-preview-card-container">
       <div className="link-preview-card">
-        {/* {displayImage && !imageError && (
+        {displayImage && !imageError && (
           <div className="link-preview-image">
-            <img src={displayImage} alt={displayTitle} onError={() => setImageError(true)} />
+            <img src={displayImage} onError={() => setImageError(true)} />
           </div>
-        )} */}
+        )}
         <div className="link-preview-info">
           <div className="link-preview-title">
             {favicon || <img className="link-preview-favicon" src={displayFavicon || websiteSvg} alt="" onError={(e) => { (e.target as HTMLImageElement).src = websiteSvg; }} />}
