@@ -2,7 +2,6 @@ import price from '@/assets/svg/price.svg';
 import time from '@/assets/svg/time.svg';
 import address from '@/assets/svg/address.svg';
 import amap from '@/assets/svg/amap.svg';
-import password from '@/assets/svg/password.svg';
 import ctrip from '@/assets/svg/ctrip.svg';
 import meituan from '@/assets/svg/meituan.svg';
 import sharecode from '@/assets/svg/sharecode.svg';
@@ -16,7 +15,6 @@ export const typeToIcon = (type: string): any => {
     'price': price,
     'time': time,
     'address': address,
-    'password': password,
     'ctrip': ctrip,
     'meituan': meituan,
     'sharecode': sharecode,
