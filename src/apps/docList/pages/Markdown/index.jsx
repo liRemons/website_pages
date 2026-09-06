@@ -8,7 +8,7 @@ import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
 import isLogin from '@/utils/isLogin';
 import renderAmap from '@/components/markdown-plugins/plugins/render-amap';
-import renderCopyPassword from '@/components/markdown-plugins/plugins/render-copy-password';
+import renderShareCode from '@/components/markdown-plugins/plugins/render-share-code';
 import renderBadge from '@/components/markdown-plugins/plugins/render-badge';
 import renderLinkCard from '@/components/markdown-plugins/plugins/render-link-preview-card';
 import dayjs from 'dayjs';
@@ -41,11 +41,11 @@ export default function Markdown(props) {
     showBackTop
     customRenderers={[
       (md) => md.use(renderAmap),
-      (md) => md.use(renderCopyPassword),
+      (md) => md.use(renderShareCode),
       (md) => md.use(renderBadge),
       (md) => md.use(renderLinkCard),
     ]}
-    excludedSelectors={['.amap-container', '.copy-password-container', '.badge-container', '.link-preview-card-container']}
+    excludedSelectors={['.amap-container', '.badge-container', '.link-preview-card-container']}
     content={localStore.markdownInfo}
     showDriverGuide={!props.isShareMode}
     isSlotMermaid

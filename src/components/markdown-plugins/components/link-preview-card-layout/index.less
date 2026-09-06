@@ -13,6 +13,7 @@
     gap: 8px;
     padding: 12px 16px;
     font-size: 12px;
+    height: 62px;
     color: var(--color-text-secondary, #999);
   }
 
@@ -38,16 +39,16 @@
 
   .link-preview-image {
     flex-shrink: 0;
-    width: 110px;
+    width: 116px;
     height: 88px;
     overflow: hidden;
     border-right: 1px solid var(--color-border, #e4e4e4);
-    border-radius: var(--radius-base, 8px);
 
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
+      border-radius: 0;
     }
   }
 
@@ -120,6 +121,8 @@
     display: flex;
     align-items: stretch;
 
+
+
     .link-preview-card {
       flex: 1;
       min-width: 0;
@@ -140,9 +143,13 @@
 /* 移动端响应式样式 */
 @media screen and (max-width: 500px) {
   .link-preview-card-container {
+    .link-preview-loading {
+      height: 94px
+    }
+
     .link-preview-image {
-      width: 90px;
-      height: 70px;
+      width: 68px;
+      height: 68px;
     }
 
     .link-preview-info {

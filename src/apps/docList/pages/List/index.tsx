@@ -190,7 +190,7 @@ export default function List() {
 
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
-    <Header showLeft={!isShareMode} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName}: ${localStore.title}` : localStore.title || name} handleContent={handleContent} />
+    <Header showLeft={!isShareMode} showRight={false} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName}: ${localStore.title}` : localStore.title || name} handleContent={handleContent} />
     <div className={style.main}>
       {/* 移动端左侧菜单（className 切换实现滑入/滑出动画） */}
       {isMobile && <MobileMenu

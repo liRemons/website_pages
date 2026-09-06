@@ -5,9 +5,10 @@ import amap from '@/assets/svg/amap.svg';
 import password from '@/assets/svg/password.svg';
 import ctrip from '@/assets/svg/ctrip.svg';
 import meituan from '@/assets/svg/meituan.svg';
+import sharecode from '@/assets/svg/sharecode.svg';
 import { img } from '@utils';
 
-export const typeToIcon = (type: string, className?: string): any => {
+export const typeToIcon = (type: string): any => {
   if (!type) return '';
   const iconMap: { [key: string]: any } = {
     'amap': amap,
@@ -18,9 +19,10 @@ export const typeToIcon = (type: string, className?: string): any => {
     'password': password,
     'ctrip': ctrip,
     'meituan': meituan,
+    'sharecode': sharecode,
   }
 
   const result = iconMap[type];
 
-  return result ? img(result, 16, className) : '';
+  return result ? img(result, 16) : '';
 };
