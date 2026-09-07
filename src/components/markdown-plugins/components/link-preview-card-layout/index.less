@@ -13,7 +13,7 @@
     gap: 8px;
     padding: 12px 16px;
     font-size: 12px;
-    height: 62px;
+    height: 72px;
     color: var(--color-text-secondary, #999);
   }
 
@@ -40,7 +40,7 @@
   .link-preview-image {
     flex-shrink: 0;
     width: 116px;
-    height: 88px;
+    height: 96px;
     overflow: hidden;
     border-right: 1px solid var(--color-border, #e4e4e4);
 
@@ -58,7 +58,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
 
   .link-preview-title {
@@ -68,7 +68,7 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--color-text-primary);
-    line-height: 20px;
+    line-height: 18px;
 
     img {
       margin: inherit;
@@ -86,14 +86,14 @@
   }
 
   .link-preview-desc {
-    height: 36px;
+    height: 52px;
     font-size: 12px;
     color: var(--color-text-secondary, #999);
     line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 
@@ -103,7 +103,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin-top: -2px;
+    line-height: 16px;
   }
 
   .link-preview-actions {
@@ -144,7 +144,7 @@
 @media screen and (max-width: 500px) {
   .link-preview-card-container {
     .link-preview-loading {
-      height: 94px
+      height: 94px;
     }
 
     .link-preview-image {
@@ -153,6 +153,7 @@
     }
 
     .link-preview-info {
+      gap: 4px;
       padding: 8px 10px 0 10px;
     }
 
