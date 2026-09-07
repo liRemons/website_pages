@@ -60,6 +60,8 @@ export default function List() {
   const [listCollapsed, setListCollapsed] = useState(localStorage.docListListCollapsed === 'true');
   // mermaid 图表折叠状态（localStorage 持久化，默认展开）
   const [mermaidCollapsed, setMermaidCollapsed] = useState(localStorage.mermaidCollapsed !== 'false');
+  // 文章标题和 OGP 标签标题（用于动态更新 document.title 和 OGP meta 标签）
+  const [fullTitle, setFullTitle]  = useState('');
 
   // 复制和打印工具函数
   const { copyContent: doCopy } = copyContent(localStore);
@@ -75,12 +77,14 @@ export default function List() {
     const articleTitle = localStore.title;
     if (!articleTitle) return;
     
-    const fullTitle = localStore.techClassName 
-      ? `${articleTitle} - ${localStore.techClassName}` 
+    const title = localStore.techClassName 
+      ? `${localStore.techClassName}: ${articleTitle}` 
       : articleTitle;
+
+    setFullTitle(title);
     
     // 更新 document.title
-    document.title = fullTitle;
+    document.title = title;
     
     // 更新 OGP meta 标签
     const setMeta = (selector: string, content: string) => {
@@ -88,8 +92,8 @@ export default function List() {
       if (el) el.setAttribute('content', content);
     };
     
-    setMeta('meta[property="og:title"]', fullTitle);
-    setMeta('meta[name="twitter:title"]', fullTitle);
+    setMeta('meta[property="og:title"]', title);
+    setMeta('meta[name="twitter:title"]', title);
   }, [localStore.title, localStore.techClassName]);
 
   /** 获取文章列表并初始化当前文章 */
@@ -190,7 +194,7 @@ export default function List() {
 
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
-    <Header showLeft={!isShareMode} showRight={false} leftPath={`/${APP_NAME}/note`} name={localStore.techClassName ? `${localStore.techClassName}: ${localStore.title}` : localStore.title || name} handleContent={handleContent} />
+    <Header showLeft={!isShareMode} showRight={false} leftPath={`/${APP_NAME}/note`} name={fullTitle} handleContent={handleContent} />
     <div className={style.main}>
       {/* 移动端左侧菜单（className 切换实现滑入/滑出动画） */}
       {isMobile && <MobileMenu

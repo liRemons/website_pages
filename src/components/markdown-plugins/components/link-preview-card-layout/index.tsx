@@ -45,7 +45,7 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
     <div className="link-preview-card-container">
       <div className="link-preview-card">
         {displayImage && !imageError && (
-          <div className="link-preview-image">
+          <div className="link-preview-image" style={{ '--image': `url("${displayImage}")`  }} >
             <img src={displayImage} onError={() => setImageError(true)} />
           </div>
         )}
