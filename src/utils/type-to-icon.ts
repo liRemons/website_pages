@@ -5,6 +5,9 @@ import amap from '@/assets/svg/amap.svg';
 import ctrip from '@/assets/svg/ctrip.svg';
 import meituan from '@/assets/svg/meituan.svg';
 import sharecode from '@/assets/svg/sharecode.svg';
+import distance from '@/assets/svg/distance.svg';
+import duration from '@/assets/svg/duration.svg';
+import routeplanning from '@/assets/svg/routeplanning.svg';
 import { img } from '@utils';
 
 export const typeToIcon = (type: string): any => {
@@ -18,6 +21,9 @@ export const typeToIcon = (type: string): any => {
     'ctrip': ctrip,
     'meituan': meituan,
     'sharecode': sharecode,
+    'distance': distance,
+    'duration': duration,
+    'routePlanning': routeplanning,
   }
 
   const result = iconMap[type];
