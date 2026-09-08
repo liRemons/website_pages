@@ -8,6 +8,8 @@ import sharecode from '@/assets/svg/sharecode.svg';
 import distance from '@/assets/svg/distance.svg';
 import duration from '@/assets/svg/duration.svg';
 import routeplanning from '@/assets/svg/routeplanning.svg';
+import reservation from '@/assets/svg/reservation.svg';
+import parking from '@/assets/svg/parking.svg';
 import { img } from '@utils';
 
 export const typeToIcon = (type: string): any => {
@@ -24,6 +26,8 @@ export const typeToIcon = (type: string): any => {
     'distance': distance,
     'duration': duration,
     'routePlanning': routeplanning,
+    'reservation': reservation,
+    'parking': parking,
   }
 
   const result = iconMap[type];
