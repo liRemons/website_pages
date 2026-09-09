@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import store from '../../model/store';
+import { DownOutlined } from '@ant-design/icons';
+import { createRoot } from 'react-dom/client';
 import { useLocalObservable, useObserver } from 'mobx-react-lite';
 import nginx from 'highlight.js/lib/languages/nginx';
 import python from 'highlight.js/lib/languages/python';
@@ -25,6 +27,7 @@ export default function Markdown(props) {
 
   useEffect(() => {
     try {
+      // 设置锚点
       props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
         setTimeout(() => {
@@ -33,6 +36,32 @@ export default function Markdown(props) {
           a.click();
         }, 500);
       }
+
+      // 设置 plugin-container 标签
+      setTimeout(() => {
+        const containers = document.querySelectorAll('plugin-container');
+        containers.forEach((container) => {
+          // 已经处理过就跳过
+          if (container.dataset.circleBound) return;
+          container.dataset.circleBound = 'true';
+          // 1. 创建 .circle 元素
+          const circle = document.createElement('div');
+          circle.className = 'circle';
+
+          // 2. 插入到 container 中
+          container.appendChild(circle);
+
+          // 3. 绑定点击事件：切换收起状态
+          circle.addEventListener('click', () => {
+            container.classList.toggle('collapsed');
+          });
+
+          // 4. 用 React 渲染 antd icon 到 circle 节点
+          const root = createRoot(circle);
+          root.render(<DownOutlined />);
+        });
+      }, 500)
+
     } catch (error) {
     }
   }, [localStore.htmlInfo, props.id]);

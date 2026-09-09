@@ -9,6 +9,29 @@
   background: var(--color-bg);
 }
 
+
+
+.collapse_toggle {
+  position: fixed;
+  top: calc(100vh - 38px);
+  left: 10px;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.expand_toggle {}
+
+  &.collapse_toggle {}
+}
+
 .main {
   flex: 1;
   overflow-y: auto;
@@ -119,27 +142,6 @@
       color: var(--color-active, #75bcff);
       box-shadow: var(--shadow-inset) !important;
     }
-  }
-
-  .collapse_toggle {
-    position: fixed;
-    top: 52px;
-    left: 15px;
-    z-index: 10;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    font-size: 12px;
-
-    &:hover {
-      opacity: 1;
-    }
-
-    &.expand_toggle {}
-
-    &.collapse_toggle {}
   }
 
   .page_main {
@@ -270,6 +272,54 @@
 
     .searchBox {}
   }
+
+  plugin-container {
+    margin-bottom: 14px;
+    display: block;
+    box-shadow: var(--shadow-md) !important;
+    border: 1px solid var(--color-border);
+    padding: 10px;
+    padding-top: 0;
+    border-radius: var(--radius-base);
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+
+    &.collapsed {
+      height: 24px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(transparent, var(--color-bg-white));
+        pointer-events: none;
+      }
+    }
+
+    .circle {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      z-index: 10;
+      transition: transform 0.3s ease-in-out;
+      height: 28px;
+      width: 28px;
+      line-height: 28px;
+      font-size: 12px;
+    }
+
+    &.collapsed .circle {
+      transform: rotate(-90deg);
+      /* 收起时朝右 */
+    }
+
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -289,17 +339,4 @@
       margin-right: 0;
     }
   }
-}
-
-plugin-container {
-  margin-bottom: 14px;
-  display: block;
-  box-shadow: var(--shadow-md) !important;
-  border: 1px solid var(--color-border);
-  padding: 10px;
-  padding-top: 0;
-  border-radius: var(--radius-base);
-  background-color: var(--color-bg-card);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }

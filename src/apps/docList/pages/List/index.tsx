@@ -61,7 +61,7 @@ export default function List() {
   // mermaid 图表折叠状态（localStorage 持久化，默认展开）
   const [mermaidCollapsed, setMermaidCollapsed] = useState(localStorage.mermaidCollapsed !== 'false');
   // 文章标题和 OGP 标签标题（用于动态更新 document.title 和 OGP meta 标签）
-  const [fullTitle, setFullTitle]  = useState('');
+  const [fullTitle, setFullTitle] = useState('');
 
   // 复制和打印工具函数
   const { copyContent: doCopy } = copyContent(localStore);
@@ -76,22 +76,22 @@ export default function List() {
   useEffect(() => {
     const articleTitle = localStore.title;
     if (!articleTitle) return;
-    
-    const title = localStore.techClassName 
-      ? `${localStore.techClassName}: ${articleTitle}` 
+
+    const title = localStore.techClassName
+      ? `${localStore.techClassName}: ${articleTitle}`
       : articleTitle;
 
     setFullTitle(title);
-    
+
     // 更新 document.title
     document.title = title;
-    
+
     // 更新 OGP meta 标签
     const setMeta = (selector: string, content: string) => {
       const el = document.querySelector(selector);
       if (el) el.setAttribute('content', content);
     };
-    
+
     setMeta('meta[property="og:title"]', title);
     setMeta('meta[name="twitter:title"]', title);
   }, [localStore.title, localStore.techClassName]);
@@ -195,6 +195,8 @@ export default function List() {
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
     <Header showLeft={!isShareMode} showRight={false} leftPath={`/${APP_NAME}/note`} name={fullTitle} handleContent={handleContent} />
+    {/* PC 端文章列表收起/展开按钮（className 切换实现箭头方向动画） */}
+    {showCollapseToggle && <CollapseToggle listCollapsed={listCollapsed} onToggle={toggleListCollapse} styles={style} />}
     <div className={style.main}>
       {/* 移动端左侧菜单（className 切换实现滑入/滑出动画） */}
       {isMobile && <MobileMenu
@@ -209,8 +211,7 @@ export default function List() {
         hasMultipleArticles={localStore.articleList?.length > 1}
         styles={style}
       />}
-      {/* PC 端文章列表收起/展开按钮（className 切换实现箭头方向动画） */}
-      {showCollapseToggle && <CollapseToggle listCollapsed={listCollapsed} onToggle={toggleListCollapse} styles={style} />}
+
       {/* PC 端操作按钮栏 */}
       {showPCControls && <ActionButtons mermaidCollapsed={mermaidCollapsed} onToggleMermaid={toggleMermaidCollapsed} onCopyContent={doCopy} onPrintPage={toPrintPage} hasMermaid={localStore.markdownInfo?.includes('mermaid')} styles={style} />}
       {/* PC 端文章列表面板（始终渲染，通过 className 切换实现展开/收起动画） */}
