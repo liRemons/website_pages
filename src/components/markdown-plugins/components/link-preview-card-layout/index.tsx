@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Spin } from 'antd';
 import websiteSvg from '@/assets/svg/website.svg';
+import { IsPC } from 'methods-r';
 import { useOgp } from './useOgp';
 import LinkButton from '../link-button';
 import './index.less';
@@ -41,31 +42,40 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
     // ignore
   }
 
+  const rightComponent = <Fragment>
+    <div className="link-preview-info">
+      <div className="link-preview-title">
+        {favicon || <img className="link-preview-favicon" src={displayFavicon || websiteSvg} alt="" onError={(e) => { (e.target as HTMLImageElement).src = websiteSvg; }} />}
+        <span>{displayTitle}</span>
+      </div>
+      {displayDesc && <div className="link-preview-desc">{displayDesc}</div>}
+      <div className="link-preview-site">{displaySiteName}</div>
+    </div>
+    <div className="link-preview-actions">
+      {
+        actions || <Fragment>
+          <LinkButton copyContent={finalUrl} componentType="div" />
+          <LinkButton href={finalUrl} componentType="a" />
+        </Fragment>
+      }
+    </div>
+  </Fragment>
+
   return (
     <div className="link-preview-card-container">
       <div className="link-preview-card">
         {displayImage && !imageError && (
-          <div className="link-preview-image" style={{ '--image': `url("${displayImage}")`  }} >
+          <div className="link-preview-image" style={{ '--image': `url("${displayImage}")` }} >
             <img src={displayImage} onError={() => setImageError(true)} />
           </div>
         )}
-        <div className="link-preview-info">
-          <div className="link-preview-title">
-            {favicon || <img className="link-preview-favicon" src={displayFavicon || websiteSvg} alt="" onError={(e) => { (e.target as HTMLImageElement).src = websiteSvg; }} />}
-            <span>{displayTitle}</span>
-          </div>
-          {displayDesc && <div className="link-preview-desc">{displayDesc}</div>}
-          <div className="link-preview-site">{displaySiteName}</div>
-        </div>
-      </div>
-      <div className="link-preview-actions">
         {
-          actions || <Fragment>
-            <LinkButton copyContent={finalUrl} componentType="div" />
-            <LinkButton href={finalUrl} componentType="a" />
-          </Fragment>
+          IsPC() ? rightComponent : <div className="link-preview-right">
+            {rightComponent}
+          </div>
         }
       </div>
+
     </div>
   );
 };
