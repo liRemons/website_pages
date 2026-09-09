@@ -11,7 +11,10 @@ import routeplanning from '@/assets/svg/routeplanning.svg';
 import reservation from '@/assets/svg/reservation.svg';
 import parking from '@/assets/svg/parking.svg';
 import highlightAttraction from '@/assets/svg/highlightattraction.svg';
+import travelMethod from '@/assets/svg/travelmethod.svg';
 import { img } from '@utils';
+
+// ffbc03
 
 export const typeToIcon = (type: string): any => {
   if (!type) return '';
@@ -30,6 +33,7 @@ export const typeToIcon = (type: string): any => {
     'reservation': reservation,
     'parking': parking,
     'highlightAttraction': highlightAttraction,
+    'travelMethod': travelMethod,
   }
 
   const result = iconMap[type];
