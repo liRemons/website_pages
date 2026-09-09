@@ -10,6 +10,7 @@ import duration from '@/assets/svg/duration.svg';
 import routeplanning from '@/assets/svg/routeplanning.svg';
 import reservation from '@/assets/svg/reservation.svg';
 import parking from '@/assets/svg/parking.svg';
+import highlightAttraction from '@/assets/svg/highlightattraction.svg';
 import { img } from '@utils';
 
 export const typeToIcon = (type: string): any => {
@@ -28,6 +29,7 @@ export const typeToIcon = (type: string): any => {
     'routePlanning': routeplanning,
     'reservation': reservation,
     'parking': parking,
+    'highlightAttraction': highlightAttraction,
   }
 
   const result = iconMap[type];
