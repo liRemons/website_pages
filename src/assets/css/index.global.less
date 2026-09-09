@@ -1235,6 +1235,8 @@ canvas {
 @media screen and (max-width: 500px) {
   .shadow_not_active {
     box-shadow: var(--shadow-sm) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .shadow,
@@ -1246,5 +1248,8 @@ canvas {
     width: 32px;
     height: 32px;
     line-height: 32px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: var(--color-bg-white);
   }
 }

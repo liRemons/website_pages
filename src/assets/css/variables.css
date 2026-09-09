@@ -6,7 +6,7 @@
   --color-bg: linear-gradient(137deg, rgb(229, 244, 255) 0%, rgb(239, 231, 255) 100%);
   --color-animation-bg: url(../img/811e589a2221e49ba274b9b2e59ca05c.webp) no-repeat center/cover;
   --color-bg-card: rgba(255, 255, 255, 0.15);
-  --color-bg-white: rgba(255, 255, 255, 0.25);
+  --color-bg-white: rgba(255, 255, 255, 0.6);
   --color-bg-overlay: rgba(255, 255, 255, 0.1);
   --color-bg-input: rgba(255, 255, 255, 0.95);
   --color-bg-tooltip: #61616141;
