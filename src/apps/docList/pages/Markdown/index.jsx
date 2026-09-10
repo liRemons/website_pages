@@ -15,6 +15,8 @@ import renderBadge from '@/components/markdown-plugins/plugins/render-badge';
 import renderLinkCard from '@/components/markdown-plugins/plugins/render-link-preview-card';
 import dayjs from 'dayjs';
 
+import '@/components/markdown-plugins/index.less';
+
 initHighlighter({
   ...languagesCommon,
   python,
