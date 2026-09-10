@@ -46,7 +46,7 @@ const LinkPreviewCardLayout: React.FC<LinkPreviewCardLayoutProps> = ({ url, desc
     <div className="link-preview-info">
       <div className="link-preview-title">
         {favicon || <img className="link-preview-favicon" src={displayFavicon || websiteSvg} alt="" onError={(e) => { (e.target as HTMLImageElement).src = websiteSvg; }} />}
-        <span>{displayTitle}</span>
+        <span className="link-preview-title-text">{displayTitle}</span>
       </div>
       {displayDesc && <div className="link-preview-desc">{displayDesc}</div>}
       <div className="link-preview-site">{displaySiteName}</div>

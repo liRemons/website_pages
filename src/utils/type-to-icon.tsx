@@ -2,9 +2,8 @@ import React from "react";
 import { createFromIconfontCN } from '@ant-design/icons';
 import { img } from '@utils';
 
-// ffbc03
 const Icon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/c/font_5232281_dnnrkzt4xdv.js',
+  scriptUrl: '//at.alicdn.com/t/c/font_5232281_7vl1k3wskmb.js',
 });
 
 export const typeToIcon = (type: string): any => {
@@ -25,6 +24,7 @@ export const typeToIcon = (type: string): any => {
     'parking': <Icon className="markdown-icon" type="icon-parking" />,
     'highlightAttraction': <Icon className="markdown-icon" type="icon-highlightattraction" />,
     'travelMethod': <Icon className="markdown-icon" type="icon-travelmethod" />,
+    'website': <Icon className="markdown-icon" type="icon-website" />,
   }
 
   const result = iconMap[type];
