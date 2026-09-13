@@ -1,130 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Menu, Alert  } from 'antd';
-import { FolderOpenOutlined, FileMarkdownOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
+import { Menu, Alert } from 'antd';
+import { AlertOutlined } from '@ant-design/icons';
 import Fixed from '@components/Fixed';
 import Container from '@components/Container';
 import Header from '@components/Header';
 import handleContent from '../../handle.md';
 import style from './index.module.less';
 import '@assets/css/index.global.less';
-import Vditor from 'vditor';
-import 'vditor/dist/index.css';
+
+import { MarkdownEditor, useRegisterToolbar } from 'remons-markdown-editor'
+import { registerAll, excludedSelectors } from 'remons-markdown-plugins';
+import 'remons-markdown-editor/style.css'
+import 'remons-markdown-plugins/style.css'
+
 
 function List() {
-  const [files, setFiles] = useState([]);
-  const [vditor, setVditor] = useState('');
-  const [type, setType] = useState('edit');
-
-  useEffect(() => {
-    const vditor = new Vditor('markdown', {
-      height: 'calc(100% - 124px)',
-      cdn: 'https://registry.npmmirror.com/vditor/4.0.0/files',
-      width: '100%',
-      resize: {
-        enable: true
-      },
-      outline: {
-        enable: true,
-        position: 'right'
-      },
-      counter: {
-        enable: true
-      },
-      // cache: {
-      //   enable: false,
-      // },
-      preview: {
-        mode: 'both'
-      },
-      preview: {
-        hljs: {
-          style: 'monokai'
-        }
-      },
-      after: () => {
-        setVditor(vditor)
-      },
-      blur: (val) => { }
-    })
-
-  }, [])
-
-  const changeFolder = (e) => {
-    vditor.setValue('');
-    const files = [...e.target.files].filter(file => file.name.includes('md'));
-    const path = files.map(file => file.webkitRelativePath.split('/'))
-    const arr = path.reduce((initVal, item, index, arr) => {
-      item.forEach((el, elIndex) => {
-        initVal?.find(a => a.path === el) ? '' : initVal.push({ parent: elIndex > 0 ? item[elIndex - 1] : null, path: el, i: elIndex, type: elIndex === item.length - 1 ? 'file' : 'path' })
-      })
-      return initVal
-    }, [])
-
-    function treeing(arr) {
-      let tree = []
-      const map = {}
-      for (let item of arr) {
-        let newItem = map[item.path] = {
-          ...item,
-          label: item.path,
-          key: item.path,
-          icon: item.type === 'file' ? <FileMarkdownOutlined /> : <FolderOpenOutlined />,
-          ...(item.type === 'file' ? {} : { children: [] }),
-          ...(item.type === 'file' ? { file: files.find(el => el.name === item.path) } : {})
-        }
-        if (map[item.parent]) {
-          let parent = map[item.parent]
-          parent.children.push(newItem)
-        } else {
-          tree.push(newItem)
-        }
-      }
-      return tree
-    }
-    setFiles(treeing(arr))
-  }
-
-  const changeFile = (e) => {
-    const file = e.target.files?.[0];
-    readFile(file)
-  }
-
-  const importFolder = () => {
-    setType('importFolder')
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.webkitdirectory = 'true';
-    input.onchange = changeFolder;
-    input.click();
-  }
-
-  const edit = () => {
-    setType('edit');
-    vditor.setValue('');
-  }
-
-  const importFile = () => {
-    setType('importFile');
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = changeFile;
-    input.click();
-  }
-
-
-  const readFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      vditor.setValue(evt.target.result);
-    };
-    reader.readAsText(file);
-  }
-
-  const menuClick = ({ item }) => {
-    setTimeout(() => {
-      readFile(item.props.file)
-    }, 500);
-  }
+  useRegisterToolbar({
+    name: 'badge',
+    label: '警告框',
+    icon: <AlertOutlined />,
+    fields: [{ key: 'type', defaultValue: 'price' }, { key: 'content', defaultValue: 'ce' }],
+    renderDialog: (props, onChange) => (
+      <Input value={props.level} onChange={e => onChange('level', e.target.value)} />
+    ),
+  })
 
   return <>
     <Fixed />
@@ -132,22 +31,14 @@ function List() {
       header={<Header name='所见即所得 markdown 编辑查看器' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
       main={<>
         <div className={style.main}>
-          {files.length !== 0 && type === 'importFolder' && <div className={style.menu}>
-            <Menu
-              onClick={menuClick}
-              mode="inline"
-              items={files}
-            />
-          </div>}
           <div className={style.content}>
             <Alert type="info" message={<span>现已支持纯预览markdown组件，并支持导出/打印为PDF，<a href={`/${APP_NAME}/simpleMarkdown`} target="_blank">点击前往</a></span>} />
-            <div className={style.btn}>
-              <Button onClick={edit} icon={<EditOutlined />}>仅编辑</Button>
-              <Button onClick={importFile} icon={<FileTextOutlined />}>单个导入</Button>
-              <Button onClick={importFolder} icon={<FolderOpenOutlined />}>导入文件夹</Button>
-            </div>
-
-            <div id="markdown"></div>
+            <MarkdownEditor previewOptions={{
+              customRenderers: [
+                (md) => md.use(registerAll),
+              ],
+              excludedSelectors
+            }} />
           </div>
         </div></>}
     >

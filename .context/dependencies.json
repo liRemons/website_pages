@@ -76,8 +76,7 @@
     "@assets/css/index.global.less"
   ],
   "src\\apps\\reMark\\pages\\List\\index.jsx": [
-    "@assets/css/index.global.less",
-    "vditor/dist/index.css"
+    "@assets/css/index.global.less"
   ],
   "src\\apps\\scanqr\\pages\\List.jsx": [
     "@assets/css/index.global.less"

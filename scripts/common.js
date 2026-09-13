@@ -201,8 +201,6 @@ const setExternals = (isEnvProduction) => {
     'react-dom': 'ReactDOM',
     mobx: 'mobx',
     'mobx-react': 'mobxReact',
-    vditor: 'Vditor',
-    'vditor/dist/index.css': 'Vditor',
     'antd': 'antd',
     'markdown-it': 'markdownit',
     '@wangeditor/editor': 'wangEditor',

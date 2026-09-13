@@ -77,8 +77,8 @@
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",
     "remons-components": "^2.0.8",
+    "remons-markdown-editor": "^1.0.0-beta.6",
     "remons-markdown-plugins": "^1.0.0-beta.2",
-    "remons-render-markdown": "^1.0.27-beta.16",
-    "vditor": "^4.0.0"
+    "remons-render-markdown": "^1.0.27-beta.16"
   }
 }
