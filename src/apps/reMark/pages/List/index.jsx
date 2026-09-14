@@ -23,6 +23,8 @@ function List() {
             customRenderers: [
               (md) => md.use(registerAll),
             ],
+            showToc: true,
+            isSlotMermaid: true,
             excludedSelectors
           }} />
         </div>}
