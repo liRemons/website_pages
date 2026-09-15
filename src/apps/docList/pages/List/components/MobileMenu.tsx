@@ -5,14 +5,13 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { LeftOutlined, RightOutlined, FolderOpenTwoTone, ProfileTwoTone, Html5TwoTone, FileMarkdownTwoTone, PrinterTwoTone } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, FolderOpenTwoTone, Html5TwoTone, FileMarkdownTwoTone, PrinterTwoTone } from '@ant-design/icons';
 import { MobileMenuProps, MenuItem } from '../types';
 
 export default function MobileMenu({
   menuVisible,
   onToggleMenu,
   onOpenListMenu,
-  onOpenListNav,
   onCopyContent,
   onPrintPage,
   hasAnchor,
@@ -22,7 +21,6 @@ export default function MobileMenu({
 }: MobileMenuProps) {
   /** 构建菜单项列表 */
   const menuItems: MenuItem[] = [
-    { className: 'docList-menu-anchor', icon: <ProfileTwoTone />, onClick: onOpenListNav, isShow: hasAnchor },
     { className: 'docList-menu-list', icon: <FolderOpenTwoTone />, onClick: onOpenListMenu, isShow: hasMultipleArticles && !isShareMode },
     { className: 'docList-menu-copyHtml', icon: <Html5TwoTone />, onClick: () => onCopyContent('html'), title: '复制渲染后的带格式 HTML' },
     { className: 'docList-menu-copyMarkdown', icon: <FileMarkdownTwoTone />, onClick: () => onCopyContent('markdown'), title: '复制原始 Markdown' },

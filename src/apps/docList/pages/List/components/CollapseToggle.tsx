@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { LeftOutlined, RightOutlined, DoubleLeftOutlined, AlignLeftOutlined } from '@ant-design/icons';
+import { DoubleLeftOutlined, AlignLeftOutlined } from '@ant-design/icons';
 import { CollapseToggleProps } from '../types';
 
 export default function CollapseToggle({ listCollapsed, onToggle, styles }: CollapseToggleProps) {

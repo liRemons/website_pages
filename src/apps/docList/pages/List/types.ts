@@ -20,7 +20,7 @@ export interface ArticleItem {
 export type CopyType = 'html' | 'markdown';
 
 /** 抽屉面板类型：文章列表 / 导航 / 空 */
-export type DrawerType = 'list' | 'nav' | '';
+export type DrawerType = 'list' | '';
 
 /** 文档列表 Store 接口（MobX 状态） */
 export interface DocListStore {
@@ -76,7 +76,6 @@ export interface MobileMenuProps {
   menuVisible: boolean;
   onToggleMenu: () => void;
   onOpenListMenu: () => void;
-  onOpenListNav: () => void;
   onCopyContent: (type: CopyType) => void;
   onPrintPage: () => void;
   hasAnchor: boolean;

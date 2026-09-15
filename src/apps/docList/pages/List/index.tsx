@@ -22,7 +22,6 @@ import ActionButtons from './components/ActionButtons';
 import MobileMenu from './components/MobileMenu';
 import CollapseToggle from './components/CollapseToggle';
 import PageList from './components/PageList';
-import PageNav from './components/PageNav';
 import { AnchorItem, DrawerType } from './types';
 
 /** 递归过滤锚点目录，保留标题包含搜索关键词的节点 */
@@ -37,7 +36,6 @@ const deepAnchor = (data: AnchorItem[], searchTitle: string): AnchorItem[] => {
 /** 抽屉面板标题映射 */
 const drawerTitleMap: Record<DrawerType, string> = {
   list: '文章列表',
-  nav: '导航',
   '': '',
 };
 
@@ -52,7 +50,7 @@ export default function List() {
   const [anchor, setAnchor] = useState<AnchorItem[]>([]);
   // 移动端 Drawer 显示状态
   const [drawerVisible, setDrawerVisible] = useState(false);
-  // 移动端 Drawer 面板类型：'list' 文章列表 / 'nav' 导航
+  // 移动端 Drawer 面板类型：'list' 文章列表
   const [drawerType, setDrawerType] = useState<DrawerType>('');
   // 移动端左侧菜单显示状态（localStorage 持久化）
   const [menuVisible, setMenuVisible] = useState(localStorage.docListMenuVisible === 'true' || false);
@@ -155,8 +153,6 @@ export default function List() {
 
   /** 打开移动端 Drawer 文章列表面板 */
   const openListMenu = () => { setDrawerVisible(true); setDrawerType('list'); };
-  /** 打开移动端 Drawer 导航面板 */
-  const openListNav = () => { setDrawerVisible(true); setDrawerType('nav'); };
   /** 切换移动端左侧菜单显示/隐藏 */
   const menuToLeft = () => { setMenuVisible(!menuVisible); localStorage.setItem('docListMenuVisible', String(!menuVisible)); };
 
@@ -189,7 +185,6 @@ export default function List() {
         styles={style}
       />
     ),
-    nav: () => <PageNav originAnchor={localStore.anchor} anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} />
   };
 
   return useObserver(() => <div className={style.container}>
@@ -204,7 +199,6 @@ export default function List() {
         menuVisible={menuVisible}
         onToggleMenu={menuToLeft}
         onOpenListMenu={openListMenu}
-        onOpenListNav={openListNav}
         onCopyContent={doCopy}
         onPrintPage={toPrintPage}
         hasAnchor={!!localStore.anchor?.length}
@@ -226,8 +220,6 @@ export default function List() {
           {hasContent ? <Markdown id={activeId} setAnchor={setAnchor} defaultCollapsed={mermaidCollapsed} isShareMode={isShareMode} /> : <Empty />}
         </div>
       </div>
-      {/* PC 端锚点导航面板 */}
-      {showPCControls && <PageNav anchor={anchor} htmlInfo={localStore.htmlInfo} onSearch={onSearch} styles={style} originAnchor={localStore.anchor} />}
     </div>
     {/* 右下角固定按钮 */}
     <Fixed propsVisible handleContent={handleContent} actions={null} />

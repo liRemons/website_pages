@@ -67,6 +67,7 @@ export default function Markdown(props) {
 
   return useObserver(() => <RenderMarkdown
     showBackTop
+    showToc
     customRenderers={[
       (md) => md.use(registerAll),
     ]}
