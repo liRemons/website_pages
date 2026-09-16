@@ -7,6 +7,9 @@ const packageJSON = require("../package.json");
 
 const DIST_BASE = path.resolve(__dirname, '../dist');
 const HBUILDER_DIR = path.resolve(__dirname, '../hbuilder');
+const SRC_DIR = path.resolve(__dirname, '../src');
+const ROOT_MANIFEST = path.resolve(__dirname, '../manifest.json');
+const APP_TEMPLATE = path.resolve(__dirname, '../src/index-app.html');
 
 // 获取 webpack 二进制路径
 const WEBPACK_BIN = process.platform === 'win32'
@@ -55,11 +58,13 @@ function buildAllPages() {
 function copyDistToHbuilder() {
   return new Promise((resolve, reject) => {
     try {
-      // 清空 hbuilder 下的旧产物（保留 manifest.json 和 index.html 模板）
+      // 清空 hbuilder 下的旧页面产物（保留 .hbuilderx, unpackage, assets）
+      // index.html 和 manifest.json 会在后续步骤由模板生成/复制，无需特殊保留
       const entries = fs.readdirSync(HBUILDER_DIR, { withFileTypes: true });
       entries.forEach((entry) => {
         const fullPath = path.join(HBUILDER_DIR, entry.name);
-        if (entry.name === 'manifest.json' || entry.name === 'index.html') return;
+        // 保留 HBuilderX 配置和构建资源
+        if (['.hbuilderx', 'unpackage', 'assets', 'static'].includes(entry.name)) return;
         fs.removeSync(fullPath);
       });
 
@@ -67,11 +72,18 @@ function copyDistToHbuilder() {
       console.log(chalk.cyan('   拷贝 dist/ 资源到 hbuilder/'));
       fs.copySync(DIST_BASE, HBUILDER_DIR, {
         filter: (src) => {
-          // 保留 manifest.json 和 index.html
+          // 保护 .hbuilderx 和 unpackage 目录
           const rel = path.relative(HBUILDER_DIR, src);
-          return rel !== 'manifest.json' && rel !== 'index.html';
+          return !rel.startsWith('.hbuilderx') && !rel.startsWith('unpackage');
         }
       });
+
+      // 从根目录复制 manifest.json 到 hbuilder 目录
+      if (fs.existsSync(ROOT_MANIFEST)) {
+        const destManifest = path.join(HBUILDER_DIR, 'manifest.json');
+        fs.copyFileSync(ROOT_MANIFEST, destManifest);
+        console.log(chalk.cyan('   拷贝 manifest.json 到 hbuilder/'));
+      }
 
       resolve();
     } catch (err) {
@@ -101,13 +113,24 @@ function generatePagesJSON() {
 
     const pagesJSONStr = JSON.stringify(pagesData, null, 4);
 
-    // 读取 index.html 模板并注入页面数据
-    const templatePath = path.join(HBUILDER_DIR, 'index.html');
+    // 从 src/index-app.html 读取模板并注入页面数据
+    const templatePath = APP_TEMPLATE;
     let html = fs.readFileSync(templatePath, 'utf-8');
-    html = html.replace('__PAGES_JSON__', pagesJSONStr);
+    
+    // 替换 pagesList 数组内容 (支持多种格式)
+    // 格式 1: var pagesList = __PAGES_JSON__;
+    if (html.includes('__PAGES_JSON__')) {
+      html = html.replace('__PAGES_JSON__', pagesJSONStr);
+    } 
+    // 格式 2: var pagesList = [...existing array...];
+    else {
+      html = html.replace(/var pagesList = \[[\s\S]*?\];/, `var pagesList = ${pagesJSONStr};`);
+    }
 
-    fs.writeFileSync(templatePath, html);
-    console.log(chalk.cyan(`   注入 ${pagesData.length} 个页面路由到 index.html`));
+    // 写入到 hbuilder/index.html
+    const outputPath = path.join(HBUILDER_DIR, 'index.html');
+    fs.writeFileSync(outputPath, html);
+    console.log(chalk.cyan(`   注入 ${pagesData.length} 个页面路由到 hbuilder/index.html`));
     resolve();
   });
 }

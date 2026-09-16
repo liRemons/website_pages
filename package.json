@@ -80,7 +80,7 @@
     "react-fast-marquee": "^1.6.5",
     "remons-components": "^2.0.8",
     "remons-markdown-editor": "^1.0.0-beta.14",
-    "remons-markdown-plugins": "^1.0.0-beta.4",
-    "remons-render-markdown": "^1.0.28-beta.5"
+    "remons-markdown-plugins": "^1.0.0-beta.5",
+    "remons-render-markdown": "^1.0.28-beta.6"
   }
 }

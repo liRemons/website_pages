@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>remons</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; }
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #fff; z-index: 9999; }
+        .loader { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #1890ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loading"><div class="loader"></div></div>
+    <script>
+        // HTML5+ 页面管理
+        var pages = {};
+        // 所有可用页面列表 (构建时由 deploy-app.js 注入)
+        var pagesList = __PAGES_JSON__;
+
+        function isApp() {
+            return typeof plus !== 'undefined';
+        }
+
+        // 创建或获取页面 webview
+        function openPage(pageName) {
+            if (pages[pageName]) {
+                pages[pageName].show('slide-in-right', 300);
+                return;
+            }
+            var w = plus.webview.create(
+                pageName + '/index.html',
+                pageName,
+                { top: '0px', bottom: '0px', width: '100%', height: '100%' },
+                { render: 'async' }
+            );
+            pages[pageName] = w;
+            w.show('slide-in-right', 300);
+        }
+
+        // 返回上一页
+        function goBack() {
+            var current = plus.webview.currentWebview();
+            var prev = plus.webview.getWebviewHistory(current).slice(0, -1).pop();
+            if (prev) {
+                prev.show('slide-in-left', 300);
+            }
+        }
+
+        // 关闭指定页面
+        function closePage(pageName) {
+            if (pages[pageName]) {
+                pages[pageName].close('auto');
+                delete pages[pageName];
+            }
+        }
+
+        // note 页面
+        function initApp() {
+            if (!isApp()) {
+                window.location.href = 'note/index.html';
+                return;
+            }
+            // 设置 note 为主页面
+            var main = plus.webview.getWebviewById('note');
+            if (!main) {
+                main = plus.webview.create(
+                    'note/index.html',
+                    'note',
+                    { top: '0px', bottom: '0px', width: '100%', height: '100%' }
+                );
+                pages['note'] = main;
+                main.show('auto', 0);
+            }
+            // 隐藏 loading
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        if (isApp()) {
+            typeof plus !== 'undefined' && plus.webview ? initApp() : document.addEventListener('plusready', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>
