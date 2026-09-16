@@ -56,7 +56,7 @@ export default function List() {
   return (
     <>
       <Container
-        header={<Header name="Mermaid 编辑器" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+        header={<Header name="Mermaid 编辑器" leftPath='/tool' handleContent={handleContent} />}
         main={<div className={style.page}>
           <div className={style.panesRow} ref={rowRef}>
             <div className={style.paneLeft} style={{ width: `${leftWidth}%` }}>

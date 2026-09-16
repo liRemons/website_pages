@@ -48,7 +48,7 @@ export default function printPage(store: DocListStore) {
       okText: '确定',
       cancelText: '取消',
       onOk: () => {
-        popupRef.current = window.open('/@website_pages/simpleMarkdown', '_blank');
+        popupRef.current = window.open('/simpleMarkdown', '_blank');
         window.addEventListener('message', onMessage);
       },
     });

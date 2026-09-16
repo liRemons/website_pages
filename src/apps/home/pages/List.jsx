@@ -16,7 +16,7 @@ export default function List() {
   return  <>
     <canvas className="canvas"></canvas>
     <div className='help'>{img(qsSvg, 20)}</div>
-    <button className='go-home' onClick={() => openApp({ url: `/${APP_NAME}/homeList` })}>{img(homeSvg, 20)}</button>
+    <button className='go-home' onClick={() => openApp({ url: '/homeList' })}>{img(homeSvg, 20)}</button>
 
     <div className="ui">
       <input id='input' className="ui-input" type="text" />

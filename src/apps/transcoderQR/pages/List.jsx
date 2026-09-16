@@ -112,7 +112,7 @@ export default function List() {
 
 
   return <Container
-    header={<Header name='解析二维码' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+    header={<Header name='解析二维码' leftPath='/tool' handleContent={handleContent} />}
     main={
       <div className='p-20'>
         <Form form={form}>

@@ -316,7 +316,7 @@ export default class ProductManage extends React.Component {
         />
       }
       <Container
-        header={<Header name='订单关联' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+        header={<Header name='订单关联' leftPath='/tool' handleContent={handleContent} />}
         main={
           <>
             <SearchForm cols={2} {...formLayout} rows={IsPC() ? 2 : 1} onSearch={this.onSearch} onReset={this.onReset}>

@@ -117,7 +117,7 @@ export default function List() {
     const { id } = data;
     if (id === activeId) return;
     const newParams = new URLSearchParams({ ...getSearchParams(), pageId: id });
-    const pageURL = newParams.toString() ? `/${APP_NAME}/docList?${newParams.toString()}` : `/${APP_NAME}/docList`;
+    const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : `/docList`;
     history.pushState('', '', pageURL);
     setActiveId(id);
     setDrawerVisible(false);
@@ -189,7 +189,7 @@ export default function List() {
 
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
-    <Header showLeft={!isShareMode} showRight={false} leftPath={`/${APP_NAME}/note`} name={fullTitle} handleContent={handleContent} />
+    <Header showLeft={!isShareMode} showRight={false} leftPath='/note' name={fullTitle} handleContent={handleContent} />
     {/* PC 端文章列表收起/展开按钮（className 切换实现箭头方向动画） */}
     {showCollapseToggle && <CollapseToggle listCollapsed={listCollapsed} onToggle={toggleListCollapse} styles={style} />}
     <div className={style.main}>

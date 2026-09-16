@@ -30,7 +30,7 @@ export default function Fixed({
   };
 
   const go = (url) => {
-    openApp({ url: `/${APP_NAME}${url}` });
+    openApp({ url });
   };
 
   const defaultBtns = [

@@ -46,8 +46,8 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         // 兜底（理论上不会走到这里）
         return 'chunks/[name].[contenthash:10].js';
       },
-      path: path.resolve(__dirname, `dist/@${packageJSON.name}`),
-      publicPath: `/@${packageJSON.name}/`,
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: '/',
     },
     optimization: {
       moduleIds: 'named',

@@ -172,7 +172,7 @@ export default function SimpleSketches() {
   return (
     <>
       <Container
-        header={<Header name="图片转白底简笔画" handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
+        header={<Header name="图片转白底简笔画" handleContent={handleContent} leftPath='/tool' />}
         main={mainContent}
       />
       <Fixed homeUrl="/tool" />

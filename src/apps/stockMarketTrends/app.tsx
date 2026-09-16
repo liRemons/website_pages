@@ -503,7 +503,7 @@ function StockDashboard(): JSX.Element {
             </Modal>
           </div>
         }
-        header={<Header name="股票行情监控" leftPath={`/${APP_NAME}/tool`} />}
+        header={<Header name="股票行情监控" leftPath='/tool' />}
       />
       <Fixed />
     </>

@@ -134,7 +134,7 @@ function List() {
 
   return (
     <>
-      <Container header={<Header name="图片文字水印" leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+      <Container header={<Header name="图片文字水印" leftPath='/tool' handleContent={handleContent} />}
         main={
           <div>
             {/* img 用 display:none 隐藏，仅作 drawImage 数据源 */}

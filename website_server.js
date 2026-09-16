@@ -48,7 +48,7 @@ app.use(async (req, res, next) => {
   }
 
   // 只处理 docList 页面的 HTML 请求
-  if (!req.path.startsWith('/@website_pages/docList')) {
+  if (!req.path.startsWith('/docList')) {
     return next();
   }
 
@@ -63,8 +63,6 @@ app.use(async (req, res, next) => {
 
   try {
     // 调用 API 获取文章信息
-    console.log(API_BASE_URL, '=API_BASE_URL===_');
-    
     const apiUrl = `${API_BASE_URL}/ogp/article-info?pageId=${encodeURIComponent(pageId)}&id=${encodeURIComponent(id)}`;
     const response = await fetch(apiUrl, {
       // 忽略 SSL 证书验证（本地开发环境）
@@ -86,7 +84,7 @@ app.use(async (req, res, next) => {
     const articleTitle = result.data.title;
     
     // 读取静态HTML文件
-    const htmlPath = path.join(__dirname, 'dist/@website_pages/docList/index.html');
+    const htmlPath = path.join(__dirname, 'dist/docList/index.html');
     if (!fs.existsSync(htmlPath)) {
       return next();
     }
@@ -165,8 +163,8 @@ app.use(express.static("dist", {
   },
 }));
 app.get('/', (req, res) => {
-  // res.sendFile(path.resolve(__dirname, './dist/@website_pages/home/index.html'))
-  res.sendFile(path.resolve(__dirname, './dist/@website_pages/tool/index.html'))
+  // res.sendFile(path.resolve(__dirname, './dist/home/index.html'))
+  res.sendFile(path.resolve(__dirname, './dist/tool/index.html'))
 })
 
 app.listen(port, () => console.log(`Example app listening on port port!`));

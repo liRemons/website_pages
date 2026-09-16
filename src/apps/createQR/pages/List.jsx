@@ -215,7 +215,7 @@ export default function List() {
 
   return (
     <Container
-      header={<Header name='创建二维码' handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
+      header={<Header name='创建二维码' handleContent={handleContent} leftPath='/tool' />}
       main={
         <Spin tip={loadingText} spinning={loading}>
           <div className='qr-page'>

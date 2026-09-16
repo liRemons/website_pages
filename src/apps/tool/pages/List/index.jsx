@@ -73,7 +73,7 @@ export default function ListPage() {
       window.open(url);
       return;
     }
-    openApp({ url: `/${APP_NAME}${url}`, params });
+    openApp({ url, params });
   };
   return <>
     <Container

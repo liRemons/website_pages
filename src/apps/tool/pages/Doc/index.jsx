@@ -18,7 +18,7 @@ export default function Doc() {
     window.open(HOST + url);
   };
   return useObserver(() => <Container
-    header={<Header name='文档' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+    header={<Header name='文档' leftPath='/tool' handleContent={handleContent} />}
     main={
       <div className={style.page_list}>
         <div className={style.page_list_main}>

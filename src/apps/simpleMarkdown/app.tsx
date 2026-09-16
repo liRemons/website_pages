@@ -219,7 +219,7 @@ export default function App() {
     <>
       <Container
         isAnimationBackground={false}
-        header={<Header name="简易 Markdown" handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
+        header={<Header name="简易 Markdown" handleContent={handleContent} leftPath='/tool' />}
         main={
           <div className={style.page} ref={containerRef}>
 

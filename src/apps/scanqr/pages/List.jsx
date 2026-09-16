@@ -7,7 +7,7 @@ import '@assets/css/index.global.less';
 
 const View = () => {
   return <Container
-    header={<Header name='扫描二维码' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+    header={<Header name='扫描二维码' leftPath='/tool' handleContent={handleContent} />}
     main={
       <ScanQr />
     }

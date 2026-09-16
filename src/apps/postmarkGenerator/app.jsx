@@ -153,7 +153,7 @@ export default function PostmarkGenerator() {
     <>
       {contextHolder}
       <Container
-        header={<Header name="邮戳生成器" leftPath={`/${APP_NAME}/tool`}  handleContent={handleContent} />}
+        header={<Header name="邮戳生成器" leftPath='/tool'  handleContent={handleContent} />}
         main={
           <div className="postmark-layout">
             {/* 预览区 */}

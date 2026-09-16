@@ -265,7 +265,7 @@ export default () => {
   return <>
     <ConfigProvider locale={zhCN}>
       <Container
-        header={<Header name='快递' leftPath={`/${APP_NAME}/tool`} handleContent={handleContent} />}
+        header={<Header name='快递' leftPath='/tool' handleContent={handleContent} />}
         main={
           <div>
             <button className="circle" onClick={openModal}>+</button>

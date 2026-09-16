@@ -31,11 +31,11 @@ export default function ListPage() {
       window.open(url);
       return;
     }
-    openApp({ url: `/${APP_NAME}${url}`, params });
+    openApp({ url, params });
   };
   return <>
     <Container
-      header={<Header name='主页' leftPath={`/${APP_NAME}/home`} handleContent={handleContent} />}
+      header={<Header name='主页' leftPath='/home' handleContent={handleContent} />}
       main={<CardList list={list} itemClick={openPage} />}
     />
     <Fixed />

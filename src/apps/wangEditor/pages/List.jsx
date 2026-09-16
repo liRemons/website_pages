@@ -61,7 +61,7 @@ export default function List() {
 
   return <>
     <Container
-      header={<Header name='富文本编辑器' handleContent={handleContent} leftPath={`/${APP_NAME}/tool`} />}
+      header={<Header name='富文本编辑器' handleContent={handleContent} leftPath='/tool' />}
       main={
         <div className={style.page}>
           {/* 编辑器卡片 */}
