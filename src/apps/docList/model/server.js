@@ -18,6 +18,13 @@ export const getMarkdown = (id) => {
   });
 };
 
+export const verifyLogin = () => {
+  return service({
+    method: 'post',
+    url: '/user/verifyLogin',
+  });
+};
+
 export const markdownToHTML = (id) => {
   return service({
     method: 'get',

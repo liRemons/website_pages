@@ -16,6 +16,7 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import { Drawer } from 'antd';
 import { getSearchParams, IsPC, debounce } from 'methods-r';
+import { isApp, openApp } from '@utils/nav';
 import copyContent from './hooks/copyContent';
 import printPage from './hooks/printPage';
 import ActionButtons from './components/ActionButtons';
@@ -70,6 +71,17 @@ export default function List() {
     getList();
   }, []);
 
+  // App 环境下验证登录状态
+  useEffect(() => {
+    if (isApp()) {
+      localStore.verifyLogin().then(res => {
+        if (!res?.success) {
+          openApp({ url: '/login' });
+        }
+      });
+    }
+  }, []);
+
   // 文章加载后，动态更新 document.title 和 OGP meta 标签
   useEffect(() => {
     const articleTitle = localStore.title;
@@ -117,8 +129,11 @@ export default function List() {
     const { id } = data;
     if (id === activeId) return;
     const newParams = new URLSearchParams({ ...getSearchParams(), pageId: id });
-    const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : `/docList`;
-    history.pushState('', '', pageURL);
+    // App（file://）环境下 pushState 绝对路径会被解析为 file:///docList?... 触发加载错误，直接跳过
+    if (!isApp()) {
+      const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : `/docList`;
+      history.pushState('', '', pageURL);
+    }
     setActiveId(id);
     setDrawerVisible(false);
     localStore.getMarkdown(id);

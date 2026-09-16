@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { encrypt, DES_KEY, DES_IV } from './model/const';
 import { useLocalObservable } from 'mobx-react-lite';
@@ -7,6 +7,7 @@ import store from './model/store';
 import styled from './index.module.less'
 import FormItem from '../../components/Form';
 import { USER_TOKEN } from '@/utils';
+import { openApp, isApp } from '@utils/nav';
 
 const NormalLoginForm = () => {
   const localStore = useLocalObservable(() => store);
@@ -22,9 +23,11 @@ const NormalLoginForm = () => {
       localStorage.setItem(USER_TOKEN, res.data.token);
       const params = new URLSearchParams(window.location.search);
       if (params.get('from')) {
-        window.location.href = params.get('from')
+        // from 可能是站内路径或完整 URL，openApp 会按环境正确解析
+        openApp({ url: params.get('from') });
       } else {
-        window.location.href = window.location.origin
+        // App 下 window.location.origin 为 "null"，跳回 note
+        openApp({ url: isApp() ? '/note' : window.location.origin });
       }
     }
   };

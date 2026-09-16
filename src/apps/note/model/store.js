@@ -1,11 +1,16 @@
 import { makeAutoObservable } from 'mobx';
-import { queryTechClassList } from './server';
+import { queryTechClassList, verifyLogin } from './server';
 
 class Store {
   techClassList = [];
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  async getVerifyLogin() {
+    const res = await verifyLogin();
+    return res;
   }
 
   async queryTechClassList(payload = {}) {

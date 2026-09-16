@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>remons</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; }
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #fff; z-index: 9999; }
+        .loader { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #1890ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loading"><div class="loader"></div></div>
+    <script>
+        // HTML5+ 页面管理
+        var pages = {};
+        // 所有可用页面列表 (构建时由 deploy-app.js 注入)
+        var pagesList = [
+    {
+        "name": "jsonViewer",
+        "title": "JSON 解析器",
+        "subTitle": "JSON 可视化解析，层级一目了然",
+        "path": "jsonViewer/index.html"
+    },
+    {
+        "name": "mermaid",
+        "title": "Mermaid 图表",
+        "subTitle": "左边写代码，右边出图表，实时渲染",
+        "path": "mermaid/index.html"
+    },
+    {
+        "name": "createQR",
+        "title": "生成二维码",
+        "subTitle": "数据化身二维码，离线传输黑科技",
+        "path": "createQR/index.html"
+    },
+    {
+        "name": "docList",
+        "title": "文章列表",
+        "subTitle": "日常干货集结，进阶路上不迷路",
+        "path": "docList/index.html"
+    },
+    {
+        "name": "home",
+        "title": "首页",
+        "subTitle": "宝藏工具集合，解决你的各种小麻烦",
+        "path": "home/index.html"
+    },
+    {
+        "name": "homeList",
+        "title": "主页",
+        "subTitle": "开发者百宝箱，效率翻倍的神器",
+        "path": "homeList/index.html"
+    },
+    {
+        "name": "transcoderQR",
+        "title": "解析二维码",
+        "subTitle": "扫一扫识万物，破解二维码秘密",
+        "path": "transcoderQR/index.html"
+    },
+    {
+        "name": "scanqr",
+        "title": "扫描二维码",
+        "subTitle": "摄像头变身扫码枪，即开即用",
+        "path": "scanqr/index.html"
+    },
+    {
+        "name": "my",
+        "title": "我",
+        "subTitle": "你的专属空间，记录你的足迹",
+        "path": "my/index.html"
+    },
+    {
+        "name": "tool",
+        "title": "实用工具",
+        "subTitle": "工作生活帮手，让麻烦事变简单",
+        "path": "tool/index.html"
+    },
+    {
+        "name": "timeCalculator",
+        "title": "时间计算",
+        "subTitle": "告别掐指一算，时间管理神器",
+        "path": "timeCalculator/index.html"
+    },
+    {
+        "name": "imgWatermark",
+        "title": "图片水印",
+        "subTitle": "一键添加水印，守护原创心血",
+        "path": "imgWatermark/index.html"
+    },
+    {
+        "name": "login",
+        "title": "登录",
+        "subTitle": "欢迎回来，解锁更多专属特权",
+        "path": "login/index.html"
+    },
+    {
+        "name": "note",
+        "title": "学习笔记",
+        "subTitle": "打造第二大脑，沉淀技术智慧",
+        "path": "note/index.html"
+    },
+    {
+        "name": "reMark",
+        "title": "Markdown 编辑查看器",
+        "subTitle": "所见即所得，书写流畅新体验",
+        "path": "reMark/index.html"
+    },
+    {
+        "name": "urlCoder",
+        "title": "URL 转编码",
+        "subTitle": "乱码参数克星，一眼看穿本质",
+        "path": "urlCoder/index.html"
+    },
+    {
+        "name": "express",
+        "title": "快递查询",
+        "subTitle": "短信智能解析，取件信息直达",
+        "path": "express/index.html"
+    },
+    {
+        "name": "wangEditor",
+        "title": "富文本编辑器",
+        "subTitle": "排版随心所欲，图文混排利器",
+        "path": "wangEditor/index.html"
+    },
+    {
+        "name": "productManage",
+        "title": "订单管理",
+        "subTitle": "订单井井有条，生意打理更轻松",
+        "path": "productManage/index.html"
+    },
+    {
+        "name": "travelBadge",
+        "title": "旅行勋章",
+        "subTitle": "照片变身勋章，打卡旅途高光",
+        "path": "travelBadge/index.html"
+    },
+    {
+        "name": "tableConfig",
+        "title": "表单引擎",
+        "subTitle": "配置生成页面，解放双手神器",
+        "path": "tableConfig/index.html"
+    },
+    {
+        "name": "simpleSketches",
+        "title": "简笔画生成器",
+        "subTitle": "照片秒变线稿，解锁艺术画风",
+        "path": "simpleSketches/index.html"
+    },
+    {
+        "name": "postmarkGenerator",
+        "title": "邮戳生成器",
+        "subTitle": "定制复古邮戳，盖下时光印记",
+        "path": "postmarkGenerator/index.html"
+    },
+    {
+        "name": "simpleMarkdown",
+        "title": "简易 Markdown 预览",
+        "subTitle": "Markdown 预览器，快速撰写导出技术文档",
+        "path": "simpleMarkdown/index.html"
+    },
+    {
+        "name": "stockMarketTrends",
+        "title": "监控",
+        "subTitle": "临时监控工具",
+        "path": "stockMarketTrends/index.html"
+    }
+];
+
+        function isApp() {
+            return typeof plus !== 'undefined';
+        }
+
+        // 创建或获取页面 webview
+        function openPage(pageName) {
+            if (pages[pageName]) {
+                pages[pageName].show('slide-in-right', 300);
+                return;
+            }
+            var w = plus.webview.create(
+                pageName + '/index.html',
+                pageName,
+                { top: '0px', bottom: '0px', width: '100%', height: '100%' },
+                { render: 'async' }
+            );
+            pages[pageName] = w;
+            w.show('slide-in-right', 300);
+        }
+
+        // 返回上一页
+        function goBack() {
+            var current = plus.webview.currentWebview();
+            var prev = plus.webview.getWebviewHistory(current).slice(0, -1).pop();
+            if (prev) {
+                prev.show('slide-in-left', 300);
+            }
+        }
+
+        // 关闭指定页面
+        function closePage(pageName) {
+            if (pages[pageName]) {
+                pages[pageName].close('auto');
+                delete pages[pageName];
+            }
+        }
+
+        // note 页面
+        function initApp() {
+            if (!isApp()) {
+                window.location.href = 'note/index.html';
+                return;
+            }
+            // 设置 note 为主页面
+            var main = plus.webview.getWebviewById('note');
+            if (!main) {
+                main = plus.webview.create(
+                    'note/index.html',
+                    'note',
+                    { top: '0px', bottom: '0px', width: '100%', height: '100%' }
+                );
+                pages['note'] = main;
+                main.show('auto', 0);
+            }
+            // 隐藏 loading
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        if (isApp()) {
+            typeof plus !== 'undefined' && plus.webview ? initApp() : document.addEventListener('plusready', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>

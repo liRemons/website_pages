@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { HomeOutlined } from '@ant-design/icons';
 import './home.css';
 import '@assets/css/index.global.less'
-import { openApp } from 'methods-r';
+import { openApp } from '@utils/nav';
 import { load } from './home';
 import { img } from '@utils';
 import homeSvg from './assets/svg/home.svg';

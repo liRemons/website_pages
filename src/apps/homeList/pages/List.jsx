@@ -6,7 +6,7 @@ import CardList from '@components/CardList';
 import Container from '@components/Container';
 import '@assets/css/index.global.less';
 import { message } from 'antd';
-import { openApp } from 'methods-r';
+import { openApp } from '@utils/nav';
 import npmSVG from './assets/svg/npm.svg';
 import githubSVG from './assets/svg/github.svg';
 import noteSvg from './assets/svg/note.svg';

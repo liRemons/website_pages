@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd';
 import { HOST, USER_TOKEN } from "@utils";
+import { resolvePageURL } from "@utils/nav";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
@@ -99,7 +100,8 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   })
     .then((response) => {
       if (response.status === 403) {
-        window.location.href = `${window.location.origin}/login`;
+        // App 环境下 window.location.origin 为 "null"，需用 resolvePageURL 改写为相对路径
+        window.location.href = resolvePageURL('/login');
         return Promise.reject(error);
       }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);

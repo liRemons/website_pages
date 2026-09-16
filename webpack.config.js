@@ -33,6 +33,8 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
     const jsPath = path.resolve(srcPagesDir, el, 'main.jsx')
     entry[el] = fs.existsSync(tsxPath) ? tsxPath : jsPath
   })
+  // App 打包使用相对路径，H5 使用绝对路径
+  const publicPath = otherParams.pagePublicPath || '/';
   const config = {
     entry,
     mode,
@@ -47,7 +49,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         return 'chunks/[name].[contenthash:10].js';
       },
       path: path.resolve(__dirname, 'dist'),
-      publicPath: '/',
+      publicPath: publicPath,
     },
     optimization: {
       moduleIds: 'named',
@@ -93,12 +95,16 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
     externals: setExternals(isEnvProduction),
     plugins: [
       ...pages.map((pageName) => {
+        /** @type {{ pageName: string, title: string, subTitle: string }} */
         const pageInfo =
           pagesJSON.find((item) => item.pageName === pageName) || {}
         return new HtmlWebpackPlugin({
           filename: `${pageName}/index.html`,
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.ejs'),
+          // @ts-ignore — TS infers untyped callback params as 'any', can't match overload
+          scriptLoading: 'defer',
+          // @ts-ignore — callback params need Compilation/assets types not available in .js
           templateParameters: (compilation, assets, assetTags, options) =>
             templateParameters({
               compilation,
@@ -146,6 +152,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         })
         : null,
       isEnvDevelopment && new ReactRefreshPlugin(),
+      // @ts-ignore — filter(Boolean) removes null, TS can't narrow conditional plugin types
     ].filter(Boolean),
     devServer: {
       static: {

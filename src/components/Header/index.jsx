@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import style from "./index.module.less";
-import { openApp } from "methods-r";
+import { openApp } from "@utils/nav";
 import { img } from "@utils";
 import backSvg from "@assets/svg/back.svg";
 import HelpDrawer from "../HelpDrawer";

@@ -5,18 +5,21 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { message, Modal } from 'antd';
 import { DocListStore } from '../types';
+import { resolvePageURL, isApp } from '@utils/nav';
 
 export default function printPage(store: DocListStore) {
   const popupRef = useRef<Window | null>(null);
 
   /** 监听子窗口消息：READY 时发送数据，RESULT 时清理 */
   const onMessage = useCallback((event: MessageEvent) => {
-    if (event.origin !== window.origin) return;
+    // App（file://）环境下 origin 为字符串 "null"，无法做来源校验，直接放行
+    if (!isApp() && event.origin !== window.origin) return;
     if (event.data?.type === 'READY') {
       if (popupRef.current) {
         popupRef.current.postMessage(
           { type: 'DATA', payload: { type: 'printData', content: store.markdownInfo } },
-          window.origin
+          // file:// 下 window.origin 是非法 targetOrigin，App 环境用 '*'
+          isApp() ? '*' : window.origin
         );
       }
     }
@@ -48,7 +51,8 @@ export default function printPage(store: DocListStore) {
       okText: '确定',
       cancelText: '取消',
       onOk: () => {
-        popupRef.current = window.open('/simpleMarkdown', '_blank');
+        // App 环境下 '/simpleMarkdown' 会被解析为 file:///simpleMarkdown 导致打不开
+        popupRef.current = window.open(resolvePageURL('/simpleMarkdown'), '_blank');
         window.addEventListener('message', onMessage);
       },
     });

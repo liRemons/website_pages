@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { queryArticleList, markdownToHTML } from './server'
+import { queryArticleList, markdownToHTML, verifyLogin } from './server'
 import { markdownFormat } from 'remons-render-markdown';
 import { getSearchParams } from 'methods-r';
 
@@ -22,6 +22,11 @@ class Store {
 
   constructor() {
     makeAutoObservable(this)
+  }
+
+  async verifyLogin() {
+    const res = await verifyLogin();
+    return res;
   }
 
   async queryArticleList(payload) {
