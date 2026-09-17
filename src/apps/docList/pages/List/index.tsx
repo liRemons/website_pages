@@ -133,6 +133,8 @@ export default function List() {
     if (!isApp()) {
       const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : `/docList`;
       history.pushState('', '', pageURL);
+    } else {
+      openApp({ url: '/docList', params: { ...getSearchParams(), pageId: id } });
     }
     setActiveId(id);
     setDrawerVisible(false);

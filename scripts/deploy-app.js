@@ -85,6 +85,15 @@ function copyDistToHbuilder() {
         console.log(chalk.cyan('   拷贝 manifest.json 到 hbuilder/'));
       }
 
+      // 复制 app-pages.js 到 hbuilder/utils/
+      var appPagesSrc = path.resolve(__dirname, '../src/utils/app-pages.js');
+      if (fs.existsSync(appPagesSrc)) {
+        var appPagesDest = path.join(HBUILDER_DIR, 'utils', 'app-pages.js');
+        fs.ensureDirSync(path.dirname(appPagesDest));
+        fs.copyFileSync(appPagesSrc, appPagesDest);
+        console.log(chalk.cyan('   拷贝 utils/app-pages.js 到 hbuilder/'));
+      }
+
       resolve();
     } catch (err) {
       reject(err);

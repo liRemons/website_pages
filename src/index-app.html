@@ -1,203 +1,112 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>remons</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; }
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #fff; z-index: 9999; }
-        .loader { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #1890ff; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            z-index: 9999;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1890ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
-<body>
-    <div id="loading"><div class="loader"></div></div>
-    <script>
-        // 存储 key
-        var LAST_PAGE_KEY = 'remons_last_page';
 
-        // HTML5+ 页面管理
-        var pages = {};
-        // 页面栈：用于管理打开的页面顺序
-        var pageStack = [];
-        // 双击退出定时器
-        var lastBackTime = 0;
+<body>
+    <div id="loading">
+        <div class="loader"></div>
+    </div>
+    <script src="utils/app-pages.js"></script>
+    <script>
         // 所有可用页面列表 (构建时由 deploy-app.js 注入)
         var pagesList = __PAGES_JSON__;
-        // 主页面标识
+        var LAST_PAGE_KEY = 'remons_last_page';
         var mainPage = 'note';
 
-        function isApp() {
-            return typeof plus !== 'undefined';
-        }
-
-        // 获取当前页面标识
-        function getCurrentPageName() {
-            if (pageStack.length > 0) {
-                return pageStack[pageStack.length - 1];
-            }
-            return null;
-        }
-
-        // 记录当前页面到 localStorage
-        function saveCurrentPage() {
-            var pageName = getCurrentPageName();
-            if (pageName) {
-                try {
-                    localStorage.setItem(LAST_PAGE_KEY, pageName);
-                } catch (e) {
-                    console.warn('saveCurrentPage error', e);
-                }
-            }
-        }
-
-        // 读取上次记录的页面
-        function getLastPage() {
+        window.getLastPage = function () {
             try {
-                return localStorage.getItem(LAST_PAGE_KEY);
+                var raw = localStorage.getItem(LAST_PAGE_KEY);
+                if (!raw) return null;
+                return JSON.parse(raw);
             } catch (e) {
                 return null;
             }
-        }
+        };
 
-        // 清除上次记录的页面
-        function clearLastPage() {
-            try {
-                localStorage.removeItem(LAST_PAGE_KEY);
-            } catch (e) {
-                console.warn('clearLastPage error', e);
-            }
-        }
-
-        // 创建或获取页面 webview
-        function openPage(pageName) {
-            if (pages[pageName]) {
-                pages[pageName].show('slide-in-right', 300);
-                // 如果已在栈中,移到栈顶
-                var idx = pageStack.indexOf(pageName);
-                if (idx > -1) {
-                    pageStack.splice(idx, 1);
-                }
-                pageStack.push(pageName);
-                saveCurrentPage();
-                return;
-            }
-            var w = plus.webview.create(
-                pageName + '/index.html',
-                pageName,
-                { top: '0px', bottom: '0px', width: '100%', height: '100%' },
-                { render: 'async' }
-            );
-            pages[pageName] = w;
-            pageStack.push(pageName);
-            w.show('slide-in-right', 300);
-            saveCurrentPage();
-        }
-
-        // 返回上一页
-        function goBack() {
-            if (pageStack.length > 1) {
-                // 关闭当前页面
-                var current = pageStack.pop();
-                pages[current].close('auto');
-                delete pages[current];
-                // 显示上一页
-                var prev = pageStack[pageStack.length - 1];
-                if (pages[prev]) {
-                    pages[prev].show('slide-in-left', 300);
-                }
-                saveCurrentPage();
-                return true;
-            }
-            return false;
-        }
-
-        // 关闭指定页面
-        function closePage(pageName) {
-            if (pages[pageName]) {
-                pages[pageName].close('auto');
-                delete pages[pageName];
-                var idx = pageStack.indexOf(pageName);
-                if (idx > -1) {
-                    pageStack.splice(idx, 1);
-                }
-                saveCurrentPage();
-            }
-        }
-
-        // 处理物理返回键
-        function handleBackButton() {
-            // 先获取当前显示的 webview
-            var currentWebview = plus.webview.currentWebview();
-            // 判断当前 webview 是否有可返回的历史
-            currentWebview.canBack(function(e) {
-                if (e.canBack) {
-                    // 有历史则返回
-                    currentWebview.back();
-                    return;
-                }
-                // 无历史，尝试返回自定义页面栈
-                if (goBack()) {
-                    return;
-                }
-                // 在主页,双击退出
-                var now = Date.now();
-                if (now - lastBackTime < 2000) {
-                    // 退出前记录当前页面
-                    saveCurrentPage();
-                    plus.runtime.quit();
-                } else {
-                    lastBackTime = now;
-                    plus.nativeUI.toast('再按一次退出应用');
-                }
-            });
-        }
-
-        // note 页面
         function initApp() {
-            if (!isApp()) {
-                window.location.href = 'note/index.html';
-                return;
+            var lastPageData = window.getLastPage();
+            if (lastPageData && lastPageData.pageName && lastPageData.pageName !== mainPage) {
+                mainPage = lastPageData.pageName;
             }
 
-            // 读取上次退出时记录的页面
-            var lastPage = getLastPage();
-
-            // 如果有上次记录的页面，且不是主页面，就打开它
-            if (lastPage && lastPage !== mainPage) {
-                mainPage = lastPage;
+            // 构建 URL，包含恢复参数
+            var url = mainPage + '/index.html';
+            if (lastPageData && lastPageData.params) {
+                var search = new URLSearchParams(lastPageData.params);
+                var suffix = search.toString();
+                if (suffix) url += '?' + suffix;
             }
 
-            // 设置 note 为主页面
             var main = plus.webview.getWebviewById(mainPage);
             if (!main) {
                 main = plus.webview.create(
-                    mainPage + '/index.html',
+                    url,
                     mainPage,
                     { top: '0px', bottom: '0px', width: '100%', height: '100%' }
                 );
-                pages[mainPage] = main;
                 main.show('auto', 0);
             }
-            pageStack.push(mainPage);
-            // 隐藏 loading
+
             document.getElementById('loading').style.display = 'none';
-            // 注册物理返回键监听 (Android 物理键 + 全面屏侧滑手势都会触发)
-            plus.key.addEventListener('backbutton', handleBackButton);
         }
 
-        if (isApp()) {
-            typeof plus !== 'undefined' && plus.webview ? initApp() : document.addEventListener('plusready', initApp);
-        } else {
+        if (typeof plus !== 'undefined' && plus.webview) {
             initApp();
+        } else {
+            document.addEventListener('plusready', initApp);
         }
-
-        // 兜底：页面卸载前也记录一次
-        window.addEventListener('beforeunload', function() {
-            saveCurrentPage();
-        });
     </script>
 </body>
+
 </html>

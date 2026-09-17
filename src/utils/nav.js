@@ -31,7 +31,15 @@ export const openApp = ({ url, params }) => {
     return;
   }
   if (isApp()) {
-    window.location.href = resolvePageURL(url, params);
+    const [pathPart] = url.split('?');
+    const name = pathPart.replace(/^\/+|\/+$/g, '');
+    // 调用 index-app.html 中定义的 openPage，支持动画和页面栈管理
+    if (window.openPage) {
+      window.openPage(name, params);
+    } else {
+      // 兜底方案
+      window.location.href = resolvePageURL(url, params);
+    }
     return;
   }
   openAppWeb({ url, params });

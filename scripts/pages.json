@@ -64,14 +64,6 @@
     "seoContent": "在线摄像头扫描二维码工具，调用设备摄像头实时识别二维码内容，无需下载 App，打开浏览器即可使用。支持手机和 PC 端，快速获取二维码信息，方便快捷。"
   },
   {
-    "pageName": "my",
-    "subTitle": "你的专属空间，记录你的足迹",
-    "title": "我",
-    "description": "我",
-    "keywords": "个人中心,用户信息,使用记录,个人设置",
-    "seoContent": "个人中心页面"
-  },
-  {
     "pageName": "tool",
     "subTitle": "工作生活帮手，让麻烦事变简单",
     "title": "实用工具",
@@ -126,14 +118,6 @@
     "description": "URL转编码，用于将 URL 参数转为可视化编码",
     "keywords": "URL编码,URL解码,encodeURIComponent,URL参数解析,在线编码转换,URL调试,接口调试",
     "seoContent": "在线 URL 编码解码工具，将 URL 参数快速拆解为 Key-Value 可视化表格，支持 encodeURIComponent 编码与解码转换。开发调试必备，帮助开发者快速分析复杂 URL 参数结构，排查接口问题，提升联调效率。"
-  },
-  {
-    "pageName": "express",
-    "subTitle": "短信智能解析，取件信息直达",
-    "title": "快递查询",
-    "description": "快递查询，用于查询快递信息，根据用户文本输入，解析取件地址及取件码",
-    "keywords": "快递查询,快递信息解析,取件码识别,取件地址,快递单号,智能解析快递,快递短信解析",
-    "seoContent": "在线智能快递信息解析工具，粘贴快递短信或通知文本，自动识别并提取取件地址、快递单号、取件码等关键信息，省去手动查找的烦恼。支持多家快递公司，让取件流程更简单高效。支持自定义解析规则，支持自定义快递公司，让信息识别更准确。"
   },
   {
     "pageName": "wangEditor",

@@ -14,7 +14,6 @@ import decodelinkSvg from './assets/svg/decodelink.svg';
 import docSvg from './assets/svg/doc.svg';
 import scanSvg from './assets/svg/scan.svg';
 import timeSvg from './assets/svg/time.svg';
-import expressSvg from './assets/svg/express.svg';
 import transcoderSvg from './assets/svg/transcoder.svg';
 import travelbadgeSvg from './assets/svg/travelbadge.svg';
 import tableconfigSvg from './assets/svg/tableconfig.svg';
@@ -38,7 +37,6 @@ pagesJson.forEach(item => {
 export default function ListPage() {
   const list = [
     { title: 'AI 聊天工具', icon: img(aiChatSvg), hot: true, url: 'https://aichat.remons.cn', isShow: !isLuckeyWork },
-    { title: '取快递', icon: img(expressSvg), appName: 'express' },
     // { title: '文档', icon: img(docSvg), appName: 'tool', params: { page: 'doc' } },
     { title: '富文本编辑器', icon: img(editorSvg), appName: 'wangEditor' },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), appName: 'reMark' },
