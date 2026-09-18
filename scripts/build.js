@@ -27,6 +27,17 @@ const progressMap = {};
 let pageListOrdered = [];
 // TTY 打包过程中缓存的错误信息，打包全部结束后统一输出，避免干扰进度条
 const pendingStderr = [];
+// TTY 进度条定时器引用，结束时需要清除
+let redrawTimer = null;
+// TTY 进度条停止标志，避免打包结束后继续重绘
+let redrawStop = false;
+// TTY 模式下 header 文本（标题行），重绘时重新输出
+let progressHeaderLines = [];
+// Alternate screen buffer - 隔离进度显示，终端滚动不影响
+const ALTERNATE_SCREEN_ENTER = '\x1b[?1049h';
+const ALTERNATE_SCREEN_EXIT  = '\x1b[?1049l';
+const SCREEN_HOME = '\x1b[H';
+const CLEAR_SCREEN = '\x1b[2J';
 
 // ─── 工具函数 ──────────────────────────────────────────────────────────────────
 
@@ -48,16 +59,20 @@ function buildPageLine(page, percent, status, spinFrame) {
 
 /**
  * TTY 模式下整块重绘所有进度行。
- * 上移到进度区域顶部后逐行覆写，完全不依赖相对光标位置，
- * 任何外部 stdout/stderr 输出都不会导致行号偏移。
+ * 使用 alternate screen buffer：每次清屏 -> 输出 header -> 输出进度行。
+ * 终端滚动、窗口调整均不影响缓冲区，不会产生"循环重建"。
  */
 function redrawAllLines(spinFrame) {
-  if (!isTTY || pageListOrdered.length === 0) return;
-  const n = pageListOrdered.length;
-  let out = `\x1b[${n}A`; // 上移到进度区域第一行
+  if (!isTTY || pageListOrdered.length === 0 || redrawStop) return;
+  let out = SCREEN_HOME + CLEAR_SCREEN;
+  // 重新输出 header（标题等前置文本）
+  if (progressHeaderLines.length > 0) {
+    out += progressHeaderLines.join('\n') + '\n';
+  }
+  // 输出进度行
   pageListOrdered.forEach((page) => {
     const { percent, status } = progressMap[page];
-    out += '\r\x1b[2K' + buildPageLine(page, percent, status, spinFrame) + '\n';
+    out += buildPageLine(page, percent, status, spinFrame) + '\n';
   });
   process.stdout.write(out);
 }
@@ -300,7 +315,7 @@ getPages().then(({ pages, otherParams }) => {
   }
 
   const pageList = pages.split(',');
-  console.log(chalk.bold(`\n🚀 并行打包 ${chalk.cyan(pageList.length)} 个应用：${chalk.cyan(pageList.join('、'))}\n`));
+  const headerText = chalk.bold(`\n🚀 并行打包 ${chalk.cyan(pageList.length)} 个应用：${chalk.cyan(pageList.join('、'))}\n`);
 
   // 初始化进度数据，赋值有序列表供整块重绘使用
   pageListOrdered = pageList;
@@ -308,45 +323,69 @@ getPages().then(({ pages, otherParams }) => {
     progressMap[page] = { percent: 0, status: 'building' };
   });
 
-  // 从 otherParams 中解析 concurrency=N，默认并发数为 2，避免多进程同时启动导致内存溢出
+  // 从 otherParams 中解析 concurrency=N，默认并发数为 1，避免多进程同时启动导致内存溢出
   const concurrencyMatch = otherParamsStr.match(/concurrency=(\d+)/);
   const concurrency = concurrencyMatch ? Math.max(1, parseInt(concurrencyMatch[1], 10)) : 1;
-  if (concurrency < pageList.length) {
-    console.log(chalk.gray(`  并发限制: ${concurrency}（其余页面排队等待，可通过 concurrency=N 调整）`));
+  const concurrencyText = concurrency < pageList.length
+    ? `\n  并发限制: ${concurrency}（其余页面排队等待，可通过 concurrency=N 调整）`
+    : '';
+
+  if (!isTTY) {
+    // 非 TTY 模式：正常输出到终端
+    console.log(headerText);
+    if (concurrencyText) console.log(chalk.gray(concurrencyText));
+  } else {
+    // TTY 模式：进入 alternate screen buffer，隔离进度显示
+    // 在正常缓冲区的最后输出 header，供用户参考
+    console.log(headerText);
+    if (concurrencyText) console.log(chalk.gray(concurrencyText));
+    // 进入 alternate screen buffer
+    process.stdout.write(ALTERNATE_SCREEN_ENTER);
+
+    // 保存 header 用于每次重画（除去首尾空行）
+    progressHeaderLines = [headerText.trim(), concurrencyText ? chalk.gray(concurrencyText).trim() : ''].filter(Boolean);
   }
 
-  // TTY：打印初始占位行（每应用一行），后续用整块重绘覆写，不依赖相对光标偏移
   const spinFrameRef = { frame: 0 };
   if (isTTY) {
-    pageList.forEach((page) => {
-      process.stdout.write(buildPageLine(page, 0, 'building', 0) + '\n');
-    });
-    // 定时器驱动 spinner + 整块重绘，保证进度条始终在正确位置
-    setInterval(() => {
+    // 首次重绘（清屏 + header + 进度行），后续由定时器驱动
+    redrawAllLines(0);
+    redrawTimer = setInterval(() => {
       spinFrameRef.frame++;
       redrawAllLines(spinFrameRef.frame);
-    }, 100).unref();
+    }, 100);
   }
 
   const startTime = Date.now();
 
   runWithConcurrency(pageList, concurrency, (page) => buildPage(page, otherParamsStr, spinFrameRef))
     .then((done) => {
+      redrawStop = true;
+      if (redrawTimer) clearInterval(redrawTimer);
+      if (isTTY) redrawAllLines(spinFrameRef.frame);
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      // 退出 alternate screen buffer 回到正常缓冲区
+      if (isTTY) process.stdout.write(ALTERNATE_SCREEN_EXIT);
+      // 在正常缓冲区输出结果
       // 输出缓存的错误/警告信息
       if (pendingStderr.length > 0) {
-        process.stderr.write(pendingStderr.join('\n') + '\n');
+        console.error(pendingStderr.join('\n'));
       }
       console.log(chalk.green(chalk.bold(`\n✅ 全部完成，耗时 ${elapsed}s\n`)));
       cleanLegacyDistDirs();
       getDist(done);
     })
     .catch((err) => {
+      redrawStop = true;
+      if (redrawTimer) clearInterval(redrawTimer);
+      if (isTTY) redrawAllLines(spinFrameRef.frame);
+      // 退出 alternate screen buffer 回到正常缓冲区
+      if (isTTY) process.stdout.write(ALTERNATE_SCREEN_EXIT);
       if (pendingStderr.length > 0) {
-        process.stderr.write(pendingStderr.join('\n') + '\n');
+        console.error(pendingStderr.join('\n'));
       }
       console.error(chalk.red(`\n❌ ${err.message}`));
       process.exit(1);
     });
-})
+});
 

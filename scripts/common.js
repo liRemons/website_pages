@@ -211,11 +211,12 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
   const externals_js = []
   const externals_css = []
   const externalsValues = []
-  for (let [key, value] of compilation._modules.entries()) {
-    if (key.includes('external')) {
-      externalsValues.push(value.userRequest)
-    }
-  }
+  // Skip _modules iteration to avoid webpack cache path issues
+  // for (let [key, value] of compilation._modules.entries()) {
+  //   if (key.includes('external')) {
+  //     externalsValues.push(value.userRequest)
+  //   }
+  // }
 
   js.forEach((item) => {
     externalsValues.forEach((val) => {
@@ -231,6 +232,36 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
       }
     })
   })
+  // Get script/link HTML from assetTags and collect file paths
+  let bodyScripts = '';
+  const chunks_js = [];
+  const chunks_css = [];
+
+  if (assetTags.bodyScripts && Array.isArray(assetTags.bodyScripts)) {
+    bodyScripts = assetTags.bodyScripts.map(item => {
+      if (typeof item === 'string') return item;
+      if (typeof item.tag === 'string') return item.tag;
+      if (item.attributes && item.attributes.src) {
+        chunks_js.push(item.attributes.src);
+        return `<script src="${item.attributes.src}"></script>`;
+      }
+      return '';
+    }).join('\n');
+  }
+  
+  let headCSS = '';
+  if (assetTags.headTags && Array.isArray(assetTags.headTags)) {
+    headCSS = assetTags.headTags.map(item => {
+      if (typeof item === 'string') return item;
+      if (typeof item.tag === 'string') return item.tag;
+      if (item.attributes && item.attributes.rel === 'stylesheet') {
+        chunks_css.push(item.attributes.href);
+        return `<link rel="stylesheet" href="${item.attributes.href}"/>`;
+      }
+      return '';
+    }).join('\n');
+  }
+  
   if (isEnvProduction) {
     // 使用 stderr 输出，避免污染主进程 stdout 的光标位置（进度条 UI 依赖 stdout 行数）
     process.stderr.write(`  [${pageInfo.pageName}] cdn/js: ${[...new Set(externals_js)].join(', ')}\n`)
@@ -243,6 +274,15 @@ const templateParameters = ({ compilation, assets, assetTags, options, pageInfo,
     keywords: pageInfo.keywords || pageInfo.title || '',
     externals_js: [...new Set(externals_js)],
     externals_css: [...new Set(externals_css)],
+    chunks_js,
+    chunks_css,
+    htmlWebpackPlugin: {
+      tags: {
+        bodyTags: bodyScripts,
+        headTags: headCSS,
+      },
+    },
+    pageName: pageInfo.pageName || '',
   }
 }
 

@@ -14,6 +14,7 @@ const packageJSON = require('./package.json')
 const { setExternals, templateParameters } = require('./scripts/common')
 const SpeedMeasurewebpackplugin = require('speed-measure-webpack-plugin')
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
+const InjectEntryLoaderPlugin = require('./scripts/inject-entry-loader')
 const smp = new SpeedMeasurewebpackplugin()
 
 /**
@@ -102,6 +103,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
           filename: `${pageName}/index.html`,
           chunks: [pageName],
           template: path.resolve(__dirname, 'src/index.ejs'),
+          inject: false,  // 不自动注入 script/link，由 index.js 动态加载
           // @ts-ignore — TS infers untyped callback params as 'any', can't match overload
           scriptLoading: 'defer',
           // @ts-ignore — callback params need Compilation/assets types not available in .js
@@ -117,6 +119,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
         })
       }),
       new AntdDayjsWebpackPlugin(),
+      new InjectEntryLoaderPlugin(),  // 为每个页面生成 index.js 入口文件
       new DefinePlugin({
         APP_NAME: JSON.stringify(`@${packageJSON.name}`),
       }),

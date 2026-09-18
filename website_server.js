@@ -153,8 +153,9 @@ app.use(express.static("dist", {
   maxAge: 0,
   setHeaders: (res, filePath) => {
     const ext = path.extname(filePath);
-    if (ext === '.html') {
-      // HTML 不缓存，每次都去服务器拿最新版本
+    const basename = path.basename(filePath);
+    if (ext === '.html' || basename === 'index.js') {
+      // HTML 和页面入口 index.js 不缓存，每次都去服务器拿最新版本
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     } else if (['.js', '.css', '.woff', '.woff2', '.ttf', '.svg', '.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
       // 带 hash 的静态资源，缓存 1 年

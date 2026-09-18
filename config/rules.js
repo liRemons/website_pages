@@ -112,8 +112,9 @@ const rules = ({ isEnvDevelopment }) => {
         // ---- SVG（替代 file-loader，保留 svgo 压缩）----
         {
           test: /\.svg$/,
+          include: path.resolve(__dirname, '../src'),
           type: 'asset/resource',
-          generator: { filename: getOutputPath },
+          generator: { filename: 'static/assets/images/[name].[contenthash:10][ext]' },
           use: [
             {
               loader: 'svgo-loader',

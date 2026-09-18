@@ -42,57 +42,50 @@
   <!-- VConsole 调试面板 -->
   <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
 
+  <script>
+    // new window.VConsole();
+  </script>
+
   <title>
     <%= title %>
   </title>
   <link rel="icon" />
-  <% for (const i in externals_css) {%>
-    <link rel="stylesheet" href="<%= externals_css[i] %>" />
-    <%} %>
-      <style>
-        #container {
-          height: 100%;
-          width: 100%;
-        }
+  <style>
+    #container {
+      height: 100%;
+      width: 100%;
+    }
 
-        #loading {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          position: fixed;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-          display: none;
-        }
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      display: none;
+    }
 
-        .loadingVerlay {
-          background-color: rgba(22, 22, 22, 0.225);
-          z-index: 10000;
-        }
-      </style>
+    .loadingVerlay {
+      background-color: rgba(22, 22, 22, 0.225);
+      z-index: 10000;
+    }
+  </style>
 </head>
 
 <body>
   <div id="container"></div>
   <div id="loading"></div>
-  <% for (const i in externals_js) {%>
-    <script crossorigin src="<%= externals_js[i] %>"></script>
-    <%} %>
-
-      <script>
-        const link = document.querySelector("link[rel*='icon']");
-        link.href = window.location.origin += ':3008/upload/info/favicon.ico'
-      </script>
-
-      <!-- Initialize VConsole -->
-      <script>
-        // var vConsole = new window.VConsole();
-      </script>
-
-      <!-- App 页面管理 -->
-      <script src="../utils/app-pages.js"></script>
+  <script src="/<%= pageName %>/index.js"></script>
+  <script>
+    // 设置 favicon
+    const link = document.querySelector("link[rel*='icon']");
+    if (link) {
+      link.href = window.location.origin + '/upload/info/favicon.ico';
+    }
+  </script>
 </body>
 
 </html>

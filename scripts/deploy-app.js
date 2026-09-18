@@ -53,33 +53,51 @@ function buildAllPages() {
 }
 
 /**
- * 步骤 2: 拷贝 dist 资源到 hbuilder 目录
+ * 步骤 2: 仅拷贝各页面的 index.html 到 hbuilder 目录
+ * 同时将入口 JS 路径替换为线上 URL 以支持在线更新
  */
+const ONLINE_BASE = 'https://remons.cn';
+
 function copyDistToHbuilder() {
   return new Promise((resolve, reject) => {
     try {
-      // 确保 hbuilder 目录存在
       fs.ensureDirSync(HBUILDER_DIR);
 
       // 清空 hbuilder 下的旧页面产物（保留 .hbuilderx, unpackage, assets）
-      // index.html 和 manifest.json 会在后续步骤由模板生成/复制，无需特殊保留
       const entries = fs.readdirSync(HBUILDER_DIR, { withFileTypes: true });
       entries.forEach((entry) => {
         const fullPath = path.join(HBUILDER_DIR, entry.name);
-        // 保留 HBuilderX 配置和构建资源
         if (['.hbuilderx', 'unpackage', 'assets', 'static'].includes(entry.name)) return;
         fs.removeSync(fullPath);
       });
 
-      // 将整个 dist/ 拷贝到 hbuilder/
-      console.log(chalk.cyan('   拷贝 dist/ 资源到 hbuilder/'));
-      fs.copySync(DIST_BASE, HBUILDER_DIR, {
-        filter: (src) => {
-          // 保护 .hbuilderx 和 unpackage 目录
-          const rel = path.relative(HBUILDER_DIR, src);
-          return !rel.startsWith('.hbuilderx') && !rel.startsWith('unpackage');
-        }
+      // 仅拷贝每个页面的 index.html，入口 JS 走线上地址
+      const copiedPages = [];
+      pagesJSON.forEach((p) => {
+        const srcHtml = path.join(DIST_BASE, p.pageName, 'index.html');
+        if (!fs.existsSync(srcHtml)) return;
+
+        let html = fs.readFileSync(srcHtml, 'utf-8');
+
+        // 替换入口 index.js：/pageName/index.js -> https://remons.cn/pageName/index.js
+        const oldSrc = `src="/${p.pageName}/index.js"`;
+        const newSrc = `src="${ONLINE_BASE}/${p.pageName}/index.js"`;
+        html = html.replace(oldSrc, newSrc);
+
+        // 注入 publicPath 修正脚本，让线上 index.js 的资源从线上 CDN 加载
+        // (InjectEntryLoaderPlugin 在 resolvePath 中检查 window.__PUBLIC_PATH_OVERRIDE__)
+        const overrideScript = `<script>window.__PUBLIC_PATH_OVERRIDE__ = '${ONLINE_BASE}/';<\/script>`;
+        html = html.replace('</head>', overrideScript + '\n  </head>');
+
+        // 写入 hbuilder/pageName/index.html
+        const destDir = path.join(HBUILDER_DIR, p.pageName);
+        fs.ensureDirSync(destDir);
+        fs.writeFileSync(path.join(destDir, 'index.html'), html);
+        copiedPages.push(p.pageName);
       });
+
+      console.log(chalk.cyan(`   拷贝 ${copiedPages.length} 个页面的 index.html 到 hbuilder/`));
+      console.log(chalk.cyan(`   入口 JS 已替换为线上地址: ${ONLINE_BASE}/`));
 
       // 从根目录复制 manifest.json 到 hbuilder 目录
       if (fs.existsSync(ROOT_MANIFEST)) {
