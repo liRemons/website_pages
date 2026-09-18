@@ -58,6 +58,9 @@ function buildAllPages() {
 function copyDistToHbuilder() {
   return new Promise((resolve, reject) => {
     try {
+      // 确保 hbuilder 目录存在
+      fs.ensureDirSync(HBUILDER_DIR);
+
       // 清空 hbuilder 下的旧页面产物（保留 .hbuilderx, unpackage, assets）
       // index.html 和 manifest.json 会在后续步骤由模板生成/复制，无需特殊保留
       const entries = fs.readdirSync(HBUILDER_DIR, { withFileTypes: true });

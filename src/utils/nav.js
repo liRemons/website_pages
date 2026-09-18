@@ -25,7 +25,7 @@ export const resolvePageURL = (url, params) => {
 };
 
 /** App 环境感知的页面跳转（替代 methods-r 的 openApp） */
-export const openApp = ({ url, params }) => {
+export const openApp = ({ url, params = {} }) => {
   if (!url) {
     console.error('url 错误');
     return;

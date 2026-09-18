@@ -13,7 +13,7 @@ import ThemeToggle from "../ThemeToggle";
 
 export default function Fixed({
   homeUrl = "/homeList",
-  handleContent,
+  handleContent = '',
   position = "right",
   actions,
   propsVisible,

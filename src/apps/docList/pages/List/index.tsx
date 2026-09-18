@@ -7,7 +7,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react-lite';
 import Empty from '@components/Empty';
 import Header from '@components/Header';
-import handleContent from '../../handle.md';
 import Fixed from '@components/Fixed';
 import store from '../../model/store';
 import classnames from 'classnames';
@@ -15,7 +14,7 @@ import '@assets/css/index.global.less';
 import style from './index.module.less';
 import Markdown from '../Markdown';
 import { Drawer } from 'antd';
-import { getSearchParams, IsPC, debounce } from 'methods-r';
+import { getSearchParams, IsPC } from 'methods-r';
 import { isApp, openApp } from '@utils/nav';
 import copyContent from './hooks/copyContent';
 import printPage from './hooks/printPage';
@@ -23,16 +22,7 @@ import ActionButtons from './components/ActionButtons';
 import MobileMenu from './components/MobileMenu';
 import CollapseToggle from './components/CollapseToggle';
 import PageList from './components/PageList';
-import { AnchorItem, DrawerType } from './types';
-
-/** 递归过滤锚点目录，保留标题包含搜索关键词的节点 */
-const deepAnchor = (data: AnchorItem[], searchTitle: string): AnchorItem[] => {
-  return data.filter(item => {
-    if (item.title.toLocaleLowerCase().includes(searchTitle.toLocaleLowerCase())) return true;
-    item.children = deepAnchor(item.children, searchTitle);
-    return item.children.length > 0;
-  });
-};
+import { DrawerType } from './types';
 
 /** 抽屉面板标题映射 */
 const drawerTitleMap: Record<DrawerType, string> = {
@@ -47,8 +37,6 @@ export default function List() {
   const [params, setParams] = useState<Record<string, string>>({});
   // 当前选中的文章 ID
   const [activeId, setActiveId] = useState('');
-  // 锚点目录数据（用于搜索过滤）
-  const [anchor, setAnchor] = useState<AnchorItem[]>([]);
   // 移动端 Drawer 显示状态
   const [drawerVisible, setDrawerVisible] = useState(false);
   // 移动端 Drawer 面板类型：'list' 文章列表
@@ -141,17 +129,6 @@ export default function List() {
     localStore.getMarkdown(id);
   };
 
-  /** 搜索锚点目录，空关键词时恢复完整目录（debounce 保持稳定引用） */
-  const onSearch = useCallback(
-    debounce((searchTitle: string) => {
-      if (!searchTitle) {
-        setAnchor(JSON.parse(JSON.stringify(localStore.anchor)));
-      } else {
-        setAnchor(deepAnchor(JSON.parse(JSON.stringify(localStore.anchor)), searchTitle));
-      }
-    }),
-    []
-  );
 
   /** 切换 mermaid 折叠状态并刷新页面 */
   const toggleMermaidCollapsed = () => {
@@ -206,7 +183,7 @@ export default function List() {
 
   return useObserver(() => <div className={style.container}>
     {/* 顶部导航栏 */}
-    <Header showLeft={!isShareMode} showRight={false} leftPath='/note' name={fullTitle} handleContent={handleContent} />
+    <Header showLeft={!isShareMode || isApp()} showRight={false} leftPath='/note' name={fullTitle} />
     {/* PC 端文章列表收起/展开按钮（className 切换实现箭头方向动画） */}
     {showCollapseToggle && <CollapseToggle listCollapsed={listCollapsed} onToggle={toggleListCollapse} styles={style} />}
     <div className={style.main}>
@@ -234,12 +211,12 @@ export default function List() {
       <div className={classnames(style.page_main, 'shadow_not_active', 'markdown_screen')}>
         <div className={classnames(style.markdown_main, 'markdown-main-content')}>
           {/* Markdown 内容区域 */}
-          {hasContent ? <Markdown id={activeId} setAnchor={setAnchor} defaultCollapsed={mermaidCollapsed} isShareMode={isShareMode} /> : <Empty />}
+          {hasContent ? <Markdown id={activeId} defaultCollapsed={mermaidCollapsed} isShareMode={isShareMode} /> : <Empty />}
         </div>
       </div>
     </div>
     {/* 右下角固定按钮 */}
-    <Fixed propsVisible handleContent={handleContent} actions={null} />
+    <Fixed propsVisible actions={null} />
     {/* 移动端 Drawer 抽屉 */}
     <Drawer open={drawerVisible} styles={{ wrapper: { padding: 0 } }} width='80%' closable={false} title={isMobile ? drawerTitleMap[drawerType] : null} placement='left' onClose={() => setDrawerVisible(false)}>
       <div className={classnames(style.main)}>

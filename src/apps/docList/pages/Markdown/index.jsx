@@ -27,7 +27,6 @@ export default function Markdown(props) {
   useEffect(() => {
     try {
       // 设置锚点
-      props.setAnchor(JSON.parse(JSON.stringify(localStore.anchor)))
       if (JSON.parse(JSON.stringify(localStore.anchor)).length && window.location.hash) {
         setTimeout(() => {
           const a = document.createElement('a');
