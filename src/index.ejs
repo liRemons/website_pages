@@ -30,6 +30,7 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="<%= title %>" />
   <meta name="twitter:description" content="<%= description %>" />
+  <link rel="icon" href="https://remons.cn:3008/upload/info/favicon.ico" />
   <script>
     var _hmt = _hmt || [];
     (function () {
@@ -44,7 +45,7 @@
   <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
 
   <script>
-    new window.VConsole();
+    // new window.VConsole();
   </script>
 
   <title>
@@ -80,13 +81,6 @@
   <div id="container"></div>
   <div id="loading"></div>
   <script src="/<%= pageName %>/index.js"></script>
-  <script>
-    // 设置 favicon
-    const link = document.querySelector("link[rel*='icon']");
-    if (link) {
-      link.href = window.location.origin + '/upload/info/favicon.ico';
-    }
-  </script>
 </body>
 
 </html>
