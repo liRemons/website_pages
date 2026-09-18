@@ -34,8 +34,10 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
     const jsPath = path.resolve(srcPagesDir, el, 'main.jsx')
     entry[el] = fs.existsSync(tsxPath) ? tsxPath : jsPath
   })
+
+  
   // App 打包使用相对路径，H5 使用绝对路径
-  const publicPath = otherParams.pagePublicPath || '/';
+  const publicPath = otherParams.pagePublicPath || 'https://remons.cn/';
   const config = {
     entry,
     mode,

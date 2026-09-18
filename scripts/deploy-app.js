@@ -26,11 +26,12 @@ function buildAllPages() {
     // 参数分隔符必须用 ,（与 webpack.config.js 的 split(',') 一致）
     // 注意：产物文件名规则是 [name]/js/xxx.js，已带页面目录前缀；
     // 而 index.html 就在页面目录内（docList/index.html），引用需再上一级，
+    const pagePublicPath = 'https://remons.cn/'
     // 所以 publicPath 必须是 ../（写成 ./ 会解析成 docList/docList/... 导致 404 白屏）
-    const otherParams = 'pagePublicPath=../,br=false,gzip=false';
+    const otherParams = `pagePublicPath=${pagePublicPath},br=false,gzip=false`;
 
     console.log(chalk.bold(`\n📱 开始 App 打包（页面数: ${pagesJSON.length}）\n`));
-    console.log(chalk.cyan(`   publicPath: ../ （相对路径）`));
+    console.log(chalk.cyan(`   publicPath: ${pagePublicPath} （相对路径）`));
     console.log(chalk.cyan(`   brotli: 关闭`));
     console.log(chalk.cyan(`   gzip: 关闭\n`));
 
