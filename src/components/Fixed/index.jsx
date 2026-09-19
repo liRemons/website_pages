@@ -27,10 +27,15 @@ export default function Fixed({
     };
     const newParams = new URLSearchParams(params);
     let origin = location.origin;
+    let pathname = location.pathname;
     if (origin.startsWith("file://")) {
       origin = "https://remons.cn";
+      const firstSegment = pathname.split("/").filter(Boolean)[0];
+      if (firstSegment) {
+        pathname = `/${firstSegment}`;
+      }
     }
-    copy(`${origin}${location.pathname}?${newParams.toString()}`);
+    copy(`${origin}${pathname}?${newParams.toString()}`);
     message.success("复制当前页面链接成功");
   };
 
