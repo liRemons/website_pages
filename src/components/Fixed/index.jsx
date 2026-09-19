@@ -26,7 +26,11 @@ export default function Fixed({
       handleType: "share",
     };
     const newParams = new URLSearchParams(params);
-    copy(`${location.origin}${location.pathname}?${newParams.toString()}`);
+    let origin = location.origin;
+    if (origin.startsWith("file://")) {
+      origin = "https://remons.cn";
+    }
+    copy(`${origin}${location.pathname}?${newParams.toString()}`);
     message.success("复制当前页面链接成功");
   };
 

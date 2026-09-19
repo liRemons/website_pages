@@ -88,7 +88,9 @@ function copyDistToHbuilder() {
         // 注入 publicPath 修正脚本，让线上 index.js 的资源从线上 CDN 加载
         // (InjectEntryLoaderPlugin 在 resolvePath 中检查 window.__PUBLIC_PATH_OVERRIDE__)
         const overrideScript = `<script>window.__PUBLIC_PATH_OVERRIDE__ = '${ONLINE_BASE}/';<\/script>`;
-        html = html.replace('</head>', overrideScript + '\n  </head>');
+        // 注入 app-pages.js（App 模式下页面路由信息）
+        const appPagesScript = `<script src="../utils/app-pages.js"><\/script>`;
+        html = html.replace('</head>', overrideScript + '\n  ' + appPagesScript + '\n  </head>');
 
         // 写入 hbuilder/pageName/index.html
         const destDir = path.join(HBUILDER_DIR, p.pageName);
