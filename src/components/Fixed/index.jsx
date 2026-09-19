@@ -30,9 +30,10 @@ export default function Fixed({
     let pathname = location.pathname;
     if (origin.startsWith("file://")) {
       origin = "https://remons.cn";
-      const firstSegment = pathname.split("/").filter(Boolean)[0];
-      if (firstSegment) {
-        pathname = `/${firstSegment}`;
+      const segments = pathname.split("/").filter(Boolean);
+      const pageName = segments[segments.length - 2];
+      if (pageName) {
+        pathname = `/${pageName}`;
       }
     }
     copy(`${origin}${pathname}?${newParams.toString()}`);
