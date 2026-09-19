@@ -117,6 +117,9 @@ export default function List() {
     const { id } = data;
     if (id === activeId) return;
     const newParams = new URLSearchParams({ ...getSearchParams(), pageId: id });
+    setActiveId(id);
+    setDrawerVisible(false);
+    localStore.getMarkdown(id);
     // App（file://）环境下 pushState 绝对路径会被解析为 file:///docList?... 触发加载错误，直接跳过
     if (!isApp()) {
       const pageURL = newParams.toString() ? `/docList?${newParams.toString()}` : `/docList`;
@@ -124,9 +127,6 @@ export default function List() {
     } else {
       openApp({ url: '/docList', params: { ...getSearchParams(), pageId: id } });
     }
-    setActiveId(id);
-    setDrawerVisible(false);
-    localStore.getMarkdown(id);
   };
 
 
