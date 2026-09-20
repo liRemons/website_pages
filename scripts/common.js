@@ -4,7 +4,6 @@ const fs = require('fs')
 const log4js = require('log4js')
 const chalk = require('./chalk')
 const { logCongfig } = require('./log')
-const pakeageJSON = require('../package.json');
 const { js, css } = require('../config/cdn')
 log4js.configure(logCongfig)
 

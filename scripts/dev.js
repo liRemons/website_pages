@@ -5,6 +5,7 @@ const WEBPACK_BIN = process.platform === 'win32'
   ? path.resolve(__dirname, '../node_modules/.bin/webpack.cmd')
   : path.resolve(__dirname, '../node_modules/.bin/webpack');
 getPages().then(({ pages, otherParams }) => {
+  otherParams.push('pagePublicPath=/')
   const command = `"${WEBPACK_BIN}" serve --mode=development --env pages=${pages} otherParams=${otherParams}`;
   execSync(command, { stdio: "inherit", shell: true });
 });

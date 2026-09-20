@@ -46,19 +46,19 @@
 
     // 创建或获取页面 webview并显示
     window.openPage = (pageName, params, slidePosition) => {
+        let suffix = '';
+        if (params) {
+            const search = new URLSearchParams(params);
+            suffix = search.toString();
+        }
         if (!isApp()) {
-            window.location.href = `../${pageName}/index.html`;
+            window.location.href = `../${pageName}/index.html?${suffix}`;
             return;
         }
 
         // 查找是否已存在该 webview
         let newUrl = `/${pageName}/index.html`;
-        if (params) {
-            const search = new URLSearchParams(params);
-            const suffix = search.toString();
-            if (suffix) newUrl += `?${suffix}`;
-        }
-
+        if (suffix) newUrl += `?${suffix}`;
         // 检查是否是当前页面
         const current = plus.webview.currentWebview();
         if (current && current.getURL() && current.getURL().indexOf(`${pageName}/`) !== -1) {
@@ -88,8 +88,7 @@
             { top: '0px', bottom: '0px', width: '100%', height: '100%' },
             { render: 'async' }
         );
-        const slidePosition = `slide-in-${slidePosition || 'right'}`;
-        w.show(slidePosition, 300);
+        w.show(`slide-in-${slidePosition || 'right'}`, 300);
         window.saveCurrentPage(pageName, params);
     };
 

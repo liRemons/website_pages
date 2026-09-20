@@ -10,7 +10,6 @@ const path = require('path')
 const fs = require('fs')
 const rules = require('./config/rules')
 const pagesJSON = require('./scripts/pages.json')
-const packageJSON = require('./package.json')
 const { setExternals, templateParameters } = require('./scripts/common')
 const SpeedMeasurewebpackplugin = require('speed-measure-webpack-plugin')
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
@@ -122,9 +121,6 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       }),
       new AntdDayjsWebpackPlugin(),
       new InjectEntryLoaderPlugin(),  // 为每个页面生成 index.js 入口文件
-      new DefinePlugin({
-        APP_NAME: JSON.stringify(`@${packageJSON.name}`),
-      }),
       // 压缩 CSS
       isEnvProduction ? new CssMinimizerPlugin() : null,
       // BundleAnalyzer 仅在 report=true 时才注入，避免每次构建都有开销
@@ -166,7 +162,7 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
       compress: true,
       host: 'local-ip',
       allowedHosts: 'auto',
-      open: [`/@${packageJSON.name}/${pages[0]}`],
+      open: [`/${pages[0]}`],
       hot: true,
       server: 'https',
       client: {

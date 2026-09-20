@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const { getPages, getDist } = require('./common');
 const chalk = require('./chalk');
-const pakeageJSON = require('../package.json');
 
 // Windows 下 .bin/ 下的符号链接无法直接执行，需使用 .cmd 后缀
 const WEBPACK_BIN = process.platform === 'win32'
@@ -79,7 +78,7 @@ function redrawAllLines(spinFrame) {
 
 // ─── dist 目录路径工具 ─────────────────────────────────────────────────────────
 
-const DIST_BASE = path.resolve(__dirname, `../dist/@${pakeageJSON.name}`);
+const DIST_BASE = path.resolve(__dirname, `../dist`);
 
 function pageDistDir(page) {
   return path.join(DIST_BASE, page);

@@ -3,8 +3,6 @@ const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("./chalk");
 const pagesJSON = require("./pages.json");
-const packageJSON = require("../package.json");
-
 const DIST_BASE = path.resolve(__dirname, '../dist');
 const HBUILDER_DIR = path.resolve(__dirname, '../hbuilder');
 const SRC_DIR = path.resolve(__dirname, '../src');
