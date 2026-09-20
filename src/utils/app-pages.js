@@ -45,7 +45,7 @@
     };
 
     // 创建或获取页面 webview并显示
-    window.openPage = (pageName, params) => {
+    window.openPage = (pageName, params, slidePosition) => {
         if (!isApp()) {
             window.location.href = `../${pageName}/index.html`;
             return;
@@ -88,7 +88,8 @@
             { top: '0px', bottom: '0px', width: '100%', height: '100%' },
             { render: 'async' }
         );
-        w.show('slide-in-right', 300);
+        const slidePosition = `slide-in-${slidePosition || 'right'}`;
+        w.show(slidePosition, 300);
         window.saveCurrentPage(pageName, params);
     };
 
@@ -152,7 +153,7 @@
         document.addEventListener('click', (e) => {
             let target = e.target;
             while (target && target !== document) {
-                if (target.tagName === 'A') {
+                if (target.tagName === 'A' && target.href && !target.hash.startsWith('#') && !target.className.includes('tocLink')) {
                     const url = target.href;
                     const urlObj = new URL(url);
                     const params = Object.fromEntries(urlObj.searchParams.entries());

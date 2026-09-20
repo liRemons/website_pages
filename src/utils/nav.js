@@ -25,7 +25,7 @@ export const resolvePageURL = (url, params) => {
 };
 
 /** App 环境感知的页面跳转（替代 methods-r 的 openApp） */
-export const openApp = ({ url, params = {} }) => {
+export const openApp = ({ url, params = {}, slidePosition = 'right' }) => {
   if (!url) {
     console.error('url 错误');
     return;
@@ -35,7 +35,7 @@ export const openApp = ({ url, params = {} }) => {
     const name = pathPart.replace(/^\/+|\/+$/g, '');
     // 调用 index-app.html 中定义的 openPage，支持动画和页面栈管理
     if (window.openPage) {
-      window.openPage(name, params);
+      window.openPage(name, params, slidePosition);
     } else {
       // 兜底方案
       window.location.href = resolvePageURL(url, params);

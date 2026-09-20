@@ -9,7 +9,7 @@ export default function Header(props) {
   const { name, showLeft = true, showRight = true, leftPath, handleContent } = props;
 
   const leftComponent = props.leftComponent || (
-    <div className="circle" onClick={() => openApp({ url: leftPath || '/homeList' })}>
+    <div className="circle" onClick={() => openApp({ url: leftPath || '/homeList', slidePosition: 'left' })}>
       {img(backSvg, 20)}
     </div>
   );
