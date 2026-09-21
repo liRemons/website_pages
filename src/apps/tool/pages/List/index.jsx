@@ -36,7 +36,7 @@ pagesJson.forEach(item => {
 
 export default function ListPage() {
   const list = [
-    { title: 'AI 聊天工具', icon: img(aiChatSvg), hot: true, url: 'https://aichat.remons.cn', isShow: !isLuckeyWork },
+    // { title: 'AI 聊天工具', icon: img(aiChatSvg), hot: true, url: 'https://aichat.remons.cn', isShow: !isLuckeyWork },
     // { title: '文档', icon: img(docSvg), appName: 'tool', params: { page: 'doc' } },
     { title: '富文本编辑器', icon: img(editorSvg), appName: 'wangEditor' },
     { title: 'markdown 编辑查看器', icon: img(markdownSvg), appName: 'reMark' },

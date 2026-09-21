@@ -45,6 +45,8 @@ export default function Markdown(props) {
           // 1. 创建 .circle 元素
           const circle = document.createElement('div');
           circle.className = 'circle';
+          // 标记为 JS 动态插入节点：useIncrementalRender 增量渲染 diff 时不移除（见 render-markdown MD_PERSIST_ATTR）
+          circle.setAttribute('data-md-persist', 'true');
 
           // 2. 插入到 container 中
           container.appendChild(circle);

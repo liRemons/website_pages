@@ -69,7 +69,6 @@
     "lodash.sortby": "^4.7.0",
     "lrz": "^4.9.41",
     "markdown-it": "^15.0.1",
-    "markdown-it-container": "^4.0.0",
     "methods-r": "^1.2.14",
     "mobx": "^6.13.6",
     "mobx-react": "^9.2.0",
@@ -79,8 +78,8 @@
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",
     "remons-components": "^2.0.8",
-    "remons-markdown-editor": "^1.0.0-beta.14",
-    "remons-markdown-plugins": "^1.0.0-beta.6",
-    "remons-render-markdown": "^1.0.28-beta.6"
+    "remons-markdown-editor": "^1.0.0-beta.15",
+    "remons-markdown-plugins": "^1.0.0-beta.7",
+    "remons-render-markdown": "^1.0.28-beta.7"
   }
 }
