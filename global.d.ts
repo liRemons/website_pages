@@ -16,7 +16,6 @@ declare module '*.md' {
 
 declare module 'methods-r';
 declare module 'lodash.clonedeep';
-declare module 'remons-render-markdown';
 declare module 'highlight.js/lib/languages/*';
 
 // Webpack DefinePlugin 注入的全局变量
