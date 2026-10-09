@@ -15,8 +15,8 @@ export default function Fixed({
   homeUrl = "/homeList",
   handleContent = '',
   position = "right",
-  actions,
-  propsVisible,
+  actions = null,
+  propsVisible = false,
 }) {
   const [visible, setVisible] = useState(propsVisible || false);
 

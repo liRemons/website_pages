@@ -1,0 +1,345 @@
+@import (reference) '../../../../assets/css/variables.css';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  background: var(--color-bg);
+}
+
+.collapse_toggle {
+  position: fixed;
+  top: calc(100vh - 38px);
+  left: 10px;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.expand_toggle {}
+
+  &.collapse_toggle {}
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  position: relative;
+  height: calc(100% - 12px);
+
+  .h5_menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 0 10px;
+    z-index: 12;
+    bottom: 20px;
+    transition: all 0.5s;
+
+    span {
+      margin-bottom: 10px;
+    }
+
+    :global(.circle) {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+    }
+  }
+
+  .menuLeftNone {
+    left: 0;
+  }
+
+  .menuLeft {
+    left: -65px;
+  }
+
+  .toRightIcon {
+    transition: all 0.5s 0.3s;
+    margin-left: 38px;
+    text-align: right;
+  }
+
+  .page_list,
+  .page_main {
+    height: 100%;
+    padding: 10px 0;
+    overflow: hidden;
+    border-radius: var(--radius-base) !important;
+  }
+
+  .page_main {
+    padding: 0;
+    height: calc(100% - 2px);
+    position: relative;
+    flex: 1;
+    background-color: var(--color-bg, #ebecf0);
+
+    .markdown_main {
+      position: relative;
+      overflow-y: auto;
+      height: 100%;
+    }
+  }
+
+  .actionButtons {
+    position: fixed;
+    top: 10px;
+    right: 15px;
+    z-index: 10;
+    opacity: .6;
+    overflow: visible;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .page_list {
+    width: 20%;
+    height: calc(100% - 22px);
+    margin-right: 6px;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+
+    &.page_list_visible {
+      width: 20%;
+      opacity: 1;
+    }
+
+    &.page_list_collapsed {
+      width: 0;
+      margin-right: 0;
+      opacity: 0;
+    }
+
+    .page_list_main {
+      height: 100%;
+      overflow: auto;
+    }
+
+    .page_list_title {
+      font-family: Inter, "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 12px;
+      line-height: 16px;
+      padding: 2px 6px;
+      margin: 4px;
+      color: var(--color-text-primary, #333);
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: var(--radius-sm) !important;
+
+      &:hover {
+        color: var(--color-active, #75bcff);
+        box-shadow: var(--shadow-inset);
+      }
+
+      &:active {
+        box-shadow: var(--shadow-inset) !important;
+      }
+    }
+
+    .active {
+      color: var(--color-active, #75bcff);
+      box-shadow: var(--shadow-inset) !important;
+    }
+  }
+}
+
+.project_main {
+  overflow-y: auto;
+  padding: 12px;
+
+  .project_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .project_card {
+    height: 270px;
+    background-color: var(--color-bg-card, #fff);
+    border-radius: var(--radius-base, 8px);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .project_img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      display: block;
+      background: var(--color-bg);
+    }
+
+    .project_body {
+      padding: 10px 12px 12px;
+    }
+
+    .project_name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .project_desc {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 18px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 18px;
+    }
+  }
+}
+
+:global {
+  .markdown-html {
+    p:empty {
+      display: none;
+    }
+  }
+
+  .ant-anchor-wrapper {
+    margin-left: 4px
+  }
+
+  .ant-drawer-content {
+    background: var(--color-bg, #ebecf0) !important;
+
+    .ant-drawer-body,
+    .ant-drawer-header {
+      padding: 0;
+      background: transparent;
+
+    }
+
+    .ant-drawer-header {
+      text-align: center;
+
+      .ant-drawer-title {
+        line-height: 40px;
+      }
+    }
+  }
+
+  plugin-container {
+    margin-bottom: 14px;
+    display: block;
+    box-shadow: var(--shadow-md) !important;
+    border: 1px solid var(--color-border);
+    padding: 10px;
+    padding-top: 0;
+    border-radius: var(--radius-base);
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+
+    &.collapsed {
+      height: 24px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(transparent, var(--color-bg-white));
+        pointer-events: none;
+      }
+    }
+
+    .circle {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      z-index: 10;
+      transition: transform 0.3s ease-in-out;
+      height: 28px;
+      width: 28px;
+      line-height: 28px;
+      font-size: 12px;
+    }
+
+    &.collapsed .circle {
+      transform: rotate(-90deg);
+      /* 收起时朝右 */
+    }
+
+  }
+
+  .md-toc-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: var(--color-bg-white);
+  }
+
+  .md-toc-sidebar {
+    position: fixed;
+    top: 60px;
+    right: 12px;
+    max-height: calc(100vh - 150px);
+    z-index: 10;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .main {
+    padding: 1px 0;
+
+    .page_list {
+      width: 100%;
+      margin-right: 0;
+    }
+
+    .page_main {
+      border-radius: 0 0 var(--radius-base) var(--radius-base) !important;
+    }
+  }
+
+  .project_main {
+    padding: 8px;
+
+    .project_grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  :global {
+    plugin-container {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+}
