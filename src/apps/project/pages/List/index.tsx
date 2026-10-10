@@ -152,7 +152,7 @@ export default function List() {
       : '项目管理';
 
     return <div className={style.container}>
-    <Header showLeft name={headerName} leftPath={projectId ? '/project' : '/homeList'} />
+    <Header showRight={false} showLeft name={headerName} leftPath={projectId ? '/project' : '/homeList'} />
 
     {!projectId ? (
       // 项目列表视图

@@ -174,8 +174,8 @@
   }
 
   .project_card {
-    height: 270px;
-    background-color: var(--color-bg-card, #fff);
+    height: 240px;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-base, 8px);
     box-shadow: var(--shadow-md);
     overflow: hidden;
@@ -332,7 +332,7 @@
     padding: 8px;
 
     .project_grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
