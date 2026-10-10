@@ -72,7 +72,6 @@ function List() {
       header={<Header name='markdown 编辑器' leftPath='/tool' handleContent={handleContent} />}
       main={
         <div className={style.content}>
-          <Alert type="info" message={<span>现已支持纯预览markdown组件，并支持导出/打印为PDF，<a href={resolvePageURL('/simpleMarkdown')} target="_blank">点击前往</a></span>} />
           <MarkdownEditor
             ref={editorRef}
             defaultValue={initialContent}
