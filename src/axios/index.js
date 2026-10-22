@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd';
 import { HOST, USER_TOKEN } from "@utils";
 import { resolvePageURL } from "@utils/nav";
+import { encrypt, decrypt, DES_KEY, DES_IV } from "@utils/crypto";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
@@ -53,11 +54,72 @@ const hideLoading = () => {
   }
 };
 
+// 登录、身份核验、上传 不加盐，其余接口均加盐
+const noEncryptURL = ['/user/login', '/user/verifylogin'];
+const isSkipEncrypt = (url) => {
+  const u = (url || '').toLowerCase();
+  return noEncryptURL.some((it) => u.includes(it)) || u.includes('upload');
+};
+
+// —— 入参加密：key 不变，叶子值转为字符串后加盐；对象递归；数组元素逐个递归加盐；FormData/Date 透传 ——
+const deepEncrypt = (value) => {
+  if (value === null || value === undefined) return value;
+  // FormData/Date 不加密，整体透传
+  if (value instanceof FormData || value instanceof Date) return value;
+  // 数组结构：逐个元素递归加盐（含数组内对象/基本值）
+  if (Array.isArray(value)) {
+    return value.map((item) => deepEncrypt(item));
+  }
+  if (typeof value === 'object') {
+    const result = {};
+    Object.keys(value).forEach((key) => {
+      result[key] = deepEncrypt(value[key]);
+    });
+    return result;
+  }
+  return encrypt({ DES_KEY, DES_IV, MSG: String(value) });
+};
+
+// —— 出参解密：key 不变；对象递归；数组元素逐个递归解密；字符串叶子解密，其他类型原样 ——
+const deepDecrypt = (value) => {
+  if (value === null || value === undefined) return value;
+  // 数组结构：逐个元素递归解密（含数组内对象/基本值）
+  if (Array.isArray(value)) {
+    return value.map((item) => deepDecrypt(item));
+  }
+  if (typeof value === 'object') {
+    const result = {};
+    Object.keys(value).forEach((key) => {
+      result[key] = deepDecrypt(value[key]);
+    });
+    return result;
+  }
+  if (typeof value === 'string') {
+    try {
+      return decrypt({ DES_KEY, DES_IV, MSG: value });
+    } catch (e) {
+      return value;
+    }
+  }
+  return value;
+};
+
 /**
  * 基于原生 fetch 实现的请求封装
  */
 const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   const upperMethod = method.toUpperCase();
+
+  // 登录/身份核验/上传 不加盐；其余入参（data + params）加盐。deepEncrypt 返回新对象，不修改原始入参
+  const skipEncrypt = isSkipEncrypt(url);
+  if (!skipEncrypt) {
+    if (params && typeof params === 'object' && !(params instanceof FormData)) {
+      params = deepEncrypt(params);
+    }
+    if (data && !(data instanceof FormData)) {
+      data = deepEncrypt(data);
+    }
+  }
 
   // 拼接 query 参数
   let fullUrl = `${HOST}${url}`;
@@ -69,6 +131,8 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
   const requestHeaders = { ...headers };
   const token = localStorage.getItem(USER_TOKEN);
   if (token) requestHeaders[USER_TOKEN] = token;
+  // 加密标记头：服务端据此决定是否对入参解密/出参加密（仅本项目启用，避免影响管理后台等其它明文客户端）
+  requestHeaders['x-encrypt'] = 'remons-des';
 
   // 构造请求体
   let body = undefined;
@@ -110,6 +174,10 @@ const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
     .then((res) => {
       if (!res.success && !url.includes('upload')) {
         message.error(res.msg);
+      }
+      // 出参解密：只解业务数据 res.data，success/msg/code 保持原样
+      if (!skipEncrypt && res && res.data !== undefined && res.data !== null) {
+        res.data = deepDecrypt(res.data);
       }
       return res;
     })
