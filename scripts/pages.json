@@ -184,7 +184,7 @@
     "seoContent": "免费在线 Markdown 编辑器，支持解析文件夹，支持所见即所得实时预览，左侧编辑右侧渲染，让 Markdown 文档撰写更直观高效。支持标题、代码块、表格、图片等全部 Markdown 语法，适合写技术文档、README、博客草稿，无需安装任何软件。"
   },
   {
-    "pageName": "stockMarketTrends",
+    "pageName": "timeSeriesMetrics",
     "subTitle": "临时监控工具",
     "title": "监控",
     "description": "监控",

@@ -3,7 +3,6 @@ import styles from "./index.module.less";
 import classnames from "classnames";
 
 function Container({ header, main, style, className, isAnimationBackground = true }) {
-  console.log(styles.animation_background, styles.container)
   return (
     <div>
       <div className={classnames(

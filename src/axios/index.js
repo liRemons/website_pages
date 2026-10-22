@@ -7,7 +7,7 @@ import { encrypt, decrypt, DES_KEY, DES_IV } from "@utils/crypto";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
-const noLoadingURL = [];
+const noLoadingURL = ['/quote/query'];
 
 let loadingCount = 0;
 let loadingTimer = null; // 用于存储延迟显示 loading 的定时器
@@ -107,7 +107,7 @@ const deepDecrypt = (value) => {
 /**
  * 基于原生 fetch 实现的请求封装
  */
-const service = ({ method = 'get', url, data, params, headers = {} } = {}) => {
+const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) => {
   const upperMethod = method.toUpperCase();
 
   // 登录/身份核验/上传 不加盐；其余入参（data + params）加盐。deepEncrypt 返回新对象，不修改原始入参

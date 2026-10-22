@@ -4,7 +4,7 @@
  * 功能说明：
  * 1. 支持输入多个股票代码（逗号分隔），批量查询实时行情
  * 2. 展示每只股票的最新价、涨跌幅、五档盘口等核心数据
- * 3. 数据来源：腾讯财经行情接口（qt.gtimg.cn）
+ * 3. 数据来源：服务端 /quote/query 接口（转发腾讯财经行情接口 qt.gtimg.cn）
  *
  * 依赖：React, Ant Design
  */
@@ -25,10 +25,12 @@ import {
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
+  MinusOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
 import { getSearchParams, IsPC } from 'methods-r'
 import { isAfterClose } from './utils';
+import { service } from '@axios';
 import Header from '@components/Header'
 import Container from '@components/Container'
 import Fixed from '@components/Fixed'
@@ -45,15 +47,44 @@ const { Title, Text } = Typography
 /** A股红涨绿跌配色 */
 const COLOR_UP = '#cf1322'
 const COLOR_DOWN = '#3f8600'
+/** 平盘（不涨不跌）中性配色 */
+const COLOR_FLAT = '#8c8c8c'
 
 /** 五档盘口档位数 */
 const ORDER_BOOK_LEVELS = 5
 
-/** 默认监控股票代码 */
-const DEFAULT_STOCK_CODES = getSearchParams('codes')
+/** 监控股票代码的 localStorage 键 */
+const CODES_STORAGE_KEY = 'tsm_stock_codes'
 
-/** 腾讯行情接口地址 */
-const QUOTE_API_URL = 'https://qt.gtimg.cn/q='
+/**
+ * 获取初始监控股票代码
+ * 优先使用 URL 的 codes 参数（命中时回写 localStorage）；
+ * URL 无参数时读取 localStorage
+ * @returns 初始股票代码字符串（逗号分隔），无则为空串
+ */
+function getInitialStockCodes(): string {
+  const urlCodes: string = getSearchParams('codes') || ''
+  if (urlCodes) {
+    localStorage.setItem(CODES_STORAGE_KEY, urlCodes)
+    return urlCodes
+  }
+  return localStorage.getItem(CODES_STORAGE_KEY) || ''
+}
+
+/** 将当前股票代码写入 localStorage（为空时清除） */
+function saveStockCodes(codes: string): void {
+  if (codes) {
+    localStorage.setItem(CODES_STORAGE_KEY, codes)
+  } else {
+    localStorage.removeItem(CODES_STORAGE_KEY)
+  }
+}
+
+/** 默认监控股票代码 */
+const DEFAULT_STOCK_CODES: string = getInitialStockCodes()
+
+/** 行情查询接口地址（服务端转发腾讯接口，返回 GBK 解码后的原始行情文本） */
+const QUOTE_API_URL = '/quote/query'
 
 // ===================== 类型定义 =====================
 
@@ -91,6 +122,7 @@ interface IStockData {
   changeAmt: number
   color: string
   isUp: boolean
+  isFlat: boolean
   stats: IStockStats
   orderBook: IOrderBookRow[]
   updateTime: string
@@ -113,6 +145,19 @@ function formatTime(t: string): string {
     8,
     10
   )}:${t.slice(10, 12)}:${t.slice(12, 14)}`
+}
+
+/**
+ * 格式化盘口价格文本为两位小数
+ * @param text - 原始价格字符串
+ * @returns 为空或无法解析时原样返回，否则保留两位小数
+ */
+function formatPriceText(text?: string): string | undefined {
+  if (!text || text.trim() === '') {
+    return text
+  }
+  const num: number = parseFloat(text)
+  return Number.isNaN(num) ? text : num.toFixed(2)
 }
 
 /**
@@ -154,9 +199,10 @@ const parseOneStock = (line: string): IStockData | null => {
   const lb: number = parseFloat(fields[49]) // 量比
   const amplitude = parseFloat(fields[43]) // 振幅
 
-  // 涨跌颜色逻辑（A股：红涨绿跌）
+  // 涨跌/平盘颜色逻辑（A股：红涨绿跌，平盘中性灰）
   const isUp: boolean = changePct > 0
-  const color: string = isUp ? COLOR_UP : COLOR_DOWN
+  const isFlat: boolean = changePct === 0
+  const color: string = isUp ? COLOR_UP : isFlat ? COLOR_FLAT : COLOR_DOWN
 
   // 构建五档盘口数据（买1~买5，卖1~卖5）
   const orderBookData: IOrderBookRow[] = []
@@ -179,6 +225,7 @@ const parseOneStock = (line: string): IStockData | null => {
     changeAmt,
     color,
     isUp,
+    isFlat,
     stats: {
       open,
       high,
@@ -215,7 +262,7 @@ function StockDashboard(): JSX.Element {
   const [detailStock, setDetailStock] = useState<IStockData | null>(null)
 
   /**
-   * 从腾讯行情接口获取股票数据
+   * 从服务端行情接口获取股票数据（入参/出参走统一加盐加解密）
    * @param codes - 逗号分隔的股票代码字符串，如 "sz002335,sh600519"
    */
   const fetchData = useCallback(async (codes: string): Promise<void> => {
@@ -225,11 +272,19 @@ function StockDashboard(): JSX.Element {
 
     setLoading(true)
     try {
-      const response: Response = await fetch(`${QUOTE_API_URL}${codes}`)
-      // 接口返回 GBK 编码，需要用 TextDecoder 解码
-      const arrayBuffer: ArrayBuffer = await response.arrayBuffer()
-      const decoder = new TextDecoder('gbk')
-      const rawText: string = decoder.decode(arrayBuffer)
+      const res = (await service({
+        method: 'get',
+        url: QUOTE_API_URL,
+        params: { codes },
+      })) as {
+        success: boolean
+        msg: string
+        data: string
+      }
+      if (!res.success) {
+        throw new Error(res.msg || '行情查询失败')
+      }
+      const rawText: string = res.data
 
       // 按分号分割多只股票数据，过滤空行
       const lines: string[] = rawText
@@ -264,8 +319,9 @@ function StockDashboard(): JSX.Element {
     return () => clearInterval(timer)
   }, [fetchData, inputValue])
 
-  /** 点击查询按钮或按回车时触发搜索 */
+  /** 点击查询按钮或按回车时触发搜索，并将当前 codes 保存到 localStorage */
   const handleSearch = useCallback((): void => {
+    saveStockCodes(inputValue)
     fetchData(inputValue)
   }, [fetchData, inputValue])
 
@@ -284,7 +340,7 @@ function StockDashboard(): JSX.Element {
       dataIndex: 'buyPrice',
       key: 'buyPrice',
       render: (text: string): JSX.Element => (
-        <span style={{ color: COLOR_UP }}>{text}</span>
+        <span style={{ color: COLOR_UP }}>{formatPriceText(text)}</span>
       ),
     },
     { title: '量', dataIndex: 'buyVol', key: 'buyVol' },
@@ -293,7 +349,7 @@ function StockDashboard(): JSX.Element {
       dataIndex: 'sellPrice',
       key: 'sellPrice',
       render: (text: string): JSX.Element => (
-        <span style={{ color: COLOR_DOWN }}>{text}</span>
+        <span style={{ color: COLOR_DOWN }}>{formatPriceText(text)}</span>
       ),
     },
     { title: '量', dataIndex: 'sellVol', key: 'sellVol' },
@@ -410,6 +466,8 @@ function StockDashboard(): JSX.Element {
                               prefix={
                                 stock.isUp ? (
                                   <ArrowUpOutlined />
+                                ) : stock.isFlat ? (
+                                  <MinusOutlined />
                                 ) : (
                                   <ArrowDownOutlined />
                                 )
@@ -417,26 +475,26 @@ function StockDashboard(): JSX.Element {
                             />
                             <Text className={style.changeAmt} style={{ color: stock.color }}>
                               {stock.changeAmt > 0 ? '+' : ''}
-                              {stock.changeAmt}
+                              {stock.changeAmt.toFixed(2)}
                             </Text>
                           </div>
                           {/* 今开价 */}
                           <div>
                             <Text type="secondary">今开</Text>
                             <br />
-                            {stock.stats.open}
+                            {stock.stats.open.toFixed(2)}
                           </div>
                           {/* 最高价 */}
                           <div>
                             <Text type="secondary">最低/最高</Text>
                             <br />
-                            {stock.stats.low} - {stock.stats.high}
+                            {stock.stats.low.toFixed(2)} - {stock.stats.high.toFixed(2)}
                           </div>
                           {/* 昨收价 */}
                           <div>
                             <Text type="secondary">昨收</Text>
                             <br />
-                            {stock.stats.preClose}
+                            {stock.stats.preClose.toFixed(2)}
                           </div>
                           {/* 成交额 */}
                           <div>
@@ -503,7 +561,7 @@ function StockDashboard(): JSX.Element {
             </Modal>
           </div>
         }
-        header={<Header name="股票行情监控" leftPath='/tool' />}
+        header={<Header name="监控" leftPath='/tool' />}
       />
       <Fixed />
     </>
