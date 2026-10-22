@@ -2,8 +2,8 @@
 
 import isLuckeyWork from "./luckey";
 
-// export const HOST = isLuckeyWork ? "https://luckey.work:3008" : "https://remons.cn:3008";
-export const HOST = "http://127.0.0.1:3009";
+export const HOST = isLuckeyWork ? "https://luckey.work:3008" : "https://remons.cn:3008";
+// export const HOST = "http://127.0.0.1:3009";
 
 export const img = (svg, height, className) => {
   return React.createElement("img", {
