@@ -53,7 +53,7 @@ export default function ListPage() {
     { title: '表单引擎', icon: img(tableconfigSvg), appName: 'tableConfig', hot: true },
     { title: '图片水印', icon: img(watermarkSvg), appName: 'imgWatermark', hot: true },
     { title: '订单管理', icon: img(productmanagSvg), appName: 'productManage', hot: true },
-    { title: '股票行情监控', icon: img(stockMarketTrendsSvg), appName: 'stockMarketTrends', hot: true },
+    { title: '数据监控', icon: img(stockMarketTrendsSvg), appName: 'timeSeriesMetrics', hot: true },
   ].filter(item => item.isShow !== false).map(item => {
     return {
       ...item,

@@ -9,6 +9,8 @@
  * 依赖：React, Ant Design
  */
 
+import { useMemo } from 'react'
+import debounce from 'lodash.debounce'
 import React, { useEffect, useState, useCallback } from 'react'
 import {
   Table,
@@ -304,10 +306,23 @@ function StockDashboard(): JSX.Element {
     }
   }, [])
 
+  // 防抖函数：用户在输入框持续输入时，等待 500ms 无操作后才真正发起请求
+  const debouncedFetch = useMemo(
+    () => debounce((codes: string) => fetchData(codes), 500),
+    [fetchData]
+  )
+
+  // 组件卸载时取消尚未触发的防抖调用
+  useEffect(() => {
+    return () => {
+      debouncedFetch.cancel()
+    }
+  }, [debouncedFetch])
+
   // 组件挂载时执行一次初始化查询
   useEffect(() => {
     let timer = null
-    fetchData(inputValue)
+    debouncedFetch(inputValue)
 
     if (isClose) {
       timer && clearInterval(timer)
@@ -317,7 +332,7 @@ function StockDashboard(): JSX.Element {
     // 如需自动刷新，可取消下方注释：
     timer = setInterval(() => fetchData(inputValue), 10 * 1000)
     return () => clearInterval(timer)
-  }, [fetchData, inputValue])
+  }, [fetchData, inputValue, debouncedFetch])
 
   /** 点击查询按钮或按回车时触发搜索，并将当前 codes 保存到 localStorage */
   const handleSearch = useCallback((): void => {
