@@ -164,6 +164,7 @@
 }
 
 .project_main {
+  display: block;
   overflow-y: auto;
   padding: 12px;
 
@@ -188,14 +189,15 @@
     }
 
     .project_img {
-      width: 100%;
-      height: 140px;
+      margin: 20px;
+      width: calc(100% - 40px);
+      height: 100px;
       object-fit: contain;
       display: block;
-      background: var(--color-bg);
     }
 
     .project_body {
+      border-top: 1px solid var(--color-border);
       padding: 10px 12px 12px;
     }
 
