@@ -33,6 +33,8 @@ import {
 import { getSearchParams, IsPC } from 'methods-r'
 import { isAfterClose } from './utils';
 import { service } from '@axios';
+import isLogin from '@utils/isLogin';
+import { openApp } from '@utils/nav';
 import Header from '@components/Header'
 import Container from '@components/Container'
 import Fixed from '@components/Fixed'
@@ -254,6 +256,22 @@ const parseOneStock = (line: string): IStockData | null => {
  */
 function StockDashboard(): JSX.Element {
   const isClose = isAfterClose(new Date())
+  // 登录态校验：未登录时重定向到登录页，登录后通过 from 参数跳回本页
+  const [authed] = useState<boolean>(() => isLogin())
+  useEffect(() => {
+    if (authed) {
+      return
+    }
+    // 归一化为站内路由路径 /<页面名>/index.html + 原查询参数，
+    // 登录页 openApp 在 App（../<页面名>/index.html）与 H5 环境下均可正确解析回跳
+    const nameMatch = window.location.pathname.match(
+      /\/(?:dist\/)?([A-Za-z][\w-]*)\//
+    )
+    const from = nameMatch
+      ? `/${nameMatch[1]}/index.html${window.location.search}`
+      : `${window.location.pathname}${window.location.search}`
+    openApp({ url: `/login?from=${encodeURIComponent(from)}` })
+  }, [authed])
   // 输入框中的股票代码字符串
   const [inputValue, setInputValue] = useState<string>(DEFAULT_STOCK_CODES)
   // 解析后的股票数据列表
@@ -319,8 +337,11 @@ function StockDashboard(): JSX.Element {
     }
   }, [debouncedFetch])
 
-  // 组件挂载时执行一次初始化查询
+  // 组件挂载时执行一次初始化查询（未登录时不发起请求，避免触发 403 二次跳转）
   useEffect(() => {
+    if (!authed) {
+      return
+    }
     let timer = null
     debouncedFetch(inputValue)
 
@@ -332,7 +353,7 @@ function StockDashboard(): JSX.Element {
     // 如需自动刷新，可取消下方注释：
     timer = setInterval(() => fetchData(inputValue), 10 * 1000)
     return () => clearInterval(timer)
-  }, [fetchData, inputValue, debouncedFetch])
+  }, [authed, fetchData, inputValue, debouncedFetch])
 
   /** 点击查询按钮或按回车时触发搜索，并将当前 codes 保存到 localStorage */
   const handleSearch = useCallback((): void => {
@@ -372,6 +393,11 @@ function StockDashboard(): JSX.Element {
 
   // 计算当前监控的股票数量
   const stockCount: number = inputValue?.split(',').length
+
+  // 未登录时不渲染页面内容，等待跳转登录页
+  if (!authed) {
+    return <></>
+  }
 
   return (
     <>
