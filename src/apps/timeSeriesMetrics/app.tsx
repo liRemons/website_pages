@@ -262,13 +262,13 @@ function StockDashboard(): JSX.Element {
     if (authed) {
       return
     }
-    // 归一化为站内路由路径 /<页面名>/index.html + 原查询参数，
-    // 登录页 openApp 在 App（../<页面名>/index.html）与 H5 环境下均可正确解析回跳
+    // 归一化为站内路由路径 /<页面名> + 原查询参数，
+    // 登录页 openApp 在 App（../<页面名>）与 H5 环境下均可正确解析回跳
     const nameMatch = window.location.pathname.match(
       /\/(?:dist\/)?([A-Za-z][\w-]*)\//
     )
     const from = nameMatch
-      ? `/${nameMatch[1]}/index.html${window.location.search}`
+      ? `/${nameMatch[1]}${window.location.search}`
       : `${window.location.pathname}${window.location.search}`
     openApp({ url: `/login?from=${encodeURIComponent(from)}` })
   }, [authed])
