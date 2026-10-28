@@ -115,6 +115,9 @@ const deepDecrypt = (value) => {
  * @property {Object} [data] 请求体参数（非 GET 方法时生效）
  * @property {Object} [params] query 参数
  * @property {Object} [headers] 额外请求头
+ * @property {boolean} [quiet] 静默请求：不弹全屏 loading、不弹错误提示、遇到 403 也不自动跳登录页。
+ *   用于「顺带确认一下登录态」这类探测请求 —— 跳不跳、怎么提示交给调用方决定，
+ *   否则在公开页面探测登录态会把匿名访客直接轰去登录页
  */
 
 /**
@@ -122,7 +125,7 @@ const deepDecrypt = (value) => {
  * @param {IRequestOptions} options 请求配置
  * @returns {Promise<any>} 接口响应（出参 data 已按统一规则解密）
  */
-const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) => {
+const service = ({ method = 'get', url = '', data, params, headers = {}, quiet = false } = {}) => {
   const upperMethod = method.toUpperCase();
 
   // 登录/身份核验/上传 不加盐；其余入参（data + params）加盐。deepEncrypt 返回新对象，不修改原始入参
@@ -164,7 +167,7 @@ const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) 
   }
 
   // 全局 loading 控制
-  const needLoading = !noLoadingURL.includes(url);
+  const needLoading = !quiet && !noLoadingURL.includes(url);
   if (needLoading) showLoading();
 
   // 超时控制
@@ -179,15 +182,25 @@ const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) 
   })
     .then((response) => {
       if (response.status === 403) {
-        // App 环境下 window.location.origin 为 "null"，需用 resolvePageURL 改写为相对路径
-        window.location.href = resolvePageURL('/login');
-        return Promise.reject(error);
+        // 带上 status，调用方（如登录态校验）据此区分「服务端明确拒绝」与「网络不通」
+        const err = new Error('登录状态已失效，请重新登录');
+        err.status = 403;
+        // quiet 请求不自己跳转，避免探测型请求把用户带离当前页面
+        if (!quiet) {
+          // App 环境下 window.location.origin 为 "null"，需用 resolvePageURL 改写为相对路径
+          window.location.href = resolvePageURL('/login');
+        }
+        return Promise.reject(err);
       }
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        const err = new Error(`HTTP ${response.status}`);
+        err.status = response.status;
+        throw err;
+      }
       return response.json();
     })
     .then((res) => {
-      const silent = noToastURL.some((it) => (url || '').includes(it));
+      const silent = quiet || noToastURL.some((it) => (url || '').includes(it));
       if (!res.success && !url.includes('upload') && !silent) {
         message.error(res.msg);
       }
@@ -198,6 +211,8 @@ const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) 
       return res;
     })
     .catch((error) => {
+      // quiet 请求的失败由调用方自行处理（例如登录态校验失败只是静默降级）
+      if (quiet) return Promise.reject(error);
       // 如果是主动取消的超时请求，可以选择不弹提示或弹特定提示
       if (error.name === 'AbortError') {
         message.error('请求超时，请稍后重试');

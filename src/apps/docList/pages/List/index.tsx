@@ -14,6 +14,7 @@ import style from './index.module.less';
 import Markdown from '../Markdown';
 import { getSearchParams, IsPC } from 'methods-r';
 import { isApp, openApp } from '@utils/nav';
+import { verifyLogin } from '@utils/auth';
 import copyContent from '@/hooks/copyContent';
 import usePersistedToggle from '@/hooks/usePersistedToggle';
 import useMermaidCollapsed from '@/hooks/useMermaidCollapsed';
@@ -68,11 +69,11 @@ export default function List() {
     getList();
   }, []);
 
-  // App 环境下验证登录状态
+  // App 环境下校验登录态：以服务端返回为准（token 可能已过期），失败才去登录页
   useEffect(() => {
     if (isApp()) {
-      localStore.verifyLogin().then(res => {
-        if (!res?.success) {
+      verifyLogin().then((ok: boolean) => {
+        if (!ok) {
           openApp({ url: '/login' });
         }
       });

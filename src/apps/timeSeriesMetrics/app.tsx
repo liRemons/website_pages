@@ -96,7 +96,7 @@ const SHELL_STYLE: React.CSSProperties = {
  * 多市场行情看板，按 Tab 切换个股查询、沪深港指数、国际指数与大宗商品
  */
 function IndexDashboard(): JSX.Element {
-  // 登录态校验：未登录时重定向到登录页，登录后通过 from 参数跳回本页
+  // 登录态校验：进页先由服务端确认（token 过期也算未登录），未登录跳登录页，登录后通过 from 参数跳回本页
   const authed: boolean = useLoginGuard()
   // 时钟快照，页面长时间打开时仍能感知时段切换
   const clock: number = useClock(CLOCK_TICK_MS)
@@ -175,7 +175,7 @@ function IndexDashboard(): JSX.Element {
     saveActiveTab(key)
   }, [])
 
-  // 未登录时不渲染页面内容，等待跳转登录页
+  // 校验中或未登录时不渲染页面内容：也就不会在失效会话下先把行情请求发出去
   if (!authed) {
     return <></>
   }

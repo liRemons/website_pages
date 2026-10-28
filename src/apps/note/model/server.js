@@ -7,12 +7,3 @@ export const queryTechClassList = (params) => {
     params,
   });
 };
-
-export const verifyLogin = () => {
-  return service({
-    method: 'post',
-    url: '/user/verifyLogin',
-  });
-};
-
-

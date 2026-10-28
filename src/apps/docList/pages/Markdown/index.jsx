@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import store from '../../model/store';
 import { DownOutlined } from '@ant-design/icons';
 import { createRoot } from 'react-dom/client';
@@ -8,7 +8,7 @@ import python from 'highlight.js/lib/languages/python';
 import RenderMarkdown, { initHighlighter, languagesCommon } from 'remons-render-markdown';
 import chartConfig from '@/utils/chart-config';
 import 'remons-render-markdown/dist/index.css'
-import isLogin from '@/utils/isLogin';
+import { verifyLogin } from '@utils/auth';
 import { registerAll, excludedSelectors } from 'remons-markdown-plugins'
 import dayjs from 'dayjs';
 
@@ -23,6 +23,18 @@ initHighlighter({
 export default function Markdown(props) {
   const localStore = useLocalObservable(() => store);
   const defaultCollapsed = !!props.defaultCollapsed;
+  // 「编辑此页」只对有效登录态开放：token 过期后不该再给入口（校验结果在同一次页面加载内复用）
+  const [canEdit, setCanEdit] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    verifyLogin().then((ok) => {
+      if (alive) setCanEdit(ok);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -79,7 +91,7 @@ export default function Markdown(props) {
     footer={<div style={{ textAlign: 'right', marginBottom: '6px' }}>
       <span>文档更新时间：{dayjs(localStore.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
       &nbsp;&nbsp;
-      {isLogin() && <a target="_blank" href={`https://manage.remons.cn/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
+      {canEdit && <a target="_blank" href={`https://manage.remons.cn/content/article/?type=edit&id=${props.id}`}>编辑此页</a>}
     </div>}
     defaultCollapsed={defaultCollapsed}
     chartConfig={chartConfig}

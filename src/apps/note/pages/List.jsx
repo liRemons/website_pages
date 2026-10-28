@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useObserver, useLocalObservable } from 'mobx-react-lite';
 import { openApp, isApp } from '@utils/nav';
+import { verifyLogin } from '@utils/auth';
 import store from '../model/store';
 import Empty from '@components/Empty';
 import Container from '@components/Container';
@@ -15,10 +16,10 @@ export default function HomeList() {
   const localStore = useLocalObservable(() => store);
 
   useEffect(() => {
-    // App 环境下验证登录状态
+    // App 环境下校验登录态：以服务端返回为准（token 可能已过期），失败才去登录页
     if (isApp()) {
-      localStore.getVerifyLogin().then(res => {
-        if (!res?.success) {
+      verifyLogin().then((ok) => {
+        if (!ok) {
           openApp({ url: '/login' });
         }
       });
