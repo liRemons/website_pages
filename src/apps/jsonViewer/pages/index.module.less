@@ -6,6 +6,7 @@
   flex-direction: column;
   gap: 12px;
   height: calc(100vh - 60px);
+  height: calc(100dvh - 60px); // 地址栏收起时 vh 会偏大，dvh 跟随可视区（上一行给老引擎兜底）
   box-sizing: border-box;
 }
 

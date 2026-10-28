@@ -68,11 +68,14 @@
 .ant-anchor-wrapper {
   overflow-y: auto;
   max-height: calc(100vh - 92px) !important;
+  // 地址栏收起时 vh 会偏大，dvh 跟随可视区（上一行给老引擎兜底）
+  max-height: calc(100dvh - 92px) !important;
 }
 
 .search_visible {
   .ant-anchor-wrapper {
     max-height: calc(100vh - 122px) !important;
+    max-height: calc(100dvh - 122px) !important;
   }
 }
 
@@ -92,5 +95,6 @@
   .ant-anchor-wrapper {
     overflow-y: auto;
     max-height: calc(100vh - 56px) !important;
+    max-height: calc(100dvh - 56px) !important;
   }
 }

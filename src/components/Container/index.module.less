@@ -1,11 +1,18 @@
 @import (reference) "../../assets/css/variables.css";
 
+// 页面骨架：固定定位铺满可视区。
+// 不用 absolute + height: 100% —— 那量的是大视口（地址栏收起的尺寸），
+// 移动端地址栏一收一收、或文档被拖动一点，骨架就跟着偏移，顶部内容被浏览器工具栏盖住；
+// inset: 0 的固定层始终等于当时的可视区，高度变化（软键盘、地址栏）也能跟上
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  position: absolute;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: var(--color-bg);
 
   &.animation_background {
@@ -17,6 +24,8 @@
     width: calc(100% - 30px);
     flex: 1;
     overflow: auto;
+    // 内容滚到底后继续滑，不要把手势链给文档：否则会触发浏览器工具栏收起 + 整页位移
+    overscroll-behavior-y: contain;
     padding: 20px 15px 0;
   }
 }

@@ -68,7 +68,8 @@ export default class TableConfig extends React.Component {
         <Header style={{ background: '#fff', borderBottom: '1px solid #f0f0f0' }}>
           <h2 style={{ margin: 0, lineHeight: '64px' }}>表单配置引擎</h2>
         </Header>
-        <Content style={{ padding: 24, background: '#f0f2f5', minHeight: 'calc(100vh - 64px)' }}>
+        {/* 高度用 dvh：移动端地址栏收起时 vh 会偏大，内容会顶到可视区外；老引擎不认识 dvh 时退成 vh */}
+        <Content style={{ padding: 24, background: '#f0f2f5', minHeight: 'calc(100dvh - 64px)' }}>
           <Tabs
             activeKey={activeTab}
             onChange={(key) => this.setState({ activeTab: key })}

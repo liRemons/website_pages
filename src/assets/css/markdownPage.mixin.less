@@ -4,19 +4,26 @@
 @import (reference) './variables.css';
 
 /* 页面根容器 */
+/* 与 components/Container 同一套做法：固定定位铺满可视区，
+   不用 absolute + height: 100%（那量的是地址栏收起后的大视口，移动端会跟着文档偏移、顶部被盖） */
 .pageContainer() {
   display: flex;
   flex-direction: column;
   width: 100%;
-  position: absolute;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: var(--color-bg);
 }
 
 /* 列表收起/展开悬浮按钮 */
+/* 贴底用 bottom 定位而不是 top: calc(100vh - 38px)：
+   vh 量的是地址栏收起后的视口，地址栏显示时按钮会掉到可视区下方 */
 .collapseToggle() {
   position: fixed;
-  top: calc(100vh - 38px);
+  bottom: 12px;
   left: 10px;
   z-index: 10;
   cursor: pointer;
@@ -301,6 +308,7 @@
     top: 60px;
     right: 12px;
     max-height: calc(100vh - 150px);
+    max-height: calc(100dvh - 150px);
     z-index: 10;
   }
 

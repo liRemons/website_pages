@@ -865,7 +865,13 @@ body,
 html {
   font-family: var(--font-family-mono);
   background: var(--color-animation-bg) !important;
+  // 视口高度用 dvh（动态视口）：移动端地址栏收起/展开时 100vh 不跟着变，
+  // 文档会比可视区高出地址栏那一截，滑动到底后再滑就能把整页拖走一点，
+  // 顶层骨架（position: absolute/fixed + 100%）随之偏移、上方内容被浏览器工具栏盖住
   min-height: 100vh;
+  min-height: 100dvh;
+  // 文档级不许回弹与下拉刷新抢走手势：列表滚到底后继续滑不应引起整页位移
+  overscroll-behavior-y: none;
 }
 
 body {
