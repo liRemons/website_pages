@@ -7,7 +7,11 @@ import { encrypt, decrypt, DES_KEY, DES_IV } from "@utils/crypto";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
-const noLoadingURL = ['/quote/query'];
+// 轮询类行情接口不弹全屏 loading，避免定时刷新打断操作（资讯列表用自带骨架屏，同理不弹全屏）
+const noLoadingURL = ['/quote/query', '/quote/global', '/news/lives'];
+// 国际指数为固定参数的轮询接口，失败原因都是上游限流，由页面内的状态文案提示，不反复弹 toast
+// 资讯列表失败由 NewsBoard 状态行提示，同样不弹全局 toast
+const noToastURL = ['/quote/global', '/news/lives'];
 
 let loadingCount = 0;
 let loadingTimer = null; // 用于存储延迟显示 loading 的定时器
@@ -105,7 +109,18 @@ const deepDecrypt = (value) => {
 };
 
 /**
+ * @typedef {Object} IRequestOptions 请求配置
+ * @property {string} [method] 请求方法，默认 get
+ * @property {string} [url] 接口路径（不含 HOST 前缀）
+ * @property {Object} [data] 请求体参数（非 GET 方法时生效）
+ * @property {Object} [params] query 参数
+ * @property {Object} [headers] 额外请求头
+ */
+
+/**
  * 基于原生 fetch 实现的请求封装
+ * @param {IRequestOptions} options 请求配置
+ * @returns {Promise<any>} 接口响应（出参 data 已按统一规则解密）
  */
 const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) => {
   const upperMethod = method.toUpperCase();
@@ -172,7 +187,8 @@ const service = ({ method = 'get', url = '', data, params, headers = {} } = {}) 
       return response.json();
     })
     .then((res) => {
-      if (!res.success && !url.includes('upload')) {
+      const silent = noToastURL.some((it) => (url || '').includes(it));
+      if (!res.success && !url.includes('upload') && !silent) {
         message.error(res.msg);
       }
       // 出参解密：只解业务数据 res.data，success/msg/code 保持原样

@@ -14,6 +14,11 @@ declare module '*.md' {
   export default content;
 }
 
+declare module '*.svg' {
+  const src: string;
+  export default src;
+}
+
 declare module 'methods-r';
 declare module 'lodash.clonedeep';
 declare module 'highlight.js/lib/languages/*';

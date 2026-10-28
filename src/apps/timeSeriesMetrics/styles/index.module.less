@@ -1,0 +1,587 @@
+@import (reference) "../../../assets/css/variables.css";
+
+.card {
+    background: var(--color-bg-input) !important;
+    margin: 0 !important;
+
+    :global {
+        .ant-card-head {
+            padding: 0 8px !important;
+        }
+        .ant-card-body {
+            position: relative;
+            padding: 10px 0 !important;
+            padding-top: 4px !important;
+            border-top: 1px solid #e8e8e8 !important;
+        }
+
+        .ant-row {
+            margin: 0 !important;
+        }
+
+        .ant-card-extra {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+}
+
+// 卡片右上角的盘口/同花顺图标按钮
+.detailBtn {
+    color: #1677ff;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+
+    img {
+        height: 20px;
+    }
+}
+
+.cardTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stockName {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+// 市场标签（沪深/港股/台股…），字号小于指数名称并与名称留出间距
+.marketTag {
+    font-size: 12px;
+    line-height: 18px;
+    margin-right: 6px;
+    padding: 0 4px;
+}
+
+// 单只指数的数据状态标识（更新中/已停更），由上游行情时间推导
+.statusTag {
+    font-size: 11px;
+    line-height: 16px;
+    margin-right: 6px;
+    padding: 0 4px;
+    // 标识不可选中，避免拖选指数名称时把状态字一并选中
+    user-select: none;
+}
+
+// 时段标识（盘前/盘中/午休/盘后/休市）：保持描边样式，与实心态的数据标识区分开
+.sessionTag {
+    font-size: 11px;
+    line-height: 16px;
+    margin-left: 6px;
+    padding: 0 4px;
+    user-select: none;
+}
+
+// 盘中：交易所正在连续竞价
+.sessionLive {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+// 盘前/午休/盘后：开闭市前后边缘时段
+.sessionEdge {
+    color: #d46b08;
+    border-color: #d4860b;
+}
+
+// 休市
+.sessionOff {
+    color: var(--color-text-placeholder);
+}
+
+// 卡片标题右侧的指数代码
+.indexCode {
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.updateTime {
+    font-size: 12px;
+    position: absolute;
+    right: 10px;
+    margin-bottom: 0 !important;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px 16px;
+    font-size: 13px;
+    // 卡片内容左右内缩 8px，与标题区的 .ant-card-head padding 对齐
+    // （原先由内层 Row/Col 提供，.card 内 .ant-row { margin: 0 !important } 抵消了负边距后生效）
+    padding: 0 8px;
+
+    >div {
+        white-space: nowrap;
+    }
+}
+
+.priceRow {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 6px;
+    grid-column: 1 / -1;
+}
+
+// 指数卡片指标栅格：字号比个股小一档（指数点位普遍五位以上），窄屏降为 2 列
+.indexGrid {
+    font-size: 12px;
+    // 等宽数字，定时刷新时位数跳动不会左右抖动
+    font-variant-numeric: tabular-nums;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.priceTitle {
+    margin: 0;
+}
+
+.statValue {
+    font-size: 18px;
+    margin-left: 12px;
+}
+
+.dataBlock {
+    margin-bottom: 6px;
+    gridColumn: 1 / -1;
+}
+
+// 个股查询顶部的搜索栏（无卡片边框，仅保留与卡片列一致的内边距节奏）
+.searchCard {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    :global {
+        .ant-card-body {
+            padding: 10px 0 !important;
+            padding-top: 4px !important;
+            border-top: 1px solid #e8e8e8 !important;
+        }
+    }
+}
+
+.changeAmt {
+    margin-left: 8px;
+}
+
+// 多市场 Tab：去掉默认外边距，分隔线与文字色跟随主题变量以适配深色模式
+// 铺满 .main 可视高度，交给内部 Tabs 分配高度（外层 .main 不再整体滚动）
+.tabsHost {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tabsWrap {
+    // Tab 撑满高度，改为内容区自身滚动、标签栏固定在顶部
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    :global {
+        .ant-tabs-nav {
+            margin: 0 0 8px !important;
+            // 标签栏不参与滚动，固定高度留在顶部
+            flex: none;
+        }
+
+        // 只有 Tab 内容区滚动，标签栏不跟着滚
+        .ant-tabs-content-holder {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .ant-tabs-nav::before {
+            border-bottom-color: var(--color-border-dark) !important;
+        }
+
+        // 与旧搜索卡片保持同一内边距节奏，分隔线由 nav 的下边线提供
+        .ant-tabs-content {
+            padding: 10px 0 0;
+        }
+
+        .ant-tabs-tab {
+            padding: 8px 0 !important;
+        }
+
+        .ant-tabs-tab-btn {
+            color: var(--color-text) !important;
+        }
+
+        .ant-tabs-tab-active .ant-tabs-tab-btn {
+            color: var(--color-primary) !important;
+        }
+
+        .ant-tabs-ink-bar {
+            background: var(--color-primary) !important;
+        }
+    }
+}
+
+.monitorInfo {
+    margin-bottom: 8px;
+    color: var(--color-text-placeholder);
+    font-size: 12px;
+    // 手动刷新按钮居最左，与状态文案排在一起
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+// 「只看重要 + 刷新」同行整块：不换行、不收缩，二者始终并排一行（只看重要在前）
+.newsFilter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+
+    // 「只看重要」文字与状态文案同色同字号（占位灰 12px），融入这一行、内部也不换行
+    :global(.ant-checkbox-wrapper) {
+        color: var(--color-text-placeholder);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}
+
+// 状态行文字也不折行，避免宽度不够时掉到下一行
+.monitorInfo span {
+    white-space: nowrap;
+}
+
+// 状态行左侧操作区（手动刷新按钮）
+.infoAction {
+    display: inline-flex;
+    align-items: center;
+}
+
+// 按市场分组的指数行（同一市场指数 ≥ 2 个时单独成行，其余归入「其他市场」一段）
+.marketSection {
+    // 拉开段间距，避免上一段的表头看起来像管到下一段
+    margin-bottom: 16px;
+}
+
+// 分组表头：市场名（用主题色左侧竖条让表头与卡片区分开）
+.marketGroupTitle {
+    margin: 2px 0 6px;
+    padding-left: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color-text);
+    border-left: 3px solid var(--color-primary);
+}
+
+// ===== 资讯快讯看板 =====
+.newsList {
+    :global {
+        .ant-list-item {
+            padding: 0;
+        }
+    }
+}
+
+// 单条快讯：左侧时间轴 + 右侧标题/正文
+.newsItem {
+    align-items: flex-start !important;
+    padding: 10px 14px !important;
+    margin-bottom: 8px;
+    // 卡片式：去掉分隔线，改圆角与轻阴影
+    border-bottom: none !important;
+    border-radius: var(--radius-base, 8px);
+    // 每条独立毛玻璃：半透明底 + 高斯模糊，遮掉会动的 webp 底层，不影响阅读
+    background: var(--color-bg-white);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+// 资讯骨架屏：单列纵向流，一条铺满整宽（不像行情栅格那样一行多列）
+.newsSkeletonList {
+    display: flex;
+    flex-direction: column;
+}
+
+// 骨架条目：复用 .newsItem 的卡片观感（圆角/内边距/间距/毛玻璃），保证数据到达前后不跳动
+.newsSkeletonItem {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-base, 8px);
+    background: var(--color-bg-white);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+// 骨架头部：时间+标签小条占一行，与正文拉开间距（对齐真实 .newsHead）
+.newsSkeletonHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+// 条目左右两栏：时间列在左（撑满整行高、内部文字垂直居中）、内容区在右，中间用竖直虚线分隔（列表与弹窗共用）
+.newsBody {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+// 左栏时间列：定宽纵向列（今天只有时刻行，昨天/更早上方多一行日期），内容再长也在列内折行，
+// 保证每一行的时间列宽与虚线位置一致；撑满行高使虚线贯通，文字整体垂直居中（字体与正文同色，虚线加深以保证可见）
+.newsTimeCol {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    padding-right: 12px;
+    border-right: 1px dashed var(--color-text-muted);
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+// 日期行（昨天 / MM-DD / YYYY-MM-DD）：字号略小于时刻但颜色与正文一致；跨年长日期靠定宽列自动折行
+.newsTimeDate {
+    line-height: 1.3;
+    color: var(--color-text-primary);
+}
+
+// 时刻行（HH:mm，已去掉秒）
+.newsTimeClock {
+    line-height: 1.3;
+}
+
+// 右栏内容区：撑满剩余宽度，与虚线留间距；最小高度两行正文（2 × 14px × 1.6 = 44.8px），
+// 避免短条目内容区比时间列还矮导致虚线局部悬空；窄屏下退化为时间在上、虚线变横线的纵向布局
+.newsMain {
+    flex: 1;
+    min-width: 0;
+    min-height: 44.8px;
+    padding-left: 12px;
+
+    @media (max-width: 576px) {
+        padding-left: 0;
+    }
+}
+
+// 窄屏堆叠：时间以块级行形式排在内容区顶部，虚线改为时间下的横线
+@media (max-width: 576px) {
+    .newsBody {
+        display: block;
+    }
+
+    .newsTimeCol {
+        width: auto;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 6px;
+        padding-right: 0;
+        padding-bottom: 4px;
+        border-right: none;
+        border-bottom: 1px dashed var(--color-text-muted);
+        text-align: left;
+    }
+}
+
+.newsTitle {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+// 正文摘要：最多 3 行截断（仅作用于正文，图片与展开补充不计入），点击整块弹窗看全文
+.newsExcerpt {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    // pre-line 保留 \n 换行（折叠多余空格），与行夹叠一起按渲染行数截断
+    white-space: pre-line;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+// 弹窗内的正文全文：与 .newsExcerpt 同字体/颜色/换行，仅去掉 3 行截断（不折叠、不响应点击）
+.newsExcerptFull {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+// 正文 HTML 内的链接：固定主题蓝，不受 score=2 内联标红的影响
+// （内联 color 会直接传播到无自行取值的后代，元素级规则仍优先于这种传播，加 !important 保险）
+.newsExcerpt a,
+.newsExcerptFull a {
+    color: var(--color-primary) !important;
+    // 长链接在折行时破词，保持可读
+    word-break: break-all;
+}
+
+// 弹窗内的完整详情：包裹与列表一致的 renderBody，仅纵向留白
+.newsDetail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+// 有新推送时置顶的提示条
+.newNewsBar {
+    // 吸顶：列表滚到中部时也能看到「x 条新快讯」入口（否则会跟着滚出视口）
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin-bottom: 8px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+// 底部加载状态行
+.newsFooter {
+    padding: 8px 0;
+    text-align: center;
+    color: var(--color-text-placeholder);
+    font-size: 12px;
+}
+
+// 触底观察哨兵：一个有高度的空块，进入视口即触发翻页
+.newsSentinel {
+    height: 1px;
+}
+
+// 快讯配图行：多图横排可换行，图与图、图与正文留间距
+.newsImages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.newsImg {
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+// 展开/收起开关：行内紧跟正文末尾，去掉按钮内边距与行高，使其与文字同基线
+// 展开/收起（由 antd link Button 改为普通 span）：保留链接文字主色与手型光标，行内紧跟正文末尾
+.newsToggle {
+    color: var(--color-primary);
+    cursor: pointer;
+    line-height: inherit;
+    vertical-align: baseline;
+    user-select: none;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+// 文字版刷新（asText，资讯 Tab 用）：普通 span 保持主色文字与手型，继承行字号
+.refreshText {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-primary);
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+// 刷新中/倒计时禁用态：不可点、置灰
+.refreshTextDisabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+        opacity: 0.6;
+    }
+}
+
+// 展开后的补充正文：与主正文区分（颜色与摘要对换，取次级文本色），可换行
+.newsMore {
+    margin-top: 4px;
+    // 统一的展开正文颜色，“重要”快讯也保持此色（不再标红），与普通展开一致
+    color: var(--color-text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+// 经济数据指标行：国旗 + 国家 + 今值/预期/前值，弱于正文的辅助信息样式
+.newsCalendar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--color-bg-overlay);
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+// 国旗 icon：行内排在标题左侧（普通 img，随正文同段 innerHTML 注入），与文字同基线，图后留一个小间距
+// 注：行夹叠容器里不能出现块级盒子（会把后续内容切成独立行盒），正文已经 sanitizeNewsHtml 拍平为纯行内流
+.newsFlag {
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: -2px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.newsCalendarCountry {
+    flex: none;
+    color: var(--color-text);
+}
+
+// 相关文章入口：固定在条目最下方，图标 + 标签 + 标题一行，整行可点击跳转原文，蓝色链接样式，标题过长省略号收尾
+.newsArticle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--color-primary);
+    cursor: pointer;
+
+    &:hover .newsArticleTitle {
+        text-decoration: underline;
+    }
+}
+
+.newsArticleLabel {
+    flex: none;
+}
+
+.newsArticleTitle {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

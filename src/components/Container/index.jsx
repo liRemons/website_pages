@@ -2,7 +2,7 @@
 import styles from "./index.module.less";
 import classnames from "classnames";
 
-function Container({ header, main, style, className, isAnimationBackground = true }) {
+function Container({ header, main, style = undefined, className = undefined, isAnimationBackground = true }) {
   return (
     <div>
       <div className={classnames(
