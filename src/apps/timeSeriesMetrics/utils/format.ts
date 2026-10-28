@@ -99,62 +99,38 @@ function formatClock(ms: number): string {
 }
 
 /**
- * 快讯时间列拆行：去掉秒，按与当前时间的距离分级，保证每行时间列宽一致
- * - 今天：只有时刻行「HH:mm」
- * - 昨天：日期行「昨天」 + 时刻行
- * - 今年更早：日期行「MM-DD」 + 时刻行
- * - 跨年：日期行「YYYY-MM-DD」 + 时刻行（定宽列内自动折成两行，不外溢）
- * 日期与时刻拆成两段由调用方分行渲染，而非拼成一长串：单行宽度会随日期格式浮动，
- * 各行时间列的虚线就对不齐；now 用页面时钟而非 Date.now()，跨零点时旧条目会自动从今天变昨天
+ * 快讯条目时刻：只取时分（去掉秒）
+ * 日期不在条目上重复（跨零点时旧条目也不靠条目自身区分日子），
+ * 统一由列表顶部状态行的「YYYY年M月D日 周X」给出，见 formatNewsDate
  * @param ms - 毫秒时间戳
- * @param now - 当前毫秒时间（页面时钟快照）
- * @returns {date, time}，date 为空串表示今天；时间戳非法时两者都是占位符
+ * @returns "HH:mm"，时间戳非法时返回占位符
  */
-function formatNewsTime(ms: number, now: number): { date: string; time: string } {
+function formatNewsClock(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) {
-    return { date: EMPTY_TEXT, time: EMPTY_TEXT }
+    return EMPTY_TEXT
   }
   const date: Date = new Date(ms)
-  const nowDate: Date = new Date(now)
-  const time: string = `${padTime(date.getHours())}:${padTime(date.getMinutes())}`
-  const sameDay: boolean =
-    date.getFullYear() === nowDate.getFullYear() &&
-    date.getMonth() === nowDate.getMonth() &&
-    date.getDate() === nowDate.getDate()
-  if (sameDay) {
-    return { date: '', time }
-  }
-  const yesterday: Date = new Date(nowDate)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const isYesterday: boolean =
-    date.getFullYear() === yesterday.getFullYear() &&
-    date.getMonth() === yesterday.getMonth() &&
-    date.getDate() === yesterday.getDate()
-  if (isYesterday) {
-    return { date: '昨天', time }
-  }
-  if (date.getFullYear() === nowDate.getFullYear()) {
-    return { date: `${padTime(date.getMonth() + 1)}-${padTime(date.getDate())}`, time }
-  }
-  return { date: `${date.getFullYear()}-${padTime(date.getMonth() + 1)}-${padTime(date.getDate())}`, time }
+  return `${padTime(date.getHours())}:${padTime(date.getMinutes())}`
 }
 
 /** 星期短名索引（Date.getDay() 0-6 对应 周日~周六） */
 const WEEKDAY_LABELS: string[] = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
 /**
- * 资讯列表顶部的总日期行：「M月D日 周X」
- * 条目时间列的日期已由 formatNewsTime 给出（今天/昨天/MM-DD），这里只补一个带星期的绝对日期
+ * 资讯列表顶部的总日期行：「YYYY年M月D日 周X」
+ * 条目只留时刻，这里补上带年份与星期的绝对日期：整列唯一的日期线索
  * 基于页面时钟或当前视口锚点条目的时间生成，日期一变顶部跟着变（今天自然变昨天）
  * @param ms - 毫秒时间戳
- * @returns 如「10月28日 周三」，时间戳非法时返回占位符
+ * @returns 如「2026年10月28日 周三」，时间戳非法时返回占位符
  */
 function formatNewsDate(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) {
     return EMPTY_TEXT
   }
   const date: Date = new Date(ms)
-  return `${date.getMonth() + 1}月${date.getDate()}日 ${WEEKDAY_LABELS[date.getDay()]}`
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${
+    WEEKDAY_LABELS[date.getDay()]
+  }`
 }
 
 /**
@@ -217,7 +193,7 @@ export {
   padTime,
   formatTimestamp,
   formatClock,
-  formatNewsTime,
+  formatNewsClock,
   formatNewsDate,
   displayCode,
   colorOf,

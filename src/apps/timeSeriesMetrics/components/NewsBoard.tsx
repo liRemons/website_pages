@@ -5,14 +5,16 @@
  * 顶部状态行复用手动刷新按钮；长连接推送的新快讯在列表头部插入并给出「回到最新」提示条；
  * 用户不在顶部时置顶插入会自动做滚动补偿（滚动条补回新增高度，原画面内容不漂移）。
  * 状态行的日期星期跟在刷新按钮后：取视口中部偏上位置条目所属日期，随滚动与跨零点更新，
- * 窄屏下该位置优先保留日期、隐藏长状态文案（省屏效）；列表条目仍按自身时刻列展示日期行。
+ * 窄屏下该位置优先保留日期、隐藏长状态文案（省屏效）；日期只在这一行给出，列表条目只显示时刻。
  * 状态行与新快讯提示条：前者整块吸顶，后者浮在吸顶头下沿（绝对定位、不占位），
  * 提示条出现与消失不会推下列表内容，也不影响固定区高度。
  * 带 calendar_key 的条目在正文标题左侧展示国旗 icon，正文下方展示经济数据指标行（国家 + 今值/预期/前值，指标由 useNewsFeed 拉取）；
  * 带 article 的条目在条目最下方展示「相关文章」蓝色链接入口，点击新标签页打开原文 uri。
- * 条目布局：宽屏定宽时间列在左（去秒，非当天条目上方多一行日期）、内容区在右，中间虚线分隔；
+ * 条目布局：宽屏定宽时间列在左（只有时刻 HH:mm）、内容区在右，中间虚线分隔；
  * 窄屏（≤576px）隐藏时间列，时刻拼在正文 HTML 前与标题同排，不再单独占一行；
- * 国旗 icon 行内拼在正文 HTML 前与标题同排（列表与弹窗共用 renderBody）。
+ * 国旗 icon 行内拼在正文 HTML 前与标题同排。
+ * 弹窗（快讯详情）不走这一套：标题放在弹窗头部（无标题时回退「快讯详情」），
+ * 时间放在标题下方独立一行（带年/日期/星期），正文不再带【标题】前缀，也不渲染左侧时刻列。
  */
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -20,7 +22,7 @@ import { List, Skeleton, Button, Image, Modal, Checkbox } from 'antd'
 import { ArrowUpOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
 import { INewsCalendar, INewsItem } from '../types'
 import { COLOR_UP } from '../constants'
-import { formatNewsDate, formatNewsTime } from '../utils/format'
+import { formatNewsClock, formatNewsDate } from '../utils/format'
 import { buildExcerptHtml, calendarKeyOf, formatCalendarValue, sanitizeNewsHtml } from '../utils/news'
 import { RefreshButton } from './RefreshButton'
 import { NewsSkeleton } from './NewsSkeleton'
@@ -41,7 +43,7 @@ interface INewsBoardProps {
   importantOnly: boolean
   /** 切换「只看重要」 */
   onToggleImportant: (checked: boolean) => void
-  /** 页面时钟快照，判「今天/昨天」的基准（跨零点时旧条目自动变昨天） */
+  /** 页面时钟快照：列表还没数据（首屏/骨架/空列表）时顶部日期的回退基准，跨零点自动换成昨天 */
   now: number
   onLoadMore: () => void
   onRefresh: () => Promise<void> | void
@@ -236,31 +238,36 @@ function NewsBoard({
     ? error
     : '实时快讯 · 进入自动加载，下滑翻页，新推送将出现在顶部'
 
-  // 列表条目与弹窗共用的正文渲染：宽屏左右两栏（时间列在左垂直居中、内容区在右、中间虚线分隔），
-  // 窄屏时间改为正文前的行内前缀（不再单独占一行，屏效）；日期语义统一看顶部状态行
-  // （经济数据指标行、展开补充、配图、相关文章置底均在右栏；重要/新标记已去掉）
+  // 列表条目与弹窗共用的正文渲染（两者布局不同，由 clamped 分支）：
+  // 列表：宽屏左右两栏（时刻列在左垂直居中、内容区在右、中间虚线分隔），窄屏时刻改为正文前的
+  // 行内前缀（不再单独占一行，屏效）；日期只在看板顶部状态行
+  // 弹窗：不渲染时刻列，也不在正文里重复标题，改为弹窗头部显示标题 + 标题下方一行日期时刻
+  // （经济数据指标行、展开补充、配图、相关文章始终跟正文同栏；重要/新标记已去掉）
   // clamped=true：正文最多 3 行截断、点击弹窗、鼠标手型；clamped=false：弹窗内展示全文、不再响应点击
   const renderBody = (item: INewsItem, clamped: boolean): JSX.Element => {
     // 条目带 calendar_key 且指标已拉到时渲染指标行；未拉到/失败则不展示（不占位）
     const calendar: INewsCalendar | undefined = calendarData[calendarKeyOf(item)]
-    // 时间拆成日期与时刻两段：定宽列分行展示，窄屏行内前缀拼成一行（两者都渲染，由样式决定显示哪个）
-    const { date: dateText, time: timeText }: { date: string; time: string } = formatNewsTime(
-      item.displayTime,
-      now
-    )
+    // 条目只留时刻：日期不在每条上重复，整列的日期语义由顶部状态行统一给出（跨零点的旧条目也一样，
+    // 滚动到它们时状态行会换成对应日期），省屏效也让时间列宽度稳定
+    const timeText: string = formatNewsClock(item.displayTime)
     return (
     <div className={style.newsBody}>
-      {/* 左栏：时间单独一列（定宽、去秒、数字等宽），今天只有时刻行，昨天/更早上方多一行日期；
-          内容再长也在定宽列内折行，每行时间列宽与虚线位置保持一致；score=2 重要快讯与正文同样标红；
-          窄屏整体隐藏，换成正文前的 .newsTimeInline 行内前缀 */}
-      <div
-        className={style.newsTimeCol}
-        style={item.score === 2 ? { color: COLOR_UP } : undefined}
-      >
-        {dateText ? <div className={style.newsTimeDate}>{dateText}</div> : null}
-        <div className={style.newsTimeClock}>{timeText}</div>
-      </div>
-      <div className={style.newsMain}>
+      {/* 左栏时刻列只在列表出现（定宽、只到分、数字等宽）；score=2 重要快讯与正文同样标红；
+          窄屏整体隐藏，换成正文前的 .newsTimeInline 行内前缀；弹窗内这一列换成标题下方的时间行 */}
+      {clamped ? (
+        <div
+          className={style.newsTimeCol}
+          style={item.score === 2 ? { color: COLOR_UP } : undefined}
+        >
+          <div className={style.newsTimeClock}>{timeText}</div>
+        </div>
+      ) : null}
+      <div className={clamped ? style.newsMain : `${style.newsMain} ${style.newsMainFlush}`}>
+        {/* 弹窗：标题已提到弹窗头部，这里在标题下方补一行完整时间（年+日期+星期+时刻）；
+            带上日期是因为弹窗已脱离看板顶部那条日期状态行，只剩时刻会看不出是哪一天 */}
+        {clamped ? null : (
+          <div className={style.newsDetailTime}>{`${formatNewsDate(item.displayTime)} ${timeText}`}</div>
+        )}
       {/* 正文：国旗、标题前缀、清洗后的正文 HTML、「展开」开关拼成单一行内流，一次 innerHTML 注入。
           必须同段注入：.newsExcerpt 是 -webkit-box（行夹叠），且正文常以 <p> 等块级标签开头，
           拆开渲染时块级正文会切出独立行盒，把行外的国旗挤成独占一行（display: contents 包装在 Chromium 下同样不可靠）；
@@ -287,12 +294,13 @@ function NewsBoard({
         }}
         dangerouslySetInnerHTML={{
           __html: buildExcerptHtml({
-            // 窄屏行内时间（含昨天/MM-DD 等相对日期），宽屏由样式隐藏，时间走左侧定宽列
-            timeLabel: dateText ? `${dateText} ${timeText}` : timeText,
+            // 行内时刻只给窄屏列表（宽屏由样式隐藏，时间走左侧定宽列）；弹窗已有标题下方的时间行，不再拼前缀
+            timeLabel: clamped ? timeText : '',
             timeClass: style.newsTimeInline,
             flagUri: calendar ? calendar.flagUri : '',
             flagClass: style.newsFlag,
-            title: item.title,
+            // 标题只在列表正文里加【】前缀；弹窗内提到弹窗头部，正文不再重复
+            title: clamped ? item.title : '',
             bodyHtml: sanitizeNewsHtml(item.contentHtml || item.contentText),
             itemId: item.id,
             showToggle: clamped && Boolean(item.contentMore),
@@ -363,11 +371,11 @@ function NewsBoard({
             >
               只看重要
             </Checkbox>
-            <RefreshButton onRefresh={onRefresh} />
             {/* 列表已有数据时取锚点条目日期；首屏/骨架/空列表时直接跟页面时钟，跨零点不会停在旧日期 */}
             <span className={style.newsDateHeader}>
               {formatNewsDate(items.length > 0 ? headerDateMs : now)}
             </span>
+            <RefreshButton onRefresh={onRefresh} />
           </div>
           <span className={style.newsStatusText}>{statusText}</span>
         </div>
@@ -404,13 +412,15 @@ function NewsBoard({
       </div>
       <div ref={sentinelRef} className={style.newsSentinel} />
 
-      {/* 点击快讯弹窗展示全部内容（正文 + 补充正文 + 配图），不再跳转外链 */}
+      {/* 点击快讯弹窗展示全部内容（标题上提到弹窗头部，下方依次是时间行 + 正文 + 补充正文 + 配图），不再跳转外链 */}
       <Modal
         open={active !== null}
         onCancel={closeDetail}
         footer={null}
         width={640}
-        title="快讯详情"
+        // 快讯原标题上提到弹窗头部；没有标题的条目回退成「快讯详情」（className 的用途见样式注释）
+        className={style.newsModal}
+        title={active?.title || '快讯详情'}
       >
         {active ? <div className={style.newsDetail}>{renderBody(active, false)}</div> : null}
       </Modal>

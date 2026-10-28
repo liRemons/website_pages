@@ -191,7 +191,7 @@
     :global {
         .ant-tabs-nav {
             // 上/左/右不留外边距（antd 默认只有 16px 下外边距，这里压到 8px），标签栏紧挨上方 Header
-            margin: 0 !important;
+            margin: 10px 0 0px !important;
             // 标签栏不参与滚动，固定高度留在顶部
             flex: none;
         }
@@ -253,6 +253,12 @@
     gap: 8px;
     flex: none;
 
+    // 极窄屏下允许这一块换行（配合 .newsDateHeader 的 width: 100%），避免日期尾巴被裁
+    @media (max-width: 360px) {
+        flex-wrap: wrap;
+        row-gap: 2px;
+    }
+
     // 「只看重要」文字与状态文案同色同字号（占位灰 12px），融入这一行、内部也不换行
     :global(.ant-checkbox-wrapper) {
         color: var(--color-text-placeholder);
@@ -261,14 +267,19 @@
     }
 }
 
-// 刷新按钮后的当前日期（视口中部偏上条目所属日期）：用竖分隔符与操作区拉开，数字等宽防跳动
+// 刷新按钮后的当前日期（视口中部偏上条目所属日期，带年份）：与操作区靠 newsFilter 的 gap 拉开，数字等宽防跳动
 .newsDateHeader {
-    padding-left: 8px;
-    border-left: 1px dashed var(--color-text-muted);
     color: var(--color-text-primary);
     font-size: 12px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+
+    // 极窄屏兜底：这一行最宽的组合是「只看重要 + N 秒后可刷新 + 带年份日期」，
+    // 320px 宽放不下时让日期整块换到第二行，而不是被滚动容器的 overflow-x: hidden 裁掉尾巴
+    @media (max-width: 360px) {
+        flex: none;
+        width: 100%;
+    }
 }
 
 // 状态行文字也不折行，避免宽度不够时掉到下一行
@@ -378,52 +389,48 @@
     width: 100%;
 }
 
-// 左栏时间列：定宽纵向列（今天只有时刻行，昨天/更早上方多一行日期），内容再长也在列内折行，
-// 保证每一行的时间列宽与虚线位置一致；撑满行高使虚线贯通，文字整体垂直居中（字体与正文同色，虚线加深以保证可见）
+// 左栏时刻列：定宽纵向列（只放 HH:mm，日期统一由顶部状态行给出），撑满行高使虚线贯通，
+// 文字垂直居中（字体与正文同色，虚线加深以保证可见）；列宽按 5 位等宽数字 + 分隔线间距取窄
 .newsTimeCol {
     flex: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 76px;
+    width: 54px;
     padding-right: 12px;
     border-right: 1px dashed var(--color-text-muted);
     color: var(--color-text-primary);
     font-variant-numeric: tabular-nums;
 }
 
-// 日期行（昨天 / MM-DD / YYYY-MM-DD）：字号略小于时刻但颜色与正文一致；跨年长日期靠定宽列自动折行
-.newsTimeDate {
-    line-height: 1.3;
-    color: var(--color-text-primary);
-}
-
-// 时刻行（HH:mm，已去掉秒）
+// 时刻（HH:mm，已去掉秒）
 .newsTimeClock {
     line-height: 1.3;
 }
 
-// 右栏内容区：撑满剩余宽度，与虚线留间距；最小高度两行正文（2 × 14px × 1.6 = 44.8px），
-// 避免短条目内容区比时间列还矮导致虚线局部悬空；窄屏下时间列已隐藏，这些补偿一并去掉
+// 右栏内容区：撑满剩余宽度，与虚线留间距；时刻列只剩一行，不再需要为两行时间补最小高度
+// （短条目按正文自然撑开，虚线由 .newsBody 的 stretch 贯通）；窄屏下时间列已隐藏，左间距一并去掉
 .newsMain {
     flex: 1;
     min-width: 0;
-    min-height: 44.8px;
     padding-left: 12px;
 
     @media (max-width: 576px) {
         padding-left: 0;
-        min-height: 0;
     }
 }
 
-// 行内时间前缀：宽屏隐藏（时间走左侧定宽列），窄屏顶替时间列，与标题正文同排，不再单独占一行
+// 弹窗内的内容区：没有左侧时刻列，那 12px 是留给虚线的间距，这里直接贴左
+.newsMainFlush {
+    padding-left: 0;
+}
+
+// 行内时刻前缀：宽屏隐藏（时间走左侧定宽列），窄屏顶替时间列，与标题正文同排，不再单独占一行
 .newsTimeInline {
     display: none;
-    margin-right: 6px;
+    margin-right: 2px;
     color: var(--color-text-muted);
-    font-size: 12px;
     // 与定宽列一致用等宽数字，多条快讯首行扫读时宽度跳动更小
     font-variant-numeric: tabular-nums;
 
@@ -432,7 +439,7 @@
     }
 }
 
-// 窄屏：只隐藏定宽时间列（时刻由 .newsTimeInline 行内给出），两栏布局保持不动，
+// 窄屏：只隐藏定宽时刻列（时刻由 .newsTimeInline 行内给出），两栏布局保持不动，
 // 内容区自然撑满整宽；这里不能改成 display: block 堆叠，否则时间又会单独撑起一行
 @media (max-width: 576px) {
     .newsTimeCol {
@@ -479,11 +486,28 @@
     word-break: break-all;
 }
 
-// 弹窗内的完整详情：包裹与列表一致的 renderBody，仅纵向留白
+// 弹窗内的完整详情：标题上提到弹窗头部、时刻列换成标题下方的时间行，这里只管纵向留白
 .newsDetail {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+// 弹窗标题下方的时间行：一条快讯的完整时间（YYYY年M月D日 周X HH:mm）
+// 弹窗已脱离看板顶部那条日期状态行，只给时刻会看不出是哪一天；次要灰小字不与正文争焦点
+.newsDetailTime {
+    margin-bottom: 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+// 传给 Modal 的 className（落在 .ant-modal 根节点）：标题换成快讯原文后长度不可控，
+// 而右上角关闭按钮是绝对定位浮在头部上，折行的首行标题会钻到按钮底下，这里给它让出宽度
+.newsModal {
+    :global(.ant-modal-title) {
+        padding-right: 32px;
+    }
 }
 
 // 有新推送时的提示条：浮在吸顶头下沿（绝对定位，不进文档流）
@@ -496,13 +520,7 @@
     transform: translateX(-50%);
     // 高于吸顶头（父级），保证不被头的背景裁在下层
     z-index: 7;
-    margin-top: 6px;
     max-width: 100%;
-    padding: 4px 8px;
-    background: var(--color-bg-input);
-    border: 1px solid var(--color-border-dark);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-sm);
     white-space: nowrap;
 }
 
@@ -586,8 +604,7 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 6px;
-    padding: 4px 8px;
+    margin-top: 2px;
     border-radius: 4px;
     background: var(--color-bg-overlay);
     color: var(--color-text-secondary);
@@ -615,7 +632,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 2px;
     font-size: 12px;
     color: var(--color-primary);
     cursor: pointer;
