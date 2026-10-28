@@ -78,6 +78,21 @@ import style from './styles/index.module.less'
 import '@assets/css/index.global.less'
 
 /**
+ * 页面外壳尺寸：透传给 Container 的 .main 与 Header（只覆盖本页，不动共享组件样式，其他页面不受影响）
+ * 1）.main 顶部留白 20px 去零（本页是铺满高度的内部滚动布局），左右 15px 收窄到 8px 省屏效；
+ *    Header 同步收到 8px，让返回按钮与下方 Tab 标签左缘对齐
+ * 2）必须显式声明 boxSizing + width：两种构建入口的 CSS 重置不一样（浏览器构建走 src/index.ejs，
+ *    无全局重置，div 默认 content-box；App 构建走 src/index-app.html，有 * { box-sizing: border-box }）。
+ *    content-box 下共享样式的 width: calc(100% - 30px) 算的是内容宽，内边距一缩盒子就等量变窄，
+ *    右侧会凭空多出一条缺口；钉成 border-box + 100% 后两侧留白恒定对称
+ */
+const SHELL_STYLE: React.CSSProperties = {
+  boxSizing: 'border-box',
+  width: '100%',
+  padding: '0 8px',
+}
+
+/**
  * IndexDashboard 组件
  * 多市场行情看板，按 Tab 切换个股查询、沪深港指数、国际指数与大宗商品
  */
@@ -199,6 +214,7 @@ function IndexDashboard(): JSX.Element {
     ? '电子盘休市'
     : '已停止自动刷新，点击左侧「刷新」获取最新'
 
+  // Container 的 style 透传给 .main，具体取值与设计取舍见 SHELL_STYLE 定义处
   return (
     <>
       <Container
@@ -297,7 +313,8 @@ function IndexDashboard(): JSX.Element {
             />
           </div>
         }
-        header={<Header name="监控" leftPath='/tool' />}
+        style={SHELL_STYLE}
+        header={<Header name="监控" leftPath='/tool' headerStyle={SHELL_STYLE} />}
       />
       <Fixed />
     </>

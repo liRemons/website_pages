@@ -6,7 +6,9 @@ import backSvg from "@assets/svg/back.svg";
 import HelpDrawer from "../HelpDrawer";
 
 export default function Header(props) {
-  const { name, showLeft = true, showRight = true, leftPath, handleContent } = props;
+  // headerStyle：透传给根节点的行内样式，只供个别页面微调盒子尺寸（如铺满宽度的内部滚动型页面）；
+  // 不传时行为与之前完全一致，其余页面不受影响
+  const { name, showLeft = true, showRight = true, leftPath, handleContent, headerStyle } = props;
 
   const leftComponent = props.leftComponent || (
     <div className="circle" onClick={() => openApp({ url: leftPath || '/homeList', slidePosition: 'left' })}>
@@ -21,7 +23,7 @@ export default function Header(props) {
   );
 
   return (
-    <div className={style.header}>
+    <div className={style.header} style={headerStyle}>
       <div className={style.left}>
         {showLeft && leftComponent}
       </div>

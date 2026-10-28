@@ -141,12 +141,15 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * 拼正文行内 HTML：国旗 + 标题前缀 + 清洗后的正文 + 可选「展开/收起」开关
+ * 拼正文行内 HTML：行内时间前缀 + 国旗 + 标题前缀 + 清洗后的正文 + 可选「展开/收起」开关
  * 全部走同一段 innerHTML 注入：容器是 -webkit-box（行夹叠）且正文可能以块级标签开头，
- * 拆开渲染时块级正文会把行内的国旗挤成独立行盒；拼成单一行内流后国旗与首行文字同排，
+ * 拆开渲染时块级正文会把行内的国旗/时间挤成独立行盒；拼成单一行内流后它们与首行文字同排，
  * 开关带 data-toggle-id，由外层事件委托处理点击；class 名由调用方传入（CSS Modules 哈希类不在工具层引用）
+ * 行内时间只供窄屏顶替左侧定宽时间列（桌面端由样式隐藏），日期语义已上提到列表顶部状态行
  */
 function buildExcerptHtml(args: {
+  timeLabel?: string
+  timeClass?: string
   flagUri?: string
   flagClass?: string
   title?: string
@@ -157,6 +160,11 @@ function buildExcerptHtml(args: {
   toggleClass?: string
 }): string {
   const parts: string[] = []
+  if (args.timeLabel) {
+    parts.push(
+      `<span class="${args.timeClass || ''}">${escapeHtml(args.timeLabel)}</span>`
+    )
+  }
   if (args.flagUri) {
     parts.push(
       `<img class="${args.flagClass || ''}" src="${escapeHtml(args.flagUri)}" width="20" height="14" alt="" />`

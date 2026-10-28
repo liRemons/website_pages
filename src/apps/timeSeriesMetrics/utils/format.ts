@@ -139,6 +139,24 @@ function formatNewsTime(ms: number, now: number): { date: string; time: string }
   return { date: `${date.getFullYear()}-${padTime(date.getMonth() + 1)}-${padTime(date.getDate())}`, time }
 }
 
+/** 星期短名索引（Date.getDay() 0-6 对应 周日~周六） */
+const WEEKDAY_LABELS: string[] = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+
+/**
+ * 资讯列表顶部的总日期行：「M月D日 周X」
+ * 条目时间列的日期已由 formatNewsTime 给出（今天/昨天/MM-DD），这里只补一个带星期的绝对日期
+ * 基于页面时钟或当前视口锚点条目的时间生成，日期一变顶部跟着变（今天自然变昨天）
+ * @param ms - 毫秒时间戳
+ * @returns 如「10月28日 周三」，时间戳非法时返回占位符
+ */
+function formatNewsDate(ms: number): string {
+  if (!Number.isFinite(ms) || ms <= 0) {
+    return EMPTY_TEXT
+  }
+  const date: Date = new Date(ms)
+  return `${date.getMonth() + 1}月${date.getDate()}日 ${WEEKDAY_LABELS[date.getDay()]}`
+}
+
 /**
  * 指数代码展示形式
  * 剔掉腾讯的交易所前缀（sh/sz/bj/hk），东财与港股的字母代码（HSI、TWII、GDAXI）原样展示
@@ -200,6 +218,7 @@ export {
   formatTimestamp,
   formatClock,
   formatNewsTime,
+  formatNewsDate,
   displayCode,
   colorOf,
   findMeta,

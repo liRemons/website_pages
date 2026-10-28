@@ -190,7 +190,8 @@
 
     :global {
         .ant-tabs-nav {
-            margin: 0 0 8px !important;
+            // 上/左/右不留外边距（antd 默认只有 16px 下外边距，这里压到 8px），标签栏紧挨上方 Header
+            margin: 0 !important;
             // 标签栏不参与滚动，固定高度留在顶部
             flex: none;
         }
@@ -207,13 +208,16 @@
             border-bottom-color: var(--color-border-dark) !important;
         }
 
-        // 与旧搜索卡片保持同一内边距节奏，分隔线由 nav 的下边线提供
+        // 与旧搜索卡片保持同一内边距节奏，分隔线由 nav 的下边线提供；
+        // 顶部不再给内边距（间距由 nav 的 8px 下外边距与各看板自己的头部行提供），铺满高度更省屏效
         .ant-tabs-content {
-            padding: 10px 0 0;
+            padding: 0;
         }
 
         .ant-tabs-tab {
-            padding: 8px 0 !important;
+            // 标签上内边距去零：标签栏上方那段空隙其实是这 8px（nav 的 margin-top 本来就是 0），
+            // 只留到分隔线之前的 8px，标签可点区域仍含这部分高度
+            padding: 0 0 8px !important;
         }
 
         .ant-tabs-tab-btn {
@@ -242,7 +246,7 @@
     flex-wrap: wrap;
 }
 
-// 「只看重要 + 刷新」同行整块：不换行、不收缩，二者始终并排一行（只看重要在前）
+// 「只看重要 + 刷新 + 当前日期」同行整块：不换行、不收缩，三者始终并排一行（只看重要在前）
 .newsFilter {
     display: inline-flex;
     align-items: center;
@@ -257,9 +261,26 @@
     }
 }
 
+// 刷新按钮后的当前日期（视口中部偏上条目所属日期）：用竖分隔符与操作区拉开，数字等宽防跳动
+.newsDateHeader {
+    padding-left: 8px;
+    border-left: 1px dashed var(--color-text-muted);
+    color: var(--color-text-primary);
+    font-size: 12px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 // 状态行文字也不折行，避免宽度不够时掉到下一行
 .monitorInfo span {
     white-space: nowrap;
+
+    // 窄屏屏效：资讯状态长文案让位隐藏，保证「只看重要 + 刷新 + 日期」这一行不折行且日期始终可见
+    @media (max-width: 576px) {
+        &.newsStatusText {
+            display: none;
+        }
+    }
 }
 
 // 状态行左侧操作区（手动刷新按钮）
@@ -285,6 +306,23 @@
 }
 
 // ===== 资讯快讯看板 =====
+// 吸顶头：状态行（只看重要 + 刷新 + 日期）与新快讯提示条整块钉在滚动区上方，列表从其下方滚过
+// 不透明底 + 模糊遮住滚过的条目，下边细线分隔固定区与滚动区
+.newsHeadSticky {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    margin-bottom: 8px;
+    padding: 6px 0;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    // 状态行自带的下边距由吸顶头的下内边距统一提供，避免两者叠加后固定区偏高吃掉屏效
+    .monitorInfo {
+        margin-bottom: 0;
+    }
+}
+
 .newsList {
     :global {
         .ant-list-item {
@@ -367,7 +405,7 @@
 }
 
 // 右栏内容区：撑满剩余宽度，与虚线留间距；最小高度两行正文（2 × 14px × 1.6 = 44.8px），
-// 避免短条目内容区比时间列还矮导致虚线局部悬空；窄屏下退化为时间在上、虚线变横线的纵向布局
+// 避免短条目内容区比时间列还矮导致虚线局部悬空；窄屏下时间列已隐藏，这些补偿一并去掉
 .newsMain {
     flex: 1;
     min-width: 0;
@@ -376,26 +414,29 @@
 
     @media (max-width: 576px) {
         padding-left: 0;
+        min-height: 0;
     }
 }
 
-// 窄屏堆叠：时间以块级行形式排在内容区顶部，虚线改为时间下的横线
-@media (max-width: 576px) {
-    .newsBody {
-        display: block;
-    }
+// 行内时间前缀：宽屏隐藏（时间走左侧定宽列），窄屏顶替时间列，与标题正文同排，不再单独占一行
+.newsTimeInline {
+    display: none;
+    margin-right: 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    // 与定宽列一致用等宽数字，多条快讯首行扫读时宽度跳动更小
+    font-variant-numeric: tabular-nums;
 
+    @media (max-width: 576px) {
+        display: inline;
+    }
+}
+
+// 窄屏：只隐藏定宽时间列（时刻由 .newsTimeInline 行内给出），两栏布局保持不动，
+// 内容区自然撑满整宽；这里不能改成 display: block 堆叠，否则时间又会单独撑起一行
+@media (max-width: 576px) {
     .newsTimeCol {
-        width: auto;
-        flex-direction: row;
-        align-items: baseline;
-        justify-content: flex-start;
-        gap: 6px;
-        padding-right: 0;
-        padding-bottom: 4px;
-        border-right: none;
-        border-bottom: 1px dashed var(--color-text-muted);
-        text-align: left;
+        display: none;
     }
 }
 
@@ -445,15 +486,24 @@
     gap: 8px;
 }
 
-// 有新推送时置顶的提示条
+// 有新推送时的提示条：浮在吸顶头下沿（绝对定位，不进文档流）
+// 出现与消失都不会推下列表内容，固定区高度也始终只有一行（屏效）；代价是盖住列表顶部约一行
 .newNewsBar {
-    // 吸顶：列表滚到中部时也能看到「x 条新快讯」入口（否则会跟着滚出视口）
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    margin-bottom: 8px;
-    padding: 6px 0;
-    text-align: center;
+    position: absolute;
+    // 相对吸顶头的 padding box 定位，top: 100% 即下沿，再用外边距跨过头的下细线，不贴成一条
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    // 高于吸顶头（父级），保证不被头的背景裁在下层
+    z-index: 7;
+    margin-top: 6px;
+    max-width: 100%;
+    padding: 4px 8px;
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border-dark);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
 }
 
 // 底部加载状态行

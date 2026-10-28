@@ -4,9 +4,14 @@
  * （antd v5 未提供 InfiniteScroll 组件，这里用原生观察器即可，不引额外依赖）。
  * 顶部状态行复用手动刷新按钮；长连接推送的新快讯在列表头部插入并给出「回到最新」提示条；
  * 用户不在顶部时置顶插入会自动做滚动补偿（滚动条补回新增高度，原画面内容不漂移）。
+ * 状态行的日期星期跟在刷新按钮后：取视口中部偏上位置条目所属日期，随滚动与跨零点更新，
+ * 窄屏下该位置优先保留日期、隐藏长状态文案（省屏效）；列表条目仍按自身时刻列展示日期行。
+ * 状态行与新快讯提示条：前者整块吸顶，后者浮在吸顶头下沿（绝对定位、不占位），
+ * 提示条出现与消失不会推下列表内容，也不影响固定区高度。
  * 带 calendar_key 的条目在正文标题左侧展示国旗 icon，正文下方展示经济数据指标行（国家 + 今值/预期/前值，指标由 useNewsFeed 拉取）；
  * 带 article 的条目在条目最下方展示「相关文章」蓝色链接入口，点击新标签页打开原文 uri。
- * 条目布局：定宽时间列在左（去秒，非当天条目上方多一行日期）、内容区在右，中间虚线分隔；
+ * 条目布局：宽屏定宽时间列在左（去秒，非当天条目上方多一行日期）、内容区在右，中间虚线分隔；
+ * 窄屏（≤576px）隐藏时间列，时刻拼在正文 HTML 前与标题同排，不再单独占一行；
  * 国旗 icon 行内拼在正文 HTML 前与标题同排（列表与弹窗共用 renderBody）。
  */
 
@@ -15,7 +20,7 @@ import { List, Skeleton, Button, Image, Modal, Checkbox } from 'antd'
 import { ArrowUpOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
 import { INewsCalendar, INewsItem } from '../types'
 import { COLOR_UP } from '../constants'
-import { formatNewsTime } from '../utils/format'
+import { formatNewsDate, formatNewsTime } from '../utils/format'
 import { buildExcerptHtml, calendarKeyOf, formatCalendarValue, sanitizeNewsHtml } from '../utils/news'
 import { RefreshButton } from './RefreshButton'
 import { NewsSkeleton } from './NewsSkeleton'
@@ -48,6 +53,9 @@ const ROOT_MARGIN = '0px 0px 240px 0px'
 
 /** 判定「在顶部」的滚动阈值（像素）： scrollTop 小于等于此值视为已置顶 */
 const AT_TOP_THRESHOLD = 40
+
+/** 顶部日期行锚点：取视口高度 40% 处（中部偏上）的条目日期作为当前日期 */
+const DATE_ANCHOR_RATIO = 0.4
 
 /** 从给定节点向上找最近的可滚动祖先（真正的滚动容器，本页为 .ant-tabs-content-holder） */
 function findScroller(from: HTMLElement | null): HTMLElement | null {
@@ -90,6 +98,11 @@ function NewsBoard({
   const prevCountRef = useRef<number>(0)
   // 点击正文（超 3 行被截断）后弹窗展示全部内容的当前条目
   const [active, setActive] = useState<INewsItem | null>(null)
+  // 状态行日期锚点：视口中部偏上条目所属日期（毫秒时间），随滚动/换页/时钟更新
+  const [headerDateMs, setHeaderDateMs] = useState<number>(now)
+  // 页面时钟快照的 ref 镜像：锚点回退基准用，避免每秒时钟刷新重建滚动监听
+  const nowRef = useRef<number>(now)
+  nowRef.current = now
   const openDetail = useCallback((item: INewsItem): void => { setActive(item) }, [])
   const closeDetail = useCallback((): void => { setActive(null) }, [])
   // content_more 可能很短，保留行内展开/收起；与「正文超长走弹窗」并存
@@ -124,18 +137,51 @@ function NewsBoard({
     return () => observer.disconnect()
   }, [onLoadMore, items.length, loadingMore, hasMore])
 
-  // 监听滚动容器维护「是否在顶部」；容器需挂载后才能取到，故用 effect 绑定
+  // 监听滚动容器维护「是否在顶部」与状态行日期锚点；容器需挂载后才能取到，故用 effect 绑定
   useEffect(() => {
     const scroller: HTMLElement | null = findScroller(topRef.current)
     const target: HTMLElement | Window = scroller || window
+    // 回退基准从 nowRef 读取：不随每秒时钟重建监听；列表滚到另一天的旧条目时（滚动/翻页/新快讯置顶）重算会带出那个日期
+    const syncHeaderDate = (): void => {
+      const y: number = window.innerHeight * DATE_ANCHOR_RATIO
+      // 只查本组件容器内的条目：弹窗也复用 renderBody（带同样的 data-news-ts），不能全局查
+      const container: HTMLElement | null = topRef.current
+      if (!container) {
+        return
+      }
+      const nodes = container.querySelectorAll<HTMLElement>('[data-news-ts]')
+      let picked: number | null = null
+      for (let i = 0; i < nodes.length; i += 1) {
+        const { top } = nodes[i].getBoundingClientRect()
+        // 逐条往后推，留下的最后一条就是跨过锚点（顶部不高于锚点）的那条
+        if (top <= y) {
+          picked = Number(nodes[i].getAttribute('data-news-ts'))
+        }
+      }
+      // 条目没铺到锚点（列表很短）时用首条；完全滑过锚点（不应发生）也走上面的逆推结果
+      if (picked === null && nodes.length > 0) {
+        picked = Number(nodes[0].getAttribute('data-news-ts'))
+      }
+      if (picked !== null && Number.isFinite(picked)) {
+        setHeaderDateMs(picked)
+      } else {
+        // 列表空或骨架屏阶段回退跟随页面时钟
+        setHeaderDateMs(nowRef.current)
+      }
+    }
     const onScroll = (): void => {
       const top: number = scroller ? scroller.scrollTop : window.scrollY
       setAtTop(top <= AT_TOP_THRESHOLD)
+      syncHeaderDate()
     }
     onScroll()
     target.addEventListener('scroll', onScroll, { passive: true })
-    return () => target.removeEventListener('scroll', onScroll)
-  }, [])
+    window.addEventListener('resize', syncHeaderDate)
+    return () => {
+      target.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', syncHeaderDate)
+    }
+  }, [items.length, loading, loadingMore])
 
   /**
    * 新快讯置顶后的滚动补偿：SSE 推送把条目插到列表头部时，DOM 总高度增加而 scrollTop 不变，
@@ -190,29 +236,29 @@ function NewsBoard({
     ? error
     : '实时快讯 · 进入自动加载，下滑翻页，新推送将出现在顶部'
 
-  // 列表条目与弹窗共用的正文渲染，左右两栏：时间列在左（垂直居中），内容区在右，中间虚线分隔
+  // 列表条目与弹窗共用的正文渲染：宽屏左右两栏（时间列在左垂直居中、内容区在右、中间虚线分隔），
+  // 窄屏时间改为正文前的行内前缀（不再单独占一行，屏效）；日期语义统一看顶部状态行
   // （经济数据指标行、展开补充、配图、相关文章置底均在右栏；重要/新标记已去掉）
   // clamped=true：正文最多 3 行截断、点击弹窗、鼠标手型；clamped=false：弹窗内展示全文、不再响应点击
   const renderBody = (item: INewsItem, clamped: boolean): JSX.Element => {
     // 条目带 calendar_key 且指标已拉到时渲染指标行；未拉到/失败则不展示（不占位）
     const calendar: INewsCalendar | undefined = calendarData[calendarKeyOf(item)]
+    // 时间拆成日期与时刻两段：定宽列分行展示，窄屏行内前缀拼成一行（两者都渲染，由样式决定显示哪个）
+    const { date: dateText, time: timeText }: { date: string; time: string } = formatNewsTime(
+      item.displayTime,
+      now
+    )
     return (
     <div className={style.newsBody}>
       {/* 左栏：时间单独一列（定宽、去秒、数字等宽），今天只有时刻行，昨天/更早上方多一行日期；
-          内容再长也在定宽列内折行，每行时间列宽与虚线位置保持一致；score=2 重要快讯与正文同样标红 */}
+          内容再长也在定宽列内折行，每行时间列宽与虚线位置保持一致；score=2 重要快讯与正文同样标红；
+          窄屏整体隐藏，换成正文前的 .newsTimeInline 行内前缀 */}
       <div
         className={style.newsTimeCol}
         style={item.score === 2 ? { color: COLOR_UP } : undefined}
       >
-        {(() => {
-          const t: { date: string; time: string } = formatNewsTime(item.displayTime, now)
-          return (
-            <>
-              {t.date ? <div className={style.newsTimeDate}>{t.date}</div> : null}
-              <div className={style.newsTimeClock}>{t.time}</div>
-            </>
-          )
-        })()}
+        {dateText ? <div className={style.newsTimeDate}>{dateText}</div> : null}
+        <div className={style.newsTimeClock}>{timeText}</div>
       </div>
       <div className={style.newsMain}>
       {/* 正文：国旗、标题前缀、清洗后的正文 HTML、「展开」开关拼成单一行内流，一次 innerHTML 注入。
@@ -241,6 +287,9 @@ function NewsBoard({
         }}
         dangerouslySetInnerHTML={{
           __html: buildExcerptHtml({
+            // 窄屏行内时间（含昨天/MM-DD 等相对日期），宽屏由样式隐藏，时间走左侧定宽列
+            timeLabel: dateText ? `${dateText} ${timeText}` : timeText,
+            timeClass: style.newsTimeInline,
             flagUri: calendar ? calendar.flagUri : '',
             flagClass: style.newsFlag,
             title: item.title,
@@ -301,27 +350,37 @@ function NewsBoard({
 
   return (
     <div ref={topRef}>
-      <div className={style.monitorInfo}>
-        {/* 只看重要在前 + 手动刷新，包成一个不换行、不收缩的整块，保证二者始终同行 */}
-        <div className={style.newsFilter}>
-          <Checkbox
-            checked={importantOnly}
-            onChange={(e) => onToggleImportant(e.target.checked)}
-          >
-            只看重要
-          </Checkbox>
-          <RefreshButton onRefresh={onRefresh} />
+      {/* 吸顶头：状态行（只看重要/刷新/日期）固定在滚动区上方，列表从它下方滚过而不带走这一行
+          （本页滚动容器为 .ant-tabs-content-holder）；新快讯提示条挂在它的下沿但不占位 */}
+      <div className={style.newsHeadSticky}>
+        <div className={style.monitorInfo}>
+          {/* 只看重要在前 + 手动刷新 + 当前日期（视口中部偏上条目所属日期），包成一个不换行、不收缩的整块；
+              窄屏下长状态文案让位隐藏，保证这一行不折行且日期始终可见 */}
+          <div className={style.newsFilter}>
+            <Checkbox
+              checked={importantOnly}
+              onChange={(e) => onToggleImportant(e.target.checked)}
+            >
+              只看重要
+            </Checkbox>
+            <RefreshButton onRefresh={onRefresh} />
+            {/* 列表已有数据时取锚点条目日期；首屏/骨架/空列表时直接跟页面时钟，跨零点不会停在旧日期 */}
+            <span className={style.newsDateHeader}>
+              {formatNewsDate(items.length > 0 ? headerDateMs : now)}
+            </span>
+          </div>
+          <span className={style.newsStatusText}>{statusText}</span>
         </div>
-        <span>{statusText}</span>
-      </div>
 
-      {newCount > 0 && !atTop && (
-        <div className={style.newNewsBar}>
-          <Button size="small" type="primary" icon={<ArrowUpOutlined />} onClick={handleBackToNew}>
-            {`${newCount} 条新快讯，点击回到顶部`}
-          </Button>
-        </div>
-      )}
+        {/* 浮在吸顶头下沿的胶囊：不进入文档流，出现/消失都不会推下列表（屏效） */}
+        {newCount > 0 && !atTop && (
+          <div className={style.newNewsBar}>
+            <Button size="small" type="primary" icon={<ArrowUpOutlined />} onClick={handleBackToNew}>
+              {`${newCount} 条新快讯，点击回到顶部`}
+            </Button>
+          </div>
+        )}
+      </div>
 
       {loading ? (
         <NewsSkeleton />
@@ -331,7 +390,7 @@ function NewsBoard({
           dataSource={items}
           split={false}
           renderItem={(item: INewsItem) => (
-            <List.Item key={item.id} className={style.newsItem}>
+            <List.Item key={item.id} className={style.newsItem} data-news-ts={item.displayTime}>
               {renderBody(item, true)}
             </List.Item>
           )}
