@@ -234,8 +234,10 @@
     }
 }
 
+// 状态行：各看板统一走 components/MonitorInfo，字号/颜色/间距/排版只在这里定义一次，
+// 各看板不要再自己覆写（差异只能通过 textClassName 追加）
 .monitorInfo {
-    margin-bottom: 8px;
+    margin:8px 0;
     color: var(--color-text-placeholder);
     font-size: 12px;
     // 手动刷新按钮居最左，与状态文案排在一起
@@ -244,6 +246,20 @@
     justify-content: flex-start;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+// 状态行左侧操作区（手动刷新按钮 / 只看重要 + 日期）：不收缩，内部也不折行
+.monitorInfoLeading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    white-space: nowrap;
+}
+
+// 状态行文案：不折行，避免宽度不够时掉到下一行
+.monitorInfoText {
+    white-space: nowrap;
 }
 
 // 「只看重要 + 刷新 + 当前日期」同行整块：不换行、不收缩，三者始终并排一行（只看重要在前）
@@ -282,22 +298,11 @@
     }
 }
 
-// 状态行文字也不折行，避免宽度不够时掉到下一行
-.monitorInfo span {
-    white-space: nowrap;
-
-    // 窄屏屏效：资讯状态长文案让位隐藏，保证「只看重要 + 刷新 + 日期」这一行不折行且日期始终可见
+// 窄屏屏效：资讯状态长文案让位隐藏，保证「只看重要 + 刷新 + 日期」这一行不折行且日期始终可见
+.newsStatusText {
     @media (max-width: 576px) {
-        &.newsStatusText {
-            display: none;
-        }
+        display: none;
     }
-}
-
-// 状态行左侧操作区（手动刷新按钮）
-.infoAction {
-    display: inline-flex;
-    align-items: center;
 }
 
 // 按市场分组的指数行（同一市场指数 ≥ 2 个时单独成行，其余归入「其他市场」一段）
@@ -328,9 +333,11 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 
-    // 状态行自带的下边距由吸顶头的下内边距统一提供，避免两者叠加后固定区偏高吃掉屏效
+    // 吸顶头自己的上下内边距（6px）就是状态行的唯一边距来源：
+    // 状态行自带的 8px 上下外边距在这里必须整个清掉，否则上方变成 8+6=14px、下方只有 6px，
+    // 既多出一截空白又上下不对称（顶到吸顶头上沿会比较空、贴列表一侧又很紧）
     .monitorInfo {
-        margin-bottom: 0;
+        margin: 0;
     }
 }
 

@@ -3,13 +3,14 @@
  * 代码输入与查询、个股卡片列表、五档盘口弹窗，以及跳转同花顺行情页
  */
 
-import React from 'react'
+import React, { memo } from 'react'
 import { Button, Card, Col, Input, Modal, Row, Statistic, Table, Tag, Typography } from 'antd'
 import { ArrowUpOutlined, ArrowDownOutlined, MinusOutlined, SearchOutlined } from '@ant-design/icons'
 import { IOrderBookRow, IStockData } from '../types'
 import { COLOR_DOWN, COLOR_UP } from '../constants'
 import { displayCode, formatPriceText } from '../utils/format'
 import { CardSkeletonGrid } from './CardSkeletonGrid'
+import { MonitorInfo } from './MonitorInfo'
 import style from '../styles/index.module.less'
 import orderbook from '../assets/svg/orderbook.svg'
 import tonghuashun from '../assets/svg/tonghuashun.svg'
@@ -60,8 +61,9 @@ interface IStockBoardProps {
 /**
  * 个股看板
  * 代码输入栏 + 股票卡片栅格 + 五档盘口弹窗
+ * 用 memo 包住：切 Tab / 其它数据源更新 / 时钟跳动都不必让它重渲染
  */
-function StockBoard({
+const StockBoard = memo(function StockBoard({
   list,
   loading,
   inputValue,
@@ -96,9 +98,8 @@ function StockBoard({
             />
           </Col>
         </Row>
-        {!!statusText && (
-          <div className={style.monitorInfo}>{statusText}</div>
-        )}
+        {/* 状态行与指数/资讯看板同一套样式与排版，见 components/MonitorInfo（文案为空时自身不渲染） */}
+        <MonitorInfo text={statusText} />
       </Card>
 
       {/* 股票列表网格（无数据且在请求中时展示骨架屏） */}
@@ -268,7 +269,7 @@ function StockBoard({
       </Modal>
     </>
   )
-}
+})
 
 export {
   orderColumns,

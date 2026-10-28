@@ -3,7 +3,7 @@
  * 展示价格与关键指标，并给出时段标识（盘前/盘中/午休/盘后/休市）与数据标识（更新中/已停更）
  */
 
-import React from 'react'
+import React, { memo } from 'react'
 import { Card, Statistic, Tag, Tooltip, Typography } from 'antd'
 import { ArrowUpOutlined, ArrowDownOutlined, MinusOutlined } from '@ant-design/icons'
 import { IQuote } from '../types'
@@ -23,8 +23,10 @@ interface IIndexCardProps {
 /**
  * 单个指数卡片
  * 指数无五档盘口、换手率、量比、市值等数据，只展示价格相关字段
+ * 用 memo 包住：切 Tab / 其它数据源更新 / 资讯推送都会让页面重渲染，
+ * 只有自己拿到的 quote 或时钟 now 变了才需要重算时段与数据标识
  */
-function IndexCard({ quote, now }: IIndexCardProps): JSX.Element {
+const IndexCard = memo(function IndexCard({ quote, now }: IIndexCardProps): JSX.Element {
   // 小数位：指数默认 2 位，大宗商品/外汇按上游逐品种给的精度（外汇 4 位、天然气 3 位），
   // 否则 1.112 会被截成 1.11、完全看不出波动
   const digits: number = quote.precision && quote.precision > 0 ? quote.precision : 2
@@ -152,7 +154,7 @@ function IndexCard({ quote, now }: IIndexCardProps): JSX.Element {
       </div>
     </Card>
   )
-}
+})
 
 export {
   IIndexCardProps,

@@ -5,7 +5,7 @@
  * 手动刷新 Tab 另配 cacheKey，命中前端 sessionStorage 缓存则直接复用、不请求；未命中则进 Tab 立即取数
  */
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { IQuote } from '../types'
 import { ActivityState, judgeActivity } from '../utils/market'
 import { resolveIndexIntervalMs } from '../utils/schedule'
@@ -86,8 +86,17 @@ function useQuoteFeed(options: IFeedOptions): IFeedState {
   const [stale, setStale] = useState<boolean>(false)
   const [cachedAt, setCachedAt] = useState<number>(0)
 
+  // 已有数据的 ref 镜像：loading 只服务于「无数据时的骨架屏」，有数据时静默刷新即可。
+  // 每次 setLoading 都会让整页重渲染一次，而切 Tab 时每路又只新激活一路，
+  // 跳过这两个无效渲染能少两次全量重渲染
+  const hasDataRef = useRef<boolean>(false)
+  hasDataRef.current = list.length > 0
+
   const refresh = useCallback(async (): Promise<void> => {
-    setLoading(true)
+    const silent: boolean = hasDataRef.current
+    if (!silent) {
+      setLoading(true)
+    }
     try {
       const snapshot: IFeedSnapshot = await fetcher()
       setList(snapshot.list)
@@ -111,7 +120,9 @@ function useQuoteFeed(options: IFeedOptions): IFeedState {
       setError(serverText || errorText)
       setStale(false)
     } finally {
-      setLoading(false)
+      if (!silent) {
+        setLoading(false)
+      }
     }
   }, [cacheKey, errorText, fetcher, logTag, serverMessageFirst])
 

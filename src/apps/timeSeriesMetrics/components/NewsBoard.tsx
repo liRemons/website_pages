@@ -17,7 +17,7 @@
  * 时间放在标题下方独立一行（带年/日期/星期），正文不再带【标题】前缀，也不渲染左侧时刻列。
  */
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { List, Skeleton, Button, Image, Modal, Checkbox } from 'antd'
 import { ArrowUpOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
 import { INewsCalendar, INewsItem } from '../types'
@@ -25,6 +25,7 @@ import { COLOR_UP } from '../constants'
 import { formatNewsClock, formatNewsDate } from '../utils/format'
 import { buildExcerptHtml, calendarKeyOf, formatCalendarValue, sanitizeNewsHtml } from '../utils/news'
 import { RefreshButton } from './RefreshButton'
+import { MonitorInfo } from './MonitorInfo'
 import { NewsSkeleton } from './NewsSkeleton'
 import style from '../styles/index.module.less'
 
@@ -72,7 +73,12 @@ function findScroller(from: HTMLElement | null): HTMLElement | null {
   return null
 }
 
-function NewsBoard({
+/**
+ * 资讯看板本体
+ * 用 memo 包住：切 Tab 时只有资讯这一路的数据源在变，行情看板与资讯之间互不拖累；
+ * 内部自有 state（滚动位置、展开、弹窗、日期锚点）不受影响，照旧由自身更新驱动重渲染
+ */
+const NewsBoard = memo(function NewsBoard({
   items,
   loading,
   loadingMore,
@@ -361,24 +367,28 @@ function NewsBoard({
       {/* 吸顶头：状态行（只看重要/刷新/日期）固定在滚动区上方，列表从它下方滚过而不带走这一行
           （本页滚动容器为 .ant-tabs-content-holder）；新快讯提示条挂在它的下沿但不占位 */}
       <div className={style.newsHeadSticky}>
-        <div className={style.monitorInfo}>
-          {/* 只看重要在前 + 手动刷新 + 当前日期（视口中部偏上条目所属日期），包成一个不换行、不收缩的整块；
-              窄屏下长状态文案让位隐藏，保证这一行不折行且日期始终可见 */}
-          <div className={style.newsFilter}>
-            <Checkbox
-              checked={importantOnly}
-              onChange={(e) => onToggleImportant(e.target.checked)}
-            >
-              只看重要
-            </Checkbox>
-            {/* 列表已有数据时取锚点条目日期；首屏/骨架/空列表时直接跟页面时钟，跨零点不会停在旧日期 */}
-            <span className={style.newsDateHeader}>
-              {formatNewsDate(items.length > 0 ? headerDateMs : now)}
-            </span>
-            <RefreshButton onRefresh={onRefresh} />
-          </div>
-          <span className={style.newsStatusText}>{statusText}</span>
-        </div>
+        {/* 状态行与行情看板共用一套结构与样式（见 components/MonitorInfo）；
+            只看重要 + 当前日期（视口中部偏上条目所属日期）+ 手动刷新包成不换行、不收缩的整块，
+            窄屏下长状态文案让位隐藏，保证这一行不折行且日期始终可见 */}
+        <MonitorInfo
+          leading={
+            <div className={style.newsFilter}>
+              <Checkbox
+                checked={importantOnly}
+                onChange={(e) => onToggleImportant(e.target.checked)}
+              >
+                只看重要
+              </Checkbox>
+              {/* 列表已有数据时取锚点条目日期；首屏/骨架/空列表时直接跟页面时钟，跨零点不会停在旧日期 */}
+              <span className={style.newsDateHeader}>
+                {formatNewsDate(items.length > 0 ? headerDateMs : now)}
+              </span>
+              <RefreshButton onRefresh={onRefresh} />
+            </div>
+          }
+          text={statusText}
+          textClassName={style.newsStatusText}
+        />
 
         {/* 浮在吸顶头下沿的胶囊：不进入文档流，出现/消失都不会推下列表（屏效） */}
         {newCount > 0 && !atTop && (
@@ -426,6 +436,6 @@ function NewsBoard({
       </Modal>
     </div>
   )
-}
+})
 
 export { INewsBoardProps, NewsBoard }

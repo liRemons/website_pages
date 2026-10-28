@@ -46,7 +46,6 @@ import Container from '@components/Container'
 import Fixed from '@components/Fixed'
 import { IStockData } from './types'
 import {
-  ACTIVE_TAB_STORAGE_KEY,
   CLOCK_TICK_MS,
   COMMODITY_REFRESH_MS,
   GLOBAL_REFRESH_MS,
@@ -57,7 +56,7 @@ import {
   TAB_STOCK,
   TAB_NEWS,
 } from './constants'
-import { getInitialTab } from './utils/prefs'
+import { getInitialTab, saveActiveTab } from './utils/prefs'
 import { formatClock } from './utils/format'
 import { getTradingIntervalMs } from './utils/schedule'
 import { IBoardPhase, getBoardPhase } from './utils/market'
@@ -141,6 +140,17 @@ function IndexDashboard(): JSX.Element {
     importantOnly: newsImportantOnly,
   })
 
+  // 两个手动刷新按钮的 JSX 引用必须稳定：否则每次渲染都是新元素，IndexBoard 的 memo 会被直接击穿
+  // （refresh 来自 useCallback，引用不变）
+  const globalRefreshAction = useMemo<JSX.Element>(
+    () => <RefreshButton onRefresh={globalFeed.refresh} />,
+    [globalFeed.refresh]
+  )
+  const commodityRefreshAction = useMemo<JSX.Element>(
+    () => <RefreshButton onRefresh={commodityFeed.refresh} />,
+    [commodityFeed.refresh]
+  )
+
   /** 切换「只看重要」：变更会触发资讯 hook 重新拉第一页 */
   const handleToggleImportant = useCallback((checked: boolean): void => {
     setNewsImportantOnly(checked)
@@ -156,10 +166,13 @@ function IndexDashboard(): JSX.Element {
     setDetailStock(null)
   }, [])
 
-  /** Tab 切换时记忆选择，便于下次进入回到同一市场 */
+  /**
+   * Tab 切换：记住选择（localStorage）并把 tab 写回 URL（?tab=news 这类深链可分享、刷新不丢），
+   * URL 侧的取舍（replaceState、App 环境不动 URL）见 utils/prefs 的 syncTabToUrl
+   */
   const handleTabChange = useCallback((key: string): void => {
     setActiveTab(key)
-    localStorage.setItem(ACTIVE_TAB_STORAGE_KEY, key)
+    saveActiveTab(key)
   }, [])
 
   // 未登录时不渲染页面内容，等待跳转登录页
@@ -268,7 +281,7 @@ function IndexDashboard(): JSX.Element {
                       groupedByMarket
                       now={clock}
                       activity={globalFeed.activity}
-                      refreshAction={<RefreshButton onRefresh={globalFeed.refresh} />}
+                      refreshAction={globalRefreshAction}
                     />
                   ),
                 },
@@ -284,7 +297,7 @@ function IndexDashboard(): JSX.Element {
                       groupedByMarket
                       now={clock}
                       activity={commodityFeed.activity}
-                      refreshAction={<RefreshButton onRefresh={commodityFeed.refresh} />}
+                      refreshAction={commodityRefreshAction}
                     />
                   ),
                 },
@@ -314,6 +327,11 @@ function IndexDashboard(): JSX.Element {
           </div>
         }
         style={SHELL_STYLE}
+        // 本页关掉动画底图，改用静态渐变（Container 默认是动画 webp）：
+        // 卡片/吸顶头都带 backdrop-filter，模糊要对背后内容实时重算；
+        // 底图每一帧都在变 = 每个模糊层每帧重算一次，十几二十张卡片的看板在切换与滚动时直接掉帧。
+        // 静态渐变下模糊结果可被缓存，合成成本基本归零，视觉上只是失去背景动效
+        isAnimationBackground={false}
         header={<Header name="监控" leftPath='/tool' headerStyle={SHELL_STYLE} />}
       />
       <Fixed />

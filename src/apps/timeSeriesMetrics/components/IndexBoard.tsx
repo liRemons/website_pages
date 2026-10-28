@@ -3,10 +3,11 @@
  * 汇总状态行文案，按市场切分段落并铺卡片，沪深港、其他市场、大宗商品三个 Tab 共用
  */
 
-import React from 'react'
+import React, { memo } from 'react'
 import { Col, Row } from 'antd'
 import { IQuote } from '../types'
 import { IndexCard } from './IndexCard'
+import { MonitorInfo } from './MonitorInfo'
 import { CardSkeletonGrid } from './CardSkeletonGrid'
 import { ActivityState, getQuoteStatus } from '../utils/market'
 import style from '../styles/index.module.less'
@@ -88,8 +89,10 @@ interface IIndexBoardProps {
 /**
  * 指数看板
  * 顶部为数量与刷新状态提示，下方为卡片栅格
+ * 用 memo 包住：切 Tab 时只有新激活那一路的数据源在变，其余看板不必跟着重算分段与卡片
+ * （refreshAction 是 JSX，页面侧需用 useMemo 固定引用，否则 memo 会失效）
  */
-function IndexBoard({
+const IndexBoard = memo(function IndexBoard({
   list,
   loading,
   refreshLabel,
@@ -123,10 +126,8 @@ function IndexBoard({
 
   return (
     <>
-      <div className={style.monitorInfo}>
-        {refreshAction && <span className={style.infoAction}>{refreshAction}</span>}
-        <span>{infoText}</span>
-      </div>
+      {/* 状态行与个股/资讯看板共用同一套结构（操作区在左、状态文案在右），见 components/MonitorInfo */}
+      <MonitorInfo leading={refreshAction} text={infoText} />
       {showSkeleton ? (
         <CardSkeletonGrid />
       ) : (
@@ -147,7 +148,7 @@ function IndexBoard({
       )}
     </>
   )
-}
+})
 
 export {
   IIndexSection,
