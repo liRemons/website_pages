@@ -256,6 +256,22 @@ function buildPage(page, otherParams, spinFrameRef) {
 // ─── 限并发执行 ────────────────────────────────────────────────────────────────
 
 /**
+ * 从参数串里解析并发数，默认 1（多进程同时启动容易把内存打满）
+ * 只认几种短写，避免记长单词：
+ *   c=4  j=4  jobs=4   最常用
+ *   -c 4  -c=4         习惯带短横杠时（args 以逗号拼接，所以 -c 4 到这里是 -c,4）
+ *   concurrency=4      旧写法，保留兼容
+ * @param {string} paramsStr - getPages 返回的 otherParams 拼接后的字符串
+ * @returns {number} 并发数，至少为 1
+ */
+function parseConcurrency(paramsStr) {
+  const match = String(paramsStr || '').match(
+    /(?:^|[,\s])-?(?:concurrency|jobs?|[cj])(?:=|,|\s)(\d+)/i
+  );
+  return match ? Math.max(1, parseInt(match[1], 10)) : 1;
+}
+
+/**
  * 限制并发数地执行任务队列，返回所有任务结果（保持顺序）。
  * 任意任务失败时，等待当前运行中的任务完成后 reject。
  */
@@ -322,11 +338,10 @@ getPages().then(({ pages, otherParams }) => {
     progressMap[page] = { percent: 0, status: 'building' };
   });
 
-  // 从 otherParams 中解析 concurrency=N，默认并发数为 1，避免多进程同时启动导致内存溢出
-  const concurrencyMatch = otherParamsStr.match(/concurrency=(\d+)/);
-  const concurrency = concurrencyMatch ? Math.max(1, parseInt(concurrencyMatch[1], 10)) : 1;
+  // 解析并发数（c=N / -c N / concurrency=N 都认），默认 1，避免多进程同时启动导致内存溢出
+  const concurrency = parseConcurrency(otherParamsStr);
   const concurrencyText = concurrency < pageList.length
-    ? `\n  并发限制: ${concurrency}（其余页面排队等待，可通过 concurrency=N 调整）`
+    ? `\n  并发限制: ${concurrency}（其余页面排队等待，可用 c=N 调整）`
     : '';
 
   if (!isTTY) {
