@@ -126,7 +126,7 @@ const IndexBoard = memo(function IndexBoard({
 
   return (
     <>
-      {/* 状态行与个股/资讯看板共用同一套结构（操作区在左、状态文案在右），见 components/MonitorInfo */}
+      {/* 状态行与个股看板共用同一套结构（操作区在左、状态文案在右），见 components/MonitorInfo */}
       <MonitorInfo leading={refreshAction} text={infoText} />
       {showSkeleton ? (
         <CardSkeletonGrid />

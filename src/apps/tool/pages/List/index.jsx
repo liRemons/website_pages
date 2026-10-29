@@ -25,6 +25,7 @@ import mermaidSvg from './assets/svg/mermaid.svg';
 import aiChatSvg from './assets/svg/aiChat.svg'
 import editorSvg from './assets/svg/editor.svg';
 import stockMarketTrendsSvg from './assets/svg/stockMarketTrends.svg';
+import newsFlashSvg from './assets/svg/newsFlash.svg';
 import pagesJson from '../../../../../scripts/pages.json'
 import { img } from '@utils'
 import isLuckeyWork from '@/utils/luckey';
@@ -54,6 +55,9 @@ export default function ListPage() {
     { title: '图片水印', icon: img(watermarkSvg), appName: 'imgWatermark', hot: true },
     { title: '订单管理', icon: img(productmanagSvg), appName: 'productManage', hot: true },
     { title: '数据监控', icon: img(stockMarketTrendsSvg), appName: 'timeSeriesMetrics', hot: true },
+    // 快讯入口带 handleType=share：走免登录放行（见 newsFlash/hooks/useLoginGuard），
+    // 参数统一用 params 对象而不是写在 url 里：App 侧 openApp 会取 url.split('?')[0]，内嵌 query 会被丢弃
+    { title: '财经快讯', icon: img(newsFlashSvg), appName: 'newsFlash', hot: true, params: { handleType: 'share' } },
   ].filter(item => item.isShow !== false).map(item => {
     return {
       ...item,

@@ -1,17 +1,19 @@
 ﻿import React from "react";
 import { Tooltip, Dropdown } from "antd";
+import { DesktopOutlined, MoonFilled, SunFilled } from "@ant-design/icons";
 import { useTheme, THEME_LIGHT, THEME_DARK, THEME_SYSTEM } from "@/hooks/useTheme";
 
+// 主题图标用 antd SVG 而非 emoji：emoji 依赖系统字体跨端画法不一，SVG 走 currentColor 自动跟随文字颜色、尺寸可控
 const MODE_META = {
-  [THEME_LIGHT]: { icon: "☀️", label: "浅色", next: THEME_DARK },
-  [THEME_DARK]: { icon: "🌙", label: "深色", next: THEME_SYSTEM },
-  [THEME_SYSTEM]: { icon: "🌓", label: "跟随系统", next: THEME_LIGHT },
+  [THEME_LIGHT]: { icon: <SunFilled />, label: "浅色", next: THEME_DARK },
+  [THEME_DARK]: { icon: <MoonFilled />, label: "深色", next: THEME_SYSTEM },
+  [THEME_SYSTEM]: { icon: <DesktopOutlined />, label: "跟随系统", next: THEME_LIGHT },
 };
 
 const menuItems = [
-  { key: THEME_LIGHT, icon: "☀️", label: "浅色" },
-  { key: THEME_DARK, icon: "🌙", label: "深色" },
-  { key: THEME_SYSTEM, icon: "🌓", label: "跟随系统" },
+  { key: THEME_LIGHT, icon: <SunFilled />, label: "浅色" },
+  { key: THEME_DARK, icon: <MoonFilled />, label: "深色" },
+  { key: THEME_SYSTEM, icon: <DesktopOutlined />, label: "跟随系统" },
 ];
 
 export default function ThemeToggle({ dropdown = false, className = "" }) {
@@ -21,12 +23,9 @@ export default function ThemeToggle({ dropdown = false, className = "" }) {
   if (dropdown) {
     const items = menuItems.map((item) => ({
       key: item.key,
-      label: (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-          <span>{item.icon}</span>
-          <span>{item.label}</span>
-        </span>
-      ),
+      // antd Dropdown menu 的 items 原生支持 icon 字段，不再手工拼 span 包裹
+      icon: item.icon,
+      label: item.label,
     }));
 
     return (
@@ -46,7 +45,7 @@ export default function ThemeToggle({ dropdown = false, className = "" }) {
           title={`当前：${meta.label}（点击切换）`}
           style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
         >
-          <span style={{ fontSize: 18, lineHeight: 1 }}>{meta.icon}</span>
+          <span style={{ fontSize: 18, lineHeight: 1, display: "inline-flex" }}>{meta.icon}</span>
         </div>
       </Dropdown>
     );
@@ -62,7 +61,7 @@ export default function ThemeToggle({ dropdown = false, className = "" }) {
         onClick={handleClick}
         style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
       >
-        <span style={{ fontSize: 18, lineHeight: 1 }}>{meta.icon}</span>
+        <span style={{ fontSize: 18, lineHeight: 1, display: "inline-flex" }}>{meta.icon}</span>
       </div>
     </Tooltip>
   );

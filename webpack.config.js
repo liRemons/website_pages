@@ -62,9 +62,10 @@ const getConfig = ({ isEnvDevelopment, mode, isEnvProduction, pages, otherParams
           // 使用 terser 替代 uglify-js：支持 ES6+，压缩率更高
           terserOptions: {
             compress: {
-              drop_console: true,    // 去掉 console.log
+              // 临时关闭以下两项，方便 newsFlash isDebug=true 直接看到线上 console 输出，确认无遗留后一并恢复：
+              // drop_console: true,    // 去掉 console.log
+              // pure_funcs: ['console.log', 'console.info'],
               drop_debugger: true,   // 去掉 debugger
-              pure_funcs: ['console.log', 'console.info'],
             },
             format: {
               comments: false,       // 去掉所有注释

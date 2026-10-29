@@ -37,6 +37,19 @@
         return plus.webview.all();
     };
 
+    // 监听通知点击：通过 payload 区分来源，点击后可拉起/跳转对应页面
+    // （发送通知已移至 @utils/notify：浏览器不加载本文件，需在 React bundle 内自判 plus；本处只保留 App 的点击广播）
+    const bindNotifyClick = () => {
+        if (!isApp() || !plus.push) return;
+        plus.push.addEventListener('onclick', (e) => {
+            let payload = null;
+            try { payload = e.payload ? JSON.parse(typeof e.payload === 'string' ? e.payload : '{}') : null; }
+            catch (_) { payload = e.payload; }
+            // 把点击事件广播给业务层，业务可自行 window.onNotifyClick = fn 接管
+            if (typeof window.onNotifyClick === 'function') window.onNotifyClick(payload, e);
+        });
+    };
+
     // 获取父级 webview
     const getParentWebview = () => {
         if (!isApp()) return null;
@@ -182,12 +195,14 @@
         if (typeof plus !== 'undefined' && plus.webview) {
             plus.key.addEventListener('backbutton', handleBackButton);
             handleNewWebview();
+            bindNotifyClick();
         }
         else {
             document.addEventListener('plusready', () => {
                 window.plus = plus;
                 plus.key.addEventListener('backbutton', handleBackButton);
                 handleNewWebview();
+                bindNotifyClick();
             });
         }
     };

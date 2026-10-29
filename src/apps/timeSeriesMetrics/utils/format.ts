@@ -99,41 +99,6 @@ function formatClock(ms: number): string {
 }
 
 /**
- * 快讯条目时刻：只取时分（去掉秒）
- * 日期不在条目上重复（跨零点时旧条目也不靠条目自身区分日子），
- * 统一由列表顶部状态行的「YYYY年M月D日 周X」给出，见 formatNewsDate
- * @param ms - 毫秒时间戳
- * @returns "HH:mm"，时间戳非法时返回占位符
- */
-function formatNewsClock(ms: number): string {
-  if (!Number.isFinite(ms) || ms <= 0) {
-    return EMPTY_TEXT
-  }
-  const date: Date = new Date(ms)
-  return `${padTime(date.getHours())}:${padTime(date.getMinutes())}`
-}
-
-/** 星期短名索引（Date.getDay() 0-6 对应 周日~周六） */
-const WEEKDAY_LABELS: string[] = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-
-/**
- * 资讯列表顶部的总日期行：「YYYY年M月D日 周X」
- * 条目只留时刻，这里补上带年份与星期的绝对日期：整列唯一的日期线索
- * 基于页面时钟或当前视口锚点条目的时间生成，日期一变顶部跟着变（今天自然变昨天）
- * @param ms - 毫秒时间戳
- * @returns 如「2026年10月28日 周三」，时间戳非法时返回占位符
- */
-function formatNewsDate(ms: number): string {
-  if (!Number.isFinite(ms) || ms <= 0) {
-    return EMPTY_TEXT
-  }
-  const date: Date = new Date(ms)
-  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${
-    WEEKDAY_LABELS[date.getDay()]
-  }`
-}
-
-/**
  * 指数代码展示形式
  * 剔掉腾讯的交易所前缀（sh/sz/bj/hk），东财与港股的字母代码（HSI、TWII、GDAXI）原样展示
  * @param code - 上游返回的代码
@@ -193,8 +158,6 @@ export {
   padTime,
   formatTimestamp,
   formatClock,
-  formatNewsClock,
-  formatNewsDate,
   displayCode,
   colorOf,
   findMeta,

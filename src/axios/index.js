@@ -7,11 +7,11 @@ import { encrypt, decrypt, DES_KEY, DES_IV } from "@utils/crypto";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
-// 轮询类行情接口不弹全屏 loading，避免定时刷新打断操作（资讯列表用自带骨架屏，同理不弹全屏）
-const noLoadingURL = ['/quote/query', '/quote/global', '/news/lives'];
+// 轮询类行情接口不弹全屏 loading，避免定时刷新打断操作（资讯列表用自带骨架屏、日历指标为后台补拉，同理不弹全屏）
+const noLoadingURL = ['/quote/query', '/quote/global', '/news/lives', '/news/calendar'];
 // 国际指数为固定参数的轮询接口，失败原因都是上游限流，由页面内的状态文案提示，不反复弹 toast
-// 资讯列表失败由 NewsBoard 状态行提示，同样不弹全局 toast
-const noToastURL = ['/quote/global', '/news/lives'];
+// 资讯列表失败由 NewsBoard 状态行提示、日历指标失败静默跳过单条，同样不弹全局 toast
+const noToastURL = ['/quote/global', '/news/lives', '/news/calendar'];
 
 let loadingCount = 0;
 let loadingTimer = null; // 用于存储延迟显示 loading 的定时器

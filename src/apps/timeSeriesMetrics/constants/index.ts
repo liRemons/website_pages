@@ -37,8 +37,6 @@ const TAB_CN_HK = 'cnhk'
 const TAB_GLOBAL = 'global'
 /** 大宗商品 Tab 标识 */
 const TAB_COMMODITY = 'commodity'
-/** 资讯快讯 Tab 标识 */
-const TAB_NEWS = 'news'
 
 /** 记忆当前 Tab 的 localStorage 键 */
 const ACTIVE_TAB_STORAGE_KEY = 'tsm_active_tab'
@@ -72,18 +70,7 @@ const QUOTE_API_URL = '/quote/query'
 const GLOBAL_QUOTE_API_URL = '/quote/global'
 /** 大宗商品与外汇查询接口（服务端转发华尔街见闻行情数据中心，返回结构化品种数组） */
 const COMMODITY_QUOTE_API_URL = '/quote/commodity'
-/** 资讯快讯列表接口（服务端转发华尔街见闻 lives 接口，返回首屏与游标翻页） */
-const NEWS_LIVES_API_URL = '/news/lives'
-/** 资讯快讯实时推送接口（SSE 长连接，服务端把常驻上游 WS 的新快讯实时推下来） */
-const NEWS_STREAM_API_URL = '/news/stream'
-/** 快讯关联财经日历指标接口（服务端转发见闻 finance/item/key，按 calendar_key 拉今值/预期/前值/国旗） */
-const NEWS_CALENDAR_API_URL = '/news/calendar'
-/** 资讯默认频道：全球频道，与服务端转发上游的 channel 一致 */
-const NEWS_CHANNEL = 'global-channel'
-/** 资讯单页条数 */
-const NEWS_PAGE_LIMIT = 20
-/** 资讯「重要」分值：勾选只看重要时，向 lives 接口传 score=NEWS_IMPORTANT_SCORE 做上游筛选 */
-const NEWS_IMPORTANT_SCORE = 2
+/** 快讯相关接口与频道参数已随资讯模块移到 newsFlash/constants（/news/lives、/news/stream、/news/calendar） */
 /**
  * 港股指数行情时间滞后说明
  * 实测腾讯对港股指数的行情时间戳（字段 [30]）恒定落后本地时钟约 15 分钟（源侧快照延迟），
@@ -320,7 +307,6 @@ export {
   TAB_CN_HK,
   TAB_GLOBAL,
   TAB_COMMODITY,
-  TAB_NEWS,
   ACTIVE_TAB_STORAGE_KEY,
   CN_HK_REFRESH_MS,
   GLOBAL_REFRESH_MS,
@@ -331,12 +317,6 @@ export {
   QUOTE_API_URL,
   GLOBAL_QUOTE_API_URL,
   COMMODITY_QUOTE_API_URL,
-  NEWS_LIVES_API_URL,
-  NEWS_STREAM_API_URL,
-  NEWS_CALENDAR_API_URL,
-  NEWS_CHANNEL,
-  NEWS_PAGE_LIMIT,
-  NEWS_IMPORTANT_SCORE,
   HK_SNAPSHOT_LAG_NOTE,
   MARKET_SESSIONS,
   CN_HK_INDEXES,

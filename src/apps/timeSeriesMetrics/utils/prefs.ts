@@ -12,12 +12,11 @@ import {
   TAB_CN_HK,
   TAB_COMMODITY,
   TAB_GLOBAL,
-  TAB_NEWS,
   TAB_STOCK,
 } from '../constants'
 
 /** 全部合法 Tab 标识：URL 的 tab 参数与 localStorage 的取值都要落在其中 */
-const TAB_KEYS: string[] = [TAB_STOCK, TAB_CN_HK, TAB_GLOBAL, TAB_COMMODITY, TAB_NEWS]
+const TAB_KEYS: string[] = [TAB_STOCK, TAB_CN_HK, TAB_GLOBAL, TAB_COMMODITY]
 
 /**
  * 获取初始监控股票代码

@@ -23,7 +23,7 @@ interface IIndexCardProps {
 /**
  * 单个指数卡片
  * 指数无五档盘口、换手率、量比、市值等数据，只展示价格相关字段
- * 用 memo 包住：切 Tab / 其它数据源更新 / 资讯推送都会让页面重渲染，
+ * 用 memo 包住：切 Tab / 其它数据源更新都会让页面重渲染，
  * 只有自己拿到的 quote 或时钟 now 变了才需要重算时段与数据标识
  */
 const IndexCard = memo(function IndexCard({ quote, now }: IIndexCardProps): JSX.Element {

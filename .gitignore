@@ -120,3 +120,7 @@ dist/
 
 # HBuilderX App 打包产物
 hbuilder/
+
+# 提交说明草稿与补丁导出（本地调测用，不入库）
+COMMIT_MSG.txt
+*.patch

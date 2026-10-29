@@ -6,34 +6,32 @@
  * 2. 「沪深港行情」：国内主要指数（含北证50）+ 港股主要指数
  * 3. 「其他市场行情（含台湾）」：美/英/德/法/日/韩/台/新/澳/印/俄等主要指数
  * 4. 「大宗商品」：贵金属、能源、美元指数与主要货币对（全天滚动品种）
- * 5. 「资讯」：华尔街见闻全球频道快讯，进页拉第一页 + 下滑游标翻页；服务端常驻长连接通过 SSE 实时推送新快讯；
- *    条目带 calendar_key（经济数据快讯）时另拉 /news/calendar，在正文下方展示国旗与今值/预期/前值
- * 6. 数据来源（服务端 /quote/global 内部为双通道）：
+ * 5. 数据来源（服务端 /quote/global 内部为双通道）：
  *    - 个股与沪深港：服务端 /quote/query（转发腾讯财经行情接口 qt.gtimg.cn）
  *    - 美股三大指数：腾讯通道（实测覆盖 usDJI/usINX/usIXIC），东财按 IP 封禁时仍可用
  *    - 其余市场：东方财富 push2 接口（腾讯不覆盖日经、德法指数、韩国综合、台湾加权等）
  *    - 大宗商品与外汇：服务端 /quote/commodity（转发华尔街见闻行情数据中心）
  *    - 服务端会把两个通道的结果整成同一结构，并用 src 标出每条数据的来源
- * 7. 指数与品种为固定清单，行情字段缺失时以占位符展示
- * 8. 沪深港与个股跟随交易阶段（盘前/集合竞价/盘中/午间休市/盘后/休市）调节轮询频率
- * 9. 每张卡片有两个独立标识：
+ * 6. 指数与品种为固定清单，行情字段缺失时以占位符展示
+ * 7. 沪深港与个股跟随交易阶段（盘前/集合竞价/盘中/午间休市/盘后/休市）调节轮询频率
+ * 8. 每张卡片有两个独立标识：
  *    - 时段标识（盘前/盘中/午休/盘后/休市）：市场 IANA 时区 + 交易所当地时段表，夏令时自动跟随
  *    - 数据标识（更新中/已停更）：看行情时间新不新，不依赖时段表；
  *      港股源行情时间固定滞后约 15 分钟，改用本轮响应到达时间判定，悬停说明里带出滞后事由
- * 10. 轮询节奏：沪深港与个股自动轮询（交易阶段/固定频率 + 数据标识纠偏）；
- *    其他市场与大宗商品不轮询，进页只拉一次，由卡片上方的刷新按钮手动取数（30 秒禁用倒计时防高频穿透）；
- *    资讯不轮询，进页拉第一页后经 SSE 长连接实时接收新快讯
+ * 9. 轮询节奏：沪深港与个股自动轮询（交易阶段/固定频率 + 数据标识纠偏）；
+ *    其他市场与大宗商品不轮询，进页只拉一次，由卡片上方的刷新按钮手动取数（30 秒禁用倒计时防高频穿透）
+ * 10. 资讯快讯已独立成页（src/apps/newsFlash，走 /newsFlash 访问），本页不再装配资讯数据源与资讯 Tab
  *
  * 文件结构（本目录）：
  * - main.tsx        webpack 入口，挂载 React 根节点
- * - app.tsx         页面编排：装配五个数据源、生成状态文案、拼 Tab（取数与轮询都在 hooks 里）
+ * - app.tsx         页面编排：装配四路数据源、生成状态文案、拼 Tab（取数与轮询都在 hooks 里）
  * - types/          共享类型：IQuote 与三个上游各自的返回结构
  * - constants/      配色字号、Tab 与存储键、刷新间隔、接口地址、港股源时间滞后说明、各市场时段表、三份指数品种清单
  * - utils/          方法：format 展示格式化、parse 上游解析、prefs 偏好读写、schedule 轮询间隔、
  *                   market 时段判定与数据标识/板块活跃度引擎
  * - hooks/          数据源：useQuoteFeed（行情通用轮询引擎）、useIndexFeeds（三个指数 Tab 适配）、
- *                   useStockFeed（个股查询）、useNewsFeed（资讯列表 + 游标翻页 + SSE 实时推送 + 日历指标按需拉取）、useClock、useLoginGuard
- * - components/     IndexCard（双标识卡片）、IndexBoard（分组看板）、StockBoard（个股看板）、NewsBoard（资讯看板，无限滚动）、RefreshButton（手动刷新按钮）、CardSkeletonGrid（无数据时骨架屏）
+ *                   useStockFeed（个股查询）、useClock、useLoginGuard
+ * - components/     IndexCard（双标识卡片）、IndexBoard（分组看板）、StockBoard（个股看板）、MonitorInfo（状态行）、RefreshButton（手动刷新按钮）、CardSkeletonGrid（无数据时骨架屏）
  * - styles/         index.module.less 页面与卡片样式
  * - assets/svg/     盘口与同花顺图标
  *
@@ -54,7 +52,6 @@ import {
   TAB_COMMODITY,
   TAB_GLOBAL,
   TAB_STOCK,
-  TAB_NEWS,
 } from './constants'
 import { getInitialTab, saveActiveTab } from './utils/prefs'
 import { formatClock } from './utils/format'
@@ -68,10 +65,8 @@ import {
   useGlobalFeed,
 } from './hooks/useIndexFeeds'
 import { useStockFeed } from './hooks/useStockFeed'
-import { useNewsFeed } from './hooks/useNewsFeed'
 import { IndexBoard } from './components/IndexBoard'
 import { StockBoard } from './components/StockBoard'
-import { NewsBoard } from './components/NewsBoard'
 import { RefreshButton } from './components/RefreshButton'
 import style from './styles/index.module.less'
 import '@assets/css/index.global.less'
@@ -109,8 +104,6 @@ function IndexDashboard(): JSX.Element {
   const tradingIntervalMs: number = getTradingIntervalMs(boardPhase)
   // 当前激活的 Tab
   const [activeTab, setActiveTab] = useState<string>(() => getInitialTab())
-  // 资讯「只看重要」筛选：勾选后向 lives 传 score=2，并对 SSE 推送按分值过滤
-  const [newsImportantOnly, setNewsImportantOnly] = useState<boolean>(false)
   // 弹窗中展示的股票盘口数据
   const [detailStock, setDetailStock] = useState<IStockData | null>(null)
 
@@ -134,11 +127,6 @@ function IndexDashboard(): JSX.Element {
     baseIntervalMs: COMMODITY_REFRESH_MS,
     now: clock,
   })
-  // 资讯快讯：进页拉第一页 + 滑到底翻页，服务端长连接推送的新快讯由 hook 定时轮询增量追到顶部
-  const newsFeed = useNewsFeed({
-    enabled: authed && activeTab === TAB_NEWS,
-    importantOnly: newsImportantOnly,
-  })
 
   // 两个手动刷新按钮的 JSX 引用必须稳定：否则每次渲染都是新元素，IndexBoard 的 memo 会被直接击穿
   // （refresh 来自 useCallback，引用不变）
@@ -151,11 +139,6 @@ function IndexDashboard(): JSX.Element {
     [commodityFeed.refresh]
   )
 
-  /** 切换「只看重要」：变更会触发资讯 hook 重新拉第一页 */
-  const handleToggleImportant = useCallback((checked: boolean): void => {
-    setNewsImportantOnly(checked)
-  }, [])
-
   /** 打开指定股票的盘口弹窗 */
   const handleDetail = useCallback((stock: IStockData): void => {
     setDetailStock(stock)
@@ -167,7 +150,7 @@ function IndexDashboard(): JSX.Element {
   }, [])
 
   /**
-   * Tab 切换：记住选择（localStorage）并把 tab 写回 URL（?tab=news 这类深链可分享、刷新不丢），
+   * Tab 切换：记住选择（localStorage）并把 tab 写回 URL（?tab=stock 这类深链可分享、刷新不丢），
    * URL 侧的取舍（replaceState、App 环境不动 URL）见 utils/prefs 的 syncTabToUrl
    */
   const handleTabChange = useCallback((key: string): void => {
@@ -298,27 +281,6 @@ function IndexDashboard(): JSX.Element {
                       now={clock}
                       activity={commodityFeed.activity}
                       refreshAction={commodityRefreshAction}
-                    />
-                  ),
-                },
-                {
-                  key: TAB_NEWS,
-                  label: '资讯',
-                  children: (
-                    <NewsBoard
-                      items={newsFeed.items}
-                      loading={newsFeed.loading}
-                      loadingMore={newsFeed.loadingMore}
-                      hasMore={newsFeed.hasMore}
-                      error={newsFeed.error}
-                      newCount={newsFeed.newCount}
-                      calendarData={newsFeed.calendarData}
-                      importantOnly={newsImportantOnly}
-                      now={clock}
-                      onToggleImportant={handleToggleImportant}
-                      onLoadMore={newsFeed.loadMore}
-                      onRefresh={newsFeed.refresh}
-                      onAckNew={newsFeed.ackNew}
                     />
                   ),
                 },

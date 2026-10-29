@@ -98,7 +98,7 @@ const StockBoard = memo(function StockBoard({
             />
           </Col>
         </Row>
-        {/* 状态行与指数/资讯看板同一套样式与排版，见 components/MonitorInfo（文案为空时自身不渲染） */}
+        {/* 状态行与指数看板同一套样式与排版，见 components/MonitorInfo（文案为空时自身不渲染） */}
         <MonitorInfo text={statusText} />
       </Card>
 

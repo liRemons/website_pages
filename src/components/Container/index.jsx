@@ -20,7 +20,8 @@ function Container({ header, main, style = undefined, className = undefined, isA
         { [styles.animation_background]: isAnimationBackground }
       )}>
         {header}
-        <div style={style} className={styles.main}>
+        {/* data-scroll-container：标记本页真正的滚动容器（.main），供 Fixed 的「回到顶部」定位滚动目标 */}
+        <div style={style} className={styles.main} data-scroll-container>
           {main}
         </div>
       </div>
