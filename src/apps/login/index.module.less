@@ -15,6 +15,38 @@
   height: auto;
 }
 
+// 联系开发者入口：固定在页面右上角
+.contactWrap {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
+// hover 气泡与移动端弹窗共用：宽度由图片决定，两侧用 clamp 限制在手机视口内
+.contactCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px; // 图片加载完成前不给 Modal 留塌陷宽度
+}
+
+.contactThumb {
+  display: block;
+  width: clamp(180px, 60vw, 280px);
+  max-height: 50vh;
+  object-fit: contain;
+}
+
+.contactTip {
+  margin: 0;
+  color: var(--color-text, #61677c);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 :global {
   .login-form {
     padding: 40px 60px !important;
@@ -33,6 +65,15 @@
     flex-direction: column;
     gap: 30px;
     padding: 20px;
+  }
+
+  .contactWrap {
+    top: 12px;
+    right: 12px;
+  }
+
+  .contactThumb {
+    width: clamp(160px, 55vw, 220px);
   }
 
   .loginImg {

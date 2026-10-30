@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { message, Spin } from 'antd';
 import { HOST, USER_TOKEN } from "@utils";
 import { resolvePageURL } from "@utils/nav";
-import { encrypt, decrypt, DES_KEY, DES_IV } from "@utils/crypto";
+import { deriveSessionKey, deepEncrypt, deepDecrypt } from "@utils/sessionCrypto";
 
 const TIMEOUT_MS = 60000;
 const LOADING_DELAY_MS = 200; // 指定时间内返回则不显示 loading
@@ -58,55 +58,34 @@ const hideLoading = () => {
   }
 };
 
-// 登录、身份核验、上传 不加盐，其余接口均加盐
-const noEncryptURL = ['/user/login', '/user/verifylogin'];
+// 登录、身份核验、游客票领、上传 不走统一加解密；其余接口入参/出参逐叶子用会话密钥 AES-GCM
+const noEncryptURL = ['/user/login', '/user/verifylogin', '/user/guesttoken'];
 const isSkipEncrypt = (url) => {
   const u = (url || '').toLowerCase();
   return noEncryptURL.some((it) => u.includes(it)) || u.includes('upload');
 };
 
-// —— 入参加密：key 不变，叶子值转为字符串后加盐；对象递归；数组元素逐个递归加盐；FormData/Date 透传 ——
-const deepEncrypt = (value) => {
-  if (value === null || value === undefined) return value;
-  // FormData/Date 不加密，整体透传
-  if (value instanceof FormData || value instanceof Date) return value;
-  // 数组结构：逐个元素递归加盐（含数组内对象/基本值）
-  if (Array.isArray(value)) {
-    return value.map((item) => deepEncrypt(item));
-  }
-  if (typeof value === 'object') {
-    const result = {};
-    Object.keys(value).forEach((key) => {
-      result[key] = deepEncrypt(value[key]);
-    });
-    return result;
-  }
-  return encrypt({ DES_KEY, DES_IV, MSG: String(value) });
+// 游客票存于独立 key：不能占 REMONS_TOKEN，否则“token 存在 = 已登录”的各处的判断会被游客票误命中
+const GUEST_TOKEN = 'REMONS_GUEST_TOKEN';
+// 当前会话 token：优先真实登录票，其次游客票
+const currentToken = () => localStorage.getItem(USER_TOKEN) || localStorage.getItem(GUEST_TOKEN) || '';
+// 并发去重：首屏多个请求同时发时，只领一次游客票
+let guestPromise = null;
+const fetchGuestToken = () => {
+  if (guestPromise) return guestPromise;
+  guestPromise = fetch(`${HOST}/user/guestToken`, { method: 'get', headers: { 'x-enc-v': '2' } })
+    .then((r) => r.json())
+    .then((res) => {
+      const t = res && res.data && res.data.token;
+      if (!t) throw new Error('游客票获取失败');
+      localStorage.setItem(GUEST_TOKEN, t);
+      return t;
+    })
+    .finally(() => { guestPromise = null; });
+  return guestPromise;
 };
 
-// —— 出参解密：key 不变；对象递归；数组元素逐个递归解密；字符串叶子解密，其他类型原样 ——
-const deepDecrypt = (value) => {
-  if (value === null || value === undefined) return value;
-  // 数组结构：逐个元素递归解密（含数组内对象/基本值）
-  if (Array.isArray(value)) {
-    return value.map((item) => deepDecrypt(item));
-  }
-  if (typeof value === 'object') {
-    const result = {};
-    Object.keys(value).forEach((key) => {
-      result[key] = deepDecrypt(value[key]);
-    });
-    return result;
-  }
-  if (typeof value === 'string') {
-    try {
-      return decrypt({ DES_KEY, DES_IV, MSG: value });
-    } catch (e) {
-      return value;
-    }
-  }
-  return value;
-};
+// 深加密/深解密已迁至 @utils/sessionCrypto（基于会话密钥 AES-256-GCM，与服务端逐字节对齐），此处直接复用。
 
 /**
  * @typedef {Object} IRequestOptions 请求配置
@@ -125,17 +104,21 @@ const deepDecrypt = (value) => {
  * @param {IRequestOptions} options 请求配置
  * @returns {Promise<any>} 接口响应（出参 data 已按统一规则解密）
  */
-const service = ({ method = 'get', url = '', data, params, headers = {}, quiet = false } = {}) => {
+const service = async ({ method = 'get', url = '', data, params, headers = {}, quiet = false } = {}) => {
   const upperMethod = method.toUpperCase();
 
-  // 登录/身份核验/上传 不加盐；其余入参（data + params）加盐。deepEncrypt 返回新对象，不修改原始入参
+  // 登录/身份核验/游客票/上传 不走加解密；其余接口入参(data+params)逐叶子 AES 加密
   const skipEncrypt = isSkipEncrypt(url);
-  if (!skipEncrypt) {
+  // 确保有会话 token（游客票兑底），据此派生会话密钥；白名单接口无需密钥
+  let token = currentToken();
+  if (!skipEncrypt && !token) token = await fetchGuestToken();
+  const aesKey = token ? deriveSessionKey(token) : null;
+  if (!skipEncrypt && aesKey) {
     if (params && typeof params === 'object' && !(params instanceof FormData)) {
-      params = deepEncrypt(params);
+      params = deepEncrypt(params, aesKey);
     }
     if (data && !(data instanceof FormData)) {
-      data = deepEncrypt(data);
+      data = deepEncrypt(data, aesKey);
     }
   }
 
@@ -145,12 +128,10 @@ const service = ({ method = 'get', url = '', data, params, headers = {}, quiet =
     fullUrl += '?' + new URLSearchParams(params).toString();
   }
 
-  // 构造请求头
+  // 构造请求头：带上会话 token（真实票优先，否则游客票）与 v2 加密标记头
   const requestHeaders = { ...headers };
-  const token = localStorage.getItem(USER_TOKEN);
   if (token) requestHeaders[USER_TOKEN] = token;
-  // 加密标记头：服务端据此决定是否对入参解密/出参加密（仅本项目启用，避免影响管理后台等其它明文客户端）
-  requestHeaders['x-encrypt'] = 'remons-des';
+  requestHeaders['x-enc-v'] = '2';
 
   // 构造请求体
   let body = undefined;
@@ -204,9 +185,9 @@ const service = ({ method = 'get', url = '', data, params, headers = {}, quiet =
       if (!res.success && !url.includes('upload') && !silent) {
         message.error(res.msg);
       }
-      // 出参解密：只解业务数据 res.data，success/msg/code 保持原样
-      if (!skipEncrypt && res && res.data !== undefined && res.data !== null) {
-        res.data = deepDecrypt(res.data);
+      // 出参解密：只解业务数据 res.data，success/msg/code 保持原样（未拿到会话密钥时不解，明文透传）
+      if (!skipEncrypt && aesKey && res && res.data !== undefined && res.data !== null) {
+        res.data = deepDecrypt(res.data, aesKey);
       }
       return res;
     })

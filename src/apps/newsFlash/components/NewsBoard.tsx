@@ -14,10 +14,12 @@
  * 轴线画在卡片已有的左内边距里，时刻（只有 HH:mm）做正文上方一行小标签，内容区占满整宽；
  * PC 端靠 .pageHost 的 max-width 收窄阅读宽度并居中（限宽在页面根层，不在这个组件里）；
  * 样式见 .newsBody / .newsItem::before / .newsTimeCol；
- * 国旗 icon 行内拼在正文 HTML 前与标题同排；标题包成 .newsTitle span：宽屏用【】跟正文同行，
- * 窄屏去括号、加粗并靠 content 换行符独占一行（不改 block，避免切断与国旗同排的行内流）；
+ * 国旗 icon 行内拼在正文 HTML 前与标题同排；标题包成 .newsTitle span，只加粗不带括号，
+ * 与正文的分行靠正文段落 <p> 自身的块级（不改标题为 block，避免切断与国旗同排的行内流）；
  * 「展开/收起」开关也拼在正文末尾，随文本流跟在正文最后一行之后（正文整段展示不做行数截断，
- * 所以不需要为避开裁切把开关脱流，见 .newsExcerpt / .newsToggle）。
+ * 所以不需要为避开裁切把开关脱流，见 .newsExcerpt / .newsToggle）；
+ * 展开后的补充正文：无配图时紧接正文下方，条目带配图（item.images，非国旗 icon）时下移到配图下方，
+ * 开关本身位置不变、仍留在正文行内流末尾（见 renderBody 的 moreBelowImages 分支）。
  * 弹窗（快讯详情）不走这一套：标题放在弹窗头部（无标题时回退「快讯详情」），
  * 时间放在标题下方独立一行（带年/日期/星期），正文不再带【标题】前缀，也不渲染左侧时刻列；
  * 弹窗整体高度封顶（.newsModal：content 定高 flex + body 滚动），内容超长只滚 body，标题行不跟着滚走。
@@ -65,6 +67,12 @@ const AT_TOP_THRESHOLD = 40
 
 /** 顶部日期行锚点：取视口高度 40% 处（中部偏上）的条目日期作为当前日期 */
 const DATE_ANCHOR_RATIO = 0.4
+
+/**
+ * 带圈序号的三档样式类名（见 utils/news 的 wrapCircledNumbers）：
+ * 正文与标题共用同一份，两处的序号才会是同一套字体与字号
+ */
+const CIRCLED_CLASS = { base: style.newsNum, wide: style.newsNumWide, cjk: style.newsNumCjk }
 
 /** 从给定节点向上找最近的可滚动祖先（真正的滚动容器，本页为 Container 的 .main） */
 function findScroller(from: HTMLElement | null): HTMLElement | null {
@@ -283,6 +291,24 @@ const NewsBoard = memo(function NewsBoard({
     // 条目只留时刻：日期不在每条上重复，整列的日期语义由顶部状态行统一给出（跨零点的旧条目也一样，
     // 滚动到它们时状态行会换成对应日期），省屏效也让时间列宽度稳定
     const timeText: string = formatNewsClock(item.displayTime)
+    // 正文里有没有标题：无标题条目与弹窗（标题已提到弹窗头部）都没有，此时给正文多挂一个类，
+    // 让国旗与首个段落同排而不是各占一行（样式见 .newsExcerptNoTitle）
+    const hasTitle: boolean = inList && Boolean(item.title)
+    const excerptClass: string = [
+      inList ? style.newsExcerpt : style.newsExcerptFull,
+      hasTitle ? '' : style.newsExcerptNoTitle,
+    ]
+      .filter(Boolean)
+      .join(' ')
+    // 有真正的配图（item.images，区别于正文行内的国旗 icon）时，展开补充正文下移到配图下方；
+    // 「展开/收起」开关不受影响，仍留在正文行内流末尾（见 .newsToggle），只是展开块换位置
+    const moreBelowImages: boolean =
+      inList && Boolean(item.images && item.images.length > 0) && Boolean(item.contentMore)
+    // 展开补充正文：列表内需点开关展开（原位给无配图，配图分支给 moreBelowImages），弹窗内默认展开原位
+    const renderMore = (): JSX.Element | null =>
+      item.contentMore && (!inList || expandedIds.has(item.id)) ? (
+        <div className={style.newsMore}>{item.contentMore}</div>
+      ) : null
     return (
     <div className={style.newsBody}>
       {/* 时刻（只到分、数字等宽）：时间线形态下整宽占正文上方一行，轴线与节点由样式画在卡片左内边距里；
@@ -302,13 +328,15 @@ const NewsBoard = memo(function NewsBoard({
         {inList ? null : (
           <div className={style.newsDetailTime}>{`${formatNewsDate(item.displayTime)} ${timeText}`}</div>
         )}
-      {/* 正文：国旗、标题前缀、清洗后的正文 HTML、「展开」开关拼成单一行内流，一次 innerHTML 注入。
-          必须同段注入：正文常以 <p> 等块级标签开头，已靠 sanitizeNewsHtml 拍平为纯行内流，
-          拆开渲染时块级正文会切出独立行盒，把行外的国旗挤成独占一行（display: contents 包装在 Chromium 下同样不可靠）；
+      {/* 正文：国旗、标题前缀、清洗后的正文 HTML、「展开」开关拼成单一 innerHTML 注入。
+          国旗与标题同在一个行内流里（同排），正文段落 <p> 由 sanitizeNewsHtml 原样保留为块级（不再 span 化），
+          有标题时会把标题行与正文切成上下两个行盒（保留块级段落的代价，见 .newsTitle/.newsFlag 注释）；
+          无标题时多挂一个 .newsExcerptNoTitle，把首段改回行内，让国旗与正文第一行同排；
           开关用 data-toggle-id 标记，在 capture 阶段事件委托处理；正文内链接同阶段拦截开新页；点击正文弹窗看详情；score=2 标红；
-          正文不做行数截断，开关就留在行内流里跟在正文末尾（见 .newsToggle） */}
+          正文不做行数截断，开关就留在文本流里跟在正文末尾（见 .newsToggle）；
+          circled 把带圈序号（上游给什么码位不受控）包成 .newsNum/.newsNumWide/.newsNumCjk，由样式统一字体与字号 */}
       <div
-        className={inList ? style.newsExcerpt : style.newsExcerptFull}
+        className={excerptClass}
         style={item.score === 2 ? { color: COLOR_UP } : undefined}
         onClick={inList ? () => openDetail(item) : undefined}
         onClickCapture={(e: React.MouseEvent): void => {
@@ -331,21 +359,21 @@ const NewsBoard = memo(function NewsBoard({
           __html: buildExcerptHtml({
             flagUri: calendar ? calendar.flagUri : '',
             flagClass: style.newsFlag,
-            // 标题只在列表正文里给（弹窗内提到弹窗头部，正文不再重复）；【】括号与窄屏独占一行都由样式控制
+            // 标题只在列表正文里给（弹窗内提到弹窗头部，正文不再重复）；加粗由样式给，不带括号
             title: inList ? item.title : '',
             titleClass: style.newsTitle,
-            bodyHtml: sanitizeNewsHtml(item.contentHtml || item.contentText),
+            bodyHtml: sanitizeNewsHtml(item.contentHtml || item.contentText, CIRCLED_CLASS),
             itemId: item.id,
             showToggle: inList && Boolean(item.contentMore),
             expanded: expandedIds.has(item.id),
             toggleClass: style.newsToggle,
+            // 标题里的序号走同一套钩子（弹窗内标题在弹窗头部，那里没传 circled，字号跟着标题走）
+            circled: inList ? CIRCLED_CLASS : undefined,
           }),
         }}
       />
-      {/* 展开补充正文：列表内点击「展开」后作为整块显示在正文下方，弹窗内默认展示 */}
-      {item.contentMore && (!inList || expandedIds.has(item.id)) ? (
-        <div className={style.newsMore}>{item.contentMore}</div>
-      ) : null}
+      {/* 展开补充正文：无配图时点击「展开」后作为整块显示在正文下方，有配图时走下方配图后的分支，弹窗内默认展示 */}
+      {moreBelowImages ? null : renderMore()}
       {/* 经济数据指标行：国家 + 今值/预期/前值（国旗已移到正文标题左侧；空值展示 --，单位非空时拼在数值后） */}
       {calendar ? (
         <div className={style.newsCalendar}>
@@ -369,6 +397,7 @@ const NewsBoard = memo(function NewsBoard({
           ))}
         </div>
       ) : null}
+      {moreBelowImages ? renderMore() : null}
       {/* 相关文章：固定在条目最下方，上游 item 带 article 时展示标题入口，蓝色链接样式，点击新标签页打开原文（stopPropagation 避免连带触发正文弹窗） */}
       {item.article ? (
         <div

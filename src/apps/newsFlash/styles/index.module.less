@@ -209,31 +209,12 @@
     min-width: 0;
 }
 
-// 正文里的标题前缀（由 buildExcerptHtml 包成 span，只有纯文字，括号与换行全在这里给）：
-// 宽屏用【】括着跟正文同一行；窄屏去括号、加粗并靠换行独占一行（不动字号，抬字号会把行高撑开）
-// 窄屏换行用 content: '\A'（容器是 white-space: pre-line 的行内流）而不改块级：
-// 国旗是行内 img 与标题同排，标题变成块级盒子会切断行内流，把国旗基线与时序带偏
+// 正文里的标题（由 buildExcerptHtml 包成 span）：不括【】，只加粗（不动字号，抬字号会把行高撑开）
+// 标题与正文的分行走「正文段落 <p> 是块级，会把前面的行内流切成独立一行」这一条路，
+// 不再用 content: '\A' 补换行（伪元素已去掉）；代价是正文走纯文本兜底（无 <p>）时标题与正文同排
+// 国旗是行内 img 与标题同排，这里不给块级：一改就把国旗挤成独占一行并把基线带偏
 .newsTitle {
-    &::before {
-        content: '【';
-    }
-
-    &::after {
-        content: '】';
-    }
-
-    @media (max-width: 576px) {
-        font-weight: bold;
-
-        // 去头括号（content: none 干脆不生成伪元素）；尾括号换成换行符，标题因此独占一行
-        &::before {
-            content: none;
-        }
-
-        &::after {
-            content: '\A';
-        }
-    }
+    font-weight: bold;
 }
 
 // 正文：整段展示，不做行数截断；点击弹窗看更完整的详情（大图配图 + 标题下时间行）
@@ -258,6 +239,67 @@
     color: var(--color-text-primary);
     white-space: pre-line;
     word-break: break-word;
+}
+
+// 正文里的强调（上游 content 带 <strong>）：列表与弹窗两条正文选择器合并成一处定义，不再各嵌套一份
+// 不加粗但带下划线：强调信号从字重换成下划线
+.newsExcerpt strong,
+.newsExcerptFull strong {
+    font-weight: normal !important;
+    text-decoration: underline;
+}
+
+// 正文 HTML 里的段落：<p> 已由 sanitizeNewsHtml 原样保留（不再 span 化），块级只用来断行，
+// 上下 margin 一律归零（UA 默认 1em 上下各一份，比卡片里其余留白松得多，不同内核还不一致）；
+// 段落之间的行间隔就靠块级自身换行，不另给间距
+.newsExcerpt p,
+.newsExcerptFull p {
+    margin: 0;
+}
+
+// 正文里没有标题时（无标题条目，以及弹窗内标题已提到弹窗头部）：国旗不该独占一行，
+// 把首个段落改成行内，它就接在国旗后面同排；后续段落照旧块级另起一行
+// 用 :first-of-type 而不是 :first-child：国旗 img 排在正文前时，首段并不是第一个子元素
+// 有标题时不套这个类：标题该独占一行，首段仍靠块级另起（见 .newsTitle 注释）
+// margin 已经是 0，改成行内不会丢间距；行内的 <p> 与下一个块级 <p> 之间仍会断行
+.newsExcerptNoTitle > p:first-of-type {
+    display: inline;
+}
+
+// 正文/标题里的带圈序号（①-⑳、❶-⓿、㉑-㊿、emoji keycap 等，由 wrapCircledNumbers 逐个包出 span）：
+// 序号内容不受本页控制，上游同一个视觉序号可能来自多套码位，而 --font-family-base 打头的 Inter 没有
+// 这些字形，逐字符各自回退就会让相邻两个圈落在不同字体上（一大一小），命中 emoji 呈现的还大一整档；
+// 这里给一份能整块覆盖这些码位的字体栈，逼整段序号走同一个字体，字号也不再随上游码位漂
+// 注：这份栈只能管住西文符号盖到的那段（至 ㊿ 之前的 ①-⑳），再大的数字靠第三档单独补（见 .newsNumCjk）
+// 定义时带括号的 mixin，Less 不会把它输出成选择器，因此不会多出一个 CSS Modules 类
+.circledNum() {
+    // 钉下来的字体（Segoe UI Symbol 等）圈径本身就比同排汉字小一号，跟正文齐平得抬一档
+    font-size: 1.2em;
+    // 行高不能跟着字号走：父级给的是 line-height: 1.6（无单位数值，按各自字号算），
+    // 这里字号一放大就会把行盒撑高、整列行位置抖动；锁成 1 后行盒高度只由容器自己定
+    line-height: 1;
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols2", "Apple Symbols", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+}
+
+// 圈内一位数字（①-⑨）：只钉字体与统一字号
+.newsNum {
+    .circledNum();
+}
+
+// 圈内两位数字（⑩-⑳ 等）：字形为装下两位数字把圈画得比单数字大，同段并排仍然突出，
+// 相对上一档压回一点（1.14/1.2 ≈ 0.95，圈径与 ①-⑨ 对齐）；用 em 而不是定值，正文以后改字号会跟着走
+.newsNumWide {
+    .circledNum();
+    font-size: 1.14em;
+}
+
+// ㉑-㊿（CJK 符号块）：上面的西文符号栈盖不住这批码位，实际落到中文字体上，圈按全角字身画，
+// 跟 ①-⑳ 同字号会明显探出一号；这里多压一档把圈径拉回与前面齐平（1em 相对 1.2em 约降 17%，
+// 20 以里正常、从 21 开始变大就改这一个值）
+.newsNumCjk {
+    .circledNum();
+    font-size: 1em;
 }
 
 // 正文 HTML 内的链接：固定主题蓝，不受 score=2 内联标红的影响
@@ -389,6 +431,7 @@
 }
 
 // 展开后的补充正文：与主正文区分（颜色与摘要对换，取次级文本色），可换行
+// 位置：无配图时紧接正文下方，条目带配图（非国旗 icon）时下移到配图下方，见 NewsBoard 的 moreBelowImages
 .newsMore {
     margin-top: 4px;
     // 统一的展开正文颜色，“重要”快讯也保持此色（不再标红），与普通展开一致
@@ -412,8 +455,8 @@
     font-variant-numeric: tabular-nums;
 }
 
-// 国旗 icon：行内排在标题左侧（普通 img，随正文同段 innerHTML 注入），与文字同基线，图后留一个小间距
-// 注：行夹叠容器里不能出现块级盒子（会把后续内容切成独立行盒），正文已经 sanitizeNewsHtml 拍平为纯行内流
+// 国旗 icon：行内排在标题左侧（普通 img，随标题同段 innerHTML 注入），与文字同基线，图后留一个小间距
+// 注：国旗与标题自己成一个行内流（同排），下面的正文段落 <p> 是块级，会另起一个行盒
 .newsFlag {
     display: inline-block;
     margin-right: 6px;

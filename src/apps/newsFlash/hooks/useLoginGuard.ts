@@ -2,11 +2,10 @@
  * 登录态校验 hook
  * 以服务端 verifyLogin 的结果为准（token 存在 ≠ 登录有效，过期后同样要跳登录页），
  * 未登录时跳转登录页，并把当前页面路径与查询参数原样带回，保证深链不丢；
- * URL 带 handleType=share（分享链接）时直接放行，让未登录访客也能看快讯
+ * 快讯与 SSE 推送均需登录，分享链接不再免登放行
  */
 
 import { useEffect, useState } from 'react'
-import { getSearchParams } from 'methods-r'
 import { verifyLogin } from '@utils/auth'
 import { openApp } from '@utils/nav'
 
@@ -15,11 +14,9 @@ type LoginStatus = 'checking' | 'authed' | 'anonymous'
 
 /**
  * 登录态与跳转编排
- * @returns 是否放行渲染（已登录或分享链接），不放行时页面不渲染内容、也不启动数据请求
+ * @returns 是否放行渲染（仅已登录），不放行时页面不渲染内容、也不启动数据请求
  */
 function useLoginGuard(): boolean {
-  // 分享链接放行：handleType 由 components/Fixed 的分享按钮写入 URL，进页后不再变化
-  const shared: boolean = getSearchParams('handleType') === 'share'
   const [status, setStatus] = useState<LoginStatus>('checking')
   useEffect(() => {
     // 组件在请求返回前卸载时不要再 setState（该页面卸载即离开，无需继续校验）
@@ -35,7 +32,7 @@ function useLoginGuard(): boolean {
     }
   }, [])
   useEffect(() => {
-    if (shared || status !== 'anonymous') {
+    if (status !== 'anonymous') {
       return
     }
     // 归一化为站内路由路径 /<页面名> + 原查询参数，
@@ -47,8 +44,8 @@ function useLoginGuard(): boolean {
       ? `/${nameMatch[1]}${window.location.search}`
       : `${window.location.pathname}${window.location.search}`
     openApp({ url: `/login?from=${encodeURIComponent(from)}` })
-  }, [shared, status])
-  return shared || status === 'authed'
+  }, [status])
+  return status === 'authed'
 }
 
 export {

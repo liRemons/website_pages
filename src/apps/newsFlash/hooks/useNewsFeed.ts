@@ -13,9 +13,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getSearchParams } from 'methods-r'
 import { service } from '@axios'
-import { HOST } from '@utils'
+import { HOST, USER_TOKEN } from '@utils'
 import { notify } from '@utils/notify'
-import { decrypt, DES_KEY, DES_IV } from '@utils/crypto'
+import { aesDecryptStr, deriveSessionKey } from '@utils/sessionCrypto'
 import { INewsCalendar, INewsCalendarResult, INewsItem, INewsLivesResult } from '../types'
 import {
   NEWS_CALENDAR_API_URL,
@@ -263,34 +263,48 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
     }
   }, [enabled, importantOnly, fetchPage])
 
-  // 用 SSE 长连接接收服务端实时推送：连上即推、断线由浏览器自动重连；仅在登录态就绪时保持
+  // 用 SSE 长连接接收服务端实时推送：连上即推、断线由浏览器自动重连；仅在登录态就绪时保持。
+  // EventSource 不能带自定义头，故先经 /news/streamTicket（带头、走会话密钥）申领短期票据，
+  // 再用 ?ticket= 建流；每条推送用与建票同一登录 token 派生的会话密钥 AES-256-GCM 解密。
   useEffect(() => {
-    if (!enabled || typeof EventSource === 'undefined') {
+    const token: string = localStorage.getItem(USER_TOKEN) || ''
+    if (!enabled || !token || typeof EventSource === 'undefined') {
       return
     }
-    const streamUrl: string = `${HOST}${NEWS_STREAM_API_URL}?channel=${encodeURIComponent(NEWS_CHANNEL)}`
-    const source: EventSource = new EventSource(streamUrl)
-    // 同一连接内首次 open 是初始建连，之后的 open 视为断线重连
-    let opened: boolean = false
-    source.onopen = (): void => {
-      if (opened) {
-        // 重连补齐断连期间可能错过的快讯：仅重连时拉一次，不做周期轮询
-        fetchPage('init')
-      } else {
-        opened = true
-      }
-    }
-    source.onmessage = (event: MessageEvent): void => {
-      // 事件体是服务端用同一套 DES 加盐的密文，解回 JSON 字符串再解析
-      let plain: string = ''
-      try {
-        plain = decrypt({ DES_KEY, DES_IV, MSG: String(event.data) })
-      } catch (err) {
-        return
-      }
-      if (!plain) {
-        return
-      }
+    const aesKey: Uint8Array | null = deriveSessionKey(token)
+    if (!aesKey) return
+    let source: EventSource | null = null
+    let cancelled = false
+
+    // 先申票（本接口能带头、走会话密钥加密回传），拿到 ticket 再建流
+    service({ method: 'get', url: '/news/streamTicket', quiet: true })
+      .then((res: { data?: { ticket?: string } }) => {
+        if (cancelled) return
+        const ticket: string | undefined = res && res.data && res.data.ticket
+        if (!ticket) return
+        const streamUrl: string = `${HOST}${NEWS_STREAM_API_URL}?ticket=${encodeURIComponent(ticket)}&channel=${encodeURIComponent(NEWS_CHANNEL)}`
+        source = new EventSource(streamUrl)
+        // 同一连接内首次 open 是初始建连，之后的 open 视为断线重连
+        let opened: boolean = false
+        source.onopen = (): void => {
+          if (opened) {
+            // 重连补齐断连期间可能错过的快讯：仅重连时拉一次，不做周期轮询
+            fetchPage('init')
+          } else {
+            opened = true
+          }
+        }
+        source.onmessage = (event: MessageEvent): void => {
+          // 事件体是服务端按本会话密钥 AES-256-GCM 加密的密文，解回 JSON 字符串再解析
+          let plain: string = ''
+          try {
+            plain = aesDecryptStr(String(event.data), aesKey)
+          } catch (err) {
+            return
+          }
+          if (!plain) {
+            return
+          }
       let raw: Record<string, unknown>
       try {
         raw = JSON.parse(plain) as Record<string, unknown>
@@ -338,9 +352,15 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
           tag: 'newsFlash',
         })
       }
-    }
+        }
+      })
+      .catch(() => {
+        /* 申票失败（如登录失效）：本次不建流，enabled/token 变化后依赖重跑再试 */
+      })
+
     return (): void => {
-      source.close()
+      cancelled = true
+      if (source) source.close()
     }
   }, [enabled, importantOnly, fetchPage, isDebug, scheduleCalendar])
 

@@ -57,7 +57,7 @@ export default function ListPage() {
     { title: '数据监控', icon: img(stockMarketTrendsSvg), appName: 'timeSeriesMetrics', hot: true },
     // 快讯入口带 handleType=share：走免登录放行（见 newsFlash/hooks/useLoginGuard），
     // 参数统一用 params 对象而不是写在 url 里：App 侧 openApp 会取 url.split('?')[0]，内嵌 query 会被丢弃
-    { title: '财经快讯', icon: img(newsFlashSvg), appName: 'newsFlash', hot: true, params: { handleType: 'share' } },
+    { title: '财经快讯', icon: img(newsFlashSvg), appName: 'newsFlash', hot: true },
   ].filter(item => item.isShow !== false).map(item => {
     return {
       ...item,

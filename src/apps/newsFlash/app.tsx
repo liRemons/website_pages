@@ -7,7 +7,7 @@
  * 3. 「只看重要」勾选后向 lives 传 score=2，并对 SSE 推送按分值过滤
  * 4. 资讯不轮询：进页拉第一页后经 SSE 长连接实时接收新快讯，刷新按钮手动重取第一页（30 秒倒计时防穿透）
  * 5. 登录态：进页先由服务端确认（token 过期也算未登录），未登录跳登录页，登录后通过 from 参数跳回本页；
- *    URL 带 handleType=share（分享链接）时免校验直接放行，取舍见 hooks/useLoginGuard
+ *    快讯与 SSE 推送均需登录，分享链接（handleType=share）不再免登放行，未登录一律跳登录页（见 hooks/useLoginGuard）
  *
  * 文件结构（本目录，与 timeSeriesMetrics 完全独立、互不引用）：
  * - main.tsx        webpack 入口，挂载 React 根节点
