@@ -7,6 +7,7 @@
  */
 
 import { INewsArticle, INewsItem } from '../types'
+import { NEWS_CHANNEL_LABELS } from '../constants'
 import { toNumber } from './format'
 
 /** 去除 HTML 标签与常见实体，把富文本转为可读纯文本（块级标签转换行，保留段落） */
@@ -43,8 +44,9 @@ function extractImages(images: unknown): string[] {
 }
 
 /**
- * 提取关联文章：上游 article 为嵌套对象（title/uri），无或非对象时回 null
- * 只取展示必需的两个字段，uri 必须是 http(s) 绝对地址才放行，防 javascript: 等伪协议
+ * 提取关联文章：上游 article 为嵌套对象（title/uri/image.uri），无或非对象时回 null
+ * 只取展示必需字段，uri 必须是 http(s) 绝对地址才放行，防 javascript: 等伪协议；
+ * 封面图取 article.image.uri（嵌套对象，可能缺失），同样只收 http(s) 地址，非法/缺失回空串不展示缩略图
  */
 function extractArticle(article: unknown): INewsArticle | null {
   if (!article || typeof article !== 'object') {
@@ -55,9 +57,12 @@ function extractArticle(article: unknown): INewsArticle | null {
   if (!/^https?:\/\//i.test(uri)) {
     return null
   }
+  const image = raw.image as Record<string, unknown> | undefined
+  const imageUri: string = String((image && image.uri) || '')
   return {
     title: stripTags(raw.title),
     uri,
+    imageUri: /^https?:\/\//i.test(imageUri) ? imageUri : '',
   }
 }
 
@@ -204,12 +209,41 @@ function normalizeNewsItem(raw: Record<string, unknown>): INewsItem {
     // 上游 score=2 表示重点快讯，前端标红
     score: toNumber(raw.score as string | number),
     images: extractImages(raw.image_uris !== undefined ? raw.image_uris : raw.images),
-    // 财经日历关联：上游带 calendar_key 的条目需在展示时另拉今值/预期/前值/国旗
-    calendarKey: String(raw.calendar_key || ''),
+    // 财经日历关联：上游带 calendar_key（列表）或 calendar_data（推送）的条目需展示时另拉今值/预期/前值/国旗
+    calendarKey: calendarKeyFromRaw(raw),
     calendarType: String(raw.calendar_type || 'FD'),
     // 关联文章：非空时展示「相关文章」入口，点击跳转原文 uri
     article: extractArticle(raw.article),
     isNew: false,
+  }
+}
+
+/**
+ * 提取财经日历标识（兼容上游两种拼法）：
+ * - lives 列表项：直接在顶层给 calendar_key
+ * - WS 推送：顶层没有 calendar_key，整份日历指标被塞在 calendar_data（一个 JSON 字符串）里，
+ *   calendar_key 嵌在其内部，需解析出来（与配图 image_uris/images 同属上游两种拼法，都在这兼容）
+ * 这样 normalizeNewsItem 后 calendarKey 在列表与推送两条链路下都是真 key，
+ * 既能让 scheduleCalendar 正常发 /news/calendar，也让 displaySig 在 R2 折叠时两边一致
+ * @param raw - 解密后的上游原始对象
+ * @returns calendar_key；两种来源都没有时回空串
+ */
+function calendarKeyFromRaw(raw: Record<string, unknown>): string {
+  const top: string = String(raw.calendar_key || '')
+  if (top) {
+    return top
+  }
+  // calendar_data 是 JSON 字符串（加密链路下叶子都是字符串），从内层取 calendar_key
+  const cd: unknown = raw.calendar_data
+  if (typeof cd !== 'string' || !cd) {
+    return ''
+  }
+  try {
+    const parsed: Record<string, unknown> = JSON.parse(cd) as Record<string, unknown>
+    return String(parsed.calendar_key || '')
+  } catch (err) {
+    // calendar_data 非合法 JSON：不阻断解析，当作无日历
+    return ''
   }
 }
 
@@ -231,7 +265,9 @@ function escapeHtml(text: string): string {
  * 开关带 data-toggle-id，由外层事件委托处理点击；class 名由调用方传入（CSS Modules 哈希类不在工具层引用）
  * 标题只给纯文字包一层 span，加粗交给样式（.newsTitle）：写死在文案里就没法按断点调，也不再拼【】括号
  * 开关不做定位（.newsToggle 只给手型），就留在行内流里跟在正文末尾：正文整段展示不做行数截断，
- * 没有 overflow 裁切会碰到它，因此这里也无需关心正文长度
+ * 没有 overflow 裁切会碰到它，因此这里也无需关心正文长度；
+ * 正文段落 <p> 是块级，开关不能拼在最后一个 </p> 之后（行内元素跟在块级后面会掉到段落下方另起一行），
+ * 而是插进最后一个段落内部，随正文最后一行的行内流排布；纯文本兜底（无 <p>）时直接接在末尾
  * 时刻不在这里拼：窄屏也走左侧时间列（样式上呈时间线形态），日期语义由列表顶部状态行统一给出
  * 标题里的带圈序号同样过一遍包 span（先 escapeHtml 再包：此时已无标签，不会碰到属性）：
  * 标题常用 ①② 做条目序号，不处理就会跟正文里的同一批字符大小不一致
@@ -260,12 +296,17 @@ function buildExcerptHtml(args: {
       `<span class="${args.titleClass || ''}">${args.circled ? wrapCircledNumbers(titleText, args.circled) : titleText}</span>`
     )
   }
-  parts.push(args.bodyHtml)
+  let html: string = args.bodyHtml
   if (args.showToggle && args.itemId) {
-    parts.push(
-      ` <a class="${args.toggleClass || ''}" data-toggle-id="${args.itemId}">${args.expanded ? '收起' : '展开'}</a>`
-    )
+    const toggle: string = ` <a class="${args.toggleClass || ''}" data-toggle-id="${args.itemId}">${
+      args.expanded ? '收起' : '展开'
+    }</a>`
+    // 开关塞进最后一个段落内部（拼在末尾 </p> 之前），而不是整个正文之后：
+    // <p> 是块级，开关作为行内元素若跟在 </p> 后面会被挤到段落下方另起一行
+    const lastClose: number = html.lastIndexOf('</p>')
+    html = lastClose >= 0 ? html.slice(0, lastClose) + toggle + html.slice(lastClose) : html + toggle
   }
+  parts.push(html)
   return parts.join('')
 }
 
@@ -277,6 +318,39 @@ function calendarKeyOf(item: Pick<INewsItem, 'calendarKey' | 'calendarType'>): s
   return item.calendarKey ? `${item.calendarKey}|${item.calendarType || 'FD'}` : ''
 }
 
+// 上游同一板块可能用不同频道 slug（商品线尤其杂），都归到清单里的板块名
+const CHANNEL_LABEL_ALIASES: Record<string, string> = {
+  'gold-channel': '商品',
+  'gold-forex-channel': '商品',
+  'commodity-channel': '商品',
+}
+
+/**
+ * 据快讯 channels 字段得出板块类型标签数组（每个板块一个元素，按清单板块顺序去重）
+ * channels 为 normalizeNewsItem 里逗号拼接的串；既不在清单也不是别名的频道忽略不计
+ * @param channels - 条目所属频道串（如 "global-channel,forex-channel"）
+ * @returns 板块名数组（如 ["要闻", "外汇"]）；无命中回空数组
+ */
+function typeLabelsOfChannels(channels: string): string[] {
+  const slugs: string[] = String(channels || '')
+    .split(',')
+    .map((s: string) => s.trim())
+    .filter(Boolean)
+  if (slugs.length === 0) {
+    return []
+  }
+  const dict: Record<string, string> = { ...NEWS_CHANNEL_LABELS, ...CHANNEL_LABEL_ALIASES }
+  const labels: string[] = []
+  // 按清单板块顺序取命中的板块名（对象键为非数字串，保持插入顺序；同一板块多个渠道只算一个）
+  Object.keys(NEWS_CHANNEL_LABELS).forEach((boardKey: string) => {
+    const label: string = NEWS_CHANNEL_LABELS[boardKey]
+    if (!labels.includes(label) && slugs.some((slug: string) => dict[slug] === label)) {
+      labels.push(label)
+    }
+  })
+  return labels
+}
+
 /** 日历数值展示：空串（未公布/无数据）回「--」，非空拼上单位 */
 function formatCalendarValue(value: string, unit: string): string {
   const text: string = String(value == null ? '' : value).trim()
@@ -285,6 +359,7 @@ function formatCalendarValue(value: string, unit: string): string {
 
 export {
   buildExcerptHtml,
+  calendarKeyFromRaw,
   calendarKeyOf,
   escapeHtml,
   extractArticle,
@@ -293,5 +368,6 @@ export {
   normalizeNewsItem,
   sanitizeNewsHtml,
   stripTags,
+  typeLabelsOfChannels,
   wrapCircledNumbers,
 }

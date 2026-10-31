@@ -4,7 +4,8 @@
  * - 进页拉第一页（服务端转发华尔街见闻 lives 接口）
  * - 滚到底用 next_cursor 取下一页，追加到列表尾部
  * - 服务端常驻长连接收到的推送，通过 SSE（/news/stream）实时推给前端（服务端纯转发、不去重），
- *   去重/折叠规则见 utils/eventDedup（R2 同 id 就地替换 → R1 跨 id 同标题 → R3 跨 id 同正文 → 乱序护栏 → 新增）；
+ *   去重/折叠规则见 utils/eventDedup（R2 同 id 就地替换 → R1 跨 id 同标题 → R3 跨 id 同正文 → 新增）；
+ *   新条目按 displayTime 倒序插入（不再无脑置顶，晚到的旧条目也能入列）；
  *   首屏请求在途期间到达的推送帧会暂存重放，避免 init 重置事件槽后同事件的两帧各渲染一条
  * - 条目带 calendar_key（经济数据快讯）时，按 key 去重后拉 /news/calendar 取今值/预期/前值/国旗
  * 列表与推送经服务端规整为同一结构，值经加盐链路后均为字符串，统一在这里转成数值
@@ -26,7 +27,7 @@ import {
   NEWS_STREAM_API_URL,
 } from '../constants'
 import { calendarKeyOf, normalizeNewsItem } from '../utils/news'
-import { IFeedCtx, applySsePush, collectItems, createFeedCtx } from '../utils/eventDedup'
+import { IFeedCtx, applySsePush, collectItems, createFeedCtx, insertByDisplayTimeDesc } from '../utils/eventDedup'
 
 /**
  * 调试日志专用引用：生产 webpack 的 terser 开了 drop_console: true，会把所有 `console.xxx()` 直接调用剩剥离，
@@ -66,7 +67,7 @@ interface INewsFeedState {
 }
 
 /**
- * 去重与折叠规则（EVENT_DUP_WINDOW_MS/titleKeyOf/contentKeyOf/displaySig/R1・R2・R3/乱序护栏）
+ * 去重与折叠规则（EVENT_DUP_WINDOW_MS/titleKeyOf/contentKeyOf/displaySig/R1・R2・R3/insertByDisplayTimeDesc）
  * 已抽到 utils/eventDedup，与 hook 状态解耦，纯函数可直接被脚本引用验证
  */
 function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
@@ -93,30 +94,6 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
   const calendarRequestedRef = useRef<Set<string>>(new Set())
   // 待拉取日历指标的条目队列，微任务批量合并后串行发送
   const calendarQueueRef = useRef<string[]>([])
-
-  /**
-   * 重放请求在途期间积压的 SSE 帧：init 重置把事件槽清空了，若同事件的两帧（如 create 与紧随的 update）
-   * 分别在重置前后落地，R1/R3 会因槽位丢失双双判为新条目、各渲染一条；这里把未被本次列表覆盖的帧
-   * 按正常推送链重放一次（带完整折叠规则），已在列表里的 id 直接丢弃
-   */
-  const replayPending = useCallback((): void => {
-    const pend: INewsItem[] = pendingSseRef.current
-    pendingSseRef.current = []
-    pend.forEach((p: INewsItem) => {
-      if (feedRef.current.ids.has(p.id)) return
-      if (applySsePush(feedRef.current, setItems, p)) {
-        setItems((prev: INewsItem[]) => {
-          if (prev.some((q: INewsItem) => q.id === p.id)) return prev
-          return [{ ...p, isNew: true }, ...prev]
-        })
-        setNewCount((prev: number) => prev + 1)
-      }
-    })
-  }, [])
-
-  // 调试开关：URL 带 isDebug=true 时，把服务端原始推送（SSE）与原始列表（lives）原样打到控制台，
-  // 不做任何字段列举/投影；前端 items 是 normalizeNewsItem 后的投影，不属「原样」范围，故不再额外输出
-  const isDebug: boolean = getSearchParams('isDebug') === 'true'
 
   /**
    * 冲刷日历指标队列：串行拉取 /news/calendar，结果按 key 存入 calendarData
@@ -149,7 +126,7 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
 
   /**
    * 登记条目里的 calendar_key：去重后进队列，微任务结束时统一冲刷
-   * 同一页/同一推送里重复 key 只拉一次；翻页、首屏、SSE 三条入口共用本登记
+   * 同一页/同一推送里重复 key 只拉一次；翻页、首屏、SSE、在途重放入口共用本登记
    */
   const scheduleCalendar = useCallback((list: INewsItem[]): void => {
     let hasNew = false
@@ -168,6 +145,31 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
       })
     }
   }, [flushCalendar])
+
+  /**
+   * 重放请求在途期间积压的 SSE 帧：init 重置把事件槽清空了，若同事件的两帧（如 create 与紧随的 update）
+   * 分别在重置前后落地，R1/R3 会因槽位丢失双双判为新条目、各渲染一条；这里把未被本次列表覆盖的帧
+   * 按正常推送链重放一次（带完整折叠规则），已在列表里的 id 直接丢弃；
+   * 重放帧同样登记日历指标——init 的 scheduleCalendar(list) 只覆盖列表页条目，
+   * 靠重放置顶的推送帧（如带 calendar_key 的 update 帧）若不在这里补登记就永远不会拉 /news/calendar
+   */
+  const replayPending = useCallback((): void => {
+    const pend: INewsItem[] = pendingSseRef.current
+    pendingSseRef.current = []
+    pend.forEach((p: INewsItem) => {
+      scheduleCalendar([p])
+      if (feedRef.current.ids.has(p.id)) return
+      if (applySsePush(feedRef.current, setItems, p)) {
+        // 同样走时间倒序插入：重放帧里可能有晚到的旧条目，无脑置顶会打乱列表顺序
+        setItems((prev: INewsItem[]) => insertByDisplayTimeDesc(prev, { ...p, isNew: true }))
+        setNewCount((prev: number) => prev + 1)
+      }
+    })
+  }, [scheduleCalendar])
+
+  // 调试开关：URL 带 isDebug=true 时，把服务端原始推送（SSE）与原始列表（lives）原样打到控制台，
+  // 不做任何字段列举/投影；前端 items 是 normalizeNewsItem 后的投影，不属「原样」范围，故不再额外输出
+  const isDebug: boolean = getSearchParams('isDebug') === 'true'
 
   /**
    * 拉取一页（mode=init 重置并覆盖，mode=more 追加到尾部）
@@ -325,19 +327,20 @@ function useNewsFeed(args: INewsFeedArgs): INewsFeedState {
       if (!pendingSseRef.current.some((p: INewsItem) => p.id === item.id)) {
         pendingSseRef.current.push(item)
       }
-      // R2→R1→R3→乱序护栏→新增：规则见 utils/eventDedup；就地折叠返回 false，只有新条目返回 true
-      // （必须排在乱序护栏之前的逻辑已在 helper 内保证：更新条目 id 可能 ≤ maxId，不能被乱序误丢）
+      // 日历指标登记放在折叠判定之前：推送帧无论走 R2/R1/R3 就地更新还是新增都覆盖得到——
+      // 上游常见「先推无 calendar_key 的简版、再补 calendar_data」，更新帧被就地折叠后若只在
+      // 「新条目」分支登记，该条目的 /news/calendar 就永远不会拉；无 key 时 calendarKeyOf 回空串
+      // 本身就是 no-op，keyed 去重（calendarRequestedRef）保证重复登记不会重复发请求
+      scheduleCalendar([item])
+      // R2→R1→R3→新增：规则见 utils/eventDedup；就地折叠返回 false，只有新条目返回 true
+      // （已去掉旧的「id ≤ maxId 丢弃」乱序护栏：晚到的新条目不再被误当旧快讯永久漏显）
       if (!applySsePush(feedRef.current, setItems, item)) {
         return
       }
-      // 新快讯置顶并标记为高亮（helper 只做判定与事件槽登记，插入由这里完成）
-      setItems((prev: INewsItem[]) => {
-        if (prev.some((p: INewsItem) => p.id === item.id)) return prev
-        return [{ ...item, isNew: true }, ...prev]
-      })
+      // 新快讯标高亮并按 displayTime 倒序插入（helper 只做判定与事件槽登记，插入由调用方完成）：
+      // 正常最新条目仍落在首位（与置顶等效），晚到的旧条目插回它该有的时间位置而不是被丢弃
+      setItems((prev: INewsItem[]) => insertByDisplayTimeDesc(prev, { ...item, isNew: true }))
       setNewCount((prev: number) => prev + 1)
-      // 推送条目同样登记日历指标需求
-      scheduleCalendar([item])
       // 本地通知：只对「重要」快讯（score===2）推一条到通知栏，普通快讯只在列表置顶不高亮打扰；
       // 且只在 SSE 实时推送这条路发——刷新（fetchPage init）、分页（fetchPage more）与重连补齐都不通知
       // （@utils/notify 自带环境分流：App 走 plus.push，浏览器走 Web Notification；

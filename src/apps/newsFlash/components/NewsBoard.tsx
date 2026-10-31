@@ -9,7 +9,9 @@
  * 状态行与新快讯提示条：前者整块吸顶，后者浮在吸顶头下沿（绝对定位、不占位），
  * 提示条出现与消失不会推下列表内容，也不影响固定区高度。
  * 带 calendar_key 的条目在正文标题左侧展示国旗 icon，正文下方展示经济数据指标行（国家 + 今值/预期/前值，指标由 useNewsFeed 拉取）；
- * 带 article 的条目在条目最下方展示「相关文章」蓝色链接入口，点击新标签页打开原文 uri。
+ * 带 article 的条目在条目最下方展示关联文章标题入口（不带图标与「相关文章」文案），用原生 <a target="_blank"> 承载，
+ * 让 App（HBuilder/5+）内 app-pages.js 的 <a> 拦截器能把外链交给 plus.runtime.openURL，返回时不会回不到本页
+ * 该文章带封面图（article.imageUri）时，移动端把这一行改成左右布局（左标题最多两行 + 右缩略图），PC 不展示该图
  * 条目布局：PC 与移动端统一走时间线（不再按断点分叉）：不给时间单独留一栏宽度，
  * 轴线画在卡片已有的左内边距里，时刻（只有 HH:mm）做正文上方一行小标签，内容区占满整宽；
  * PC 端靠 .pageHost 的 max-width 收窄阅读宽度并居中（限宽在页面根层，不在这个组件里）；
@@ -19,21 +21,24 @@
  * 「展开/收起」开关也拼在正文末尾，随文本流跟在正文最后一行之后（正文整段展示不做行数截断，
  * 所以不需要为避开裁切把开关脱流，见 .newsExcerpt / .newsToggle）；
  * 展开后的补充正文：无配图时紧接正文下方，条目带配图（item.images，非国旗 icon）时下移到配图下方，
- * 开关本身位置不变、仍留在正文行内流末尾（见 renderBody 的 moreBelowImages 分支）。
+ * 列表与弹窗同一套位置规则；开关只在列表给，本身位置不变、仍留在正文行内流末尾
+ * （见 renderBody 的 moreBelowImages 分支）。
  * 弹窗（快讯详情）不走这一套：标题放在弹窗头部（无标题时回退「快讯详情」），
- * 时间放在标题下方独立一行（带年/日期/星期），正文不再带【标题】前缀，也不渲染左侧时刻列；
+ * 时间放在标题下方独立一行（带年/日期/星期），板块类型标签不在时间行内而是另起一行
+ * （列表仍把标签紧跟时刻同行），正文不再带【标题】前缀，也不渲染左侧时刻列；
  * 弹窗整体高度封顶（.newsModal：content 定高 flex + body 滚动），内容超长只滚 body，标题行不跟着滚走。
  */
 
 import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { List, Skeleton, Button, Image, Modal, Checkbox } from 'antd'
-import { ArrowUpOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
+import { ArrowUpOutlined, EyeOutlined } from '@ant-design/icons'
 import { INewsCalendar, INewsItem } from '../types'
 import { COLOR_UP } from '../constants'
 import { formatNewsClock, formatNewsDate } from '../utils/format'
-import { buildExcerptHtml, calendarKeyOf, formatCalendarValue, sanitizeNewsHtml } from '../utils/news'
+import { buildExcerptHtml, calendarKeyOf, formatCalendarValue, sanitizeNewsHtml, typeLabelsOfChannels } from '../utils/news'
 import { RefreshButton } from './RefreshButton'
 import { MonitorInfo } from './MonitorInfo'
+import { LiveClock } from './LiveClock'
 import { NewsSkeleton } from './NewsSkeleton'
 import style from '../styles/index.module.less'
 
@@ -52,8 +57,6 @@ interface INewsBoardProps {
   importantOnly: boolean
   /** 切换「只看重要」 */
   onToggleImportant: (checked: boolean) => void
-  /** 页面时钟快照：列表还没数据（首屏/骨架/空列表）时顶部日期的回退基准，跨零点自动换成昨天 */
-  now: number
   onLoadMore: () => void
   onRefresh: () => Promise<void> | void
   onAckNew: () => void
@@ -65,8 +68,13 @@ const ROOT_MARGIN = '0px 0px 240px 0px'
 /** 判定「在顶部」的滚动阈值（像素）： scrollTop 小于等于此值视为已置顶 */
 const AT_TOP_THRESHOLD = 40
 
-/** 顶部日期行锚点：取视口高度 40% 处（中部偏上）的条目日期作为当前日期 */
-const DATE_ANCHOR_RATIO = 0.4
+/** 板块类型标签渲染（每个板块一个 pill，样式见 .newsTypeTag）：列表时间列与弹窗时间行共用同一份，避免两处各写一遍 */
+const renderTypeTags = (labels: string[]): JSX.Element[] =>
+  labels.map((label: string): JSX.Element => (
+    <span key={label} className={style.newsTypeTag}>
+      {label}
+    </span>
+  ))
 
 /**
  * 带圈序号的三档样式类名（见 utils/news 的 wrapCircledNumbers）：
@@ -102,7 +110,6 @@ const NewsBoard = memo(function NewsBoard({
   newCount,
   calendarData,
   importantOnly,
-  now,
   onToggleImportant,
   onLoadMore,
   onRefresh,
@@ -119,13 +126,8 @@ const NewsBoard = memo(function NewsBoard({
   const prevScrollHeightRef = useRef<number>(0)
   const prevFirstIdRef = useRef<number | null>(null)
   const prevCountRef = useRef<number>(0)
-  // 点击正文后弹窗看详情的当前条目（正文本身不再截断，弹窗多给大图配图与标题下的时间行）
+  // 点击正文后弹窗看详情的当前条目（正文本身不再截断，弹窗多给标题下的时间行；配图尺寸与列表一致，不再放档）
   const [active, setActive] = useState<INewsItem | null>(null)
-  // 状态行日期锚点：视口中部偏上条目所属日期（毫秒时间），随滚动/换页/时钟更新
-  const [headerDateMs, setHeaderDateMs] = useState<number>(now)
-  // 页面时钟快照的 ref 镜像：锚点回退基准用，避免每秒时钟刷新重建滚动监听
-  const nowRef = useRef<number>(now)
-  nowRef.current = now
   const openDetail = useCallback((item: INewsItem): void => { setActive(item) }, [])
   const closeDetail = useCallback((): void => { setActive(null) }, [])
   // content_more 可能很短，保留行内展开/收起；与「正文超长走弹窗」并存
@@ -160,49 +162,18 @@ const NewsBoard = memo(function NewsBoard({
     return () => observer.disconnect()
   }, [onLoadMore, items.length, loadingMore, hasMore])
 
-  // 监听滚动容器维护「是否在顶部」与状态行日期锚点；容器需挂载后才能取到，故用 effect 绑定
+  // 监听滚动容器维护「是否在顶部」；容器需挂载后才能取到，故用 effect 绑定
   useEffect(() => {
     const scroller: HTMLElement | null = findScroller(topRef.current)
     const target: HTMLElement | Window = scroller || window
-    // 回退基准从 nowRef 读取：不随每秒时钟重建监听；列表滚到另一天的旧条目时（滚动/翻页/新快讯置顶）重算会带出那个日期
-    const syncHeaderDate = (): void => {
-      const y: number = window.innerHeight * DATE_ANCHOR_RATIO
-      // 只查本组件容器内的条目：弹窗也复用 renderBody（带同样的 data-news-ts），不能全局查
-      const container: HTMLElement | null = topRef.current
-      if (!container) {
-        return
-      }
-      const nodes = container.querySelectorAll<HTMLElement>('[data-news-ts]')
-      let picked: number | null = null
-      for (let i = 0; i < nodes.length; i += 1) {
-        const { top } = nodes[i].getBoundingClientRect()
-        // 逐条往后推，留下的最后一条就是跨过锚点（顶部不高于锚点）的那条
-        if (top <= y) {
-          picked = Number(nodes[i].getAttribute('data-news-ts'))
-        }
-      }
-      // 条目没铺到锚点（列表很短）时用首条；完全滑过锚点（不应发生）也走上面的逆推结果
-      if (picked === null && nodes.length > 0) {
-        picked = Number(nodes[0].getAttribute('data-news-ts'))
-      }
-      if (picked !== null && Number.isFinite(picked)) {
-        setHeaderDateMs(picked)
-      } else {
-        // 列表空或骨架屏阶段回退跟随页面时钟
-        setHeaderDateMs(nowRef.current)
-      }
-    }
     const onScroll = (): void => {
       const top: number = scroller ? scroller.scrollTop : window.scrollY
       setAtTop(top <= AT_TOP_THRESHOLD)
-      syncHeaderDate()
     }
     onScroll()
     target.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', syncHeaderDate)
     return () => {
       target.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', syncHeaderDate)
     }
   }, [items.length, loading, loadingMore])
 
@@ -288,9 +259,11 @@ const NewsBoard = memo(function NewsBoard({
   const renderBody = (item: INewsItem, inList: boolean): JSX.Element => {
     // 条目带 calendar_key 且指标已拉到时渲染指标行；未拉到/失败则不展示（不占位）
     const calendar: INewsCalendar | undefined = calendarData[calendarKeyOf(item)]
-    // 条目只留时刻：日期不在每条上重复，整列的日期语义由顶部状态行统一给出（跨零点的旧条目也一样，
-    // 滚动到它们时状态行会换成对应日期），省屏效也让时间列宽度稳定
+    // 条目只留时刻：日期不在每条上重复，整列的日期语义统一由顶部实时时钟（LiveClock）给出，
+    // 省屏效也让时间列宽度稳定
     const timeText: string = formatNewsClock(item.displayTime)
+    // 时刻后面的板块类型标签：据条目 channels 命中频道清单得出，每个板块一个独立标签，无命中不占位
+    const typeLabels: string[] = typeLabelsOfChannels(item.channels)
     // 正文里有没有标题：无标题条目与弹窗（标题已提到弹窗头部）都没有，此时给正文多挂一个类，
     // 让国旗与首个段落同排而不是各占一行（样式见 .newsExcerptNoTitle）
     const hasTitle: boolean = inList && Boolean(item.title)
@@ -300,11 +273,11 @@ const NewsBoard = memo(function NewsBoard({
     ]
       .filter(Boolean)
       .join(' ')
-    // 有真正的配图（item.images，区别于正文行内的国旗 icon）时，展开补充正文下移到配图下方；
+    // 有真正的配图（item.images，区别于正文行内的国旗 icon）时，展开补充正文下移到配图下方（列表与弹窗统一走这一条）；
     // 「展开/收起」开关不受影响，仍留在正文行内流末尾（见 .newsToggle），只是展开块换位置
     const moreBelowImages: boolean =
-      inList && Boolean(item.images && item.images.length > 0) && Boolean(item.contentMore)
-    // 展开补充正文：列表内需点开关展开（原位给无配图，配图分支给 moreBelowImages），弹窗内默认展开原位
+      Boolean(item.images && item.images.length > 0) && Boolean(item.contentMore)
+    // 展开补充正文：列表内需点开关展开（原位给无配图，配图分支给 moreBelowImages），弹窗内默认展开、位置规则同列表
     const renderMore = (): JSX.Element | null =>
       item.contentMore && (!inList || expandedIds.has(item.id)) ? (
         <div className={style.newsMore}>{item.contentMore}</div>
@@ -319,14 +292,21 @@ const NewsBoard = memo(function NewsBoard({
           className={style.newsTimeCol}
           style={item.score === 2 ? { color: COLOR_UP } : undefined}
         >
-          <div className={style.newsTimeClock}>{timeText}</div>
+          <div className={style.newsTimeClock}>
+            {timeText}
+            {renderTypeTags(typeLabels)}
+          </div>
         </div>
       ) : null}
       <div className={style.newsMain}>
-        {/* 弹窗：标题已提到弹窗头部，这里在标题下方补一行完整时间（年+日期+星期+时刻）；
-            带上日期是因为弹窗已脱离看板顶部那条日期状态行，只剩时刻会看不出是哪一天 */}
+        {/* 弹窗：标题已提到弹窗头部，这里在标题下方补一行完整时间（年+日期+星期+时刻），
+            板块类型标签与列表不同——不在时间行内，另起一行（样式见 .newsDetailTagRow；列表仍紧跟时刻同行）；
+            带上日期是因为弹窗已脱离看板顶部那条时钟行 */}
         {inList ? null : (
-          <div className={style.newsDetailTime}>{`${formatNewsDate(item.displayTime)} ${timeText}`}</div>
+          <div className={style.newsDetailTime}>
+            {`${formatNewsDate(item.displayTime)} ${timeText}`}
+            <div className={style.newsDetailTagRow}>{renderTypeTags(typeLabels)}</div>
+          </div>
         )}
       {/* 正文：国旗、标题前缀、清洗后的正文 HTML、「展开」开关拼成单一 innerHTML 注入。
           国旗与标题同在一个行内流里（同排），正文段落 <p> 由 sanitizeNewsHtml 原样保留为块级（不再 span 化），
@@ -372,7 +352,7 @@ const NewsBoard = memo(function NewsBoard({
           }),
         }}
       />
-      {/* 展开补充正文：无配图时点击「展开」后作为整块显示在正文下方，有配图时走下方配图后的分支，弹窗内默认展示 */}
+      {/* 展开补充正文：无配图时点击「展开」后作为整块显示在正文下方，有配图时走下方配图后的分支（弹窗默认展开、位置规则同列表） */}
       {moreBelowImages ? null : renderMore()}
       {/* 经济数据指标行：国家 + 今值/预期/前值（国旗已移到正文标题左侧；空值展示 --，单位非空时拼在数值后） */}
       {calendar ? (
@@ -388,8 +368,8 @@ const NewsBoard = memo(function NewsBoard({
             <Image
               key={index}
               src={src}
-              width={inList ? 96 : 140}
-              height={inList ? 72 : 105}
+              width={96}
+              height={72}
               className={style.newsImg}
               // 自定义预览遮罩：只留小眼睛图标，去掉默认的「预览」文案
               preview={{ mask: <EyeOutlined style={{ fontSize: 20, color: '#fff' }} /> }}
@@ -398,19 +378,56 @@ const NewsBoard = memo(function NewsBoard({
         </div>
       ) : null}
       {moreBelowImages ? renderMore() : null}
-      {/* 相关文章：固定在条目最下方，上游 item 带 article 时展示标题入口，蓝色链接样式，点击新标签页打开原文（stopPropagation 避免连带触发正文弹窗） */}
+      {/* 相关文章：固定在条目最下方，上游 item 带 article 时展示标题入口，整块做成带淡底的可点区域；
+          必须用原生 <a target="_blank"> 而不是 div + window.open：app-pages.js 的外链拦截器只认 tagName==='A'（document capture），
+          站内页走 openPage、外部站点走 plus.runtime.openURL（交系统浏览器，返回时自然回到本页）；
+          之前用 div + window.open 命不中拦截器，走 5+ 默认 _blank 行为，叠加 handleBackButton 里被注掉的 canBack/goBack 分支，
+          表现为「跳外链后按返回只能退出 App」；浏览器构建则照旧靠原生 <a> 开新标签；
+          图标与「相关文章」文案都已去掉（卡片位置固定、不需要额外标识），只留标题本身；
+          带封面图（article.imageUri）时标题在左、图在右（移动端，资讯卡片的常见排法：先读文字再看图），标题最多两行末尾省略，无图则回到单行形态；
+          缩略图只在移动端展示（DOM 两端都渲染，PC 由 CSS 隐去，见 .newsArticleImg）；
+          尺寸固定 60x48、不随列表/弹窗分叉：两端的正文字号本来就一致，这里跟着视口变只会让同一块内容两处看着不同；
+          高度保住两行标题不缩（缩了会与文字块顶对齐留白），宽度收窄一档，比例从 3:2 走到 5:4，cover 会横向多裁一点；
+          这一行的主角是标题，图只做辅助辨认，高过两行标题就会抢焦点并撑高条目；
+          整块可点击所以不走 antd Image 预览 */}
       {item.article ? (
-        <div
-          className={style.newsArticle}
+        <a
+          className={[
+            style.newsArticle,
+            item.article.imageUri ? style.newsArticleWithImg : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          href={item.article.uri}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={(e: React.MouseEvent): void => {
+            // 只隔断冒泡（避开正文的「拉起详情弹窗」），不能 preventDefault：
+            // 浏览器构建要靠原生 <a> 开新标签；App 构建的原生跳转已被 app-pages.js 在 document capture 阶段抢先接管
             e.stopPropagation()
-            window.open(item.article ? item.article.uri : '', '_blank')
           }}
         >
-          <FileTextOutlined />
-          <span className={style.newsArticleLabel}>相关文章:</span>
-          <span className={style.newsArticleTitle}>{item.article.title}</span>
-        </div>
+          <span
+            className={[
+              style.newsArticleTitle,
+              item.article.imageUri ? style.newsArticleTitleClamp : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {item.article.title}
+          </span>
+          {item.article.imageUri ? (
+            <img
+              className={style.newsArticleImg}
+              src={item.article.imageUri}
+              alt=""
+              width={60}
+              height={48}
+              loading="lazy"
+            />
+          ) : null}
+        </a>
       ) : null}
       </div>
     </div>
@@ -432,11 +449,11 @@ const NewsBoard = memo(function NewsBoard({
                 checked={importantOnly}
                 onChange={(e) => onToggleImportant(e.target.checked)}
               >
-                只看重要
+                重要
               </Checkbox>
-              {/* 列表已有数据时取锚点条目日期；首屏/骨架/空列表时直接跟页面时钟，跨零点不会停在旧日期 */}
+              {/* 顶部实时时钟：由独立叶子组件 LiveClock 渲染日期+星期+按 1 秒节拍跳动的 HH:mm:ss，不随滚动/列表重渲染 */}
               <span className={style.newsDateHeader}>
-                {formatNewsDate(items.length > 0 ? headerDateMs : now)}
+                <LiveClock />
               </span>
               <RefreshButton onRefresh={onRefresh} />
             </div>
@@ -477,13 +494,16 @@ const NewsBoard = memo(function NewsBoard({
       </div>
       <div ref={sentinelRef} className={style.newsSentinel} />
 
-      {/* 点击快讯弹窗展示全部内容（标题上提到弹窗头部，下方依次是时间行 + 正文 + 补充正文 + 配图），不再跳转外链；
+      {/* 点击快讯弹窗展示全部内容（标题上提到弹窗头部，下方依次是时间行 + 正文 + 配图 + 补充正文（有配图时，位置规则同列表），无配图时补充正文紧跟正文），不再跳转外链；
           弹窗高度封顶在视口内，超出部分只滚 body（样式见 .newsModal 注释） */}
       <Modal
         open={active !== null}
         onCancel={closeDetail}
         footer={null}
         width={640}
+        // 垂直居中：antd 默认 top:100px 会让内容不满一屏的短弹窗固定在上方、下方大片留白（看着靠上）；
+        // centered 把弹窗在视口内居中，长内容仍靠 .ant-modal-content 的 max-height:72vh 封顶、只在 body 内滚
+        centered
         // 快讯原标题上提到弹窗头部；没有标题的条目回退成「快讯详情」（className 的用途见样式注释）；
         // score=2 重要快讯的标题与正文内容区同样标红（见 renderBody 正文的着色逻辑）
         className={style.newsModal}

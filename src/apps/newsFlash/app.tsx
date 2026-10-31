@@ -25,8 +25,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Header from '@components/Header'
 import Container from '@components/Container'
 import Fixed from '@components/Fixed'
-import { CLOCK_TICK_MS } from './constants'
-import { useClock } from './hooks/useClock'
 import { useLoginGuard } from './hooks/useLoginGuard'
 import { useNewsFeed } from './hooks/useNewsFeed'
 import { NewsBoard } from './components/NewsBoard'
@@ -55,8 +53,6 @@ const SHELL_STYLE: React.CSSProperties = {
 function NewsFlash(): JSX.Element {
   // 登录态：未登录时跳转登录页，校验中不渲染内容也不发请求；分享链接（?handleType=share）下直接为 true
   const authed: boolean = useLoginGuard()
-  // 时钟快照：列表还没数据时（首屏/骨架/空列表），顶部状态行的日期靠它跨零点自动换新
-  const clock: number = useClock(CLOCK_TICK_MS)
   // 资讯「只看重要」筛选：勾选后向 lives 传 score=2，并对 SSE 推送按分值过滤
   const [importantOnly, setImportantOnly] = useState<boolean>(false)
 
@@ -104,7 +100,6 @@ function NewsFlash(): JSX.Element {
               newCount={newsFeed.newCount}
               calendarData={newsFeed.calendarData}
               importantOnly={importantOnly}
-              now={clock}
               onToggleImportant={handleToggleImportant}
               onLoadMore={newsFeed.loadMore}
               onRefresh={newsFeed.refresh}
@@ -118,7 +113,7 @@ function NewsFlash(): JSX.Element {
         // 底图每一帧都在变 = 每个模糊层每帧重算一次，长列表滚动时直接掉帧。
         // 静态渐变下模糊结果可被缓存，合成成本基本归零，视觉上只是失去背景动效
         isAnimationBackground={false}
-        header={<Header name="财经快讯" leftPath="/tool" headerStyle={SHELL_STYLE} />}
+        header={<Header name="财经快讯" showRight={false} leftPath="/tool" headerStyle={SHELL_STYLE} />}
       />
       {/* backTop：常驻「回到顶部」（由 Fixed 统一承载，基于 antd FloatButton.BackTop），
           与工具列上下错开不遮挡，且 Fixed 收起时仍可见；滚动目标为 Container 的 .main（data-scroll-container） */}

@@ -36,6 +36,20 @@ function formatNewsClock(ms: number): string {
   return `${padTime(date.getHours())}:${padTime(date.getMinutes())}`
 }
 
+/**
+ * 顶部实时时钟：时:分:秒（HH:mm:ss），配 1 秒跳拍的 LiveClock 用
+ * 与条目时刻（formatNewsClock 只到分）不同：顶部要“一直在走”的观感，故带上秒
+ * @param ms - 毫秒时间戳
+ * @returns "HH:mm:ss"，时间戳非法时返回占位符
+ */
+function formatNewsTime(ms: number): string {
+  if (!Number.isFinite(ms) || ms <= 0) {
+    return EMPTY_TEXT
+  }
+  const date: Date = new Date(ms)
+  return `${padTime(date.getHours())}:${padTime(date.getMinutes())}:${padTime(date.getSeconds())}`
+}
+
 /** 星期短名索引（Date.getDay() 0-6 对应 周日~周六） */
 const WEEKDAY_LABELS: string[] = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
@@ -58,4 +72,4 @@ function formatNewsDate(ms: number): string {
   }`
 }
 
-export { toNumber, padTime, formatNewsClock, formatNewsDate }
+export { toNumber, padTime, formatNewsClock, formatNewsTime, formatNewsDate }

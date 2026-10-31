@@ -64,6 +64,12 @@
         font-size: 12px;
         white-space: nowrap;
     }
+
+    // antd 标签默认带 padding-inline-end:8px，与本容器的 gap 叠加会让「只看重要」右侧空一格：
+    // 行间距统一交给 gap 控制，这里清掉标签右侧 padding（左侧 padding-inline-start 保留，仍贴着勾选框）
+    :global(.ant-checkbox-wrapper .ant-checkbox-label) {
+        padding-inline-end: 0;
+    }
 }
 
 // 刷新按钮前的当前日期（视口中部偏上条目所属日期，带年份）：与操作区靠 newsFilter 的 gap 拉开，数字等宽防跳动
@@ -198,9 +204,28 @@
     background: currentColor;
 }
 
-// 时刻（HH:mm，已去掉秒）；与正文首行齐行靠 line-height 对位
+// 时刻（HH:mm，已去掉秒）；行内排类型标签，改 flex 行靠 align-items 让时刻与标签垂直居中
+// （标签是带边框/内距的 inline-block，光靠 vertical-align: middle 与文字对不齐）
 .newsTimeClock {
+    display: flex;
+    align-items: center;
     line-height: 1.3;
+}
+
+// 时刻后面的板块类型标签（据 channels 得出）：每个板块一个独立 pill 标签，跟在时刻同行
+// 走页面主色 --color-primary（与链接/「回到最新」同一强调色），用 color-mix 混透明得淡底/淡边，浅深色主题都自适应；
+// 不支持 color-mix 的内核会自动作废这两行→退化成纯蓝字无底，仍可读。自己定 color，盖掉父级 .newsTimeCol 在 score=2 时内联的 currentColor
+.newsTypeTag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 26%, transparent);
+    border-radius: var(--radius-sm, 3px);
+    white-space: nowrap;
 }
 
 // 内容区：贴左占满卡片内容盒（宽屏分栏时给分隔虚线留的 12px 左内边距随分栏一起去掉，
@@ -318,13 +343,27 @@
     gap: 8px;
 }
 
-// 弹窗标题下方的时间行：一条快讯的完整时间（YYYY-MM-DD 周X HH:mm）
-// 弹窗已脱离看板顶部那条日期状态行，只给时刻会看不出是哪一天；次要灰小字不与正文争焦点
+// 弹窗标题下方的时间行：一条快讯的完整时间（YYYY-MM-DD 周X HH:mm）；次要灰小字不与正文争焦点
+// 弹窗已脱离看板顶部那条时钟行，只给时刻会看不出是哪一天
+// 与列表不同：板块类型标签不跟在时间后面，另起一行（见 .newsDetailTagRow），这里无需 flex 行对齐
 .newsDetailTime {
     margin-bottom: 6px;
     color: var(--color-text-muted);
     font-size: 12px;
     font-variant-numeric: tabular-nums;
+}
+
+// 弹窗内时间行下方的板块类型标签行：与列表（标签同行跟在时刻后）区分，单独占一行；
+// 行内保持 .newsTypeTag 自带的 6px 左间距，首个标签贴左缘归零，行距 4px，窄弹窗里多个标签仍可换行
+.newsDetailTagRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    margin-top: 4px;
+
+    .newsTypeTag:first-child {
+        margin-left: 0;
+    }
 }
 
 // 传给 Modal 的 className（落在 .ant-modal 根节点）：标题换成快讯原文后长度不可控，
@@ -465,28 +504,73 @@
     border-radius: 2px;
 }
 
-// 相关文章入口：固定在条目最下方，图标 + 标签 + 标题一行，整行可点击跳转原文，蓝色链接样式，标题过长省略号收尾
+// 相关文章入口：固定在条目最下方，整块可点击跳转原文
+// 颜色不再走主题蓝（避免与正文里的蓝色内链抢强调），也不取正文黑（那块淡底上会显得比正文还重），
+// 用次级文字色 --color-text-secondary（与经济数据指标行同一档）比正文浅一档，靠底色块 + hover 下划线给出可点信号
+// 底色不能用 --color-bg-overlay：那个值在浅色主题下是半透白，铺在卡片（--color-bg-white 也是半透白）上看不出来；
+// 这里拿正文灰（--color-text）用 color-mix 掺成很淡的一层灰底（6%），与卡片拉开一层次但不抢正文；不加描边；
+// 不支持 color-mix 的内核会自动作废这一行→退化成无底色，仍不影响阅读与点击（同 .newsTypeTag 的取值思路）
+// 字号跟正文同档（14px）：这里挂的是另一篇文章的标题，属于可点内容，不走本页 12px 那套辅助信息字号（时间列/指标行/状态行）
 .newsArticle {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 2px;
-    font-size: 12px;
-    color: var(--color-primary);
+    margin-top: 6px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
     cursor: pointer;
+    // 入口是原生 <a>（为了被 App 的 <a> 拦截器接管，见组件注释），这里去掉链接默认的常驻下划线，
+    // 只保留 hover 时给标题加下划线作为可点提示
+    text-decoration: none;
 
     &:hover .newsArticleTitle {
         text-decoration: underline;
     }
 }
 
-.newsArticleLabel {
+// 封面缩略图：排在标题右侧（图在右、文字在左，标题 flex:1 把图顶到右缘），只在移动端给；
+// flex: none 不参与伸缩，也不被长标题压窄；上游图比例不受控，定宽定高 + cover 裁切保证行高稳定；
+// PC 直接隐去，相关文章退回原来的单行文字形态：DOM 结构两端一致，只靠 CSS 分叉，不用监听视口
+.newsArticleImg {
+    display: none;
     flex: none;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
+// 标题：图标与「相关文章」文案都已去掉，它就是这一块的唯一内容，因此自己吃掉整行宽度（flex:1），
+// 保证底色块不因文字短而收缩、可点区域铺满整行；min-width: 0 不能省，少了它不肯收到内容宽以下，省略号不会生效
 .newsArticleTitle {
+    flex: 1;
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+// 移动端（与本页其他窄屏适配同一档断点）：相关文章切成左右布局
+@media (max-width: 576px) {
+    // 标题与图顶部对齐（标题折两行时不能跟图行中心跑偏），间距拉到 8px 与配图行一致
+    .newsArticleWithImg {
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .newsArticleImg {
+        display: block;
+    }
+
+    // 标题从单行省略换成最多两行、第三行直接裁掉（窄屏能多露一段标题）；
+    // 靠 -webkit-line-clamp 裁字并自带省略号，text-overflow 在这种多行盒上不生效，显式关掉
+    .newsArticleTitleClamp {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        text-overflow: clip;
+    }
 }

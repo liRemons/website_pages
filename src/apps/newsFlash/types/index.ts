@@ -40,10 +40,12 @@ interface INewsItem {
   isNew?: boolean
 }
 
-/** 快讯关联文章（上游 lives item 的 article 子对象，只取标题与跳转地址） */
+/** 快讯关联文章（上游 lives item 的 article 子对象，取标题、跳转地址与封面图） */
 interface INewsArticle {
   title: string
   uri: string
+  /** 封面图 URL（上游 article.image.uri），非空时相关文章入口左侧展示缩略图（只在移动端给，PC 隐去） */
+  imageUri?: string
 }
 
 /**
